@@ -1,0 +1,131 @@
+\documentclass[11pt,titlepage]{report}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For new proposals, sections may need to be (un)commented and reordered
+% to reflect that requested in FOA
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%% Setup packages, style, etc. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{preamble}
+
+%%%%% Key definitions for current proposal %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\baseproposaltitle}{Hobbes: OS and Runtime Support for
+  Application Composition}
+
+\begin{document}
+
+\IfFileExists{acronym-inst.tex}{ \input{acronym-inst} }{}
+\IfFileExists{acronym-pis.tex}{ \input{acronym-pis} }{}
+
+\dominitoc %% Initialize generation of minitocs for later use
+
+\pagenumbering{roman}
+
+%%%%% FWP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% \smartincludeemptych{Field Work Proposal}{fwps/\proposalinstitution}
+
+%%%%% Cover page %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\thispagestyle{empty}
+\smartincludeemptych{Cover Page}{covers/\proposalinstitution}
+
+%%%%% Face page %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% \smartincludeemptych{Face Page}{faces/\proposalinstitution}
+
+%%%%% Table of Contents %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tableofcontents
+\phantomsection % Needed by hyperref because of the unnumbered section
+%%   \addcontentsline{toc}{chapter}{Table of Contents}
+\addstarredchapter{Table of Contents}
+
+%% Needed for lab, must skip for grants. Not sure why.  Figure out later
+%%\ifthenelse{\equal{\proposalcontent}{lab}}{
+%%   \adjustmtc
+%%   \clearpage
+%%}{}
+
+%%%%% Summary Budget %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DOE usually asks for this only in the LEAD submission, but there is no good
+% reason not to include it in the collaborator submissions too.
+
+\input{summary-budget}
+
+%%%%% Budget %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Entered directly into PAMS
+
+%% \input{budgets}
+
+%%%%% Abstract %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{abstract}
+
+%%%%% Title page %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% \begin{titlepage}
+%%   \phantomsection % Needed by hyperref because of the unnumbered section
+%%   \addcontentsline{toc}{chapter}{Project Narrative}
+%%   \input{titlepage}
+%% \end{titlepage}
+
+%%%%% Change page number style %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Force new page, otherwise style change might affect previous page
+\newpage
+\pagenumbering{arabic}
+
+%%%%% Narrative %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{narrative}
+
+%%%%% Bibliography %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\bibname}{Literature Cited}
+\bibliographystyle{cv}
+
+% Multiple bib files are possible.  Format is comma separated list,
+% relative to this directory, without .bib suffix.  So bib/a,bib/b,...
+\bibliography{bib/\jobname}
+
+%%%%% Biographical Sketches %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{bios}
+
+%%%%% Facilities %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{facilities}
+
+%%%%% Other Support %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{other-support}
+
+%%%%% Appendices %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \appendix
+%% \adjustmtc
+
+% Have we added the appendix line to the TOC?
+\provBoolDflt{addedappendixtoc}{false}
+
+\IfFileExists{appendices.tex}{ 
+  %% \phantomsection % Needed by hyperref because of the unnumbered section
+  %% \addcontentsline{toc}{chapter}{Appendices}
+  %% \setboolean{addedappendixtoc}{true}
+  \input{appendices} 
+}
+
+% Normally only have this post-award
+%% \ifthenelse{\boolean{includerevisedsow}}{
+%%   \ifthenelse{\NOT\boolean{addedappendixtoc}}{
+%%     \phantomsection % Needed by hyperref because of the unnumbered section
+%%     \addcontentsline{toc}{chapter}{Appendices}
+%%     \setboolean{addedappendixtoc}{true}
+%%   }
+%%   \input{revised-sow} 
+%% }{}
+
+
+
+\end{document}

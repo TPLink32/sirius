@@ -1,0 +1,328 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Define what will be included in the document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Shorthand for providing and initially setting
+\newcommand{\provBoolDflt}[2]{
+   \provideboolean{#1}
+   \setboolean{#1}{#2}
+}
+
+% There ought to be a simpler way, but I couldn't find in Google
+% First argument is set to result of logical AND of first and second
+\newcommand{\booleanand}[2]{
+  \ifthenelse{\boolean{#1} \and \boolean{#2} }{
+    \setboolean{#1}{true}
+  }{
+    \setboolean{#1}{false}
+  }
+}
+
+% For debugging
+\newcommand{\typeoutboolean}[2]{
+  \ifthenelse{\boolean{#2}}{
+    \typeout{#1 #2 = TRUE}
+  }{
+    \typeout{#1 #2 = FALSE}
+  }
+}
+
+%%%%% Read in user configuration %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%
+%%%%% Set defaults, then read in user's configuration file (if one
+%%%%% exists) to override them.
+
+\newcommand{\proposalinstitution}{ornl} %%% One of the participating insts
+\newcommand{\proposallead}{ornl}      %%% institution leading the proposal
+\newcommand{\proposalcontent}{lab}  %%% technical|lab|grants|abstract|public
+\newcommand{\proposalversion}{draft} %%% draft|final
+
+\IfFileExists{configure.tex}{
+   \input{configure}
+}{}
+
+%%%%% Available/required content %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%
+%%%%% Initialize a set of controls for the different parts of the
+%%%%% proposal. Set these to true/false based on whether the section
+%%%%% is required by the FOA or for ``supplementary'' sections,
+%%%%% whether you have content for them in this proposal.
+
+\provBoolDflt{includeleadcontent}{true} %%% Include content for lead
+                                         %%% institution submissions
+                                         %%% only
+\provBoolDflt{includetitlepage}{true}
+\provBoolDflt{includecover}{true}
+\provBoolDflt{includeface}{false} %%% Most places don't use both cover and face
+\provBoolDflt{includefwp}{true}
+\provBoolDflt{includetoc}{true}
+\provBoolDflt{includeabstract}{true}
+\provBoolDflt{includenarrative}{true}
+\provBoolDflt{includebib}{true}
+\provBoolDflt{includemeasure}{false} %%%%% Not required this proposal
+\provBoolDflt{includeequipment}{false} %%%%% Not required this proposal
+\provBoolDflt{includebudgets}{true}
+\provBoolDflt{includesupport}{true}
+\provBoolDflt{includebios}{true}
+\provBoolDflt{includecvs}{false} %%%%% Special to ARO/NSA BAA (so far)
+\provBoolDflt{includefacilities}{true}
+\provBoolDflt{includecollab}{true} 
+\provBoolDflt{includerevisedsow}{false} %%%%% Probably no longer relevant
+\provBoolDflt{includeinstitutionalsow}{true} 
+\provBoolDflt{includeappendices}{true} 
+
+%%%%% For the ARO grants.gov submission, we want some things to be
+%%%%% starred chapters so that they will not appear in the TOC
+\provBoolDflt{starredbibliography}{false}
+\provBoolDflt{starredbudget}{false}
+\provBoolDflt{starredsupport}{false}
+
+
+%%%%% Toggle content inclusion based on \proposalcontent setting %%%%%%%%%%%%%%
+%%%%%
+%%%%% To modify these settings, we AND the default value (whether we
+%%%%% _have_ relevant content) with the truth value of whether it
+%%%%% should be included for the given build of the document.
+%%%%%
+%%%%% NOTE: If you define a new control above, you need to add it for
+%%%%% each content type below.
+
+\ifthenelse{\equal{\proposalcontent}{technical}}{ % Basic narrative-only
+  \typeout{output-controls: content set to 'technical'}
+  \booleanand{includeleadcontent}{false} % Override below for lead inst.
+  \booleanand{includetitlepage}{false}
+  \booleanand{includecover}{false}
+  \booleanand{includeface}{false}
+  \booleanand{includefwp}{false}
+  \booleanand{includetoc}{true}
+  \booleanand{includeabstract}{true}
+  \booleanand{includenarrative}{true}
+  \booleanand{includebib}{true}
+  \booleanand{includemeasure}{true}
+  \booleanand{includeequipment}{true}
+  \booleanand{includebudgets}{false}
+  \booleanand{includesupport}{false}
+  \booleanand{includebios}{false}
+  \booleanand{includefacilities}{false}
+  \booleanand{includecollab}{false} 
+  \booleanand{includerevisedsow}{false}
+  \booleanand{includeinstitutionalsow}{true}
+  \booleanand{includeappendices}{true} 
+}{}
+
+\ifthenelse{\equal{\proposalcontent}{lab}}{ % Lab-style build
+  \typeout{output-controls: content set to 'lab'}
+  \booleanand{includeleadcontent}{false}
+  \booleanand{includetitlepage}{false}
+  \booleanand{includecover}{true}
+  \booleanand{includeface}{false}
+  \booleanand{includefwp}{true}
+  \booleanand{includetoc}{true}
+  \booleanand{includeabstract}{true}
+  \booleanand{includenarrative}{true}
+  \booleanand{includebib}{true}
+  \booleanand{includemeasure}{true}
+  \booleanand{includeequipment}{true}
+  \booleanand{includebudgets}{true}
+  \booleanand{includesupport}{true}
+  \booleanand{includebios}{true}
+  \booleanand{includefacilities}{true}
+  \booleanand{includecollab}{true} 
+  \booleanand{includerevisedsow}{false}
+  \booleanand{includeinstitutionalsow}{true}
+  \booleanand{includeappendices}{true} 
+}{}
+
+\ifthenelse{\equal{\proposalcontent}{grants}}{ % Grants.gov-style build
+  \typeout{output-controls: content set to 'grants'}
+  \booleanand{includeleadcontent}{false}
+  \booleanand{includetitlepage}{false}
+  \booleanand{includecover}{true}
+  \booleanand{includeface}{false}
+  \booleanand{includefwp}{false}
+  \booleanand{includetoc}{true}
+  \booleanand{includeabstract}{false} % Abstract uploaded separately
+  \booleanand{includenarrative}{true}
+  \booleanand{includebib}{true}
+  \booleanand{includemeasure}{true}
+  \booleanand{includeequipment}{true}
+  \booleanand{includebudgets}{false}
+  \booleanand{includesupport}{true}
+  \booleanand{includebios}{true}
+  \booleanand{includefacilities}{true}
+  \booleanand{includecollab}{true} 
+  \booleanand{includerevisedsow}{false}
+  \booleanand{includeinstitutionalsow}{true}
+  \booleanand{includeappendices}{true} 
+}{}
+
+\ifthenelse{\equal{\proposalcontent}{aro-grants}}{ 
+  % Army Research Office BAA submitted via grants.gov
+  \typeout{output-controls: content set to 'aro-grants'}
+  \booleanand{includeleadcontent}{false}
+  \booleanand{includetitlepage}{true}
+  \booleanand{includecover}{false}
+  \booleanand{includeface}{false}
+  \booleanand{includefwp}{false}
+  \booleanand{includetoc}{true}
+  \booleanand{includeabstract}{true} % Abstract uploaded separately
+  \booleanand{includenarrative}{true}
+  \booleanand{includebib}{true}
+  \booleanand{includemeasure}{false}
+  \booleanand{includeequipment}{false}
+  \booleanand{includebudgets}{true}
+  \setboolean{includecvs}{true}
+  \booleanand{includesupport}{true}
+  \booleanand{includebios}{true}
+  \booleanand{includefacilities}{false}
+  \booleanand{includecollab}{true} 
+  \booleanand{includerevisedsow}{false}
+  \booleanand{includeinstitutionalsow}{false}
+  \booleanand{includeappendices}{true} % they just aren't shown as appendices
+  \booleanand{includecollab}{true} 
+  \setboolean{starredbibliography}{true}
+  %% \setboolean{starredbudget}{true}
+  %% \setboolean{starredsupport}{true}
+}{}
+
+\ifthenelse{\equal{\proposalcontent}{abstract}}{ % Standalone abstract-only
+  \typeout{output-controls: content set to 'abstract'}
+  \booleanand{includeleadcontent}{false}
+  \booleanand{includetitlepage}{false}
+  \booleanand{includecover}{false}
+  \booleanand{includeface}{false}
+  \booleanand{includefwp}{false}
+  \booleanand{includetoc}{false}
+  \booleanand{includeabstract}{true} % Abstract uploaded separately
+  \booleanand{includenarrative}{false}
+  \booleanand{includebib}{false}
+  \booleanand{includemeasure}{false}
+  \booleanand{includeequipment}{false}
+  \booleanand{includebudgets}{false}
+  \booleanand{includesupport}{false}
+  \booleanand{includebios}{false}
+  \booleanand{includefacilities}{false}
+  \booleanand{includecollab}{false} 
+  \booleanand{includerevisedsow}{false}
+  \booleanand{includeinstitutionalsow}{false}
+  \booleanand{includeappendices}{false} 
+}{}
+
+\ifthenelse{\equal{\proposalcontent}{public}}{ % For public release
+  \typeout{output-controls: content set to 'public'}
+  \booleanand{includeleadcontent}{false}
+  \booleanand{includetitlepage}{true}
+  \booleanand{includecover}{false}
+  \booleanand{includeface}{false}
+  \booleanand{includefwp}{false}
+  \booleanand{includetoc}{true}
+  \booleanand{includeabstract}{true}
+  \booleanand{includenarrative}{true}
+  \booleanand{includebib}{true}
+  \booleanand{includemeasure}{true}
+  \booleanand{includeequipment}{true}
+  \booleanand{includebudgets}{false}
+  \booleanand{includesupport}{false}
+  \booleanand{includebios}{false}
+  \booleanand{includefacilities}{false}
+  \booleanand{includecollab}{false} 
+  \booleanand{includerevisedsow}{false}
+  \booleanand{includeinstitutionalsow}{true}
+  \booleanand{includeappendices}{true} 
+}{}
+
+%%%%% Special cases for content inclusion %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Content only the lead institution should include
+\ifthenelse{\equal{\proposalcontent}{aro-grants}}{ 
+  \setboolean{includeleadcontent}{false}
+}{ % else not aro-grants
+  \ifthenelse{\equal{\proposallead}{\proposalinstitution}}{
+    \typeout{output-controls: including LEAD content (\proposallead = \proposalinstitution)}
+    \setboolean{includeleadcontent}{true}
+  }{
+    \setboolean{includeleadcontent}{false}
+  }
+}
+
+% Anal retentives at ORNL tend to require both a cover page, per the
+% FOA, and the old-style DOE ``face page'', even though they are
+% redundant.
+
+%% \ifthenelse{\equal{\proposalinstitution}{ornl}}{
+%%   \typeout{output-controls: including ORNL content}
+%%   \setboolean{includeface}{true}
+%% }{}
+
+%% \ifthenelse{\equal{\proposalinstitution}{anl}}{
+%%   \typeout{output-controls: including ANL content}
+%%   \setboolean{includeinstitutionalsow}{true}
+%% }{}
+
+%%%%% Controls for draft vs final output %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%
+%%%%% Note that people may define other things that _should_ be
+%%%%% toggleable, but aren't!
+
+\provBoolDflt{printacro}{true}
+\provBoolDflt{printfmtdate}{true}
+\provBoolDflt{printsource}{true}
+\provBoolDflt{printcomments}{true}
+% smartincludes should warn when expected files are not found
+\provBoolDflt{printmissingwarnings}{true}
+% missing smartincludes should appear in table of contents
+\provBoolDflt{printmissingintoc}{true}
+
+\ifthenelse{\equal{\proposalversion}{final}}{
+  \typeout{output-controls: proposal version set to 'final'}
+   \booleanand{printacro}{false}
+   \booleanand{printfmtdate}{false}
+   \booleanand{printsource}{false}
+   \booleanand{printcomments}{false}
+   \booleanand{printmissingwarnings}{false}
+   \booleanand{printmissingintoc}{false}
+}{
+  \typeout{output-controls: proposal version set to 'draft'}
+}
+
+%%%% For some reason this doesn't work right for a single page
+%%%% abstract -- if you say not to print, the acronyms don't actually
+%%%% get resolved
+%% % Special case
+%% \ifthenelse{\equal{\proposalcontent}{abstract}}{ % Standalone abstract-only
+%%    \booleanand{printacro}{false}
+%% }{}
+
+%%%%% Output to log file for debugging %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%
+%%%%% NOTE: if you add controls above, print them out here!
+
+\typeoutboolean{output-controls: content setting}{includeleadcontent}
+\typeoutboolean{output-controls: content setting}{includetitlepage}
+\typeoutboolean{output-controls: content setting}{includecover}
+\typeoutboolean{output-controls: content setting}{includeface}
+\typeoutboolean{output-controls: content setting}{includefwp}
+\typeoutboolean{output-controls: content setting}{includetoc}
+\typeoutboolean{output-controls: content setting}{includeabstract}
+\typeoutboolean{output-controls: content setting}{includenarrative}
+\typeoutboolean{output-controls: content setting}{includebib}
+\typeoutboolean{output-controls: content setting}{includemeasure}
+\typeoutboolean{output-controls: content setting}{includeequipment}
+\typeoutboolean{output-controls: content setting}{includebudgets}
+\typeoutboolean{output-controls: content setting}{includesupport}
+\typeoutboolean{output-controls: content setting}{includebios}
+\typeoutboolean{output-controls: content setting}{includecvs}
+\typeoutboolean{output-controls: content setting}{includefacilities}
+\typeoutboolean{output-controls: content setting}{includerevisedsow}
+\typeoutboolean{output-controls: content setting}{includeinstitutionalsow}
+\typeoutboolean{output-controls: content setting}{includeappendices}
+
+\typeoutboolean{output-controls: content setting}{starredbibliography}
+\typeoutboolean{output-controls: content setting}{starredbudget}
+\typeoutboolean{output-controls: content setting}{starredsupport}
+
+\typeoutboolean{output-controls: print setting}{printacro}
+\typeoutboolean{output-controls: print setting}{printfmtdate}
+\typeoutboolean{output-controls: print setting}{printsource}
+\typeoutboolean{output-controls: print setting}{printcomments}
+\typeoutboolean{output-controls: print setting}{printmissingwarnings}
+\typeoutboolean{output-controls: print setting}{printmissingintoc}
