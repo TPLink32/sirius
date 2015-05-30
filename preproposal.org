@@ -53,9 +53,17 @@ over the entire storage hierarchy. This approach will go even further in
 utilizing the deeper knowledge of data by allowing progressive access for
 applications. We will combine this higher level knowledge with information
 about the storage hardware to create optimized representations of data at
-every level of the hierarchy. 
+every level of the hierarchy. We will also leverage the availability of
+overresolved data in most scientific solvers, used to provide numerical
+stability. We will apply a user defined accuracy metric to the data,
+allowing for storage optimizations. Similarly, we will leverage the vastly
+greater capability for computation in exascale platforms to combine
+recomputation and regeneration of data with the storage heirarchy. 
 
 ** Who cares? If you're successful, what difference will it make?
+
 ** What are the risks and the payoffs?
+
 ** How much will it cost? How long will it take?
+
 ** What are the midterm and final "exams" to check for success?
