@@ -1,0 +1,24 @@
+* Introduction [Hasan, Scott]  1.5 pages
+* Application Drivers and Challenges [Scott, Hasan, Jay] 1.0
+* Our Team and Enabling Technologies  1.0 
+** ADIOS [Scott, Hasan, Jay]
+** Dataspaces [Manish]
+** Ceph [Carlos]
+** Sirroco [Lee]
+** OLCF infrastructure [Sudharshan]
+* Research Areas
+** Overarching Architecture [Hasan, Jay] 1 page
+** From bytes to knowledge, how to include information about times, sizes, accuracy, and this leads to re-generation 
+** Data Abstractions (intentions/rules) 
+** Middleware
+*** Autonomic Engine [Manish] 1 page
+*** Hierarchical representation of data [Hasan, Jay] 2 pages
+*** Mapping to storage hierarchy [Carlos, Jay, Lee] 2 pages
+** Data Movement [Manish, Lee] 2 pages
+** Storage Layer
+*** Interaction with Sirroco [Lee, Jay] 1 page
+*** Mapping of storage characteristic with data characteristics (from user). Knowledge based data re-organization [Carlos, Hasan] 2 pages
+*** Storage Model [Sudharshan, Manish] 1.5 pages
+* Conclusions
+* Milestones
+

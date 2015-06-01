@@ -1,0 +1,164 @@
+*** Hierarchical data layout and organization
+  1. Representation of data based on its location in a multi-tier heirarchy
+  2. Layout and organization determined by application semantics
+  3. Transparent migration and reorganization of data based on intents/hints
+  4. Persistent memory (NVM) + disk/ssd layers
+  5. Map storage and data characteristics
+  6. Adding the accuracy dimension to data sets
+  7. Regenerating data through computation instead of reading from slow storage
+
+** What are you trying to do? Articulate your objectives using absolutely no jargon.
+We propose to explore a herarchical organization of massive scientific data
+sets on exascale, and beyond, platforms where a complex storage hiearchy
+will be commonplace. Unlike current thought, we propose using the entire
+hierarchy for a single storage operation--a vertical rather than solely
+horizontal data distribution. Because the storage capacities and bandwidths are
+limited differently for each tier, we propose to enable an Adaptive Mesh
+Refinement (AMR)-style approach for adapting the data to the various tiers.
+Further, we wish to apply this technique not just to allow optimized data
+output, but also to place and organize data based on analysis needs. Because
+data volumes are strictly outstripping available bandwidths, compression will
+be required. Rather than focusing solely on lossless compression, we will
+incorporate lossy compression with the ability to annotate data allowing
+optimized algorithm selection based on the numerical methods employed in the
+source simulation. We plan to epxlore this tradeoff of storage capacity and
+bandwidth for computation to determine how to offer the user options that can
+meet their needs with desireable performance characteristics.
+
+We wish to support additional data access modes as well. First, within a given
+accuracy bounds, offer a mode for recomputation from data stored in a ``fast''
+tier to reduce data latencies. Second, exploratory analysis operations
+frequently entail an overall data set view followed by targeted data
+exploration based on identified features. We will offer support for a
+configurable data access mode to support these sorts of analysis accesses. An
+``overview'' access mode that gives a quick, approximate within error bounds,
+data view that can guide feature selection offering rapid coarse-grained data
+exploration without requiring loading the complete, detailed data set from
+storage. Based on the granularity requested, the accuracy and size of the data
+returned can be adjusted. At the most extreme setting, the original data can
+be retrieved at the time cost of moving the potentially huge data quantity.
+Third, to ensure available storage for subsequent operations, we will offer
+automatic data migration based on user annotations for required data lifetimes
+using monitoring and learning techniques. Unlike existing approaches, this will
+be tempered both by the user annotations and through learned access patterns.
+While past access patterns may not indicate future access because the
+simulation run purpose may have changed, we are focused on scalability where
+runs are subsequently larger as the simulation prepares for a capability run.
+By learning from the output and access patterns during this run sequence, we
+can accurate decide how to place and organize data for the critical capability
+runs. Fourth, we anticipiate storing mutliple data copies, each compressed in
+different ways according to the underlying media, some of these copies will
+disappear based on storage pressures, but data persistence will be maintained
+according to user specifications. Assuming a relatively low latency cache layer
+before a tape system, we can offer exporatory data access reserving pulling
+data from tape to just the data required. This will save scientists time and
+make data stored on tape usable without long delays.
+
+%The key insight we will base this effort on is the use
+%of deep knowledge about data semantic and potential utilization in the
+%scientific process. We will explore the structure of scientific datasets and
+%explore how user hints, or intents, can guide the layout of data. Individual
+%objects, or variables, within the data sets will be partitioned into multiple
+%representations with varying resolution, precision, accuracy and
+%organization, on different tiers of the storage hierarchy, with the exact
+%representation optimized for the specific characteristics of the
+%hardware. We will also explore how partial data regeneration, either at full
+%or reduced accuracy, can serve to fill in the large gaps between storage
+%tier. To wit, we will investigate how recomputation of data from information
+%available in the faster tiers, can reduce the latency of data access in the
+%slower tier. We will combine user indication of data lifetime with
+%monitoring and learning techniques, to proactively move and reorganize
+%objects within the vertical hiearchy, while also integrating with the
+%resource management subsystem to optimize the interaction of computation and
+%data. 
+
+** How is it done today, and what are the limits of current practice?
+% JL: I think this is covered above.
+%In current system the storage hiearchy is substantially flatter than the
+%anticipated storage systems for exascale machines. Most common I/O
+%techniques treat data as a bucket of bytes, ignoring the deeper structure of
+%scientific data. The I/O system often will use flash based SSDs and DRAM to
+%prefetch or cache data blocks based on access patterns or user hints. Even
+%at petascale, the tape system becomes a major bottleneck for the scientific
+%process, greatly reducing the accessability of data once it has been
+%archived. Due to the imposed flatness of the archived data, little to no
+%information is maintained in the faster tiers of the hierarchy to allow
+%applications to progressively access data in the lower tiers. Current
+%systems are also unable to utilize the semantic information that
+%applications can provide to regenerate portions of the data set, thus
+%trading off computation with I/O. 
+
+** What's new in your approach and why do you think it will be successful?
+By integrating numerical method-aware data management techniques, we can
+manipulate data in ways existing storage systems cannot. Through incorporating
+additional data-aware information, we can leverage data characteristics, such
+as overresolved data, to achieve highly optimized data storage with minimal
+or no accuracy loss, as is acceptable to the end user.
+
+%Our approach, however, utilizes the deep knowledge that domain scientists
+%have about their data sets. Instead of treating data as a simple byte
+%stream, we will push knowledge of the structure of the data, its semantic
+%meaning, and user expected access patterns into the middleware. This will
+%allow us to intelligentally partition the data into segments and distributed
+%over the entire storage hierarchy. This approach will go even further in
+%utilizing the deeper knowledge of data by allowing progressive access for
+%applications. We will combine this higher level knowledge with information
+%about the storage hardware to create optimized representations of data at
+%every level of the hierarchy. We will also leverage the availability of
+%overresolved data in most scientific solvers, used to provide numerical
+%stability. We will apply a user defined accuracy metric to the data,
+%allowing for storage optimizations. Similarly, we will leverage the vastly
+%greater capability for computation in exascale platforms to combine
+%recomputation and regeneration of data with the storage heirarchy. 
+
+** Who cares? If you're successful, what difference will it make?
+Application scientists and data analysts care strongly about being able to
+write sufficient data for subsequent data exploration. Our techniques offer an
+approach that uses the entire storage stack to enable writing vastly larger
+data volumes than the raw I/O bandwidth would indicate with minimal accuracy
+loss done in a way that acknowledges how the raw data is used and what
+techniques were used to create it.
+
+** What are the risks and the payoffs?
+Creating the storage system to support these techniques is a relatively low
+risk endeavor. The main risks are in the numerical methods required to offer
+the lossy compression and regeneration within acceptable error bounds. Initial
+exploration has demonstrated that this should be possible for a variety of
+numerical methods. Without these techniques, the storage system will offer
+greatly reduced functionality compared to what is proposed. Ultimately, it
+will still offer a performance improvement by using multiple storage tiers
+simultaneously.
+
+** How much will it cost? How long will it take?
+$1.25 million/yr for 3 years.
+
+** What are the midterm and final "exams" to check for success?
+Milestones:
+1. Determine data annotation requirements and develop the metadata system
+extensions to store these annotations in a way the semantics are preserved for
+use in data management decisions.
+2. Extend existing storage mechanisms to incorporate computation during data
+movement between tiers.
+3. Validate system without lossy compression to demonstrate vertical data
+distribution and data migration.
+4. Incorporate algorithms for data compression and regeneration as data moves
+between tiers.
+
+TODO:
+- Need to describe how Sirocco is being incorporated/leveraged. It offers 90\%
+of what we need from the raw data storage. The last 10\% can be achieved
+with far less effort than the $1.25 million/yr for 3 years requested. We need
+to justify why we need this amount of money when integrating with a relatively
+mature existing system or what we are adding to Sirocco to enable the kinds of
+data management we are proposing.
+- We need to differentiate from Triton (ANL) as well. Since it is the sister
+project to Sirocco and they are inteded to merge eventually, there are some
+similarities and differences we should take into account
+- We need to make sure that the numerical algorithms stay in the background so
+that reviewers see that we are offering a storage system rather than some
+algorithms. If we don't do that, I (Jay) don't see how this will get past the
+pre-proposal stage. This version is closer, but still not there. We need a more
+crystal clear picture of the storage system with where the plug-ins for
+different algorithms will be offered. The algorithms need to be presented as
+examples and validation techniques for the approach rather than core to the
+proposal.
