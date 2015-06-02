@@ -54,39 +54,39 @@ before a tape system, we can offer exporatory data access reserving pulling
 data from tape to just the data required. This will save scientists time and
 make data stored on tape usable without long delays.
 
-%The key insight we will base this effort on is the use
-%of deep knowledge about data semantic and potential utilization in the
-%scientific process. We will explore the structure of scientific datasets and
-%explore how user hints, or intents, can guide the layout of data. Individual
-%objects, or variables, within the data sets will be partitioned into multiple
-%representations with varying resolution, precision, accuracy and
-%organization, on different tiers of the storage hierarchy, with the exact
-%representation optimized for the specific characteristics of the
-%hardware. We will also explore how partial data regeneration, either at full
-%or reduced accuracy, can serve to fill in the large gaps between storage
-%tier. To wit, we will investigate how recomputation of data from information
-%available in the faster tiers, can reduce the latency of data access in the
-%slower tier. We will combine user indication of data lifetime with
-%monitoring and learning techniques, to proactively move and reorganize
-%objects within the vertical hiearchy, while also integrating with the
-%resource management subsystem to optimize the interaction of computation and
-%data. 
+# The key insight we will base this effort on is the use
+# of deep knowledge about data semantic and potential utilization in the
+# scientific process. We will explore the structure of scientific datasets and
+# explore how user hints, or intents, can guide the layout of data. Individual
+# objects, or variables, within the data sets will be partitioned into multiple
+# representations with varying resolution, precision, accuracy and
+# organization, on different tiers of the storage hierarchy, with the exact
+# representation optimized for the specific characteristics of the
+# hardware. We will also explore how partial data regeneration, either at full
+# or reduced accuracy, can serve to fill in the large gaps between storage
+# tier. To wit, we will investigate how recomputation of data from information
+# available in the faster tiers, can reduce the latency of data access in the
+# slower tier. We will combine user indication of data lifetime with
+# monitoring and learning techniques, to proactively move and reorganize
+# objects within the vertical hiearchy, while also integrating with the
+# resource management subsystem to optimize the interaction of computation and
+# data. 
 
 ** How is it done today, and what are the limits of current practice?
-% JL: I think this is covered above.
-%In current system the storage hiearchy is substantially flatter than the
-%anticipated storage systems for exascale machines. Most common I/O
-%techniques treat data as a bucket of bytes, ignoring the deeper structure of
-%scientific data. The I/O system often will use flash based SSDs and DRAM to
-%prefetch or cache data blocks based on access patterns or user hints. Even
-%at petascale, the tape system becomes a major bottleneck for the scientific
-%process, greatly reducing the accessability of data once it has been
-%archived. Due to the imposed flatness of the archived data, little to no
-%information is maintained in the faster tiers of the hierarchy to allow
-%applications to progressively access data in the lower tiers. Current
-%systems are also unable to utilize the semantic information that
-%applications can provide to regenerate portions of the data set, thus
-%trading off computation with I/O. 
+#  JL: I think this is covered above.
+# In current system the storage hiearchy is substantially flatter than the
+# anticipated storage systems for exascale machines. Most common I/O
+# techniques treat data as a bucket of bytes, ignoring the deeper structure of
+# scientific data. The I/O system often will use flash based SSDs and DRAM to
+# prefetch or cache data blocks based on access patterns or user hints. Even
+# at petascale, the tape system becomes a major bottleneck for the scientific
+# process, greatly reducing the accessability of data once it has been
+# archived. Due to the imposed flatness of the archived data, little to no
+# information is maintained in the faster tiers of the hierarchy to allow
+# applications to progressively access data in the lower tiers. Current
+# systems are also unable to utilize the semantic information that
+# applications can provide to regenerate portions of the data set, thus
+# trading off computation with I/O. 
 
 ** What's new in your approach and why do you think it will be successful?
 By integrating numerical method-aware data management techniques, we can
@@ -95,21 +95,21 @@ additional data-aware information, we can leverage data characteristics, such
 as overresolved data, to achieve highly optimized data storage with minimal
 or no accuracy loss, as is acceptable to the end user.
 
-%Our approach, however, utilizes the deep knowledge that domain scientists
-%have about their data sets. Instead of treating data as a simple byte
-%stream, we will push knowledge of the structure of the data, its semantic
-%meaning, and user expected access patterns into the middleware. This will
-%allow us to intelligentally partition the data into segments and distributed
-%over the entire storage hierarchy. This approach will go even further in
-%utilizing the deeper knowledge of data by allowing progressive access for
-%applications. We will combine this higher level knowledge with information
-%about the storage hardware to create optimized representations of data at
-%every level of the hierarchy. We will also leverage the availability of
-%overresolved data in most scientific solvers, used to provide numerical
-%stability. We will apply a user defined accuracy metric to the data,
-%allowing for storage optimizations. Similarly, we will leverage the vastly
-%greater capability for computation in exascale platforms to combine
-%recomputation and regeneration of data with the storage heirarchy. 
+# Our approach, however, utilizes the deep knowledge that domain scientists
+# have about their data sets. Instead of treating data as a simple byte
+# stream, we will push knowledge of the structure of the data, its semantic
+# meaning, and user expected access patterns into the middleware. This will
+# allow us to intelligentally partition the data into segments and distributed
+# over the entire storage hierarchy. This approach will go even further in
+# utilizing the deeper knowledge of data by allowing progressive access for
+# applications. We will combine this higher level knowledge with information
+# about the storage hardware to create optimized representations of data at
+# every level of the hierarchy. We will also leverage the availability of
+# overresolved data in most scientific solvers, used to provide numerical
+# stability. We will apply a user defined accuracy metric to the data,
+# allowing for storage optimizations. Similarly, we will leverage the vastly
+# greater capability for computation in exascale platforms to combine
+# recomputation and regeneration of data with the storage heirarchy. 
 
 ** Who cares? If you're successful, what difference will it make?
 Application scientists and data analysts care strongly about being able to

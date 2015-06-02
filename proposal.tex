@@ -15,6 +15,11 @@
 
 \begin{document}
 
+\newtoggle{preproposal}
+\toggletrue{preproposal}
+
+\nottoggle{preproposal}{
+
 \IfFileExists{acronym-inst.tex}{ \input{acronym-inst} }{}
 \IfFileExists{acronym-pis.tex}{ \input{acronym-pis} }{}
 
@@ -27,8 +32,10 @@
 %% \smartincludeemptych{Field Work Proposal}{fwps/\proposalinstitution}
 
 %%%%% Cover page %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+}
 
 \thispagestyle{empty}
+\nottoggle{preproposal}{
 \smartincludeemptych{Cover Page}{covers/\proposalinstitution}
 
 %%%%% Face page %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -47,6 +54,7 @@
 %%   \adjustmtc
 %%   \clearpage
 %%}{}
+}
 
 %%%%% Summary Budget %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % DOE usually asks for this only in the LEAD submission, but there is no good
@@ -60,6 +68,7 @@
 %% \input{budgets}
 
 %%%%% Abstract %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\nottoggle{preproposal}{
 
 \input{abstract}
 
@@ -76,10 +85,12 @@
 % Force new page, otherwise style change might affect previous page
 \newpage
 \pagenumbering{arabic}
-
+}
 %%%%% Narrative %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input{narrative}
+
+\nottoggle{preproposal}{
 
 %%%%% Bibliography %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -125,6 +136,7 @@
 %%   }
 %%   \input{revised-sow} 
 %% }{}
+}
 
 
 
