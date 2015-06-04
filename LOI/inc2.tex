@@ -119,7 +119,7 @@ Scott Klasky klasky@ornl.gov
 
 Manish Parashar, Rutgers, parashar@rutgers.edu, 732-445-5388
 Carlson Malzahn, UCSC
-Jay Lofstead, Sandia
+Jay Lofstead, Sandia, gflofst@sandia.gov, 505-284-5803
 
 
 \vskip .2in
@@ -131,7 +131,7 @@ Hasan Abbasi, ORNL
 Mark Ainsworth, ORNL
 Matthew Curry, Sandia
 Qing Liu, ORNL
- Lee Ward, Sandia
+Lee Ward, Sandia
 
 
 
@@ -141,17 +141,13 @@ Qing Liu, ORNL
 \hline
 Oak Ridge National Laboratory & \$350,000 & \$350,000 & \$350,000	\\
 \hline
-  Argonne National Laboratory & \$350,000 & \$350,000 & \$350,000 \\
-\hline
-  Lawrence Berkeley Laboratory & \$300,000 & \$300,000 & \$300,000\\
-\hline
-  Brookhaven National Laboratory & \$150,000 & \$150,000 & \$150,000 \\
-\hline
   Rutgers University & \$175,000 & \$175,000 & \$175,000 \\
 \hline
-  Stony Brook University & \$175,000 & \$175,000 & \$175,000 \\
+  University of California Santa Cruz & \$160,000 & \$160,000 & \$160,000 \\
 \hline
-  Total & \$1,500,000 & \$1,500,000 & \$1,500,000 \\
+  Sandia National Laboratories & \$360,000 & \$360,000 & \$360,000 \\
+\hline
+  Total & \$1,250,000 & \$1,250,000 & \$1,250,000 \\
 \hline
 \end{tabular}
 \newpage
@@ -217,7 +213,7 @@ Jay Lofstead, Sandia National Laboratory \par
 Kimmy Mu, Oak Ridge National Laboratory \par
 Carlos Malzahn, U. Cal. Santa Cruz \par
 Manish Parashar, Rutgers University, Oak Ridge National Laboratory \par
- Sudharshan Vazhkudai, Oak Ridge National Laboratory \par
+Sudharshan Vazhkudai, Oak Ridge National Laboratory \par
 Lee Ward, Sandia National Laboratory \par
 \vskip 0.2 in
 
@@ -234,7 +230,7 @@ mission critical scientific processes in exascale computing.
 %
 We propose a research program that aims to explore a hiearchical organization and storage infstraturure which will facilitiate 
 how we data can be written and read efficiently. In order to help us explore our many research issues, we will build upon the
-sucess of our middleware system, ADIOS, our multi-tier storage system, Sirocco, and our distributed storage system, Cepth.
+sucess of our middleware system, ADIOS, our multi-tier storage system, Sirocco, and our distributed storage system, Ceph.
 We will also take advantage of our staging system, Data Spaces, and our Comon communication Interface (CCI) and build on all of
 our sucessful software used in petascale simulations to understand the new directions which need to be understood to fully develop
 the next generation I/O and Storage System for exascale and beyond systems.
@@ -248,7 +244,7 @@ environments. Because data volumes are strictly outstripping available bandwidth
 be required. Rather than focusing solely on lossless compression, we will
 incorporate lossy compression with the ability to annotate data allowing
 optimized algorithm selection based on the numerical methods employed in the
-source simulation. We plan to epxlore this tradeoff of storage capacity and
+source simulation. We plan to explore this tradeoff of storage capacity and
 bandwidth for computation to determine how to offer the user options that can
 meet their needs with desireable performance characteristics.
 %
@@ -312,7 +308,7 @@ OS/R, and hardware.
 
 The success of this project will  provide insights into how to build middleware and storage layers which can interact
 well with each other, and take user-provided hints. Today data is reduced by application scientist who have 
-limited information on what the storage layer can provide. They often make comprimises based on this limited knowledge
+limited information on what the storage layer can provide. They often make compromises based on this limited knowledge
 and either tune their output for writing or reading performance. This data then gets moved to other locations, and much of
 the tuning is lost when the data is read back during their post processing. Furthermore, there is a limited set of operations
 which users will be able to stage to other staging nodes for real-tiime-reduction and visualization. 
