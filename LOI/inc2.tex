@@ -212,19 +212,21 @@ Oak Ridge National Laboratory & \$350,000 & \$350,000 & \$350,000	\\
 Hasan Abbasi, Oak Ridge National Laboratory \par
 Mark Ainsworth, Oak Ridge National Laboratory JFA, Brown University \par
 Matthew Curry, Sandia National Laboratory\par
+Qing Liu, Oak Ridge National Laboratory \par
 Jay Lofstead, Sandia National Laboratory \par
+Kimmy Mu, Oak Ridge National Laboratory \par
 Carlos Malzahn, U. Cal. Santa Cruz \par
 Manish Parashar, Rutgers University, Oak Ridge National Laboratory \par
+ Sudharshan Vazhkudai, Oak Ridge National Laboratory \par
 Lee Ward, Sandia National Laboratory \par
 \vskip 0.2 in
 
 
 
-\underline{\textbf{Objective:}} Exascale scientific discovery will
+\underline{\textbf{Objectives:}} Exascale scientific discovery will
 introduce more complex hardware, and many simulations will be bottlenecked 
 without sufficient new research into manging and storing the large data which will be
 produced during the simulation, and analzyed for months after the simulations.
-
 Our goal is to explore and address
 the multi-tier challenges that are faced by scientists in creating and
 managing and storing their data  to expedite insights into
@@ -233,24 +235,40 @@ mission critical scientific processes in exascale computing.
 We propose a research program that aims to explore a hiearchical organization and storage infstraturure which will facilitiate 
 how we data can be written and read efficiently. In order to help us explore our many research issues, we will build upon the
 sucess of our middleware system, ADIOS, our multi-tier storage system, Sirocco, and our distributed storage system, Cepth.
+We will also take advantage of our staging system, Data Spaces, and our Comon communication Interface (CCI) and build on all of
+our sucessful software used in petascale simulations to understand the new directions which need to be understood to fully develop
+the next generation I/O and Storage System for exascale and beyond systems.
 
 %
-We will also study ??
+We will apply a technique which will re-organize and possibly reduce the total amount of information based on user intentions along
+with direct feedback from the storage and I/O system to allow data to be optimized not just for output, but also for many of the complex
+reading patterns. Since data analysis and visualization will be performed in both an in situ and post processing environment, 
+we will continue to use our I/O and storage abstractions to help enable applications to take full advantage of the hardware and softare 
+environments. Because data volumes are strictly outstripping available bandwidths, compression will
+be required. Rather than focusing solely on lossless compression, we will
+incorporate lossy compression with the ability to annotate data allowing
+optimized algorithm selection based on the numerical methods employed in the
+source simulation. We plan to epxlore this tradeoff of storage capacity and
+bandwidth for computation to determine how to offer the user options that can
+meet their needs with desireable performance characteristics.
 %
-Finally, we will, jointly with application partners, study the behvior of how data gets written and read from the storage layers, and
-what key inishgts can be used in the next generation LCF systems, along with future exascale systems.
+Our objective is to reduce the time to knowledge, which means that we will also support additional access modes, beyond the traditional 
+Checkpoint/Restart methods, and understand that all data has errors associated with it and we will ensure that these become encoded to allow
+for additional optimizations. For example, all scientific simulations contain approximations, and all measurements from obervations and experiments 
+also contain errors. These errors can help guide how information can be presented to users, by allowing us to ask for information within a given 
+accuracy bound, and also allow us to offer a mode for recomputation vs. data storage and reterival.  
+%
+{\bf: please list other things from UCSC, OLCF}.
+%
 
-\underline{\textbf{Key Technical Approach:}} The primary contribution of
-our research are insights into how to build a hiearchical organization and storage
-of massive scientific data sets generated from exascale computations along with 
-the necessary information needed for advanced data validation and exploration from 
-experimental and observational data. 
-We are fundamentally trying to address the fundmantal questions : 1)  How can we 
-place and mangage massive scienfici data across all of the tiers of the storage and memory
-hiearchy? 2) What are the proper semantics needed in order to help bring knowledge from the applications
-to the middleware layer. 3) What information from the storage layer can be exposed to the middleweare such
-that the placement of information can be agreed upon from what the application requires and what the
-system resources are available. 
+
+\underline{\textbf{Key Technical Approach:}}
+%We are fundamentally trying to address the fundmantal questions : 1)  How can we 
+%place and mangage massive scienfici data across all of the tiers of the storage and memory
+%hiearchy? 2) What are the proper semantics needed in order to help bring knowledge from the applications
+%to the middleware layer. 3) What information from the storage layer can be exposed to the middleweare such
+%that the placement of information can be agreed upon from what the application requires and what the
+%system resources are available. 
 
 Our approach will allow users to ``plug-in'' techniques to classify data, not as bytes but as motifs, where
 we can understand relationships between objects (into data models) and relationships of data in variables.
