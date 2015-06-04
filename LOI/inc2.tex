@@ -224,20 +224,34 @@ Lee Ward, Sandia National Laboratory \par
 
 
 \underline{\textbf{Objectives:}} Exascale scientific discovery will
-introduce more complex hardware, and many simulations will be bottlenecked 
+%introduce more complex hardware, and many simulations will 
+be bottlenecked 
 without sufficient new research into managing and storing the large data which will be
 produced during the simulation, and analzyed for months after the simulations.
-Our goal is to explore and address
-the multi-tier challenges that are faced by scientists in creating and
-managing and storing their data  to expedite insights xsinto
-mission critical scientific processes in exascale compuxsting.
+Our goal is to investigate a unique approach to addressing this challenge in
+a multi-tier storage platform, expediting insights into mission critical
+scientific processes. 
+% the multi-tier challenges that are faced by scientists in creating and
+% managing and storing their data  to expedite insights xsinto
+% mission critical scientific processes in exascale compuxsting.
 %
-We propose a research program that aims to explore a hiearchical organization and storage infstraturure which will facilitiate 
-how we data can be written and read efficiently. In order to help us explore our many research issues, we will build upon the
-sucess of our middleware system, ADIOS, our multi-tier storage system, Sirocco, and our distributed storage system, Cepth.
-We will also take advantage of our staging system, Data Spaces, and our Comon communication Interface (CCI) and build on all of
-our sucessful software used in petascale simulations to understand the new directions which need to be understood to fully develop
-the next generation I/O and Storage System for exascale and beyond systems.
+We propose a research program that aims to explore a hiearchical
+organization and storage infstraturure which will facilitiate how data can
+be written to and read from a complex heterogenous storage hierarchy
+efficiently. In order to explore the many research challenges in this
+domain, we will build upon the success of our middleware system, ADIOS, our
+multi-tier storage system, Sirocco, and our distributed storage system,
+Ceph.  We will also leverage data movement and staging technologies, Data
+Spaces and the Common Communication Interface (CCI), as part of a software
+stack used successfully on current leadership class machines. Our experience
+with this stack will guide us in understanding the new directions for
+research in storage systems and I/O for exascale and beyond systems.
+
+% We will also take advantage of our staging system, Data Spaces, and the
+% network abstraction layer, the Common communication Interface (CCI),
+% and build on all of
+% our sucessful software used in petascale simulations to understand the new directions which need to be understood to fully develop
+% the next generation I/O and Storage System for exascale and beyond systems.
 
 %
 We will apply a technique which will re-organize and possibly reduce the total amount of information based on user intentions along
