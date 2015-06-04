@@ -220,39 +220,78 @@ Lee Ward, Sandia National Laboratory \par
 
 
 \underline{\textbf{Objectives:}} Exascale scientific discovery will
-introduce more complex hardware, and many simulations will be bottlenecked 
-without sufficient new research into manging and storing the large data which will be
+%introduce more complex hardware, and many simulations will 
+be bottlenecked 
+without sufficient new research into managing and storing the large data which will be
 produced during the simulation, and analzyed for months after the simulations.
-Our goal is to explore and address
-the multi-tier challenges that are faced by scientists in creating and
-managing and storing their data  to expedite insights into
-mission critical scientific processes in exascale computing.
+Our goal is to investigate a unique approach to addressing this challenge in
+a multi-tier storage platform, expediting insights into mission critical
+scientific processes. 
+% the multi-tier challenges that are faced by scientists in creating and
+% managing and storing their data  to expedite insights xsinto
+% mission critical scientific processes in exascale compuxsting.
 %
-We propose a research program that aims to explore a hiearchical organization and storage infstraturure which will facilitiate 
-how we data can be written and read efficiently. In order to help us explore our many research issues, we will build upon the
-sucess of our middleware system, ADIOS, our multi-tier storage system, Sirocco, and our distributed storage system, Ceph.
-We will also take advantage of our staging system, Data Spaces, and our Comon communication Interface (CCI) and build on all of
-our sucessful software used in petascale simulations to understand the new directions which need to be understood to fully develop
-the next generation I/O and Storage System for exascale and beyond systems.
+We propose a research program that aims to explore a hiearchical
+organization and storage infstraturure which will facilitiate how data can
+be written to and read from a complex heterogenous storage hierarchy
+efficiently.  
+%
+We will apply a technique which will re-organize and possibly
+reduce the total amount of information based on user intentions along with
+direct feedback from the storage and I/O system to allow data to be
+optimized not just for output, but also for many of the complex reading
+patterns. Since data analysis and visualization will be performed in both an
+in situ and post processing environment, we will continue to use our I/O and
+storage abstractions to help enable applications to take full advantage of
+the hardware and softare environments. Because data volumes are strictly
+outstripping available bandwidths, compression will be required. Rather than
+focusing solely on lossless compression, we will incorporate lossy
+compression with the ability to annotate data allowing optimized algorithm
+selection based on the numerical methods employed in the source
+simulation. We plan to epxlore this tradeoff of storage capacity and
+bandwidth for computation to determine how to offer the user options that
+can meet their needs with desireable performance characteristics.
+
+In order to explore the many research challenges in this
+domain, we will build upon the success of our middleware system, ADIOS, our
+multi-tier storage system, Sirocco, and our distributed storage system,
+Ceph.  We will also leverage data movement and staging technologies, Data
+Spaces and the Common Communication Interface (CCI), as part of a software
+stack used successfully on current leadership class machines. Our experience
+with this stack will guide us in understanding the new directions for
+research in storage systems and I/O for exascale and beyond systems.
+
+% We will also take advantage of our staging system, Data Spaces, and the
+% network abstraction layer, the Common communication Interface (CCI),
+% and build on all of
+% our sucessful software used in petascale simulations to understand the new directions which need to be understood to fully develop
+% the next generation I/O and Storage System for exascale and beyond systems.
 
 %
-We will apply a technique which will re-organize and possibly reduce the total amount of information based on user intentions along
-with direct feedback from the storage and I/O system to allow data to be optimized not just for output, but also for many of the complex
-reading patterns. Since data analysis and visualization will be performed in both an in situ and post processing environment, 
-we will continue to use our I/O and storage abstractions to help enable applications to take full advantage of the hardware and softare 
-environments. Because data volumes are strictly outstripping available bandwidths, compression will
-be required. Rather than focusing solely on lossless compression, we will
-incorporate lossy compression with the ability to annotate data allowing
-optimized algorithm selection based on the numerical methods employed in the
-source simulation. We plan to explore this tradeoff of storage capacity and
-bandwidth for computation to determine how to offer the user options that can
-meet their needs with desireable performance characteristics.
+
 %
-Our objective is to reduce the time to knowledge, which means that we will also support additional access modes, beyond the traditional 
-Checkpoint/Restart methods, and understand that all data has errors associated with it and we will ensure that these become encoded to allow
-for additional optimizations. For example, all scientific simulations contain approximations, and all measurements from obervations and experiments 
-also contain errors. These errors can help guide how information can be presented to users, by allowing us to ask for information within a given 
-accuracy bound, and also allow us to offer a mode for recomputation vs. data storage and reterival.  
+Our objective here is to reduce the time to knowledge, an end-to-end metric
+relevant to the scientific discovery process. Beyond the traditional high
+volume I/O pattern of checkpoint/restart, we will address the challenges
+posed by additional data access patterns in the knowledge gathering
+process. With a deeper insight into the scientific process we will encode
+and utilize errors and accuracy as an optimization parameter. For example, 
+%
+% We will explore access to
+% large data sets as part of this process, w
+
+% which means that we will
+% also support additional access modes, beyond the traditional
+% Checkpoint/Restart methods, and understand that all data has errors
+% associated with it and we will ensure that these become encoded to allow for
+% additional optimizations. 
+For example, all scientific simulations contain
+approximations, and all measurements from obervations and experiments also
+contain errors. These errors can help guide how information can be presented
+to users, by allowing us to ask for information within a given accuracy
+bound, and also allow us to offer a mode for recomputation vs. data storage
+and reterival.
+
 %
 {\bf: please list other things from UCSC, OLCF}.
 %
