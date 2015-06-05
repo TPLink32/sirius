@@ -221,45 +221,53 @@ Lee Ward, Sandia National Laboratory \par
 
 \underline{\textbf{Objectives:}} Exascale scientific discovery will
 %introduce more complex hardware, and many simulations will 
-be bottlenecked 
-without sufficient new research into managing and storing the large data which will be
-produced during the simulation, and analzyed for months after the simulations.
-Our goal is to investigate a unique approach to addressing this challenge in
-a multi-tier storage platform, expediting insights into mission critical
-scientific processes. 
+be severely bottlenecked without sufficient new 
+ research into managing and storing the large amounts of 
+data that will be produced during the simulation, and analyzed for months after the simulations.
+%Our goal in this project is to investigate a unique approach to addressing this data management 
+%and storage challenge for multi-tier exascale storage architectures, thereby expediting insights into mission critical
+%scientific processes. 
+Our goal in this project is to address this data management and storage challenge. Specifically we plan
+ to research and develop a unique application-aware hierarchy data organization that can effectively map 
+ to  multi-tier exascale storage architectures, and can facilitate how data can be efficiently written to and 
+ read from a complex heterogeneous storage hierarchy  
+ thereby expediting insights into mission critical scientific processes. 
 % the multi-tier challenges that are faced by scientists in creating and
 % managing and storing their data  to expedite insights xsinto
 % mission critical scientific processes in exascale compuxsting.
 %
-We propose a research program that aims to explore a hiearchical
-organization and storage infstraturure which will facilitiate how data can
-be written to and read from a complex heterogenous storage hierarchy
-efficiently.  
+%Specifically, we propose a research program that aims to explore a hierarchical
+%organization and storage infrastructure that will facilitate how data can
+%be written to and read from a complex heterogenous storage hierarchy
+%efficiently.  
 %
-We will apply a technique which will re-organize and possibly
-reduce the total amount of information based on user intentions along with
-direct feedback from the storage and I/O system to allow data to be
-optimized not just for output, but also for many of the complex reading
-patterns. Since data analysis and visualization will be performed in both an
-in situ and post processing environment, we will continue to use our I/O and
-storage abstractions to help enable applications to take full advantage of
-the hardware and softare environments. Because data volumes are strictly
-outstripping available bandwidths, compression will be required. Rather than
-focusing solely on lossless compression, we will incorporate lossy
-compression with the ability to annotate data allowing optimized algorithm
-selection based on the numerical methods employed in the source
-simulation. We plan to epxlore this tradeoff of storage capacity and
-bandwidth for computation to determine how to offer the user options that
-can meet their needs with desireable performance characteristics.
+Our approach is to explicitly and implicitly capture user/application intentions 
+and use this information, along with direct feedback from the storage and I/O 
+system, to dynamically structure, organize, process and map the data so that 
+it can most effectively support complex I/O patterns. Furthermore, we will do 
+this with an awareness of data usage semantics and with an understanding 
+of current and future hardware and software technologies. 
+%re-organize and possibly reduce the total amount of information 
+%Since data analysis and visualization will be performed in both an
+%in situ and post processing environment, we will continue to use our I/O and
+%storage abstractions to help enable applications to take full advantage of
+%the hardware and software environments. 
+For example, as data volumes are quickly outgrowing available bandwidths, 
+compression is becoming essential. Rather than focusing solely on lossless 
+compression, we will incorporate lossy compression with the ability to annotate 
+data allowing optimized algorithm selection based on the numerical methods 
+employed in the source simulation. We plan to explore this tradeoff of storage 
+capacity and bandwidth for computation to determine how to offer the user 
+options that can meet their needs with desirable performance characteristics.
 
-In order to explore the many research challenges in this
-domain, we will build upon the success of our middleware system, ADIOS, our
-multi-tier storage system, Sirocco, and our distributed storage system,
-Ceph.  We will also leverage data movement and staging technologies, Data
-Spaces and the Common Communication Interface (CCI), as part of a software
-stack used successfully on current leadership class machines. Our experience
-with this stack will guide us in understanding the new directions for
-research in storage systems and I/O for exascale and beyond systems.
+In order to explore the many research challenges in this domain, we will build 
+upon the success of our middleware system, ADIOS, our multi-tier storage 
+system, Sirocco, and our distributed storage system, Ceph.  We will also leverage 
+data staging and data movement technologies, DataSpaces and the Common 
+Communication Interface (CCI), as part of a software stack. 
+%used successfully on current leadership class machines. 
+%Our experience with this stack will guide us in understanding the new directions for
+%research in storage systems and I/O for exascale and beyond systems.
 
 % We will also take advantage of our staging system, Data Spaces, and the
 % network abstraction layer, the Common communication Interface (CCI),
@@ -286,10 +294,10 @@ and utilize errors and accuracy as an optimization parameter. For example,
 % associated with it and we will ensure that these become encoded to allow for
 % additional optimizations. 
 For example, all scientific simulations contain
-approximations, and all measurements from obervations and experiments also
+approximations, and all measurements from observations and experiments also
 contain errors. These errors can help guide how information can be presented
 to users, by allowing us to ask for information within a given accuracy
-bound, and also allow us to offer a mode for recomputation vs. data storage
+bound, and also allow us to offer a mode for re-computation vs. data storage
 and reterival.
 
 %
@@ -308,11 +316,11 @@ and reterival.
 Our approach will allow users to ``plug-in'' techniques to classify data, not as bytes but as motifs, where
 we can understand relationships between objects (into data models) and relationships of data in variables.
 This will allow us to adapt data from a variable into the various storage tiers. Rather than focus on simple data
-compression, we will incoroarte a multitude of techniques to reduce data on the faster storage tiers, and keep the less
+compression, we will incorporate a multitude of techniques to reduce data on the faster storage tiers, and keep the less
 reduced information on the lower tiers.
 
 We wish to support additional data access modes as well. First, within a given
-accuracy bounds, offer a mode for recomputation from data stored in a ``fast''
+accuracy bounds, offer a mode for re-computation from data stored in a ``fast''
 tier to reduce data latencies. Second, exploratory analysis operations
 frequently entail an overall data set view followed by targeted data
 exploration based on identified features. We will offer support for a
@@ -332,11 +340,11 @@ simulation run purpose may have changed, we are focused on scalability where
 runs are subsequently larger as the simulation prepares for a capability run.
 By learning from the output and access patterns during this run sequence, we
 can accurate decide how to place and organize data for the critical capability
-runs. Fourth, we anticipiate storing mutliple data copies, each compressed in
+runs. Fourth, we anticipate storing multiple data copies, each compressed in
 different ways according to the underlying media, some of these copies will
 disappear based on storage pressures, but data persistence will be maintained
 according to user specifications. Assuming a relatively low latency cache layer
-before a tape system, we can offer exporatory data access reserving pulling
+before a tape system, we can offer exploratory data access reserving pulling
 data from tape to just the data required. This will save scientists time and
 make data stored on tape usable without long delays.
 
@@ -350,7 +358,7 @@ well with each other, and take user-provided hints. Today data is reduced by app
 limited information on what the storage layer can provide. They often make compromises based on this limited knowledge
 and either tune their output for writing or reading performance. This data then gets moved to other locations, and much of
 the tuning is lost when the data is read back during their post processing. Furthermore, there is a limited set of operations
-which users will be able to stage to other staging nodes for real-tiime-reduction and visualization. 
+which users will be able to stage to other staging nodes for real-time-reduction and visualization. 
 
 We will identify,   through concrete application evaluation, the requirements for highly 
 usable and scalable middleware and storage layers
