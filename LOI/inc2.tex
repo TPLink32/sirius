@@ -208,7 +208,7 @@ Oak Ridge National Laboratory & \$350,000 & \$350,000 & \$350,000	\\
 Hasan Abbasi, Oak Ridge National Laboratory \par
 Mark Ainsworth, Oak Ridge National Laboratory JFA, Brown University \par
 Matthew Curry, Sandia National Laboratory\par
-Qing Liu, Oak Ridge National Laboratory \par
+Qing Gary Liu, Oak Ridge National Laboratory \par
 Jay Lofstead, Sandia National Laboratory \par
 Kimmy Mu, Oak Ridge National Laboratory \par
 Carlos Malzahn, U. Cal. Santa Cruz \par
@@ -223,15 +223,21 @@ Lee Ward, Sandia National Laboratory \par
 %introduce more complex hardware, and many simulations will 
 be severely bottlenecked without sufficient new 
  research into managing and storing the large amounts of 
-data that will be produced during the simulation, and analyzed for months after the simulations.
+data that will be produced during the simulation, and analyzed for months afterwards.
 %Our goal in this project is to investigate a unique approach to addressing this data management 
 %and storage challenge for multi-tier exascale storage architectures, thereby expediting insights into mission critical
 %scientific processes. 
-Our goal in this project is to address this data management and storage challenge. Specifically we plan
- to research and develop a unique application-aware hierarchy data organization that can effectively map 
- to  multi-tier exascale storage architectures, and can facilitate how data can be efficiently written to and 
- read from a complex heterogeneous storage hierarchy  
- thereby expediting insights into mission critical scientific processes. 
+Our goal in this project is to address the associated I/O and storage challenges on the 
+future storage landscape, and expedite insights into mission critical
+scientific processes. To this end, we plan
+ to research and develop a unique application-aware data management scheme that
+can (1) effectively map data to multi-tier exascale storage architectures, 
+(2) facilitate how data can be efficiently written to and 
+ read from a complex heterogeneous storage hierarchy, and (3) reduce and re-generate
+data on-the-fly without compromising the quality of science. The project
+will assemble a team with strong expertise in I/O middleware (ORNL, Rutgers), file system (SNL, UCSC)
+and storage (UCSC), and connect and coordinate
+these key storage components in a seamless fashion. 
 % the multi-tier challenges that are faced by scientists in creating and
 % managing and storing their data  to expedite insights xsinto
 % mission critical scientific processes in exascale compuxsting.
@@ -242,30 +248,31 @@ Our goal in this project is to address this data management and storage challeng
 %efficiently.  
 %
 Our approach is to explicitly and implicitly capture user/application intentions 
-and use this information, along with direct feedback from the storage and I/O 
+and use this information, along with direct feedback from the I/O and storage
 system, to dynamically structure, organize, process and map the data so that 
-it can most effectively support complex I/O patterns. Furthermore, we will do 
-this with an awareness of data usage semantics and with an understanding 
+it can most effectively support complex I/O patterns. This will be done
+with an awareness of data usage semantics and an understanding 
 of current and future hardware and software technologies. 
 %re-organize and possibly reduce the total amount of information 
 %Since data analysis and visualization will be performed in both an
 %in situ and post processing environment, we will continue to use our I/O and
 %storage abstractions to help enable applications to take full advantage of
 %the hardware and software environments. 
-For example, as data volumes are quickly outgrowing available bandwidths, 
-compression is becoming essential. Rather than focusing solely on lossless 
+On the other hand, data reduction is becoming increasingly important, as a result of 
+the disparirty between data volume/frequency and storage bandwdith. 
+Rather than focusing solely on lossless 
 compression, we will incorporate lossy compression with the ability to annotate 
-data allowing optimized algorithm selection based on the numerical methods 
-employed in the source simulation. We plan to explore this tradeoff of storage 
+data, allowing for optimized algorithm selection based on the numerical accuracy
+required by the simulation and analysis. We plan to explore this tradeoff of storage 
 capacity and bandwidth for computation to determine how to offer the user 
 options that can meet their needs with desirable performance characteristics.
 
-In order to explore the many research challenges in this domain, we will build 
-upon the success of our middleware system, ADIOS, our multi-tier storage 
-system, Sirocco, and our distributed storage system, Ceph.  We will also leverage 
-data staging and data movement technologies, DataSpaces and the Common 
-Communication Interface (CCI), as part of a software stack. 
-%used successfully on current leadership class machines. 
+%In order to explore the many research challenges in this domain, we will build 
+%upon the success of our middleware system, ADIOS, our multi-tier storage 
+%system, Sirocco, and our distributed storage system, Ceph.  We will also leverage 
+%data staging and data movement technologies, DataSpaces and the Common 
+%Communication Interface (CCI), as part of the I/O stack. 
+%%used successfully on current leadership class machines. 
 %Our experience with this stack will guide us in understanding the new directions for
 %research in storage systems and I/O for exascale and beyond systems.
 
@@ -313,12 +320,14 @@ and reterival.
 %that the placement of information can be agreed upon from what the application requires and what the
 %system resources are available. 
 Our overall technical approach is based on an application-aware runtime realization of tradeoffs in 
-data-representation, data placement and data access. For example, we will allow users to ``plug-in'' 
-techniques to classify data, not as bytes but as motifs, allowing us to understand relationships 
-between objects (based on data models), the relationships of data and variables, as well as data
-access and transport patterns.  This will allow us 
-to adaptively map data from a variable onto the various storage tiers. Rather than focus on simple data
-compression, we will incorporate a multitude of techniques to reduce data on the faster storage tiers, and keep the less
+data representation, data placement and data access. We will allow users to ``plug-in'' 
+their knowledge about the data, not as bytes but as motifs, allowing the I/O and storage system
+to understand user intentions and the relationships between data objects, as well as data
+access and transport patterns. This will facilitate
+efficient mapping of data from user space, such as a multi-dimensional array, onto various storage tiers. 
+Rather than focus on simple data
+compression, we will incorporate a multitude of techniques to reduce data on the faster yet smaller
+storage tiers, and keep the less
 reduced information in the lower storage tiers.
 
 We will support additional data access modes as well. First, within a given
