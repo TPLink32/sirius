@@ -180,7 +180,7 @@ Oak Ridge National Laboratory & \$350,000 & \$350,000 & \$350,000	\\
 %  Fig A: much 
 
 % \item What is the new technical idea; why can we succeed now?
-%  Integration of proven components into an architecure that solves
+%  Integration of proven components into an architecture that solves
 %  problems. New research will resolve remaining technical hurdles.
 
 % \item What is the impact if successful?
@@ -281,9 +281,9 @@ Communication Interface (CCI), as part of a software stack.
 Our objective here is to reduce the time to knowledge, an end-to-end metric
 relevant to the scientific discovery process. Beyond the traditional high
 volume I/O pattern of checkpoint/restart, we will address the challenges
-posed by additional data access patterns in the knowledge gathering
-process. With a deeper insight into the scientific process we will encode
-and utilize errors and accuracy as an optimization parameter. For example, 
+posed by other essential data access patterns in the knowledge gathering
+process. Through a deeper insight into the scientific process we will encode
+and utilize accuracy and errors as optimization parameters. 
 %
 % We will explore access to
 % large data sets as part of this process, w
@@ -293,11 +293,11 @@ and utilize errors and accuracy as an optimization parameter. For example,
 % Checkpoint/Restart methods, and understand that all data has errors
 % associated with it and we will ensure that these become encoded to allow for
 % additional optimizations. 
-For example, all scientific simulations contain
-approximations, and all measurements from observations and experiments also
-contain errors. These errors can help guide how information can be presented
-to users, by allowing us to ask for information within a given accuracy
-bound, and also allow us to offer a mode for re-computation vs. data storage
+For example, scientific simulations contain approximations, as do measurements 
+from observations and experiments, and depending on the goal, these approximations 
+are acceptable. We can leverage this observation to optimize the presentation of data
+to the user and to implement various tradeoffs. For example, users can ask for information 
+within a given accuracy bound, allowing us to offer a mode for re-computation vs. data storage
 and reterival.
 
 %
@@ -312,14 +312,16 @@ and reterival.
 %to the middleware layer. 3) What information from the storage layer can be exposed to the middleweare such
 %that the placement of information can be agreed upon from what the application requires and what the
 %system resources are available. 
-
-Our approach will allow users to ``plug-in'' techniques to classify data, not as bytes but as motifs, where
-we can understand relationships between objects (into data models) and relationships of data in variables.
-This will allow us to adapt data from a variable into the various storage tiers. Rather than focus on simple data
+Our overall technical approach is based on an application-aware runtime realization of tradeoffs in 
+data-representation, data placement and data access. For example, we will allow users to ``plug-in'' 
+techniques to classify data, not as bytes but as motifs, allowing us to understand relationships 
+between objects (based on data models), the relationships of data and variables, as well as data
+access and transport patterns.  This will allow us 
+to adaptively map data from a variable onto the various storage tiers. Rather than focus on simple data
 compression, we will incorporate a multitude of techniques to reduce data on the faster storage tiers, and keep the less
-reduced information on the lower tiers.
+reduced information in the lower storage tiers.
 
-We wish to support additional data access modes as well. First, within a given
+We will support additional data access modes as well. First, within a given
 accuracy bounds, offer a mode for re-computation from data stored in a ``fast''
 tier to reduce data latencies. Second, exploratory analysis operations
 frequently entail an overall data set view followed by targeted data
@@ -331,6 +333,7 @@ exploration without requiring loading the complete, detailed data set from
 storage. Based on the granularity requested, the accuracy and size of the data
 returned can be adjusted. At the most extreme setting, the original data can
 be retrieved at the time cost of moving the potentially huge data quantity.
+
 Third, to ensure available storage for subsequent operations, we will offer
 automatic data migration based on user annotations for required data lifetimes
 using monitoring and learning techniques. Unlike existing approaches, this will
@@ -353,15 +356,14 @@ manner, adapt data and metadata retention policies to the dynamic
 resource balancing that will need to take place between the application,
 OS/R, and hardware.
 
-The success of this project will  provide insights into how to build middleware and storage layers which can interact
-well with each other, and take user-provided hints. Today data is reduced by application scientist who have 
+The success of this project will  provide insights into how to build autonomic middleware and storage layers which can interact
+well with each other, and take user-provided hints. Today, data is reduced by application scientist who have 
 limited information on what the storage layer can provide. They often make compromises based on this limited knowledge
 and either tune their output for writing or reading performance. This data then gets moved to other locations, and much of
 the tuning is lost when the data is read back during their post processing. Furthermore, there is a limited set of operations
 which users will be able to stage to other staging nodes for real-time-reduction and visualization. 
 
-We will identify,   through concrete application evaluation, the requirements for highly 
-usable and scalable middleware and storage layers
+%We will identify,  through concrete application evaluation, the requirements for highly usable and scalable middleware and storage layers
 
 
 
