@@ -50,7 +50,7 @@
 
 \ifdraft
   \definecolor{darkgreen}{rgb}{0,0.5,0}
-  \newcommand{\manish}[1]{ {\it \color{red} \{#1 -Tahsin\}}}
+  \newcommand{\manish}[1]{ {\it \color{red} \{#1 -Manish}}}
   \newcommand{\hasan}[1]{ {\textcolor{blue} { #1 -Hasan }}}
   \definecolor{orange}{rgb}{0.7,0.5,0.0}
   \newcommand{\klasky}[1]{{\textcolor{orange}{ #1 -Scott }}}
@@ -223,29 +223,41 @@ Lee Ward, Sandia National Laboratory \par
 Exascale scientific discovery will be severely bottlenecked without sufficient
 new research into managing and storing the large amounts of data that will be
 produced during the simulation, and analyzed for months afterwards.  Our goal
-in this project is to address the associated I/O and storage challenges on the
-future storage landscape, and expedite insights into mission critical
-scientific processes. To that end, we will build on the capabilities offered
-by ADIOS that provides I/O abstractions, 
-the Sirocco peer-to-peer file system under development at Sandia and the
-object storage and annotation expertise of UC Santa Cruz to develop a unique
-application-aware data management scheme. It will center upon
-a multi-tier storage-aware approach and incorporate new
-functionalities and extended object metadata and APIs for 1) matching
-storage capability across the storage hierarchy with data importance employing
-application-aware data compression (both lossy with specified error bounds and
-lossless), 2) a selectable performance/quality tradeoff when reading data, and
-the ability to recompute data if needed, and
-3) incorporate reader prioritization for data annotation, placement, and data
-quality when writing data.  The major challenge in this project is metadata
-management connecting different object quality levels and enabling the user
-with the best possible outcomes given the user intent and the storage system state. The new user
-APIs required to interact with this rich metadata system will drive effective
-use of the entire middleware and storage stack. The project is compriesed of a
-team with strong expertise in I/O middleware (ORNL, Rutgers), file system (SNL,
+in this project is to address associated I/O and storage challenges in the context 
+of current and emerging storage landscapes, and expedite insights into mission 
+critical scientific processes. To that end, we will build on the capabilities offered
+by ADIOS and DataSpaces that provide I/O abstractions and services, the Sirocco 
+peer-to-peer file system under development at Sandia and the object storage 
+and annotation expertise of UC Santa Cruz, to develop a application and 
+multi-tier storage aware data management solution. Our solutions will provide
+novel functionalities and APIs for 
+% It will center upon a multi-tier storage-aware approach and incorporate new
+%functionalities, extended object metadata and APIs for 
+1) specifying, at the application level, data annotations than enable the qualification
+ of the relative importance and utility of data objects, and enable them to be 
+ mapped at runtime to appropriate storage capabilities across the storage hierarchy;
+2) specifying selectable performance/quality/cost tradeoffs from both application and system perspectives; and
+3) evaluating and executing these tradeoffs at runtime, in an autonomic manner,
+during data placement and movement, using techniques such as application-aware 
+data compression (both lossy with specified error bounds and lossless), re-computation, 
+reader prioritization, etc.
+%2) a selectable performance/quality tradeoff when reading data, and
+%the ability to recompute data if needed, and
+%3) incorporate reader prioritization for data annotation, placement, and data
+%quality when writing data.  
+The key challenge in this project is defining and maintaining the metadata
+ connecting different object quality and utility levels, and using this metadata 
+ to most appropriate manage the placement and access of data object based on 
+ user/application intent/contraints and storage system state.
+% to best enabling the user with the best possible outcomes 
+ %given the user intent and the storage system state. 
+The new user APIs required to interact with this rich metadata system will drive effective
+use of the entire middleware and storage stack. 
+The project is comprised of a team with strong expertise in I/O middleware (ORNL, Rutgers), file system (SNL,
 UCSC) and storage (UCSC), and connect and coordinate these key storage
 components in a seamless fashion.
 
+\manish{I believe this analogy needs to be developed further -- the point we are trying to make here, i.e., autonomic cross layer management, negotiation, are not completely obvious.}
 Our approach can most easily be understood by considering a road navigation
 program. Similar to the navigation program, we will offer a coarse grained,
 fast overview of a data set with progressively more detail in areas of interest
@@ -261,22 +273,21 @@ both an acceptable retrieval timeframe and error bound.
 %information about the quality and timeframes available for a subsequent
 %request.
 %%%%%%%%%%%% I am not sure if we should do this type of expert system in the project.
-The user may also specify guidlines that are funneled through I/O middle and 
-advise how to react if the timeframe and error bound cannot be accepted.
+The user may also specify guidelines that are funneled through the I/O middleware and 
+provide advice on how to react if the timeframe and error bound cannot be accepted.
 
 Our objective here is to reduce the time to knowledge, an end-to-end metric
-relevant to the scientific discovery process. Beyond the traditional high
-volume I/O pattern of checkpoint/restart, we will address the challenges posed
+relevant to the scientific discovery process. We will explore beyond the traditional high
+volume I/O pattern of checkpoint/restart, and will address the challenges posed
 by other essential data access patterns in the knowledge gathering process.
 Through a deeper insight into the scientific process we will encode and utilize
 accuracy and errors as optimization parameters. 
-
 For example, scientific simulations contain approximations, as do measurements
 from observations and experiments, and depending on the goal, these
 approximations are acceptable. We can leverage this observation to optimize the
-presentation of data to the user and to implement various tradeoffs. For
-example, users can ask for information within a given accuracy bound, allowing
-us to offer a mode for re-computation vs. data storage and reterival.
+presentation of data to the user and to implement various tradeoffs  -- users can 
+ask for information within a given accuracy bound, allowing
+us to offer a mode for re-computation vs. data storage and retrieval.
 
 %
 {\bf: please list other things from OLCF}.
@@ -317,7 +328,8 @@ the simulation run purpose may have changed, we are focused on scalability
 where runs are subsequently larger as the simulation prepares for a capability
 run.  By learning from the output and access patterns during this run sequence,
 we can accurate decide how to place and organize data for the critical
-capability runs. Fourth, we anticipate storing multiple data copies, each
+capability runs. 
+\textbf{Fourth}, we anticipate storing multiple data copies, each
 compressed in different ways according to the underlying media, some of these
 copies will disappear based on storage pressures, but data persistence will be
 maintained according to user specifications. Assuming a relatively low latency
