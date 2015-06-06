@@ -226,18 +226,20 @@ produced during the simulation, and analyzed for months afterwards.  Our goal
 in this project is to address the associated I/O and storage challenges on the
 future storage landscape, and expedite insights into mission critical
 scientific processes. To that end, we will build on the capabilities offered
-by the Sirocco peer-to-peer file system under development at Sandia and the
+by ADIOS that provides I/O abstractions, 
+the Sirocco peer-to-peer file system under development at Sandia and the
 object storage and annotation expertise of UC Santa Cruz to develop a unique
-application aware data management scheme. It will build on the existing
-multi-tier storage aware approach offered by Sirroco to incorporate new
-functionality and extended object metadata and APIs for 1) matching available
-storage bandwidth across the storage hierarchy with data importance employing
-application aware data compression (both lossy with specified error bounds and
+application-aware data management scheme. It will center upon
+a multi-tier storage-aware approach and incorporate new
+functionalities and extended object metadata and APIs for 1) matching
+storage capability across the storage hierarchy with data importance employing
+application-aware data compression (both lossy with specified error bounds and
 lossless), 2) a selectable performance/quality tradeoff when reading data, and
+the ability to recompute data if needed, and
 3) incorporate reader prioritization for data annotation, placement, and data
 quality when writing data.  The major challenge in this project is metadata
-management connecting different object quality levels and connecting the user
-with the best possible outcomes given the current system state. The new user
+management connecting different object quality levels and enabling the user
+with the best possible outcomes given the user intent and the storage system state. The new user
 APIs required to interact with this rich metadata system will drive effective
 use of the entire middleware and storage stack. The project is compriesed of a
 team with strong expertise in I/O middleware (ORNL, Rutgers), file system (SNL,
@@ -247,16 +249,20 @@ components in a seamless fashion.
 Our approach can most easily be understood by considering a road navigation
 program. Similar to the navigation program, we will offer a coarse grained,
 fast overview of a data set with progressively more detail in areas of interest
-noted by data features and less data in areas without. These progressively
+such as those contain features, and less detail in areas without. These progressively
 more detailed data views require more storage space and time to retrieve. By
-incorporating middleware informed of both how to identify relevant data
-features and the intended use locations, it will be able to selectively store
+incorporating middleware informed of either the criteria for identifying areas of interest
+or the intended use locations, it will be able to selectively store
 data at different quality levels, with bounded errors in the case of lossy
 compression, and allow a user to select what data to retrieve by specifying
-both an acceptable retrieval timeframe and quality required. If the request
-cannot be fulfilled, the storage system can negotiate with the user providing
-information about the quality and timeframes available for a subsequent
-request.
+both an acceptable retrieval timeframe and error bound. 
+%If the request
+%cannot be fulfilled, the storage system can negotiate with the user providing
+%information about the quality and timeframes available for a subsequent
+%request.
+%%%%%%%%%%%% I am not sure if we should do this type of expert system in the project.
+The user may also specify guidlines that are funneled through I/O middle and 
+advise how to react if the timeframe and error bound cannot be accepted.
 
 Our objective here is to reduce the time to knowledge, an end-to-end metric
 relevant to the scientific discovery process. Beyond the traditional high
@@ -280,26 +286,27 @@ us to offer a mode for re-computation vs. data storage and reterival.
 \underline{\textbf{Key Technical Approach:}}
 Our overall technical approach is based on an application-aware runtime
 realization of tradeoffs in data representation, data placement and data
-access. We will allow users to ``plug-in'' their knowledge about the data, not
-as bytes but as motifs, allowing the I/O and storage system to understand user
+access. We will allow users to be able to ``plug-in'' their knowledge 
+about the data, not as bytes but as motifs, thus allowing the I/O and 
+storage system to understand user
 intentions and the relationships between data objects, as well as data access
 and transport patterns. This will facilitate efficient mapping of data from
-user space, such as a multi-dimensional array, onto various storage tiers.
-Rather than focus on simple data compression, we will incorporate a multitude
-of techniques to reduce data on the faster yet smaller storage tiers, and keep
-the less reduced information in the lower storage tiers.
+user space onto various storage tiers, and application-guided
+data reductions.
 
-We will support additional data access modes as well. \textbf{First}, within a
-given accuracy bounds, offer a mode for re-computation from data stored in a
-``fast'' tier to reduce data latencies. \textbf{Second}, exploratory analysis
+The I/O and storage system produced from the project will
+enable highly flexible data access modes that are common in data analytics. 
+\textbf{First}, data re-computation is allowed to re-generate
+data with higher accuracy, if the associated computing and I/O cost is lower
+than retrieving the target data from a ``slow'' tier. 
+\textbf{Second}, exploratory analysis
 operations frequently entail an overall data set view followed by targeted data
-exploration based on identified features. We will offer support for a
-configurable data access mode to support these sorts of analysis accesses. An
-``overview'' access mode that gives a quick, approximate within error bounds,
+exploration on extracted features. 
+In particular, the ``overview'' access mode gives a quick but approximate
 data view that can guide feature selection offering rapid coarse-grained data
-exploration without requiring loading the complete, detailed data set from
+exploration without requiring loading the high-accuracy data from
 storage. Based on the granularity requested, the accuracy and size of the data
-returned can be adjusted. At the most extreme setting, the original data can
+returned can be adjusted. In the most extreme setting, the original data can
 be retrieved at the time cost of moving the potentially huge data quantity.
 \textbf{Third}, to ensure available storage for subsequent operations, we will
 offer automatic data migration based on user annotations for required data
