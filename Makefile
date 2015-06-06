@@ -28,12 +28,12 @@
 
 # Participating institutions grouped by how they submit their proposal
 # 'nobody' is meant as a default
-PARTICIPANTS_LAB = ornl
-PARTICIPANTS_GRANTS = nobody gatech oregon
+PARTICIPANTS_LAB = ornl snl
+PARTICIPANTS_GRANTS = nobody ucsc 
 PARTICIPANTS = $(PARTICIPANTS_LAB) $(PARTICIPANTS_GRANTS)
 
 # Lead institution may need to include some additional content
-LEAD = gatech
+LEAD = ornl
 
 CONTENTS = lab
 VERSIONS = draft final
