@@ -237,10 +237,10 @@ novel functionalities and APIs for
  of the relative importance and utility of data objects, and enable them to be 
  mapped at runtime to appropriate storage capabilities across the storage hierarchy;
 2) specifying selectable performance/quality/cost tradeoffs from both application and system perspectives; and
-3) evaluating and executing these tradeoffs at runtime, in an autonomic manner,
-during data placement and movement, using techniques such as application-aware 
-data compression (both lossy with specified error bounds and lossless), re-computation, 
-reader prioritization, etc.
+3) evaluating and executing these tradeoffs at runtime during data placement and movement, 
+in an autonomic manner using models, heuristics and learning and leveraging  
+techniques such as application-aware data compression (both lossy with specified error bounds 
+and lossless), re-computation,  reader prioritization, etc.
 %2) a selectable performance/quality tradeoff when reading data, and
 %the ability to recompute data if needed, and
 %3) incorporate reader prioritization for data annotation, placement, and data
@@ -306,7 +306,8 @@ user space onto various storage tiers, and application-guided
 data reductions.
 
 The I/O and storage system produced from the project will
-enable highly flexible data access modes that are common in data analytics. 
+enable highly flexible data access modes that are common in scientific 
+applications and associated analysis. 
 \textbf{First}, data re-computation is allowed to re-generate
 data with higher accuracy, if the associated computing and I/O cost is lower
 than retrieving the target data from a ``slow'' tier. 
@@ -320,10 +321,11 @@ storage. Based on the granularity requested, the accuracy and size of the data
 returned can be adjusted. In the most extreme setting, the original data can
 be retrieved at the time cost of moving the potentially huge data quantity.
 \textbf{Third}, to ensure available storage for subsequent operations, we will
-offer automatic data migration based on user annotations for required data
-lifetimes using monitoring and learning techniques. Unlike existing approaches,
-this will be tempered both by the user annotations and through learned access
-patterns.  While past access patterns may not indicate future access because
+offer automatic data migration.
+%based on user annotations for required data and using monitoring and learning techniques. 
+ Unlike existing approaches,
+this will be driven both by the user annotations and through learned access
+patterns in an autonomic and crosslayer manner.  While past access patterns may not indicate future access because
 the simulation run purpose may have changed, we are focused on scalability
 where runs are subsequently larger as the simulation prepares for a capability
 run.  By learning from the output and access patterns during this run sequence,
