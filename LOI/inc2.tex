@@ -232,7 +232,7 @@ severely bottlenecked without sufficient new research into managing and
 storing the large amounts of data that will be produced during the
 simulation, and analyzed for months afterwards.  Our goal in this project is
 to address the associated I/O and storage challenges in the context of
-current ancd emerging storage landscapes, and expedite insights into mission
+current and emerging storage landscapes, and expedite insights into mission
 critical scientific processes. To that end, we will build on the
 capabilities offered by ADIOS and DataSpaces that provide I/O abstractions
 and services, the Sirocco peer-to-peer file system under development at
@@ -252,9 +252,9 @@ application and system perspectives; and
 %
 3) evaluating these tradeoffs at runtime during data placement and movement,
 and executing the resultant policies in an autonomic system using models,
-heuristics and continous learning,
+heuristics and continuous learning,
 %
-4) Leveraging techniques such as application-aware data compression (both
+4) leveraging techniques such as application-aware data compression (both
 lossy with specified error bounds and lossless), re-computation at the
 requisite level of accuracy, and I/O prioritization to enforce these
 policies.
@@ -265,12 +265,12 @@ policies.
 A key challenge in this project is defining and maintaining the metadata
 connecting different object quality and utility levels, and using this metadata 
 to most appropriately manage the placement and access of data object based on 
-user/application intent/contraints and storage system state.
+user/application intent/constraints and storage system state.
 % to best enabling the user with the best possible outcomes 
 % given the user intent and the storage system state. 
 The new user APIs required to interact with this rich metadata system will
-drive effective use of the entire middleware and storage stack.  The project
-is comprised of a team with strong expertise in I/O middleware (ORNL,
+drive effective use of the entire middleware and storage stack.  This project
+brings together a unique team with strong expertise in I/O middleware (ORNL,
 Rutgers), file system (SNL, UCSC) and storage (UCSC), and connect and
 coordinate these key storage components in a seamless fashion.
 
@@ -296,23 +296,27 @@ coordinate these key storage components in a seamless fashion.
   locality in purchasing. Backroom and warehouses represent tiers of storage
   where objects can be stored in bulk, but have a substantial overhead (and
   thus lower utility) in access. Similar to this scenario, the data management
-  problem is a complex logistics problem. Shelf space is analagous to high
+  problem is a complex logistics problem. Shelf space is analogous to high
   performance/lower capacity storage. Locality is an important consideration,
   not just for single data objects but also through the identification of
   domain meaningful relationships between objects. The tiers of the storage
   hierarchy provide lower cost for data storage, but also increase the
   overhead for access.}
 
-Our approach can most easily be understood by considering a road navigation
-program. Similar to the navigation program, we will offer a coarse grained,
-fast overview of a data set with progressively more detail in areas of
-interest such as those contain features, and less detail in areas
+\manish{I have tried to rework the text below, but I am still not comfortable with it. I have left the original text commented.
+
+%Our approach can most easily be understood by considering a road navigation
+%program. Similar to the navigation program, 
+Incorporating awareness of the data content and user intent (to the extent possible) into
+our decision making and data management process is integral to our approach. For example, 
+we will offer a coarse grained, quick overview of a data set with progressively more detail in 
+areas of interest such as those containing features, and less detail in areas
 without. These progressively more detailed data views require more storage
-space and time to retrieve. By incorporating middleware informed of either
-the criteria for identifying areas of interest or the intended use
-locations, it will be able to selectively store data at different quality
-levels, with bounded errors in the case of lossy compression, and allow a
-user to select what data to retrieve by specifying both an acceptable
+space and time to retrieve. By defining mechanisms for applications to provide this 
+knowledge and incorporating its awareness into our middleware 
+%so that it is informed of either the criteria for identifying areas of interest or the intended use locations, 
+it will be able to selectively store data at different quality levels, with bounded errors in the case of 
+lossy compression, and allow a user to select what data to retrieve by specifying both an acceptable
 retrieval timeframe and error bound.
 %  If the request
   %   cannot be fulfilled, the storage system can negotiate with the user providing
