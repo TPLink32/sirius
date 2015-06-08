@@ -242,8 +242,8 @@ Sandia and the object storage and annotation expertise of UC Santa Cruz, to
 explore application and multi-tier storage aware data management
 solutions.    This project
 brings together a  team with strong expertise in I/O middleware (ORNL,
-Rutgers), file system (SNL, UCSC) and storage (UCSC), and connect and
-coordinate these key storage components in a seamless fashion.
+Rutgers), file system (SNL, UCSC) and storage (UCSC), and connects and
+coordinates these key storage components in a seamless fashion.
 
 Our solutions will provide novel functionalities and APIs for
 \setlength{\parindent}{0cm}
@@ -268,18 +268,20 @@ policies.
   %  quality when writing data.  
   
   \setlength{\parindent}{0.5cm}
-  Our objective here is to reduce the time to knowledge, not just for a single
-application or workflow, but for the entire workload in the system. This is
-an end-to-end system wide metric relevant to the scientific discovery
-process. We will explore beyond the traditional I/O pattern of
-checkpoint/restart, and will address the challenges posed by other essential
-data access patterns in the knowledge gathering process.  Through a deeper
-insight into the scientific process we will encode and utilize accuracy and
-errors as optimization parameters.  
-Finally, we will take the knowledge from the storage system to provide vital feedback to the middleware 
-so that the best possible decisions can be autonomically  between the user intentions and
-the available system resources. Our overall goal is to ensure that optimizations can be made across
-1) a single application, 2) an ensemble of applications, and 3) the entire suite of applications which are running on the system.
+  
+ %% Manish: Commented this since it seems to be replicated below.  
+%  Our objective here is to reduce the time to knowledge, not just for a single
+%application or workflow, but for the entire workload in the system. This is
+%an end-to-end system wide metric relevant to the scientific discovery
+%process. We will explore beyond the traditional I/O pattern of
+%checkpoint/restart, and will address the challenges posed by other essential
+%data access patterns in the knowledge gathering process.  Through a deeper
+%insight into the scientific process we will encode and utilize accuracy and
+%errors as optimization parameters.  
+%Finally, we will take the knowledge from the storage system to provide vital feedback to the middleware 
+%so that the best possible decisions can be autonomically  between the user intentions and
+%the available system resources. Our overall goal is to ensure that optimizations can be made across
+%1) a single application, 2) an ensemble of applications, and 3) the entire suite of applications which are running on the system.
 
 
   \setlength{\parindent}{0.5cm}
@@ -323,13 +325,13 @@ s XGC1, GTC, QMCPack, and SpecFM3D simulations.
 
 Our overall technical approach is based on an application-aware runtime
 realization of tradeoffs in data representation, data placement and data
-access. We will allow users plug-in their knowledge 
+access. We will allow users to plug-in their knowledge 
 about the data, represented not as bytes but as motifs, allowing the I/O and 
 storage system to understand user
 intentions, the relationships between data objects, and also data access
 and transport patterns. This will facilitate efficient mapping of data from
 user space onto various storage tiers, and application-guided
-data reductions.
+data reductions/transformations.
 
 %Our approach can be most easily understood by considering a traditional
 %  supermarket logistics problem. Given a limited amount of shelf space,
@@ -355,8 +357,9 @@ we will offer a coarse grained, quick overview of a data set with progressively 
 areas of interest such as those containing features, and less detail in areas
 without. These progressively more detailed data views require more storage
 space and time to retrieve. By defining mechanisms for applications to provide this 
-knowledge and incorporating its awareness into our middleware  and storage allow
-it will be able to selectively store data at different  levels, and allow a user to select what data to retrieve by specifying both an acceptable  timeframe and accuracy.
+knowledge and incorporating its awareness into the middleware and storage,
+we will be able to selectively store data at different levels, and allow a user to select 
+not only what data to retrieve but also specify an acceptable timeframe and accuracy.
 
 %The user may also specify guidelines that are funneled through the I/O middleware and 
 %provide advice on how to react if the timeframe and error bound cannot be accepted.
@@ -366,9 +369,7 @@ it will be able to selectively store data at different  levels, and allow a user
 %  to consider things like fairness, availability and this is also why we
 %  want to tie in with the resource management system} 
 
-
-
-The I/O and storage system prototype will enable
+Our proposed I/O and storage system prototype will enable
 highly flexible data access modes that are common in scientific applications
 and associated analysis.
 %
@@ -379,25 +380,25 @@ and associated analysis.
 %  boundaries to fill in blanks over temporally changing data}
 %
 \textbf{First}, the storage system will offer the ability to directly store
-different portions of a single dataset--even a single variable at differnt
+different portions of a single dataset, even a single variable, at different
 levels of the storage hierarchy and apply different data transformation
 operations to each portion. For example, full data can be queued to tape while
 a highly compressed version intended for high-level analytical views can be
 stored in NVM or even RAM within the storage hierarchy. The storage system will
-support the metadata and plug-ins reuired to support this sort of data storage
+support the metadata and plug-ins required to support this data storage
 approach.
 %data re-computation is allowed to re-generate data with
 %customizable accuracy, if the associated computing and I/O cost is lower
 %than retrieving the target data from a {\em slow} tier.
 %
 \textbf{Second}, new storage access APIs will be developed that understand the
-notion of a time and data quality for requested data. The storage system,
-through the knowledge of both the data quality stored in differeht storage
+notion of time and data quality for requested data. The storage system,
+through knowledge of both the data quality stored in different storage
 hierarchy tiers and the approximate time to retrieve data from the different
-tiers, the user can manage the tradeoff between data precision and time to
-retrieve. This storage system support will be managed through middleware
+tiers, can manage (with the user in the loop) the tradeoff between data precision and time to
+retrieve. This storage system support will be executed and managed through our middleware, 
 insulating the user as much as possible from the new APIs. The storage system
-must also support plug-ins to potentially decompress or expand data to the
+must also support plug-ins, for example, to potentially decompress or expand data to the
 original size. Both lossless and lossy with error bounds style storage is
 assumed. The time factor must take into account how long this operation takes
 for servicing the user request.
@@ -414,13 +415,13 @@ for servicing the user request.
 \textbf{Third}, the storage system will offer annotations within the metadata
 and support for both predictive and reactive data placement and migration.
 While past access patterns may not indicate future access because the
-simulation run purpose may have changed, we are focused on scalability where
-subsequent runs are larger as the simulation prepares for a capability run.  By
+simulation details may have changed, we are focused on scalability where
+subsequent runs are larger in scale as the simulation prepares for a capability run.  By
 learning from the output and access patterns during this run sequence, we can
 accurately decide how to place and organize data for the critical capability
 runs. The reactive mechanisms will consider the space and performance
 characteristics, as well as the requested data fidelity, to determine where and
-how to pull and store data sets. In some cases, a full fidelity will be pulled
+how to pull and store data sets. In some cases, a full fidelity dataset may be pulled
 from tape to disk and no further to preserve 100\% data fidelity. In others, a
 lossy-compressed within error bounds version may be generated and stored in
 local node RAM for very fast access with an acceptable error.
@@ -433,7 +434,8 @@ local node RAM for very fast access with an acceptable error.
 %
 \textbf{Fourth}, to effectively manage data storage capacities, the storage
 system's capability for storing multiple, potentially different data quality
-versions of the same data will be leveraged to offer eviction and migration. The main challenge of this approach is to keep in mind the intentional placement
+versions of the same data will be leveraged to guide data eviction and migration. 
+The main challenge of this approach is to be aware of intentional placement
 decisions made to optimize future data access while ensuring proper system
 operation by not exhausting any tier inappropriately. If a single application
 has been allocated the entire machine for a capability run, completely
@@ -457,16 +459,18 @@ user/application intent/constraints and storage system state.
 %The new user APIs required to interact with this rich metadata system will
 %drive effective use of the entire middleware and storage stack.
 Our research efforts will be heavily focused on the need to, in a
-coordinated manner, adapt data and metadata retention policies to the
+coordinated manner, adapt data and metadata retention policies according to the 
 dynamic resource balancing that will need to take place between the
 application, OS/R, and hardware.
 
-The success of this project will provide insights into how to build
-autonomic middleware and storage layers which can interact well with each
-other, and take user-provided hints.  This will be managed against the needs of
-individual simulations as well as what's happening on the entire system. This
-will reduce the time to knowledge by allowing user and system knowledge into
-the SSIO software layers.
+The success of this project will provide insights into how to build extreme scale
+autonomic middleware and storage layers that can interact effectively with each
+other, and bring the user in the loop through user-provided hints, allowing user 
+and system knowledge to be incorporated into the SSIO software layers.
+Storage resources will be managed against the needs of individual simulations 
+as well as what's happening on the entire system. The impact of such a solution 
+will be a significant reduction in the time to knowledge, and the overall increase in 
+the effectiveness and utility of exascale simulations.
 
 %Today, data is reduced by application
 %scientist who have limited information on what the storage layer can
