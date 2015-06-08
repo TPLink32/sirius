@@ -378,39 +378,76 @@ and associated analysis.
 %  storing boundary state instead of full volume and then using those
 %  boundaries to fill in blanks over temporally changing data}
 %
-\textbf{First}, data re-computation is allowed to re-generate data with
-customizable accuracy, if the associated computing and I/O cost is lower
-than retrieving the target data from a {\em slow} tier.
+\textbf{First}, the storage system will offer the ability to directly store
+different portions of a single dataset--even a single variable at differnt
+levels of the storage hierarchy and apply different data transformation
+operations to each portion. For example, full data can be queued to tape while
+a highly compressed version intended for high-level analytical views can be
+stored in NVM or even RAM within the storage hierarchy. The storage system will
+support the metadata and plug-ins reuired to support this sort of data storage
+approach.
+%data re-computation is allowed to re-generate data with
+%customizable accuracy, if the associated computing and I/O cost is lower
+%than retrieving the target data from a {\em slow} tier.
 %
-\textbf{Second}, exploratory analysis operations frequently entail an
-overall data set view followed by targeted data exploration on extracted
-features.  In particular, the {\em overview} access mode gives a quick but
-approximate data view that can guide feature selection offering rapid
-coarse-grained data exploration without requiring loading the high-accuracy
-data from storage. Based on the granularity requested, the accuracy and size
-of the data returned can be adjusted. In the most extreme setting, the
-original data can be retrieved at the time cost of moving the potentially
-huge data quantity.
+\textbf{Second}, new storage access APIs will be developed that understand the
+notion of a time and data quality for requested data. The storage system,
+through the knowledge of both the data quality stored in differeht storage
+hierarchy tiers and the approximate time to retrieve data from the different
+tiers, the user can manage the tradeoff between data precision and time to
+retrieve. This storage system support will be managed through middleware
+insulating the user as much as possible from the new APIs. The storage system
+must also support plug-ins to potentially decompress or expand data to the
+original size. Both lossless and lossy with error bounds style storage is
+assumed. The time factor must take into account how long this operation takes
+for servicing the user request.
+%exploratory analysis operations frequently entail an
+%overall data set view followed by targeted data exploration on extracted
+%features.  In particular, the {\em overview} access mode gives a quick but
+%approximate data view that can guide feature selection offering rapid
+%coarse-grained data exploration without requiring loading the high-accuracy
+%data from storage. Based on the granularity requested, the accuracy and size
+%of the data returned can be adjusted. In the most extreme setting, the
+%original data can be retrieved at the time cost of moving the potentially
+%huge data quantity.
 %
-\textbf{Third}, to ensure available storage for subsequent operations, we
-will offer automatic data migration, based on user annotations for required data and using monitoring and learning techniques.  Unlike existing approaches, this will be
-driven both by the user annotations and through learned access patterns in
-an autonomic and crosslayer manner.  While past access patterns may not
-indicate future access because the simulation run purpose may have changed,
-we are focused on scalability where subsequent runs are larger as the
-simulation prepares for a capability run.  By learning from the output and
-access patterns during this run sequence, we can accurately decide how to
-place and organize data for the critical capability runs.
+\textbf{Third}, the storage system will offer annotations within the metadata
+and support for both predictive and reactive data placement and migration.
+While past access patterns may not indicate future access because the
+simulation run purpose may have changed, we are focused on scalability where
+subsequent runs are larger as the simulation prepares for a capability run.  By
+learning from the output and access patterns during this run sequence, we can
+accurately decide how to place and organize data for the critical capability
+runs. The reactive mechanisms will consider the space and performance
+characteristics, as well as the requested data fidelity, to determine where and
+how to pull and store data sets. In some cases, a full fidelity will be pulled
+from tape to disk and no further to preserve 100\% data fidelity. In others, a
+lossy-compressed within error bounds version may be generated and stored in
+local node RAM for very fast access with an acceptable error.
+%to ensure available storage for subsequent operations, we
+%will offer automatic data migration, based on user annotations for required
+%data and using monitoring and learning techniques.  Unlike existing
+%approaches, this will be driven both by the user annotations and through
+%learned access patterns in
+%an autonomic and crosslayer manner.
 %
-\textbf{Fourth}, we anticipate storing multiple data copies, each compressed
-in different ways according to the underlying media, some of these copies
-will disappear based on storage pressures, but data persistence will be
-maintained according to user specifications. Assuming a relatively low
-latency cache layer before a tape system, we can offer exploratory data
-access reserving pulling data from tape to just the data required. 
- Additionally, we will incorporate data life time, at sub-object
-granularity, as a user described metric to allow the storage system to
-intelligently make decisions on purging and evicting data. 
+\textbf{Fourth}, to effectively manage data storage capacities, the storage
+system's capability for storing multiple, potentially different data quality
+versions of the same data will be leveraged to offer eviction and migration. The main challenge of this approach is to keep in mind the intentional placement
+decisions made to optimize future data access while ensuring proper system
+operation by not exhausting any tier inappropriately. If a single application
+has been allocated the entire machine for a capability run, completely
+consuming resources on the machine is expected. For smaller runs, these
+allocations must be balanced to support the diverse workload.
+%we anticipate storing multiple data copies, each compressed
+%in different ways according to the underlying media, some of these copies
+%will disappear based on storage pressures, but data persistence will be
+%maintained according to user specifications. Assuming a relatively low
+%latency cache layer before a tape system, we can offer exploratory data
+%access reserving pulling data from tape to just the data required. 
+% Additionally, we will incorporate data life time, at sub-object
+%granularity, as a user described metric to allow the storage system to
+%intelligently make decisions on purging and evicting data. 
 
  
 A key challenge in this project is defining and maintaining the metadata
