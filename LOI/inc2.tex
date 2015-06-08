@@ -328,7 +328,7 @@ realization of tradeoffs in data representation, data placement and data
 access. We will allow users to plug-in their knowledge 
 about the data, represented not as bytes but as motifs, allowing the I/O and 
 storage system to understand user
-intentions, the relationships between data objects, and also data access
+intentions, the relationships between data objects, as well as data access
 and transport patterns. This will facilitate efficient mapping of data from
 user space onto various storage tiers, and application-guided
 data reductions/transformations.
@@ -351,12 +351,12 @@ data reductions/transformations.
 %  hierarchy provide lower cost for data storage, but also increase the
 %  overhead for access.
 
-Incorporating awareness of the data content and user intent  into
-our decision making and data management process is integral to our approach. For example, 
+Incorporating awareness of the data content and user intent into
+storage and data management process is integral to our approach. For example, 
 we will offer a coarse grained, quick overview of a data set with progressively more detail in 
-areas of interest such as those containing features, and less detail in areas
+areas of interest such as those with features, and less detail in areas
 without. These progressively more detailed data views require more storage
-space and time to retrieve. By defining mechanisms for applications to provide this 
+space and time to retrieve if left unmanaged. By defining mechanisms for applications to provide this 
 knowledge and incorporating its awareness into the middleware and storage,
 we will be able to selectively store data at different levels, and allow a user to select 
 not only what data to retrieve but also specify an acceptable timeframe and accuracy.
@@ -380,23 +380,23 @@ and associated analysis.
 %  boundaries to fill in blanks over temporally changing data}
 %
 \textbf{First}, the storage system will offer the ability to directly store
-different portions of a single dataset, even a single variable, at different
-levels of the storage hierarchy and apply different data transformation
-operations to each portion. For example, full data can be queued to tape while
+different versions of a single variable to different
+levels of the storage hierarchy and allow each version to be processed 
+differently. For example, full data can be queued to tape while
 a highly compressed version intended for high-level analytical views can be
-stored in NVM or even RAM within the storage hierarchy. The storage system will
-support the metadata and plug-ins required to support this data storage
-approach.
+stored in non-volatile memory (NVM) or even RAM within the storage hierarchy. 
+The storage system will support the metadata and plug-ins required to support
+this data storage approach.
 %data re-computation is allowed to re-generate data with
 %customizable accuracy, if the associated computing and I/O cost is lower
 %than retrieving the target data from a {\em slow} tier.
 %
-\textbf{Second}, new storage access APIs will be developed that understand the
+\textbf{Second}, new storage access APIs will be developed that incorporates the
 notion of time and data quality for requested data. The storage system,
-through knowledge of both the data quality stored in different storage
+through the knowledge of both data quality stored in different storage
 hierarchy tiers and the approximate time to retrieve data from the different
-tiers, can manage (with the user in the loop) the tradeoff between data precision and time to
-retrieve. This storage system support will be executed and managed through our middleware, 
+tiers, can manage (with the user in the loop) the tradeoff between error bound and the time to
+retrieve data. This storage system support will be executed and managed through our middleware, 
 insulating the user as much as possible from the new APIs. The storage system
 must also support plug-ins, for example, to potentially decompress or expand data to the
 original size. Both lossless and lossy with error bounds style storage is
