@@ -368,7 +368,7 @@ it will be able to selectively store data at different  levels, and allow a user
 
 
 
-The I/O and storage system prototype produced from the project will enable
+The I/O and storage system prototype will enable
 highly flexible data access modes that are common in scientific applications
 and associated analysis.
 %
@@ -393,7 +393,7 @@ original data can be retrieved at the time cost of moving the potentially
 huge data quantity.
 %
 \textbf{Third}, to ensure available storage for subsequent operations, we
-will offer automatic data migration. based on user annotations for required data and using monitoring and learning techniques.  Unlike existing approaches, this will be
+will offer automatic data migration, based on user annotations for required data and using monitoring and learning techniques.  Unlike existing approaches, this will be
 driven both by the user annotations and through learned access patterns in
 an autonomic and crosslayer manner.  While past access patterns may not
 indicate future access because the simulation run purpose may have changed,
@@ -407,9 +407,8 @@ in different ways according to the underlying media, some of these copies
 will disappear based on storage pressures, but data persistence will be
 maintained according to user specifications. Assuming a relatively low
 latency cache layer before a tape system, we can offer exploratory data
-access reserving pulling data from tape to just the data required. This will
-save scientists time and make data stored on tape usable without long
-delays. Additionally, we will incorporate data life time, at sub-object
+access reserving pulling data from tape to just the data required. 
+ Additionally, we will incorporate data life time, at sub-object
 granularity, as a user described metric to allow the storage system to
 intelligently make decisions on purging and evicting data. 
 
@@ -418,9 +417,8 @@ A key challenge in this project is defining and maintaining the metadata
 connecting different object quality and utility levels, and using this metadata 
 to most appropriately manage the placement and access of data object based on 
 user/application intent/constraints and storage system state.
-The new user APIs required to interact with this rich metadata system will
-drive effective use of the entire middleware and storage stack.
-
+%The new user APIs required to interact with this rich metadata system will
+%drive effective use of the entire middleware and storage stack.
 Our research efforts will be heavily focused on the need to, in a
 coordinated manner, adapt data and metadata retention policies to the
 dynamic resource balancing that will need to take place between the
@@ -428,14 +426,21 @@ application, OS/R, and hardware.
 
 The success of this project will provide insights into how to build
 autonomic middleware and storage layers which can interact well with each
-other, and take user-provided hints. Today, data is reduced by application
-scientist who have limited information on what the storage layer can
-provide. They often make compromises based on this limited knowledge and
-either tune their output for writing or reading performance. This data then
-gets moved to other locations, and much of the tuning is lost when the data
-is read back during their post processing. Furthermore, there is a limited
-set of operations which users will be able to stage to other staging nodes
-for real-time-reduction and visualization.
+other, and take user-provided hints.  This will be managed against the needs of
+individual simulations as well as what's happening on the entire system. This
+will reduce the time to knowledge by allowing user and system knowledge into
+the SSIO software layers.
+
+%Today, data is reduced by application
+%scientist who have limited information on what the storage layer can
+%provide. 
+
+%They often make compromises based on this limited knowledge and
+%either tune their output for writing or reading performance. This data then
+%gets moved to other locations, and much of the tuning is lost when the data
+%is read back during their post processing. Furthermore, there is a limited
+%set of operations which users will be able to stage to other staging nodes
+%for real-time-reduction and visualization.
 
 
 %  \includepdf[pages={1}]{COI.pdf}
