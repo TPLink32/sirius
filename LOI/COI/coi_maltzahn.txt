@@ -1,55 +1,55 @@
-Dimitris Achlioptas, UC Santa Cruz, co-author
-Sasha Ames, Lawrence Livermore National Laboratory, co-author
-Andrea Arpaci-Dusseau, University of Wisconsin, Madison, co-author
-Remzi Arpaci-Dusseau, University of Wisconsin, Madison, co-author
-John Bent, EMC, co-author
-Varun Bhagwan, Yahoo!, co-author
-Scott Brandt, UC Santa Cruz, co-author
-Joe Buck, Context Relevant, co-author
-Philip Carns, Argonne National Laboratory, co-author
-Christopher Carothers, Rensselaer Polytechnic Institute, co-author
-Jason Cope, DDN, co-author
-Matthew Curry, Sandia National Laboratory, co-author
-Jai Dayal, Georgia Tech, co-author
-Garth Gibson, Carnegie Mellon University, co-author
-Maya Gokhale, Lawrence Livermore National Laboratory, co-author
-Tyron Grandison, Proficiency Labs, co-author
-Gary Grider, Los Alamos National Laboratory, co-author
-Dirk Grunwald, UC Santa Cruz, advisor
-Jun He, Univ. of Wisconsin, Madison, co-author
-Nathan Hjelm, Los Alamos National Laboratory, collaborator
-Kleoni Ioannidou, TidalScale, co-author
-Latchesar Ionkov, Los Alamos National Laboratory, co-author
-Arnav Jhala, UC Santa Cruz, co-author
-Shinpei Kato, Nagoya University, co-author
-Quincey Koziol, HDF Group, co-author
-Thomas Kroeger, Sandia National Laboratory, co-author
-Mike Lang, Los Alamos National Laboratory, co-author
-Greg Levin, Google, co-author
-Ning Liu, Argonne National Laboratory, co-author
-Jay Lofstead, Sandia National Laboratory, co-author
-Darrell Long, UC Santa Cruz, affiliation
-Adam Manzanares, HGST, co-author
-Michael Mateas, UC Santa Cruz, co-author
-Patrick McCormick, Los Alamos National Laboratory, co-author
-Ethan Miller, UC Santa Cruz, affiliation
-Kathryn Mohror, Lawrence Livermore National Laboratory, co-author
-Adam Moody, Lawrence Livermore National Laboratory, co-author
-Ike Nassi, TidalScale, co-author
-Katia Obraczka, UC Santa Cruz, co-author
-Ron Oldfield, Sandia National Laboratory, co-author
-Neoklis Polyzotis, Google, co-author
-Ian Pye, Cloud Helix, co-author
-Robert Ross, Argonne National Laboratory, co-author
-Andrew Shewmaker, Los Alamos National Laboratory, co-author
-Galen Shipman, Los Alamos National Laboratory, co-author
-Dimitris Skourtis, VMWare, co-author
-Xian-He Sun, Illinois Institute of Technology, co-author
-Wang-Chiew Tan, UC Santa Cruz, affiliation
-Aaron Torres, Linden Lab, co-author
-Lee Ward, Sandia National Laboratory, co-author
-Sage Weil, Red Hat, co-author
-Jim Whitehead, UC Santa Cruz, co-author
-Patrick Widener, Sandia National Laboratory, co-author
-David Wolpert, Los Alamos National Laboratory, collaborator
-Jon Woodring, Los Alamos National Laboratory, collaborator
+D.; Achlioptas; UC Santa Cruz; co-author
+S.; Ames; Lawrence Livermore National Laboratory; co-author
+A.; Arpaci-Dusseau; University of Wisconsin Madison; co-author
+R.; Arpaci-Dusseau; University of Wisconsin Madison; co-author
+J.; Bent; EMC; co-author
+V.; Bhagwan; Yahoo!; co-author
+S.; Brandt; UC Santa Cruz; co-author
+J.; Buck; Context Relevant; co-author
+P.; Carns; Argonne National Laboratory; co-author
+C.; Carothers; Rensselaer Polytechnic Institute; co-author
+J.; Cope; DDN; co-author
+M.; Curry; Sandia National Laboratory; co-author
+J.; Dayal; Georgia Tech; co-author
+G.; Gibson; Carnegie Mellon University; co-author
+M.; Gokhale; Lawrence Livermore National Laboratory; co-author
+T.; Grandison; Proficiency Labs; co-author
+G.; Grider; Los Alamos National Laboratory; co-author
+D.; Grunwald; UC Santa Cruz; advisor
+J.; He; Univ. of Wisconsin Madison; co-author
+N.; Hjelm; Los Alamos National Laboratory; collaborator
+K.; Ioannidou; TidalScale; co-author
+L.; Ionkov; Los Alamos National Laboratory; co-author
+A.; Jhala; UC Santa Cruz; co-author
+S.; Kato; Nagoya University; co-author
+Q.; Koziol; HDF Group; co-author
+T.; Kroeger; Sandia National Laboratory; co-author
+M.; Lang; Los Alamos National Laboratory; co-author
+G.; Levin; Google; co-author
+N.; Liu; Argonne National Laboratory; co-author
+J.; Lofstead; Sandia National Laboratory; co-author
+D.; Long; UC Santa Cruz; affiliation
+A.; Manzanares; HGST; co-author
+M.; Mateas; UC Santa Cruz; co-author
+P.; McCormick; Los Alamos National Laboratory; co-author
+E.; Miller; UC Santa Cruz; affiliation
+K.; Mohror; Lawrence Livermore National Laboratory; co-author
+A.; Moody; Lawrence Livermore National Laboratory; co-author
+I.; Nassi; TidalScale; co-author
+K.; Obraczka; UC Santa Cruz; co-author
+R.; Oldfield; Sandia National Laboratory; co-author
+N.; Polyzotis; Google; co-author
+I.; Pye; Cloud Helix; co-author
+R.; Ross; Argonne National Laboratory; co-author
+A.; Shewmaker; Los Alamos National Laboratory; co-author
+G.; Shipman; Los Alamos National Laboratory; co-author
+D.; Skourtis; VMWare; co-author
+X.; Sun; Illinois Institute of Technology; co-author
+W.; Tan; UC Santa Cruz; affiliation
+A.; Torres; Linden Lab; co-author
+L.; Ward; Sandia National Laboratory; co-author
+S.; Weil; Red Hat; co-author
+J.; Whitehead; UC Santa Cruz; co-author
+P.; Widener; Sandia National Laboratory; co-author
+D.; Wolpert; Los Alamos National Laboratory; collaborator
+J.; Woodring; Los Alamos National Laboratory; collaborator
