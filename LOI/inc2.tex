@@ -208,23 +208,25 @@
 
   %  \end{enumerate}
   %   
-
-{\bf Title of Pre-application:} Hierarchal Extreme Scale Knowledge Management \par
+\setlength{\parindent}{0cm}
+{\bf Title of Pre-application:}  Extreme Scale Hierarchal Knowledge Management \par
 {\bf Principal Investigator:} Scott Klasky, Group Leader, ORNL, 854-241-9980, klasky@ornl.gov \par
 {\bf Funding Opportunity Announcement Number: DE-FOA-0001338} \par
-{\bf List of all co-PIs and Key/Senior Personnel} \par
-Hasan Abbasi, Oak Ridge National Laboratory \par
-Mark Ainsworth, Oak Ridge National Laboratory JFA, Brown University \par
-Matthew Curry, Sandia National Laboratory\par
-Qing Gary Liu, Oak Ridge National Laboratory \par
-Jay Lofstead, Sandia National Laboratory \par
-Kimmy Mu, Oak Ridge National Laboratory \par
-Carlos Malzahn, U. Cal. Santa Cruz \par
-Manish Parashar, Rutgers University, Oak Ridge National Laboratory \par
-Sudharshan Vazhkudai, Oak Ridge National Laboratory \par
-Lee Ward, Sandia National Laboratory \par
-\vskip 0.2 in
+ \vskip 0.1 in
 
+\begin{tabular} {ll}
+ \multicolumn{2}{l}{\bf Co-PIs and Key/Senior Personnel}\\
+Hasan Abbasi, ORNL  & Mark Ainsworth, ORNL JFA, Brown University \\
+Matthew Curry, SNL & Qing  Liu, ORNL \\
+Jay Lofstead, ORNL & Kimmy Mu, ORNL \\
+Carlos Malzahn, U. Cal. Santa Cruz & Manish Parashar, Rutgers University, ORNL \\
+Feiyi Wang, ORNL & Lee Ward, SNL
+\end{tabular}
+
+
+\setlength{\parindent}{0.5cm}
+
+\vskip 0.1 in
 
 
 \underline{\textbf{Objectives:}} Exascale scientific discovery will be
@@ -238,21 +240,21 @@ capabilities offered by ADIOS and DataSpaces that provide I/O abstractions
 and services, the Sirocco peer-to-peer file system under development at
 Sandia and the object storage and annotation expertise of UC Santa Cruz, to
 explore application and multi-tier storage aware data management
-solutions. Our solutions will provide novel functionalities and APIs for
-% It will center upon a multi-tier storage-aware approach and incorporate new
-% functionalities, extended object metadata and APIs for 
-%
+solutions. 
+
+Our solutions will provide novel functionalities and APIs for
+\setlength{\parindent}{0cm}
 1) specifying, at the application level, data annotations that enable the
 qualification of the relative importance and utility of data objects, and
 enable them to be mapped at runtime to appropriate storage capabilities
 across the storage hierarchy;
 %
 2) specifying selectable performance/quality/cost tradeoffs from both the
-application and system perspectives; and
+application and system perspectives;
 %
 3) evaluating these tradeoffs at runtime during data placement and movement,
 and executing the resultant policies in an autonomic system using models,
-heuristics and continuous learning,
+heuristics and continuous learning; and
 %
 4) leveraging techniques such as application-aware data compression (both
 lossy with specified error bounds and lossless), re-computation at the
@@ -262,6 +264,23 @@ policies.
   %  the ability to recompute data if needed, and
   %  3) incorporate reader prioritization for data annotation, placement, and data
   %  quality when writing data.  
+  
+  \setlength{\parindent}{0.5cm}
+  Our objective here is to reduce the time to knowledge, not just for a single
+application or workflow, but for the entire workload in the system. This is
+an end-to-end system wide metric relevant to the scientific discovery
+process. We will explore beyond the traditional high volume I/O pattern of
+checkpoint/restart, and will address the challenges posed by other essential
+data access patterns in the knowledge gathering process.  Through a deeper
+insight into the scientific process we will encode and utilize accuracy and
+errors as optimization parameters.  
+Finally, we will take the knowledge from the storage system to provide vital feedback to the middleware 
+so that the best possible decisions can be autonomically  between the user intentions and
+the available system resources. Our overall goal is to ensure that optimizations can be made across
+1) a single application, 2) an ensemble of applications, and 3) the entire suite of applications which are running on the system.
+
+
+  \setlength{\parindent}{0.5cm}
 A key challenge in this project is defining and maintaining the metadata
 connecting different object quality and utility levels, and using this metadata 
 to most appropriately manage the placement and access of data object based on 
@@ -275,17 +294,58 @@ Rutgers), file system (SNL, UCSC) and storage (UCSC), and connect and
 coordinate these key storage components in a seamless fashion.
 
 
-\manish{I believe this analogy needs to be developed further -- the point we
-  are trying to make here, i.e., autonomic cross layer management,
-  negotiation, are not completely obvious.}
-\hasan{I am not a fan of this analogy either. I liked the walmart logistics
-  one better, it more correctly represented the biggest challenge we have,
-  viz. negotiating in a complex system where objects should be placed. The
-  partition of data is an addendum to the organization (thus moving us away
-  from simple logistical solutions. I am going add an alternate analogy as a
-  comparison}
+%
+Our objective here is to reduce the time to knowledge, not just for a single
+application or workflow, but for the entire workload in the system. This is
+an end-to-end system wide metric relevant to the scientific discovery
+process. We will explore beyond the traditional high volume I/O pattern of
+checkpoint/restart, and will address the challenges posed by other essential
+data access patterns in the knowledge gathering process.  Through a deeper
+insight into the scientific process we will encode and utilize accuracy and
+errors as optimization parameters. 
 
-\ALT{Our approach can be most easily understood by considering a traditional
+
+Ultimately, we will take the knowledge from the storage system to provide vital feedback to the middleware 
+so that the best possible decisions can be autonomically  between the user intentions and
+the available system resources. Our overall goal is to ensure that optimizations can be made across
+1) a single application, 2) an ensemble of applications, and 3) the entire suite of applications which are running on the system. Many of our prototypes will eventually be incorporated into the Sirocco peer-to-peer file system,
+and linked to the ADIOS middleware system. We will test our techniques on the Titan and Summitt systems
+at ORNL, along with the current and next generation machines with many of our application partner simulations
+such as XGC1, GTC, QMCPack, and SpecFM3D. The test will ensure that many of our research
+ideas can reduce the time to knowledge from these simulations and their corresponding analysis and visualization
+routines.
+
+
+
+ % For example, scientific simulations
+%contain approximations, as do measurements from observations and
+%experiments, and depending on the goal, these approximations are
+%acceptable. We can leverage this observation to optimize the presentation of
+%data to the user and to implement various tradeoffs -- users can ask for
+%information within a given accuracy bound, allowing us to offer a tradeoff for
+%re-computation vs. data storage and retrieval.
+
+
+
+
+%  
+% \TODO{\bf: please list other things from OLCF}
+% 
+
+
+\underline{\textbf{Key Technical Approach:}}
+
+Our overall technical approach is based on an application-aware runtime
+realization of tradeoffs in data representation, data placement and data
+access. We will allow users to be able to plug-in their knowledge 
+about the data, represented not as bytes but as motifs, allowing the I/O and 
+storage system to understand user
+intentions, the relationships between data objects, and also data access
+and transport patterns. This will facilitate efficient mapping of data from
+user space onto various storage tiers, and application-guided
+data reductions.
+
+Our approach can be most easily understood by considering a traditional
   supermarket logistics problem. Given a limited amount of shelf space,
   fluctuating user demands and priorities, and the need to optimize profit at
   a market wide level instead of per product, the logistical problem combines
@@ -301,76 +361,50 @@ coordinate these key storage components in a seamless fashion.
   not just for single data objects but also through the identification of
   domain meaningful relationships between objects. The tiers of the storage
   hierarchy provide lower cost for data storage, but also increase the
-  overhead for access.}
+  overhead for access.
 
-\manish{I have tried to rework the text below, but I am still not comfortable with it. I have left the original text commented.
+%\manish{I believe this analogy needs to be developed further -- the point we
+%  are trying to make here, i.e., autonomic cross layer management,
+%  negotiation, are not completely obvious.}
+%\hasan{I am not a fan of this analogy either. I liked the walmart logistics
+%  one better, it more correctly represented the biggest challenge we have,
+%  viz. negotiating in a complex system where objects should be placed. The
+%  partition of data is an addendum to the organization (thus moving us away
+%  from simple logistical solutions. I am going add an alternate analogy as a
+%  comparison}
+%
+%\manish{I have tried to rework the text below, but I am still not comfortable with it. I have left the original text commented.}
 
-%Our approach can most easily be understood by considering a road navigation
-%program. Similar to the navigation program, 
-Incorporating awareness of the data content and user intent (to the extent possible) into
+Incorporating awareness of the data content and user intent  into
 our decision making and data management process is integral to our approach. For example, 
 we will offer a coarse grained, quick overview of a data set with progressively more detail in 
 areas of interest such as those containing features, and less detail in areas
 without. These progressively more detailed data views require more storage
 space and time to retrieve. By defining mechanisms for applications to provide this 
 knowledge and incorporating its awareness into our middleware 
-%so that it is informed of either the criteria for identifying areas of interest or the intended use locations, 
 it will be able to selectively store data at different quality levels, with bounded errors in the case of 
 lossy compression, and allow a user to select what data to retrieve by specifying both an acceptable
 retrieval timeframe and error bound.
-%  If the request
-  %   cannot be fulfilled, the storage system can negotiate with the user providing
-   %    information about the quality and timeframes available for a subsequent
-    %     request.
-     %%%%%%%%%%%%                 I am not sure if we should do this type of expert system in the project.
-The user may also specify guidelines that are funneled through the I/O middleware and 
-provide advice on how to react if the timeframe and error bound cannot be accepted.
 
-\hasan{Since we are laying the foundation for a real storage system we can't
-  be solving the problem for a single application. We will eventually have
-  to consider things like fairness, availability and this is also why we
-  want to tie in with the resource management system} 
-%
-Our objective here is to reduce the time to knowledge, not just for a single
-application or workflow, but for the entire workload in the system. This is
-an end-to-end system wide metric relevant to the scientific discovery
-process. We will explore beyond the traditional high volume I/O pattern of
-checkpoint/restart, and will address the challenges posed by other essential
-data access patterns in the knowledge gathering process.  Through a deeper
-insight into the scientific process we will encode and utilize accuracy and
-errors as optimization parameters.  For example, scientific simulations
-contain approximations, as do measurements from observations and
-experiments, and depending on the goal, these approximations are
-acceptable. We can leverage this observation to optimize the presentation of
-data to the user and to implement various tradeoffs -- users can ask for
-information within a given accuracy bound, allowing us to offer a tradeoff for
-re-computation vs. data storage and retrieval.
+%The user may also specify guidelines that are funneled through the I/O middleware and 
+%provide advice on how to react if the timeframe and error bound cannot be accepted.
 
-%  
-% \TODO{\bf: please list other things from OLCF}
-% 
+%\hasan{Since we are laying the foundation for a real storage system we can't
+%  be solving the problem for a single application. We will eventually have
+%  to consider things like fairness, availability and this is also why we
+%  want to tie in with the resource management system} 
 
 
-\underline{\textbf{Key Technical Approach:}}
-Our overall technical approach is based on an application-aware runtime
-realization of tradeoffs in data representation, data placement and data
-access. We will allow users to be able to plug-in their knowledge 
-about the data, represented not as bytes but as motifs, allowing the I/O and 
-storage system to understand user
-intentions, the relationships between data objects, and also data access
-and transport patterns. This will facilitate efficient mapping of data from
-user space onto various storage tiers, and application-guided
-data reductions.
 
 The I/O and storage system prototype produced from the project will enable
 highly flexible data access modes that are common in scientific applications
 and associated analysis.
 %
-\hasan{Can we actually take some lower accuracy representation of data (low
-  granularity MR for example, and compute more stuff to provide a higher
-  accuracy representation? I am thinking of the work with Varis Carey with
-  storing boundary state instead of full volume and then using those
-  boundaries to fill in blanks over temporally changing data}
+%\hasan{Can we actually take some lower accuracy representation of data (low
+%  granularity MR for example, and compute more stuff to provide a higher
+%  accuracy representation? I am thinking of the work with Varis Carey with
+%  storing boundary state instead of full volume and then using those
+%  boundaries to fill in blanks over temporally changing data}
 %
 \textbf{First}, data re-computation is allowed to re-generate data with
 customizable accuracy, if the associated computing and I/O cost is lower
