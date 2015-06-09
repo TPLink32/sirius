@@ -1,0 +1,55 @@
+D.; Achlioptas; UC Santa Cruz; co-author
+S.; Ames; Lawrence Livermore National Laboratory; co-author
+A.; Arpaci-Dusseau; University of Wisconsin Madison; co-author
+R.; Arpaci-Dusseau; University of Wisconsin Madison; co-author
+J.; Bent; EMC; co-author
+V.; Bhagwan; Yahoo!; co-author
+S.; Brandt; UC Santa Cruz; co-author
+J.; Buck; Context Relevant; co-author
+P.; Carns; Argonne National Laboratory; co-author
+C.; Carothers; Rensselaer Polytechnic Institute; co-author
+J.; Cope; DDN; co-author
+M.; Curry; Sandia National Laboratory; co-author
+J.; Dayal; Georgia Tech; co-author
+G.; Gibson; Carnegie Mellon University; co-author
+M.; Gokhale; Lawrence Livermore National Laboratory; co-author
+T.; Grandison; Proficiency Labs; co-author
+G.; Grider; Los Alamos National Laboratory; co-author
+D.; Grunwald; UC Santa Cruz; advisor
+J.; He; Univ. of Wisconsin Madison; co-author
+N.; Hjelm; Los Alamos National Laboratory; collaborator
+K.; Ioannidou; TidalScale; co-author
+L.; Ionkov; Los Alamos National Laboratory; co-author
+A.; Jhala; UC Santa Cruz; co-author
+S.; Kato; Nagoya University; co-author
+Q.; Koziol; HDF Group; co-author
+T.; Kroeger; Sandia National Laboratory; co-author
+M.; Lang; Los Alamos National Laboratory; co-author
+G.; Levin; Google; co-author
+N.; Liu; Argonne National Laboratory; co-author
+J.; Lofstead; Sandia National Laboratory; co-author
+D.; Long; UC Santa Cruz; affiliation
+A.; Manzanares; HGST; co-author
+M.; Mateas; UC Santa Cruz; co-author
+P.; McCormick; Los Alamos National Laboratory; co-author
+E.; Miller; UC Santa Cruz; affiliation
+K.; Mohror; Lawrence Livermore National Laboratory; co-author
+A.; Moody; Lawrence Livermore National Laboratory; co-author
+I.; Nassi; TidalScale; co-author
+K.; Obraczka; UC Santa Cruz; co-author
+R.; Oldfield; Sandia National Laboratory; co-author
+N.; Polyzotis; Google; co-author
+I.; Pye; Cloud Helix; co-author
+R.; Ross; Argonne National Laboratory; co-author
+A.; Shewmaker; Los Alamos National Laboratory; co-author
+G.; Shipman; Los Alamos National Laboratory; co-author
+D.; Skourtis; VMWare; co-author
+X.; Sun; Illinois Institute of Technology; co-author
+W.; Tan; UC Santa Cruz; affiliation
+A.; Torres; Linden Lab; co-author
+L.; Ward; Sandia National Laboratory; co-author
+S.; Weil; Red Hat; co-author
+J.; Whitehead; UC Santa Cruz; co-author
+P.; Widener; Sandia National Laboratory; co-author
+D.; Wolpert; Los Alamos National Laboratory; collaborator
+J.; Woodring; Los Alamos National Laboratory; collaborator
