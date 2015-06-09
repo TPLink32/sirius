@@ -245,8 +245,9 @@ brings together a  team with strong expertise in I/O middleware (ORNL), file sys
 coordinates these key storage components in a seamless fashion.
 
 Our objective here is to reduce the time to knowledge, not just for a single
-application, but for the entire workload in a multi-user environment,
-and allow for selectable data quality, by adjusting its accuracy and error, 
+application, but for the entire workload in a multi-user environment, where
+the storage is shared among users.
+We achieve this goal by allowing selectable data quality, by trading its accuracy and error
 in order to meet the time or resource constraint. 
 We will explore beyond the traditional high volume I/O pattern of
 checkpoint/restart, and will address the challenges posed by other essential
@@ -367,6 +368,10 @@ space and time to retrieve if left unmanaged. By defining mechanisms for applica
 knowledge and incorporating its awareness into the middleware and storage,
 we will be able to selectively store data at different levels, and allow a user to select 
 not only what data to retrieve but also specify an acceptable timeframe and accuracy.
+On the other hand, the storage system layer may also dynamically 
+adjust the level of data that will be retrieved
+for an individual application, if that's allowed, to maximize the overall system efficiency and 
+provide fairness among applications.
 
 %The user may also specify guidelines that are funneled through the I/O middleware and 
 %provide advice on how to react if the timeframe and error bound cannot be accepted.
