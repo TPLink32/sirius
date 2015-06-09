@@ -235,7 +235,7 @@ storing the large amounts of data that will be produced during the
 simulation, and analyzed for months afterwards.  Our goal in this project is
 to address the associated I/O and storage challenges in the context of
 current and emerging storage landscapes, and expedite insights into mission
-critical scientific processes. To that end, we will build on the
+critical scientific processes; which is associated with {\bf theme two} of the FOA. To that end, we will build on the
 capabilities offered by ADIOS and DataSpaces at ORNL that provide I/O abstractions
 and services, the Sirocco peer-to-peer file system at
 Sandia and the object storage and annotation expertise of UC Santa Cruz, to
@@ -249,8 +249,11 @@ application, but for the entire workload in a multi-user environment, where
 the storage is shared among users.
 We achieve this goal by allowing selectable data quality, by trading its accuracy and error
 in order to meet the time or resource constraint. 
-We will explore beyond the traditional high volume I/O pattern of
-checkpoint/restart, and will address the challenges posed by other essential
+We will explore beyond 
+%the traditional high volume I/O pattern of
+checkpoint/restart I/O, and will address the challenges posed by 
+%other essential
+key
 data access patterns in the knowledge gathering process.
 Ultimately, we will take the knowledge from the storage system to provide vital feedback to the middleware 
 so that the best possible decisions can be autonomically made between the user intentions and
@@ -258,12 +261,12 @@ the available system resources.
 We will test our prototypes  on current and future DOE system with many of today's applications, including the
 s XGC1, GTC, QMCPack, and SpecFM3D simulations. 
 
-Our solutions will provide novel functionalities and APIs for
+Our solutions will provide  new functionalities and APIs for
 \setlength{\parindent}{0cm}
 %
 1) specifying, at the application level, data annotations that enable the
 quantification of the relative importance and utility of data objects and
-enable partitioning of objects across the storage hierarch;
+enable partitioning  across the storage hierarchy;
 %
 2) specifying selectable performance/quality/cost tradeoffs from both the
 application and system perspectives;
@@ -323,22 +326,22 @@ policies.
 
 \underline{\textbf{Key Technical Approach:}}
 
-Our technical approach is based on the insight that storage system awareness
+Our  approach is based on the insight that storage system awareness
 of application data requirements provides a powerful tool for guiding key
-extreme scale challenges such as data access method,  data representation in
+I/O challenges such as data access,  data representation in
 storage, and data
 placement within the hierarchy.
 %Our overall technical approach is based on an application-aware runtime
 %realization of tradeoffs in data representation, data placement and data
 %access. 
-Towards this goal, we will allow users, both the developers of applications
-and science users running these applications, 
+Towards this goal, we will allow both the developers of applications
+and users running these applications, 
  to plug-in their knowledge 
-about the data, represented not as bytes but as motifs, allowing the I/O and 
-storage system to understand user
-intentions, the relationships between data objects, as well as data access
+about their data, represented not as bytes but as motifs, allowing the I/O and 
+storage system to understand their
+intentions, the relationships between the data objects, as well as access
 and transport patterns. This will facilitate efficient mapping of data from
-user space onto multiple storage tiers, and enable application-guided
+the user space onto multiple storage tiers, and enable application-guided
 data reductions/transformations to address capacity and bandwidth
 bottlenecks. 
 %
@@ -360,27 +363,24 @@ bottlenecks.
 %  hierarchy provide lower cost for data storage, but also increase the
 %  overhead for access.
 %
- For example, based on user and application insights into how the data is used,
+ For example, based on insights into how the data is used,
 we will offer a coarse grained, quick overview of a data set with progressively more detail in 
 areas of interest such as those with features, and less detail in areas
 without. These progressively more detailed data views require more storage
-space and time to retrieve if left unmanaged. By defining mechanisms for applications to provide this 
+space and time to retrieve if left unmanaged. By defining mechanisms to provide this 
 knowledge and incorporating its awareness into the middleware and storage,
 we will be able to selectively store data at different levels, and allow a user to select 
 not only what data to retrieve but also specify an acceptable timeframe and accuracy.
-On the other hand, the storage system layer may also dynamically 
+The storage system layer may also dynamically 
 adjust the level of data that will be retrieved
-for an individual application, if that's allowed, to maximize the overall system efficiency and 
+for an individual application,  to maximize the overall system efficiency and 
 provide fairness among applications.
-
 %The user may also specify guidelines that are funneled through the I/O middleware and 
 %provide advice on how to react if the timeframe and error bound cannot be accepted.
-
 %\hasan{Since we are laying the foundation for a real storage system we can't
 %  be solving the problem for a single application. We will eventually have
 %  to consider things like fairness, availability and this is also why we
 %  want to tie in with the resource management system} 
-
 % Our proposed I/O and storage system prototype will enable
 % highly flexible data access modes that are common in scientific applications
 % and associated analysis.
@@ -391,28 +391,28 @@ provide fairness among applications.
 %  storing boundary state instead of full volume and then using those
 %  boundaries to fill in blanks over temporally changing data}
 %
-The proposed work will address the following technical areas;
+The proposed work will address the following technical areas:
 \\\textbf{First}, the storage system will offer the ability to directly store
-different versions of a single variable to different
-levels of the storage hierarchy and allow each version to be processed 
+different portions of a single variable to different
+levels of the hierarchy and allow each version to be processed 
 differently. For example, full data can be queued to tape while
 a highly compressed version intended for high-level analytical views can be
-stored in non-volatile memory (NVM) or even RAM within the storage
+stored in non-volatile memory (NVM)  within the storage
 hierarchy. 
-The key challenge here would be defining and maintaining the metadata
-connecting different object quality and utility levels, 
+The key challenge would be defining and maintaining the metadata
+connecting different object quality and utility levels. 
 The storage system will support the metadata and plug-ins required to support
-this data storage approach.   
+this approach.   
 %data re-computation is allowed to re-generate data with
 %customizable accuracy, if the associated computing and I/O cost is lower
 %than retrieving the target data from a {\em slow} tier.
 %
 \textbf{Second}, new storage access APIs will be developed that incorporates the
-notion of time and data quality for requested data. The storage system,
-through the knowledge of both data quality stored in different storage
-hierarchy tiers and the approximate time to retrieve data from the different
-tiers, can manage (with the user in the loop) the tradeoff between error bound and the time to
-retrieve data. This storage system support will be executed and managed through our middleware, 
+notion of time and data quality. The storage system,
+through the knowledge of both the data quality stored in different storage
+hierarchy tiers and the approximate time to retrieve it from the different
+tiers, can manage the tradeoff between error bound and the time to
+retrieve the data. This storage system support will be executed and managed through our middleware, 
 insulating the user as much as possible from the new APIs. The storage system
 will also support plug-ins, for example, to potentially decompress or expand data to the
 original size. Both lossless and lossy with error bounds style storage is
@@ -440,7 +440,6 @@ characteristics, as well as the requested data fidelity, to determine where and
 how to pull and store data sets. The challenge here is to utilize this
 metadata to manage the placement and access of data object based on the
 defined constraints as well as storage system state. 
-
 % In some cases, a full fidelity dataset may be pulled
 % from tape to disk and no further to preserve 100\% data fidelity. In others, a
 % lossy-compressed within error bounds version may be generated and stored in
@@ -456,9 +455,9 @@ defined constraints as well as storage system state.
 system's capability for storing multiple, potentially different data quality
 versions of the same data will be leveraged to guide data eviction and migration. 
 The main challenge of this approach is to be aware of intentional placement
-decisions made to optimize future data access while ensuring proper system
+decisions made to optimize future  access while ensuring proper system
 operation by not exhausting any tier inappropriately. If a single application
-has been allocated the entire machine for a capability run, completely
+is allocated on the entire machine, completely
 consuming resources on the machine is expected. For smaller runs, these
 allocations must be balanced to support the diverse workload. 
 Our research efforts will be heavily focused on the need to, in a
