@@ -1,2 +1,30 @@
-We propose to explore the development of a performance engineering data pipeline that combines extraction of fine grained monitoring data, collation and curation of this data into a usable distributed object store, and in-situ analysis and visualization of the data to enable performance understanding at extreme scale for application developers and scientific users. Additionally we will explore the characterization of end-to-end pipelines for typical scientific workflows to better identify key optimization points and explore both application and system level optimization models for these data-centric tasks. 
-The inherent complexity of extreme scale systems, combining heterogeneous processing architectures, deep memory hierarchy and severe power constraints, provides a challenge for performance engineering…%motivation
+\section*{Introduction}
+
+\begin{itemize}
+
+\item describe data size problems for getting scientific results out
+\item describe annotating and differentiating data storage according to both
+use and inherent data qualities (e.g., contains desireable features)
+\item describe idea of using heavy compression for less interesting areas and less or no compression for more interesting areas.
+\item describe inherent errors in scientific calculations
+\item describe lossy compression within error bounds
+\item describe how incorporating plug-ins for application aware data compression opportunities to aid data storage
+\item describe Sirocco's current state and future designs as a solid foundation on which to work
+\item describe how these new features can enhance a system like Sirocco to reduce data intensity
+\item describe metadata challenges that we will also have to face.
+
+\end{itemize}
+
+every section should include:
+
+Problem and background, one or more solution approaches, and investigation goals/questions.
+
+Technical Areas
+ 
+1. Application Intentions.\\
+2. Metadata Management (middleware and storage system)\\
+3. Pluggable infrastructure for data transformation (storage system)\\
+4. Intelligent data mapping to storage/memory hierarchies (middleware and storage system)\\
+5. Predictable Performance and resolution tradeoffs\\
+6. Data re-generation. (middleware & storage)\\
+7. Learning Motifs and data re-organization.\\
