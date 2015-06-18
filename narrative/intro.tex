@@ -1,4 +1,4 @@
-\section*{Introduction}
+
 
 \begin{itemize}
 
@@ -28,3 +28,58 @@ Technical Areas
 5. Predictable Performance and resolution tradeoffs\\
 6. Data re-generation. (middleware & storage)\\
 7. Learning Motifs and data re-organization.\\
+
+\section*{Introduction}
+
+Exascale scientific discovery will be severely bottlenecked without
+sufficient new research into managing and storing the large amounts of data
+that will be produced during the simulation, and analyzed for months
+afterwards.  
+%
+In this project we will demonstrate novel techniques to
+facilitate efficient mapping of data objects, even partitioning individual
+variables, from the user space onto multiple storage tiers, and enable
+application-guided data reductions/transformations to address capacity and
+bandwidth bottlenecks, while constraining the error to be within user
+provided bounds.
+%
+We will address the associated I/O and storage challenges in the context of
+current and emerging storage landscapes, and expedite insights into critical
+scientific processes, demonstrating the validity of our approach in key DOE
+domains. 
+
+The metric we are most intrested in optimizing is time to knowledge. Current
+approaches to addressing the I/O bottleneck fall into two broad
+categories. Parallel file system approaches that optimize the throughput for
+an entire system, and I/O middleware approaches that optimize the
+performance of a single application. Both approaches have seen success but
+are unlikely to overcome the major obstactles in reaching exascale. Instead
+of trying to optimize throughput, we will seek to reduce the time to
+knowledge. This is the most significant metric for scientific applications
+where the desired outcome is not storing data, but rather executing a
+knowledge extraction process on the data. Moreover, we aim to perform the
+optimization not for a single application, but rather for workload of a
+multi-user multi-application system environment.
+
+Our approach leverages the expected characteristics of exascale storage
+hardware. The storage layer will be partitioned into multiple heterogenous
+tiers with vastly different performance characteristics. This difference
+between layers will be further exacerbated by the constraints on capacity
+and data lifetime within a layer. Tape archival storage will still maintain
+data long term, but access to this data will be orders of magnitude slower
+than the next layer and naively accessing data from archival storage will
+greatly impact productivity. 
+
+We will achieve reduced time to knowledge using a combination of techniques;
+\begin{enumerate}
+\item Data annotations specified at the application level to quantify the
+  relative important, utility and lifetime of data objects;
+\item Partitioning of data objects across the storage hierarchy utilizing
+  the additional knowledge embedded in the annotations;
+\item Evaluating the tradeoffs at runtime to guide data placement, movement,
+  and migration across storage layers using models, heuristics and continuous
+  learning;
+\item Utilize the additional knowledge available about the data to perform
+  application-aware data compression and I/O prioritization;
+\end{enumerate}
+
