@@ -83,6 +83,47 @@ We will achieve reduced time to knowledge using a combination of techniques;
   application-aware data compression and I/O prioritization;
 \end{enumerate}
 
+We are aiming to spread an output across the vertical layers of the storage
+hierarchy simultaneously.  When data should migrate to a higher tier, what
+happens to the existing version?
+
+Is there a canonical copy that is the originally written version?
+
+Is there annotation about this (I think so) attached to that part of the variable?
+
+At the tape layer, we see having a lossy compressed version just above the tape
+layer used as a directory/index and then the ``full'' resolution version on
+tape only retrieving once the user accepts the time/quality tradeoff. This is
+going to require some serious language to describe. If we have 100s PB of tape
+space, we'll need 1s PB of disk even at a 99\% data reduction. That is
+non-trivial.
+
+What happens when that data is retrieved from tape? Is a third copy made in an
+appropriately sized/quality level version for the tier it is requested to be
+pulled to? What if it is just the index version? Or the on tape version? Does
+it have a TTL because of the pain retrieving it from tape?
+
+Do we specify a target tier or just allow the system to place it in a place
+that makes sense? Given the potential space limitations, I think this is pretty
+critical because it could cause evictions or other insufficient space actions
+that are unintended. I can see us specifying that when you ask for data to be
+pulled at a particular quality level to a particular performance tier that it
+is a best effort with the use specifying if compromise or just failure is the
+result if the request cannot be fulfilled.  Making this interaction make sense
+is going to require some reasonable thought and testing. We'll probably need to
+run it past apps people to get their feedback too as I don't think we are able
+to give a solid answer without some broad input.
+
+How does the migration to ``data lakes''/``campaign storage'' work? How does the
+migration to tape ultimately happen? I think we need to incorporate some
+explicit staging commands to move data both up and down the stack along with
+some variability in placement based on data features and current system state. 
+
+Given the storage scarcity, particularly for NVM, I think we need to have a
+solid story here as part of the proposal. Yes, there are questions that have to
+be answered to build this still, but we need to have some pretty solid clarity
+where possible. I don't feel like I can explain it well enough at what I
+believe to be a proper clarity level at this point.
 
 %%% Local Variables:
 %%% mode: latex
