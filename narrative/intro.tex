@@ -4,20 +4,25 @@
 
 \item describe data size problems for getting scientific results out
 \item describe annotating and differentiating data storage according to both
-use and inherent data qualities (e.g., contains desireable features)
-\item describe idea of using heavy compression for less interesting areas and less or no compression for more interesting areas.
+  use and inherent data qualities (e.g., contains desireable features)
+\item describe idea of using heavy compression for less interesting areas
+  and less or no compression for more interesting areas.
 \item describe inherent errors in scientific calculations
 \item describe lossy compression within error bounds
-\item describe how incorporating plug-ins for application aware data compression opportunities to aid data storage
-\item describe Sirocco's current state and future designs as a solid foundation on which to work
-\item describe how these new features can enhance a system like Sirocco to reduce data intensity
+\item describe how incorporating plug-ins for application aware data
+  compression opportunities to aid data storage
+\item describe Sirocco's current state and future designs as a solid
+  foundation on which to work
+\item describe how these new features can enhance a system like Sirocco to
+  reduce data intensity
 \item describe metadata challenges that we will also have to face.
 
 \end{itemize}
 
 every section should include:
 
-Problem and background, one or more solution approaches, and investigation goals/questions.
+Problem and background, one or more solution approaches, and investigation
+goals/questions.
 
 Technical Areas
  
@@ -31,94 +36,151 @@ Technical Areas
 
 \section*{Introduction}
 
-We will examine the research challenges from the perspective of the (1) user of the system who is attempting to run an exascale simulation,
-(2) the Storage System and I/O layer which needs to negotiate amongst all of the users, and finally (3) the user of the system who is attempting to
+We will examine the research challenges from the perspective of the (1) user
+of the system who is attempting to run an exascale simulation, (2) the
+Storage System and I/O layer which needs to negotiate amongst all of the
+users, and finally (3) the user of the system who is attempting to
 understand the data which was produced from their collection of simulations.
 
-From the perspective of the simulation scientist, they want to be able to have knowledge about how much time they will 
-put into writing their data, and how much storage space they will be able to get during the lifetime of their simulations. Furthermore, they
-would like the ability to get a certain amount of Quality of Service such that they can then make decisions when the expected bandwidth, for example
-is less than what they desire. The user will then place in a certain set of rules which the system can make autonomic decisions to help decide what
-should be done. In our simple scenario, a user wants to perhaps write 1 PB of data every hour for their checkpoint/restart, and they which to write 500TB of data
-every 15 minutes for their analysis and visualization results which have been reduced by using in situ reduction techniques. At this stage, they will ask the system
-to write their data, and they would like to get an estimated time which they can then figure out, through a series of rules, whether they want to write out all of the
-data or if they want to write none of the data but rather wait for a later time to write or write a reduced amount of data, along with some code container to allow them 
-to regenerate the data with a certain level of accuracy. Furthermore, they realize that the analysis data will be saved on either the parallel file system, or the campaign storage,
-a longer term storage area with lower bandwidth than the parallel file system, or if some of the data will just go to tape. Each piece of data the user will specify the
-time they will want to keep the data round. We want the system to give the users a certain amount of currency in terms of bandwidth, storage space on each level, and latency expectations.
-These notions will be fuzzy but they will allow the user to make ad-hoc decisions to figure out what needs to be saved.
+From the perspective of the simulation scientist, they want to be able to
+have knowledge about how much time they will put into writing their data,
+and how much storage space they will be able to get during the lifetime of
+their simulations. Furthermore, they would like the ability to get a certain
+amount of Quality of Service such that they can then make decisions when the
+expected bandwidth, for example is less than what they desire. The user will
+then place in a certain set of rules which the system can make autonomic
+decisions to help decide what should be done. In our simple scenario, a user
+wants to perhaps write 1 PB of data every hour for their checkpoint/restart,
+and they which to write 500TB of data every 15 minutes for their analysis
+and visualization results which have been reduced by using in situ reduction
+techniques. At this stage, they will ask the system to write their data, and
+they would like to get an estimated time which they can then figure out,
+through a series of rules, whether they want to write out all of the data or
+if they want to write none of the data but rather wait for a later time to
+write or write a reduced amount of data, along with some code container to
+allow them to regenerate the data with a certain level of accuracy.
+Furthermore, they realize that the analysis data will be saved on either the
+parallel file system, or the campaign storage, a longer term storage area
+with lower bandwidth than the parallel file system, or if some of the data
+will just go to tape. Each piece of data the user will specify the time they
+will want to keep the data round. We want the system to give the users a
+certain amount of currency in terms of bandwidth, storage space on each
+level, and latency expectations. These notions will be fuzzy but they will
+allow the user to make ad-hoc decisions to figure out what needs to be
+saved.
 
-Since the data will be a collection of objects placed to the storage system, some of the objects will be broken up into multiple pieces by ``plug-ins'' to the system
-which will allow data to be characterized in terms of the most important pieces, and the next level of details. We can think of this as something similar to an Adaptive Mesh Refinement scheme
-which keeps track of the places where there are perhaps steep gradients (large errors on the coarser views), and smaller errors.  These then allows us to make decisions about which 
-sub-objects to save (all of the data, which will then go to different layers) or just some of the sub-objects?  The research questions are numerous: How does the user specify their intentions? 
-How does the user prioritize the different sub-objects of the data? Where does the data go into the storage hierarchy? Does the data get replicated in the lower tiers of the hierarchy? 
-When the user specifies the time they want the data saved, how does this get into the storage system?
+Since the data will be a collection of objects placed to the storage system,
+some of the objects will be broken up into multiple pieces by ``plug-ins''
+to the system which will allow data to be characterized in terms of the most
+important pieces, and the next level of details. We can think of this as
+something similar to an Adaptive Mesh Refinement scheme which keeps track of
+the places where there are perhaps steep gradients (large errors on the
+coarser views), and smaller errors. These then allows us to make decisions
+about which sub-objects to save (all of the data, which will then go to
+different layers) or just some of the sub-objects? The research questions
+are numerous: How does the user specify their intentions? How does the user
+prioritize the different sub-objects of the data? Where does the data go
+into the storage hierarchy? Does the data get replicated in the lower tiers
+of the hierarchy? When the user specifies the time they want the data saved,
+how does this get into the storage system?
 
-From the perspective of the storage system, it needs to manage the data from a given user request amongst all of the request and try to optimize the entire system. Today the problem is that
-when a user writes there is a tremendous amount of interference from other users on the system who may be writing or reading at the same time. By maiming a certain level of quality of service
-the system must potentially lock out users with lower currency they want to place in the reading or writing of their data.  The storage system must also automatically move data from one tier of the
-storage to another, without effecting the quality of service that it guarantees at the time of questioning. The storage system must also look at ways to organize data amongst all of the tiers of
-storage in one consistent way. 
+From the perspective of the storage system, it needs to manage the data from
+a given user request amongst all of the request and try to optimize the
+entire system. Today the problem is that when a user writes there is a
+tremendous amount of interference from other users on the system who may be
+writing or reading at the same time. By maiming a certain level of quality
+of service the system must potentially lock out users with lower currency
+they want to place in the reading or writing of their data. The storage
+system must also automatically move data from one tier of the storage to
+another, without effecting the quality of service that it guarantees at the
+time of questioning. The storage system must also look at ways to organize
+data amongst all of the tiers of storage in one consistent way.
 
-From the perspective of the users who want to read in the data from their simulations, and then operate on this data and possibly write data, we
-see that in general these users will be running on much less compute resources than the users who are running the simulation. One of the
-important aspects of this class of user is that they want a reduction of latency and they require a certain amount of quality of service as well. 
-When someone is doing interactive analysis and expects that the data they read in is about 10s, but it terms into 1,000s, the user typically
-tends to either wait another day for doing their analysis, or gets frustrated and reads much less data than they really need to. Furthermore
-the user tends to read in just a small sample of the data without much knowledge if they are missing important pieces of the data. 
+From the perspective of the users who want to read in the data from their
+simulations, and then operate on this data and possibly write data, we see
+that in general these users will be running on much less compute resources
+than the users who are running the simulation. One of the important aspects
+of this class of user is that they want a reduction of latency and they
+require a certain amount of quality of service as well. When someone is
+doing interactive analysis and expects that the data they read in is about
+10s, but it terms into 1,000s, the user typically tends to either wait
+another day for doing their analysis, or gets frustrated and reads much less
+data than they really need to. Furthermore the user tends to read in just a
+small sample of the data without much knowledge if they are missing
+important pieces of the data.
 
-Our research into the storage system and middle ware layers must address many of these challenges including
+Our research into the storage system and middle ware layers must address
+many of these challenges including
 \begin{enumerate}
-\item  How do we describe the user intentions at the API layer and have this communicated down to the middle-ware and storage layers?
-\item How do we allow users to define their user defined compression techniques and have this data read back from the storage system layers? Where do we execute the decompression techniques
-\item How do we evaluate the tradeoffs at runtime to guide data placement, including the movement of data across the network, across the
-different storage tiers? 
-\item Can we use different forms of learning techniques as daemons on the system to perform data migration from one storage tier to another?
-For example, if we see that a user is looking at one time slice after another for a certain object in their dataset which is in the slower tiers of 
-the hierarchy, do we automatically propane up the data which has not been requested in the hope that this will be requested data?
-\item Can we understand the true need of campaign storage and understand the possible impact of the campaign storage if we run a 
-hadoop-like file-system instead of a lustre/gpfs file system?
-\item Can we limit the amount of data duplication? Data space is going to be very constrained on the exascale system so we must ensure that
-minimal copies are made of data, and when data is duplicated, they are removed through a garbage collection routine.
-\item Can we build a model to give us the time estimates during the reading and writing phases, so that rules can be in place from the user
-perspective to make adaptive decisions. For example, if the file system says that reading will take 3 months, users can they place in rules to
-then read in a subset of data, and they can understand which data can be read quickly and which pieces will take more time.
-\item Can we understand how to place code in the system which will allow data-regeneration to take place. 
-\item How does the storage system do a better job in managing request from all of the users on a LCF than today? We realize that today
-users who have a better middlware system can often lock other users from getting high performance when they are running. If we have 
-the concept of currency which is eventually used in the same extent as node-hours, then users will have to be able to think about how much
-storage and how much bandwidth they can choose. One question that needs to be understood is if there are times when the system sees
-that there are very few  storage system resources being used, then the lucky users can get the bandwidth cheaper than at times of heavy usage.
-How can we enforce this?
-\item How do we manage all of the metdata not only from the principle objects, but from the sub-objects? How well will this scale when we have
-users who can potentially create billions of objects from their simulation? 
-
+\item How do we describe the user intentions at the API layer and have this
+  communicated down to the middle-ware and storage layers?
+\item How do we allow users to define their user defined compression
+  techniques and have this data read back from the storage system layers?
+  Where do we execute the decompression techniques 
+\item How do we evaluate the tradeoffs at runtime to guide data placement,
+  including the movement of data across the network, across the different
+  storage tiers? (data movement and quality tradeoff)
+\item Can we use different forms of learning techniques as daemons on the
+  system to perform data migration from one storage tier to another? For
+  example, if we see that a user is looking at one time slice after another
+  for a certain object in their dataset which is in the slower tiers of the
+  hierarchy, do we automatically propane up the data which has not been
+  requested in the hope that this will be requested data? (prediction and
+  prefetching, user defined compression on movement)
+\item Can we understand the true need of campaign storage and understand the
+  possible impact of the campaign storage if we run a hadoop-like
+  file-system instead of a lustre/gpfs file system? (additional layers)
+\item Can we limit the amount of data duplication? Data space is going to be
+  very constrained on the exascale system so we must ensure that minimal
+  copies are made of data, and when data is duplicated, they are removed
+  through a garbage collection routine. (space management)
+\item Can we build a model to give us the time estimates during the reading
+  and writing phases, so that rules can be in place from the user
+  perspective to make adaptive decisions. For example, if the file system
+  says that reading will take 3 months, users can they place in rules to
+  then read in a subset of data, and they can understand which data can be
+  read quickly and which pieces will take more time. (estimation)
+\item Can we understand how to place code in the system which will allow
+  data-regeneration to take place. (regeneration)
+\item How does the storage system do a better job in managing request from
+  all of the users on a LCF than today? We realize that today users who have
+  a better middlware system can often lock other users from getting high
+  performance when they are running. If we have the concept of currency
+  which is eventually used in the same extent as node-hours, then users will
+  have to be able to think about how much storage and how much bandwidth
+  they can choose. One question that needs to be understood is if there are
+  times when the system sees that there are very few storage system
+  resources being used, then the lucky users can get the bandwidth cheaper
+  than at times of heavy usage. How can we enforce this? (Fairness)
+\item How do we manage all of the metdata not only from the principle
+  objects, but from the sub-objects? How well will this scale when we have
+  users who can potentially create billions of objects from their
+  simulation? (scalability and discovery)
 \end{enumerate}
 
 Exascale scientific discovery will be severely bottlenecked without
 sufficient new research into managing and storing the large amounts of data
 that will be produced during the simulation, and analyzed for months
-afterwards.  
+afterwards.
 %
-In this project we will demonstrate novel techniques to
-facilitate efficient mapping of data objects, even partitioning individual
-variables, from the user space onto multiple storage tiers, and enable
-application-guided data reductions/transformations to address capacity and
-bandwidth bottlenecks, while constraining the error to be within user
-provided bounds. 
+In this project we will demonstrate novel techniques to facilitate efficient
+mapping of data objects, even partitioning individual variables, from the
+user space onto multiple storage tiers, and enable application-guided data
+reductions/transformations to address capacity and bandwidth bottlenecks,
+while constraining the error to be within user provided bounds.
 %
 We will address the associated I/O and storage challenges in the context of
 current and emerging storage landscapes, and expedite insights into critical
 scientific processes, demonstrating the validity of our approach in key DOE
-domains.  Our techniques will be to research novel techniques into a Scalable 
-Storage Software Infrastructure by integrating services from the middle-ware layer which will
-talk to the applications, with the Storage system. The negotation between these layers will
-be a fundamental service which we will create in this project to ensure that users will be able
-to save `'the best'' amount of data in the different storage tiers.
+domains. Our techniques will be to research novel techniques into a Scalable
+Storage Software Infrastructure by integrating services from the middle-ware
+layer which will talk to the applications, with the Storage system. The
+negotation between these layers will be a fundamental service which we will
+create in this project to ensure that users will be able to save `'the
+best'' amount of data in the different storage tiers.
 
-The metric we are most interested in optimizing is time to knowledge. Current
-approaches to addressing the I/O bottleneck fall into two broad
+The metric we are most interested in optimizing is time to knowledge.
+Current approaches to addressing the I/O bottleneck fall into two broad
 categories. Parallel file system approaches that optimize the throughput for
 an entire system, and I/O middleware approaches that optimize the
 performance of a single application. Both approaches have seen success but
@@ -137,7 +199,7 @@ between layers will be further exacerbated by the constraints on capacity
 and data lifetime within a layer. Tape archival storage will still maintain
 data long term, but access to this data will be orders of magnitude slower
 than the next layer and naively accessing data from archival storage will
-greatly impact productivity. 
+greatly impact productivity.
 
 We will achieve reduced time to knowledge using a combination of techniques;
 \begin{enumerate}
@@ -146,53 +208,56 @@ We will achieve reduced time to knowledge using a combination of techniques;
 \item Partitioning of data objects across the storage hierarchy utilizing
   the additional knowledge embedded in the annotations;
 \item Evaluating the tradeoffs at runtime to guide data placement, movement,
-  and migration across storage layers using models, heuristics and continuous
-  learning;
+  and migration across storage layers using models, heuristics and
+  continuous learning;
 \item Utilize the additional knowledge available about the data to perform
   application-aware data compression and I/O prioritization;
 \end{enumerate}
 
 We are aiming to spread an output across the vertical layers of the storage
-hierarchy simultaneously.  When data should migrate to a higher tier, what
+hierarchy simultaneously. When data should migrate to a higher tier, what
 happens to the existing version?
 
 Is there a canonical copy that is the originally written version?
 
-Is there annotation about this (I think so) attached to that part of the variable?
+Is there annotation about this (I think so) attached to that part of the
+variable?
 
-At the tape layer, we see having a lossy compressed version just above the tape
-layer used as a directory/index and then the ``full'' resolution version on
-tape only retrieving once the user accepts the time/quality tradeoff. This is
-going to require some serious language to describe. If we have 100s PB of tape
-space, we'll need 1s PB of disk even at a 99\% data reduction. That is
-non-trivial.
+At the tape layer, we see having a lossy compressed version just above the
+tape layer used as a directory/index and then the ``full'' resolution
+version on tape only retrieving once the user accepts the time/quality
+tradeoff. This is going to require some serious language to describe. If we
+have 100s PB of tape space, we'll need 1s PB of disk even at a 99\% data
+reduction. That is non-trivial.
 
-What happens when that data is retrieved from tape? Is a third copy made in an
-appropriately sized/quality level version for the tier it is requested to be
-pulled to? What if it is just the index version? Or the on tape version? Does
-it have a TTL because of the pain retrieving it from tape?
+What happens when that data is retrieved from tape? Is a third copy made in
+an appropriately sized/quality level version for the tier it is requested to
+be pulled to? What if it is just the index version? Or the on tape version?
+Does it have a TTL because of the pain retrieving it from tape?
 
 Do we specify a target tier or just allow the system to place it in a place
-that makes sense? Given the potential space limitations, I think this is pretty
-critical because it could cause evictions or other insufficient space actions
-that are unintended. I can see us specifying that when you ask for data to be
-pulled at a particular quality level to a particular performance tier that it
-is a best effort with the use specifying if compromise or just failure is the
-result if the request cannot be fulfilled.  Making this interaction make sense
-is going to require some reasonable thought and testing. We'll probably need to
-run it past apps people to get their feedback too as I don't think we are able
-to give a solid answer without some broad input.
+that makes sense? Given the potential space limitations, I think this is
+pretty critical because it could cause evictions or other insufficient space
+actions that are unintended. I can see us specifying that when you ask for
+data to be pulled at a particular quality level to a particular performance
+tier that it is a best effort with the use specifying if compromise or just
+failure is the result if the request cannot be fulfilled. Making this
+interaction make sense is going to require some reasonable thought and
+testing. We'll probably need to run it past apps people to get their
+feedback too as I don't think we are able to give a solid answer without
+some broad input.
 
-How does the migration to ``data lakes''/``campaign storage'' work? How does the
-migration to tape ultimately happen? I think we need to incorporate some
+How does the migration to ``data lakes''/``campaign storage'' work? How does
+the migration to tape ultimately happen? I think we need to incorporate some
 explicit staging commands to move data both up and down the stack along with
-some variability in placement based on data features and current system state. 
+some variability in placement based on data features and current system
+state.
 
 Given the storage scarcity, particularly for NVM, I think we need to have a
-solid story here as part of the proposal. Yes, there are questions that have to
-be answered to build this still, but we need to have some pretty solid clarity
-where possible. I don't feel like I can explain it well enough at what I
-believe to be a proper clarity level at this point.
+solid story here as part of the proposal. Yes, there are questions that have
+to be answered to build this still, but we need to have some pretty solid
+clarity where possible. I don't feel like I can explain it well enough at
+what I believe to be a proper clarity level at this point.
 
 %%% Local Variables:
 %%% mode: latex
