@@ -36,11 +36,22 @@ Technical Areas
 
 \section*{Introduction}
 
-We will examine the research challenges from the perspective of the (1) user
-of the system who is attempting to run an exascale simulation, (2) the
-Storage System and I/O layer which needs to negotiate amongst all of the
-users, and finally (3) the user of the system who is attempting to
-understand the data which was produced from their collection of simulations.
+The Lightweight File Systems project from Sandia sought to strip down a file
+system to the minimum features and encourage layering our auxiliary services to
+add features for a particular use. Sirocco is the storage mechanism for LWFS.
+We are proposing to combine the apps knowledge from ORNL with the SNL system
+and the expertise gaps represented in the additional people to investigate how
+to make a data, workflow, and application aware storage system.
+
+We will examine the research challenges from the perspective of the
+%
+(1) user of the system who is attempting to run an exascale simulation,
+%
+(2) the Storage System and I/O layer which needs to negotiate amongst all of
+the users, and finally
+%
+(3) the user of the system who is attempting to understand the data which
+was produced from their collection of simulations.
 
 From the perspective of the simulation scientist, they want to be able to
 have knowledge about how much time they will put into writing their data,
