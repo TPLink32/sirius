@@ -85,6 +85,14 @@ minimal copies are made of data, and when data is duplicated, they are removed t
 perspective to make adaptive decisions. For example, if the file system says that reading will take 3 months, users can they place in rules to
 then read in a subset of data, and they can understand which data can be read quickly and which pieces will take more time.
 \item Can we understand how to place code in the system which will allow data-regeneration to take place. 
+\item How does the storage system do a better job in managing request from all of the users on a LCF than today? We realize that today
+users who have a better middlware system can often lock other users from getting high performance when they are running. If we have 
+the concept of currency which is eventually used in the same extent as node-hours, then users will have to be able to think about how much
+storage and how much bandwidth they can choose. One question that needs to be understood is if there are times when the system sees
+that there are very few  storage system resources being used, then the lucky users can get the bandwidth cheaper than at times of heavy usage.
+How can we enforce this?
+\item How do we manage all of the metdata not only from the principle objects, but from the sub-objects? How well will this scale when we have
+users who can potentially create billions of objects from their simulation? 
 
 \end{enumerate}
 
