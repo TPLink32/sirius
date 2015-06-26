@@ -31,12 +31,25 @@ Technical Areas
 
 \section*{Introduction}
 
-The Lightweight File Systems project from Sandia sought to strip down a file
-system to the minimum features and encourage layering our auxiliary services to
-add features for a particular use. Sirocco is the storage mechanism for LWFS.
-We are proposing to combine the apps knowledge from ORNL with the SNL system
-and the expertise gaps represented in the additional people to investigate how
-to make a data, workflow, and application aware storage system.
+The Lightweight File Systems~\cite{lwfs} (LWFS) project from Sandia sought to
+demonstrate stripping down a file system to the bare minimum features required
+for any storage system. Then, additional functionality and semantics, such as
+POSIX-style directories and consistency requirements, are added in using
+auxiliary services separate from the stack or by layering providing a new
+interface to the storage system. The project demonstrated that using a core
+object storage system with integrated security providing authentication and
+autorization services, customized storage interfaces could be developed with
+exactly the overhead required for different applications. The second phase of
+LWFS, known as Sirocco~\cite{sirocco}, is investigating how to manage storage
+devices for efficient and scalable storage performance.  Sirocco has been in
+process for three years and has a usable storage infrastructure system. This
+proposal seeks to build upon this work to demonstrate an application, data, and
+usage aware storage system optimized for exascale composite applications and
+capability application runs. We are proposing to combine the applications
+knowledge from ORNL with the SNL LWFS system and storage system knowledge, the
+metadata and storage systems knowledge of UCSC, and the middleware expertise of
+Rutgers to investigate how to make a data, workflow, and application aware
+storage system.
 
 We will examine the research challenges from the perspective of the (1) user of the system who is attempting to run an exascale simulation,
 (2) the Storage System and I/O layer which needs to negotiate amongst all of the users, and finally (3) the user of the system who is attempting to
