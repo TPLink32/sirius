@@ -1,10 +1,55 @@
 \section*{Enabling Technologies}
 
-\begin{itemize}
+Significant existing work will serve as the foundation upon which this project
+will be performed.
 
-\item Sirocco
-\item ADIOS
-\item DataSpaces
-\item Anything Else
+At the lowest level is the Lightweight File Systems (LWFS) project~\cite{lwfs}.
+As mentioned above, LWFS's goal is to provide the simplest core services for
+a storage system and investigate adding functionality by using auxiliary
+services or layering an API on top that offers more functionality. For example,
+by eliminating consistency checks from the core system, applications already
+managing consistency can eliminate the redundant check enhancing performance.
 
-\end{itemize}
+The current LWFS project phase is investigating new ways for managing storage
+devices. This project, Sirocco, offers a peer-to-peer style data storage device
+mesh wtih data migrating based on use, required resilience, and available
+resources. For example, when writing data initially into Sirocco, required
+resilience characteristics are provided prompting Sirocco to ensure the data is
+stored on appropriate storage device(s) that meet the resilience requirement.
+When a particular device is full, Sirocco determines if it should migrate the
+data to a new location or if it is a copy beyond the resilience requirement. If
+this copy must still be protected, Sirocco will find a place of sufficient 
+resilience to move the data to before deleting the local copy. Further, when
+data is requested, a client can ask any Sirocco server and Sirocco will find
+the data returning it to the client. If desired, the canonical data location
+can be moved on client request to offer better performance for the client. In
+additional features, a stored object can have multiple data forks that can
+store different versions or aspects of the same data.  For this project, we
+will build on this Sirocco foundation for data placement, migration, and the
+version storage (via the fork mechanism). 
+
+The Sirocco API is much more complex than a standard POSIX call prompting
+layering a more user friendly interface on top. The ADIOS~\cite{adios} API
+offers an API nearly as simple as POSIX, but with the ability to change the
+actual data transport mechanism without changing the source code. This affords
+writing to a single output API while shifting from writing to a POSIX file
+system, some middleware like DataSpaces~\cite{dataspaces}, or some other system
+like Sirocco all without changing the source code. ADIOS has proven effective
+for writing to POSIX file systems, data staging
+systems~\cite{predata,dataspaces,nessie}, workflow systems~\cite{flexpath}, and
+even nothing through the use of a NULL transport.
+
+At a similar level as ADIOS, but can be used in conjunction, are tools like
+DataSpaces~\cite{dataspaces}. They offer a way to request data set portions
+from a one component by the next componet in a data flow. In DataSpaces case,
+the data transfer does not have to correspond to the data from a single
+process.  Instead, DataSpaces will determine where the data is and issue
+requests to pull the data from the source to the sink in an on demand process.
+
+For this project, we plan to use the Sirocco data storage mechanism to
+offer managing the actual data storage on all of the different tiers. We'll add
+a data management layer as part of the file system to handle data discovery and
+metadata tasks. As a middleware layer, we will investigate offering differing
+data compression, fidelity, and storage placement options. Through this 
+combination, we will be able to deliver a complete end-to-end system.
+
