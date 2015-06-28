@@ -1,4 +1,39 @@
 \subsubsection{Discovery}
 
-Jay
+Hierarchical Storage Management (HSM) systems offer a strct caching approach
+for managing different storage capacities trading off performance for capacity.
+By maintaining a single namespace across all tiers, it is possible to list a
+single directory view with files stored at different tiers. While this approach
+to managing multi-tier storage works, it is far from ideal for scientific
+simulations.
 
+Our goal with this proposal is to offer a similar capability, but use a finer
+granularity. Instead of a single file such as might be used to store an entire
+timestep output for a simulation, we will demonstrate offering the same
+capability at a subset of a single variable level. By shifting to a
+finer-grained approach, we will enable more effective use of close/fast/small
+storage tiers. Traiditional HSM stores an entire file on a tier making room if
+insufficient space is available. With this shift to a partial variable
+granularity, a 1 PB output with 500 GB of ``high interest'' data can limit this
+costly tier ussage to just 500 GB greatly enhancing usability.
+
+Tagging a variable subset as ``high interest'' requires intervention from the
+application and/or middleware to determine what data meets this criteria. The
+storage system itself simply needs to offer an ability to perform different
+actions based on this information.
+
+The challenge for discovery is that potentially, data will migrate from where
+it is initially stored to a new location within the storage system. Sirocco
+offers an ability to search for data that has moved as well as forcing a
+particular resilience-based replica be the ``authoritative'' version. We will
+investigate if the current Sirocco functionality is capable of supporting the
+new operating modes we wish to offer. Initial expectations suggest having
+bounded time guarantees for finding data are critical for offering the quality
+of service guarantees we wish to offer. This new work will be an expansion of
+Sirocco's currently planned features.
+
+The other aspect of discovery is the negotiation between the user and the
+storage system for a data quality/retrevial time tradeoff. The naming service
+will work hand-in-hand with the discovery, data migration, and time estimation
+services to offer the best possible options for data retrevial based on quality
+of service requested.
