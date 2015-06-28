@@ -52,58 +52,53 @@
 
 % Even with the space manipulation above, we need to cheat a little
 \enlargethispage{2\baselineskip}
+Exascale scientific discovery will be
+severely bottlenecked without sufficient new research into managing and
+storing the large amounts of data that will be produced during the
+simulation, and analyzed for months afterwards. In this project we will
+demonstrate novel techniques to  facilitate efficient mapping of data
+objects, even partitioning individual variables, from
+the user space onto multiple storage tiers, and enable application-guided
+data reductions/transformations to address capacity and bandwidth
+bottlenecks. 
+Our goal in this project is
+to address the associated I/O and storage challenges in the context of
+current and emerging storage landscapes, and expedite insights into mission
+critical scientific processes; which is associated with {\bf theme two} of the FOA. To that end, we will build on the
+capabilities offered by ADIOS and DataSpaces at ORNL that provide I/O abstractions
+and services, the Sirocco peer-to-peer file system at
+Sandia and the object storage and annotation expertise of UC Santa Cruz, to
+explore application and multi-tier storage aware data management
+solutions.    This project
+brings together a  team with strong expertise in I/O middleware (ORNL, Rutgers), file system (SNL, UCSC) and storage (UCSC), and connects and
+coordinates these key storage components in a seamless fashion.
 
+Our objective here is to reduce the time to knowledge, not just for a single
+application, but for the entire workload in a multi-user environment, where
+the storage is shared among users.
+We achieve this goal by allowing selectable data quality, by trading its accuracy and error
+in order to meet the time or resource constraint. 
+We will explore beyond 
+checkpoint/restart I/O, and will address the challenges posed by 
+key
+data access patterns in the knowledge gathering process.
+Ultimately, we will take the knowledge from the storage system to provide vital feedback to the middleware 
+so that the best possible decisions can be autonomically made between the user intentions and
+the available system resources.  
+We will test our prototypes  on current and future DOE system with many of today's applications, including the
+s XGC1, GTC, QMCPack, and SpecFM3D simulations. 
+Our solutions will provide  new functionalities and APIs for
+1) specifying, at the application level, data annotations that enable the
+quantification of the relative importance and utility of data objects and
+enable partitioning  across the storage hierarchy;
+2) specifying selectable performance/quality/cost tradeoffs from both the
+application and system perspectives;
+3) evaluating these tradeoffs at runtime during data placement and movement,
+and executing the resultant policies in an autonomic system using models,
+heuristics and continuous learning; and
+4) leveraging techniques such as application-aware data compression, 
+and I/O prioritization to enforce these
+policies.
 \noindent
-Outline and writing assignments:
-later the abstract will go here.
-\begin{enumerate}
-\item Introduction - Scott - Hasan - Gary - Jay 4 pages
-   \begin{enumerate}
-      \item resource drivers
-      \item application drivers
-      \item overall example which we will use for the test
-      \item  need to answer the questions what we are doing, research  , prototype, aim, and what is new
-   \end{enumerate}
-\item Enabling Technologies - Jay - 1 page
-   \begin{enumerate}
-   	\item Sirocco
-   	\item ADIOS
-   	\item DataSpaces
-   	\item Anything else
-   \end{enumerate}
- \item {Proposed Research and Methods} - 14 pages
-          Proposed work
-          Execution path
-          Related work
-
-    \begin{enumerate}
-       \item Application interface - Hasan, Manish, Gary, Kimmy, Jay, Mark
-          \begin{enumerate}
-            \item APIS - Kimmy  (rules/policy, user decision of data compression, quick feedback from system monitoring, QoS)
-            \item description of data - Gary `` how we describe the structure and semantic of the data, how will it be stored, application level importance, utility curve''
-            \item collection of data reduction techniques - Mark
-            \item data re-organization specification - Scott, Mark
-            \item QoS - Hasan/Gary/Carlos - emission control, some guarantees on the estimates
-            \item data placement and movement (anticipatory and on-demand)  - Manish, Gary 
-            \item policies - Jay
-          \end{enumerate}
-      \item Storage System - Jay, Carlos, Manish, Lee, Matthew, Feyi
-      \begin{enumerate}
-         \item migration - Lee
-         \item Match organization of data with the medium characteristics - Carlos, Hasan
-         \item Eviction metrics - Carlos, Hasan
-         \item resource management -Jay
-         \item QoS - Carlos 
-         \item Discovery - Jay - moves things based on pressure on the system, getting to some things take effort because it is at different places, understand what our different options in terms of data quality... ability to decide the trade-offs 
-         \item Naming Service (not completely sure what this is?) - Jay
-          \item data placement and movement (anticipatory and on-demand) from a storage system perspective - Manish 
-         \item Estimation of Times - Feyi
-      \end{enumerate}
-    \end{enumerate}
-\item Evaluation - 1 pages - Scott
-\item Timetable of Activities - 1/2 page
-\item Project Management Plan - 1 page - Scott
-\item Project Objective  1/2 page
-\end{enumerate}
 
 \vfill
