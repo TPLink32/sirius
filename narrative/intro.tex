@@ -6,21 +6,26 @@ sufficient new research into managing and storing the large amounts of data
 that will be produced during the simulation, and analyzed for months
 afterwards.
 %
-In this project we will demonstrate novel techniques to facilitate efficient
-mapping of data objects, even partitioning individual variables, from the
-user space onto multiple storage tiers, and enable application-guided data
-reductions/transformations to address capacity and bandwidth bottlenecks,
-while constraining the error to be within user provided bounds.
+In this project we will demonstrate a cooperative approach for storing data
+where the user and the storage system work together to achieve the best data
+quality and performance based on data features, storage tier characteristics,
+and system state. We will investigate novel techniques to facilitate efficient
+mapping of data objects, even partitioning individual variables, from the user
+space onto multiple storage tiers and enable application-guided data
+reductions/transformations to address capacity and bandwidth bottlenecks while
+constraining the error to be within user provided bounds.
 %
 We will address the associated I/O and storage challenges in the context of
-current and emerging storage landscapes, and expedite insights into critical
-scientific processes, demonstrating the validity of our approach in key DOE
-domains. Our techniques will be to research novel techniques into a Scalable
-Storage Software Infrastructure by integrating services from the middle-ware
-layer which will talk to the applications, with the Storage system. The
-negotation between these layers will be a fundamental service which we will
-create in this project to ensure that users will be able to save `'the
-best'' amount of data in the different storage tiers.
+current and emerging storage landscapes and expedite insights into critical
+scientific processes demonstrating the validity of our approach in key DOE
+domains. We will research novel techniques into a Scalable
+Storage Software Infrastructure integrating services from the middle-ware
+layer adapted to each application with Storage System features to support the
+novel data distribution both horizontally and vertically across the storage
+system. The negotation between these layers will be a fundamental service 
+to ensure that users will be able to save `'the best'' amount of data using the
+right storage technology available at request time across the entire storage
+stack.
 
 The metric we are most interested in optimizing is time to knowledge.
 Current approaches to addressing the I/O bottleneck fall into two broad
@@ -44,10 +49,11 @@ data long term, but access to this data will be orders of magnitude slower
 than the next layer and naively accessing data from archival storage will
 greatly impact productivity.
 
-To address these challenges we will We are proposing to combine the applications
-knowledge from ORNL, from the ADIOS project, with the SNL LWFS system and storage system knowledge, the
-metadata and storage systems knowledge of UCSC, and the middleware expertise of
-Rutgers to investigate how to make a data, workflow, and application aware
+To address these challenges we will We are proposing to combine the
+applications knowledge from ORNL, from the ADIOS project, with the SNL
+Lightweight File Systems project and storage system knowledge, the metadata
+management and storage systems knowledge of UCSC, and the middleware expertise
+of Rutgers to investigate how to make a data, workflow, and application aware
 storage system.
 
 %ADIOS was developed with the understanding that we must
@@ -79,10 +85,11 @@ storage system.
 %need to consider additional features such as compression and
 %indexing to better cope with the expected tsunami of data.
 
-In this project we extend ADIOS with new APIs and novel techniques to talk to the
-storage back-end. We will also test our ideas on the next generation OLCF system along with
-the next generation NERSC system. One of the clear challenges of this work will be in accessing new APIs which
-will give the applications much more control and flexibility of their I/O.
+In this project we extend ADIOS~\cite{adios} with new APIs and novel techniques
+to talk to the storage back-end. The key idea is offering the ability to
+negotiate with the storage system to agree on the tradeoff between data quality
+and response time.  We will test our ideas on the next generation OLCF,
+SNL/LANL, and  NERSC systems.
 %
 In this project we will make use of the many inovations we discovered in 
 the Lightweight File Systems~\cite{lwfs} (LWFS) project, where Sandia sought to
@@ -90,15 +97,14 @@ demonstrate stripping down a file system to the bare minimum features required
 for any storage system. Then, additional functionality and semantics, such as
 POSIX-style directories and consistency requirements, are added in using
 auxiliary services separate from the stack or by layering providing a new
-interface to the storage system. The project demonstrated that using a core
-object storage system with integrated security providing authentication and
-authorization services, customized storage interfaces could be developed with
-exactly the overhead required for different applications. The second phase of
-LWFS, known as Sirocco~\cite{sirocco}, is investigating how to manage storage
-devices for efficient and scalable storage performance.  Sirocco has been in
-process for three years and has a usable storage infrastructure system.
-
-
+interface to the storage system. The project's first phase demonstrated that
+using a core object storage system with integrated security providing
+authentication and authorization services, customized storage interfaces could
+be developed with exactly the overhead required for different applications. The
+second phase of LWFS, known as Sirocco~\cite{sirocco}, is investigating how to
+manage storage devices for efficient and scalable storage performance.  Sirocco
+has been in process for three years and has a usable storage infrastructure
+system.
 
 %  This
 %proposal seeks to build upon this work to demonstrate an application, data, and
@@ -126,35 +132,38 @@ have knowledge about how much time they will put into writing their data,
 and how much storage space they will be able to get during the lifetime of
 their simulations. Furthermore, they would like the ability to get a certain
 amount of Quality of Service such that they can then make decisions when the
-expected bandwidth, for example is less than what they desire. The user will
+expected bandwidth, for example, is less than what they desire. The user will
 then place in a certain set of rules which the system can make autonomic
 decisions to help decide what should be done.
 %
 
-One of the key aspects of our approach is to allow the users to define the utility (importance) of their data;
-in other-words, for each data object, users need to come up with a way to define pieces of the object
-which have more utility (more importance) . There are many clear research challenges faced with this approach 
-including: 1) How do we make this simple enough so that users can do this, 2) can we come up with a model to
-allow the system to then make the autonomic decisions to save the data which has the highest utility, and 3) can
-we allow the back-end storage system to interact with this definition so that it can optimize not just over one application
-but across all of the applications.
+One of the key aspects of our approach is to allow the users to define the
+utility (importance) of their data; in other-words, for each data object, users
+need to come up with a way to define pieces of the object which have more
+utility (more importance) . There are many clear research challenges faced with
+this approach including: 1) How do we make this simple enough so that users can
+do this, 2) can we come up with a model to allow the system to then make the
+autonomic decisions to save the data which has the highest utility, and 3) can
+we allow the back-end storage system to interact with this definition so that
+it can optimize not just over one application but across all of the
+applications.
  %
-  In our simple scenario, a user
-wants to perhaps write 1 PB of data every hour for their checkpoint/restart,
-and they which to write 500TB of data every 15 minutes for their analysis
-and visualization results which have been reduced by using in situ reduction
-techniques. At this stage, they will ask the system to write their data, and
-they would like to get an estimated time which they can then figure out,
-through a series of rules, whether they want to write out all of the data or
-if they want to write none of the data but rather wait for a later time to
-write or write a reduced amount of data, along with some code container to
-allow them to regenerate the data with a certain level of accuracy.
-Furthermore, they realize that the analysis data will be saved on either the
-parallel file system, or the campaign storage, a longer term storage area
-with lower bandwidth than the parallel file system, or if some of the data
-will just go to tape. Each piece of data the user will specify the lifetime so that the 
-data with the most important utility is kept around for the longest period of time, but the data which has the least utility might
-be migrated to lower layers of the storage hierarchy faster. 
+  In our simple scenario, a user wants to perhaps write 1 PB of data every hour
+for their checkpoint/restart, and they which to write 500TB of data every 15
+minutes for their analysis and visualization results which have been reduced by
+using in situ reduction techniques. At this stage, they will ask the system to
+write their data, and they would like to get an estimated time which they can
+then figure out, through a series of rules, whether they want to write out all
+of the data or if they want to write none of the data but rather wait for a
+later time to write or write a reduced amount of data, along with some code
+container to allow them to regenerate the data with a certain level of
+accuracy.  Furthermore, they realize that the analysis data will be saved on
+either the parallel file system, or the campaign storage, a longer term storage
+area with lower bandwidth than the parallel file system, or if some of the data
+will just go to tape. Each piece of data the user will specify the lifetime so
+that the data with the most important utility is kept around for the longest
+period of time, but the data which has the least utility might be migrated to
+lower layers of the storage hierarchy faster. 
 
 Since the data will be a collection of objects placed to the storage system,
 some of the objects will be broken up into multiple pieces by ``plug-ins''
@@ -177,7 +186,7 @@ From the perspective of the storage system, it needs to manage the data from
 a given user request amongst all of the request and try to optimize the
 entire system. Today the problem is that when a user writes there is a
 tremendous amount of interference from other users on the system who may be
-writing or reading at the same time. By maiming a certain level of quality
+writing or reading at the same time. By requiring a certain quality
 of service the system must potentially lock out users with lower currency
 they want to place in the reading or writing of their data. The storage
 system must also automatically move data from one tier of the storage to
@@ -185,12 +194,16 @@ another, without effecting the quality of service that it guarantees at the
 time of questioning. The storage system must also look at ways to organize
 data amongst all of the tiers of storage in one consistent way.
 
-One of the clear research objectives of this project is to understand how the storage system can interact
-with the middleware (application-aware) piece so that the data with the highest utility is kept on the fastest 
-layers of the storage system for as long as specified. Clearly we need to maintain some sort of QoS such that
-we can give fuzzy-estimates of the time it will take to write/read data from the different layers, and clearly it is critical
-that the storage system can manage the data across all of the layers. We will use learning techniques to automatically
-migrate data sub-objects across the hierarchy as well as to eventually evict data which is large and has very low utility.
+One of the clear research objectives of this project is to understand how the
+storage system can interact with the middleware (application-aware) piece so
+that the data with the highest utility is kept on the fastest layers of the
+storage system for as long as specified. Clearly we need to maintain 
+QoS such that fuzzy-estimates of the time it will take to write/read data from
+the different layers informs any migration/eviction decisions, and clearly it
+is critical that the storage system can manage the data across all of the
+layers. We will use learning techniques to automatically migrate data
+sub-objects across the hierarchy as well as to eventually evict data which is
+large and has very low utility.
 
 
 \subsection{Reading  Perspective}
@@ -202,8 +215,8 @@ than the users who are running the simulation. One of the important aspects
 of this class of user is that they want a reduction of latency and they
 require a certain amount of quality of service as well. When someone is
 doing interactive analysis and expects that the data they read in is about
-10s, but it terms into 1,000s, the user typically tends to either wait
-another day for doing their analysis, or gets frustrated and reads much less
+10s, but it turns into 1,000s, the user typically tends to either wait
+another day for doing their analysis or gets frustrated and reads much less
 data than they really need to. Furthermore the user tends to read in just a
 small sample of the data without much knowledge if they are missing
 important pieces of the data.
