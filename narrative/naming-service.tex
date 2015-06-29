@@ -1,4 +1,28 @@
 \subsubsection{Naming Service}
 
-Manish
+A traditional POSIX naming service offers a hierarchical space consisting of
+directories and files. LWFS and Sirocco have abandonded this as the default
+model in favor of a container/object/fork/addrress tuple for identifying data.
+LWFS demonstrated a POSIX-style namespace on the side kept in sync using a
+transaction process like D2T~\cite{d2t} showing that this alternative approach
+can support traditional POSIX API calls even though the underlying storage
+system uses a different model.
 
+For this project, we seek to offer a similar POSIX-style namespace for naming
+objects, but store a rich metadata collection with each entry to handle data
+migration, discovery, and writing and retrevial time estimations. Further, we
+will also have to track data stored in different tiers, even at the variable
+subset level. This additional metadata load will require a more complex naming
+service that reacts to automatic data movement while caching current data
+locations accelerating data access operations avoiding any data discovery
+operations.
+
+In addition to the basic naming operations, we will also need to incorporate
+authorization capabilities. Sirocco currently integrates with a Kerberos
+service for authentication and authorization. Given a capability ticket, a
+user can access different objects as needed.
+
+The main challenge of incorporating the additional, rich metadata will be
+joined by the additional challenge of coordinating with the other storage
+and application-layer services to offer the best access times possible for data
+stored in the system.
