@@ -1,0 +1,119 @@
+\paragraph{Background:} ``Quality of Service'' (QoS) refers to the
+properties of the performance qualtiy of a particular service.
+Performance quality can be expressed in either relative or absolute
+terms. Examples of relative performance qualities are ``fair'',
+``proportional'', or ``priority/class-based'' (``the higher the
+priority the better the service'' or ``1st class is better than
+2nd''). The key advantage of relative performance qualities is that
+they are easy to implement. The key disadvantage is the difficulty
+of making any strong guarantees based on those implementations --
+even relative guarantees are mired by the well-known effect of
+priority inversion~\cite{lampson:cacm80}. Examples of absolute
+performance qualities are ``rate-based'', ``soft real-time'', and
+``hard real-time''. The key advantage of absolute performance
+qualities is that it is principally easier to implement strong
+guarantees: they enable an agreement between a task and a service,
+also known as a \emph{reservation}, does not change meaning depending
+on the service's state, as long as the service is able to isolate
+performance between different tasks. The key disadvantage of absolute
+performance qualities is that their implementation is non-trivial,
+especially in large-scale systems.
+
+\paragraph{Approach:} The goals of this proposal require applications
+to demand guarantees in terms of absolute performance qualities.
+The first key enabler for any service to make absolute guarantees
+is \emph{performance isolation}, i.e. the ability to shield the
+performance impact of one task from another. The most straight-forward
+but least flexible strategy is to simply cap the latency of each
+task, irregardless of its completeness (see for
+example~\cite{decandia:sosp07}). This strategy is applicable when
+incomplete tasks still have value and missing results are either
+not important or can be easily retrieved in subsequent tasks. A
+more generally applicable strategy is to control the admission of
+tasks to the system: \emph{admission control} maintains a
+\emph{utilization model} that can predict the utilization of system
+resources given a new task, estimates the current utilization of
+the system, and decides whether the task can be admitted without
+overloading the system. Thus, admission control avoids system
+overload conditions that lead to hard-to-model chaotic behaviors.
+Consequently, utilization models can frequently be approximated by
+automatically calibrated linear models (see for
+example~\cite{skourtis:hpdc12}).
+
+Another essential component of performance isolation is the
+\emph{charging model} which determines which task(s) should be
+charged how much for a request. Performance isolation is implemented
+by the charging model by ensuring that performance of a task only
+depends on its reservation and its workload behavior (but not on
+other workloads in the system). Each task has a budget based on its
+reservation and spends it based on the cost of each request determined
+by the charging model. A charging model determines the cost based
+on the utilization model and the interactions a request can have
+with other requests (e.g. a random request to spinning media
+interrupting a stream of sequential requests).
+
+Performance isolation (including its utilization and charging models)
+critically depends on \emph{workload-independent metrics}. Even
+though throughput and latency are frequently the most meaningful
+metrics for an application, they are not workload-independent and
+therefore are inadequate for measuring the utilization of a device
+across all workloads, unless one accepts worst-case estimates that
+can lead to gross underutilization of resources (e.g. the throughput
+of random and sequential workloads in spinning media differ by
+orders of magnitudes). A common workload-independent metric is
+\emph{time utilization}, i.e. the amount of time a resource is
+utilized in a given time interval. Time utilization has the advantage
+of having an always defined maximum and therefore makes resources
+fully reservable. Even though a workload-independent metric might
+at first not appear meaningful for an application, given a particular
+workload an application can discover the relationship between its
+workload-dependent metric and the workload-independent metric.
+Because of performance isolation, the application has to discover
+this relationship only once.
+
+\paragraph{Related Work:}
+
+\paragraph{Challenges:} The deep and heterogenous memory and storage
+hierarchy we are assuming for this proposal complicates the
+relationship between workload-dependent and workload-independent
+metrics: the performance of a task can significantly differ depending
+on what levels of the hierarchy are involved. Furthermore, an
+important goal of the proposed project is to enable applications
+to reason about the trade-off between resolution and latency, adding
+yet another dimension to how tasks are mapped to resources.
+
+\begin{itemized}
+
+\item A key challenge of admission control is scalability: the
+decision of whether to admit a task could potentially depend on
+global knowledge of the current utilization of every single resource
+in the system. Scalability therefore depends on whether admission
+control is able to accurately map a new task to a relatively small
+set of resources which can quickly provide up-to-date utilization.
+One approach might involve pseudo-random mapping that also load-balances
+as a side-effect.
+
+\item To offer latency/latency trade-offs, the system must be able
+to quickly generate a number of data production plans, involving
+different parts of the hierarchy and different data resolutions.
+It will then use the utilization model to estimate the latency for
+each production plan and the resolutions they can provide. Here
+again, pseudo-random selection could reduce the number of resources
+that would be involved, thereby increasing scalability.
+
+\item The complexity of a utilization model involving the entire
+storage hieararchy with 100,000s of devices is potentially daunting.
+However, the utilization model can be simplified by modeling classes
+of devices as well as classes of requests. In particular, each
+device could restrict access to its content via a set of well-defined
+methods with known, absolute performance properties.
+
+\item Flash devices become inherently unpredictable when reads and
+writes are mixed on the same device because of garbage collection.
+While write latency can be easily hidden using asynchronous I/O,
+hiding read latency is more difficult. By separating reads and
+writes for each device, read latency becomes predictable. The
+challenge is to minimize duplication of data, at least on fast
+layers and leverage redundancy across layers.
+
+\end{itemized}
