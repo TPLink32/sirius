@@ -49,7 +49,7 @@ data long term, but access to this data will be orders of magnitude slower
 than the next layer and naively accessing data from archival storage will
 greatly impact productivity.
 
-To address these challenges we will We are proposing to combine knowledge
+To address these challenges we are proposing to combine knowledge
 from a wide range of sources including ORNL applications, the ADIOS project,
 the SNL Lightweight File Systems project and storage system knowledge, the metadata
 management and storage systems knowledge of UCSC, and the middleware expertise
@@ -91,11 +91,12 @@ negotiate with the storage system to agree on the tradeoff between data quality
 and response time. We will test our ideas on the next generation OLCF,
 SNL/LANL, and NERSC systems.
 %
-In this project we will make use of the many inovations we discovered in 
-the Lightweight File Systems~\cite{lwfs} (LWFS) project, where Sandia sought to
+We plan to leverage the many inovations we discovered in 
+the Lightweight File Systems~\cite{lwfs} (LWFS) project.
+In this project, Sandia sought to
 demonstrate stripping down a file system to the bare minimum features required
 for any storage system. Then, additional functionality and semantics, such as
-POSIX-style directories and consistency requirements, are added in using
+POSIX-style directories and consistency requirements, were added in using
 auxiliary services separate from the stack or by layering providing a new
 interface to the storage system. The project's first phase demonstrated that
 using a core object storage system with integrated security providing
@@ -103,27 +104,17 @@ authentication and authorization services, customized storage interfaces could
 be developed with exactly the overhead required for different applications. The
 second phase of LWFS, known as Sirocco~\cite{sirocco}, is investigating how to
 manage storage devices for efficient and scalable storage performance.  Sirocco
-has been in process for three years and has a usable storage infrastructure
-system.
+has been in process for three years and has developed a usable storage infrastructure.
 
-%  This
-%proposal seeks to build upon this work to demonstrate an application, data, and
-%usage aware storage system optimized for exascale composite applications and
-%capability application runs. We are proposing to combine the applications
-%knowledge from ORNL with the SNL LWFS system and storage system knowledge, the
-%metadata and storage systems knowledge of UCSC, and the middleware expertise of
-%Rutgers to investigate how to make a data, workflow, and application aware
-%storage system.
-
-We will examine the research challenges from the perspective of the
+We will examine the research challenges from the perspective of
 %
-(1) user of the system who is attempting to run an exascale simulation,
+(1) the user of the system who is attempting to run an exascale simulation,
 %
-(2) the Storage System and I/O layer which needs to negotiate amongst all of
+(2) the Storage System and I/O layer which needs to negotiate between all of
 the users, and finally
 %
 (3) the user of the system who is attempting to understand the data which
-was produced from their collection of simulations.
+was produced from a set of simulations.
 
 \subsection{Writing Perspective}
 \label{subsec:sim-perspective}
