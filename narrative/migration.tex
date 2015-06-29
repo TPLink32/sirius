@@ -1,4 +1,70 @@
 \subsubsection{Migration}
 
-Lee
+One important research question in this proposal is whether and how a liberated
+Hierarchical Storage Manager designed for online use, such as Sirocco, might be
+employed in supporting the higher level concepts discussed previously.
+Conceptually, in this effort, data is accessed by the middleware IO libraries
+at various tiers in the lower-level storage hierarchy. While Sirocco does
+autonomously group the distributed set of media into like groups and manage
+movement of data between these groups the various motivations to do so include
+both the traditional ones found in classical HSM (Hierarchical Storage
+Management) as well as the novel.
+
+Sirocco groups like media into aggregated volumes on a service node, and like
+service nodes with like media into pseudo-tiers. It accomplishes both using
+attributes such as latency to first byte, bandwidth to and from the media, and
+some function representing the resilience capabilities of the attached media.
+In addition to these static attributes, when grouping servers into
+pseudo-tiers, Sirocco also may employ more dynamic attributes such as CPU load
+and the rate-of-change of the media use.
+
+Grouping into pseudo-tiers is not a formal, nor rigid, concept within Sirocco,
+at present. In classic HSM the tiering is often a formally expressed concept,
+embodied both in the architecture and the implementation. In Sirocco, though,
+it is not directly expressed. Instead, a client or server that attempts to make
+a decision relative to migration and staging uses the attributes discussed
+above to constrain the choice of candidates. For instance, a server acting as
+an off-node writeback cache for a compute node might only have access to
+volatile dynamic RAM for use as storage media and a client might deposit data
+that is marked for persistent media as a resilience constraint. At some point,
+then, such a server must copy or move the data to another Sirocco server with
+media matching, or exceeding, the resilience constraint. At that point in time,
+all servers managing appropriate persistent media are candidates but
+second-order attributes, such as latency and bandwidth of a candidate's managed
+media would tend to dominate the ranking. Thus, the concept of a ``tier''
+becomes an artifact of decision rather than a formal concept.
+
+Further complication arises when a Sirocco server is forced to make choices for
+capacity reasons. The Sirocco architecture dictates that a server function as a
+victim cache. As media managed by a server fills the server will begin to
+manage for capacity. In order to do so, currently, it need only verify or make
+a copy of the data on another server that meets the resiliency constraint of
+the held data prior to removing the local copy and in the current
+implementation the server makes no attempt either to remember it ever had the
+data or to notify others about what it is doing.  others that it has removed
+the local copy or remember that it has 
+
+Taken together then, the above at least complicates the higher level research
+questions discussed in this proposal, potentially even renders some
+unachievable since a few involve determinism. We are forced, then, to consider
+either or both mitigating management policies within and between Sirocco
+servers as well as explicitly allowing clients to participate in capacity
+management decisions, for a time at least, on the relevant Sirocco servers.
+
+Our research intent involves short term and long term activities. In the short
+term we will modify the relevant clients to provide hit and miss related data
+and associated activities and explore an enhancement to our storage servers
+that would provide some, hopefully tightly, bounded estimate about time to
+first byte for a potential read operation. In the long term we hope that an
+augmented client-server API providing usage hints will allow us to modify local
+server policy algorithms to more effectively manage it's media and communicate
+to other servers holding copies of the relevant data how they might best manage
+theirs. In the event that this approach proves ineffective at meeting the
+overall approach described in this proposal we will explore modifying Sirocco
+servers to provide notifications about locations of the relevant data as they
+migrate and stage as well as supporting client-directed pinning of location,
+for a period at least. Client-directed pinning could introduce potentially
+serious negative impacts to Sirocco's overarching goals though, since the
+fundamental design of Sirocco assumes much about opaque and unrestricted data
+movement, so this is contemplated only as a last resort.
 
