@@ -113,19 +113,19 @@ We will examine the research challenges from the perspective of
 (2) the Storage System and I/O layer which needs to negotiate between all of
 the users, and finally
 %
-(3) the user of the system who is attempting to understand the data which
-was produced from a set of simulations.
+(3) the user of the system who is attempting to understand the data
+produced by a set of simulations.
 
 \subsection{Writing Perspective}
 \label{subsec:sim-perspective}
-From the perspective of the simulation scientist, they want to be able to
-have knowledge about how much time they will put into writing their data,
+The simulation scientist ideally should be able to
+obtain an estimate of how much time will be required to write their data,
 and how much storage space they will be able to get during the lifetime of
-their simulations. Furthermore, they would like the ability to get a certain
-amount of Quality of Service such that they can then make decisions when the
-expected bandwidth, for example, is less than what they desire. The user will
-then place in a certain set of rules which the system can make autonomic
-decisions to help decide what should be done.
+their simulations. Furthermore, they would like the ability to get an assurance
+of Quality of Service such that they can react appropriately when the
+expected bandwidth, for example, is less than what they desire. Ideally, the user
+would specify a set of rules with which the system can make autonomic
+decisions to determine what should be done.
 %
 
 One of the key aspects of our approach is to allow the users to define the
@@ -139,24 +139,25 @@ we allow the back-end storage system to interact with this definition so that
 it can optimize not just over one application but across all of the
 applications.
  %
-  In our simple scenario, a user wants to perhaps write 1 PB of data every hour
-for their checkpoint/restart, and they which to write 500TB of data every 15
-minutes for their analysis and visualization results which have been reduced by
+  In our simple scenario, a user wants to write 1 PB of data every hour
+for checkpoint/restart, and they wish to write 500TB of data every 15
+minutes to save analysis and visualization results which have already been reduced
 using in situ reduction techniques. At this stage, they will ask the system to
 write their data, and they would like to get an estimated time which they can
 then figure out, through a series of rules, whether they want to write out all
-of the data or if they want to write none of the data but rather wait for a
-later time to write or write a reduced amount of data, along with some code
-container to allow them to regenerate the data with a certain level of
+of the data, postpone the write until a later time, or write a reduced amount
+of data, along with some code
+container to allow them to regenerate the data with a specified level of
 accuracy.  Furthermore, they realize that the analysis data will be saved on
-either the parallel file system, or the campaign storage, a longer term storage
-area with lower bandwidth than the parallel file system, or if some of the data
-will just go to tape. Each piece of data the user will specify the lifetime so
-that the data with the most important utility is kept around for the longest
+either the parallel file system, long-term tape storage, or on the campaign storage,
+which is a medium-term storage
+area with lower bandwidth than the parallel file system.
+For each piece of data, the user will specify the lifetime so
+that the data with the highest utility is kept around for the longest
 period of time, but the data which has the least utility might be migrated to
-lower layers of the storage hierarchy faster. 
+lower layers of the storage hierarchy more quickly. 
 
-Since the data will be a collection of objects placed to the storage system,
+Since the data will be a collection of objects placed on the storage system,
 some of the objects will be broken up into multiple pieces by ``plug-ins''
 to the system which will allow data to be characterized in terms of the most
 important pieces, and the next level of details. We can think of this as
