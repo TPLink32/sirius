@@ -1,15 +1,15 @@
 \section*{Introduction} {\color{red} Scott, Hasan, Gary, Jay - 4 pages}
 \label{sec:introduction}
 
-Exascale scientific discovery will be severely bottlenecked without
-sufficient new research into managing and storing the large amounts of data
-that will be produced during the simulation, and analyzed for months
+Avoiding impending bottlenecks in exascale scientific discovery will require
+new research into managing and storing the large amounts of data
+that will be produced by simulations and analyzed for months
 afterwards.
 %
 In this project we will demonstrate a cooperative approach for storing data
-where the user and the storage system work together to achieve the best data
-quality and performance based on data features, storage tier characteristics,
-and system state. We will investigate novel techniques to facilitate efficient
+where the user and the storage system work together to achieve the best possible data
+quality and performance given data features, storage tier characteristics,
+and current system state. We will investigate novel techniques to facilitate efficient
 mapping of data objects, even partitioning individual variables, from the user
 space onto multiple storage tiers and enable application-guided data
 reductions/transformations to address capacity and bandwidth bottlenecks while
@@ -17,44 +17,44 @@ constraining the error to be within user provided bounds.
 %
 We will address the associated I/O and storage challenges in the context of
 current and emerging storage landscapes and expedite insights into critical
-scientific processes demonstrating the validity of our approach in key DOE
-domains. We will research novel techniques into a Scalable
-Storage Software Infrastructure integrating services from the middle-ware
-layer adapted to each application with Storage System features to support the
-novel data distribution both horizontally and vertically across the storage
-system. The negotation between these layers will be a fundamental service 
-to ensure that users will be able to save `'the best'' amount of data using the
-right storage technology available at request time across the entire storage
-stack.
+scientific processes, while demonstrating the validity of our approach in key DOE
+domains. We will research techniques for creating a Scalable
+Storage Software Infrastructure, integrating services from the middleware
+layer with Storage System features to support the
+novel strategy of distributing data both horizontally and vertically across the storage
+system. 
+The negotation between these layers will be provided as a fundamental service, 
+allowing users to easily save ``the best'' amount of data, automatically placed
+throughout the entire storage stack.
 
 The metric we are most interested in optimizing is time to knowledge.
 Current approaches to addressing the I/O bottleneck fall into two broad
-categories. Parallel file system approaches that optimize the throughput for
+categories: parallel file system approaches that optimize the throughput for
 an entire system, and I/O middleware approaches that optimize the
-performance of a single application. Both approaches have seen success but
-are unlikely to overcome the major obstacles in reaching exascale. Instead
+performance of a single application. Both approaches have been successful to date, but
+are unlikely to overcome the remaining obstacles in reaching exascale. Instead
 of trying to optimize throughput, we will seek to reduce the time to
 knowledge. This is the most significant metric for scientific applications
 where the desired outcome is not storing data, but rather executing a
 knowledge extraction process on the data. Moreover, we aim to perform the
-optimization not for a single application, but rather for workload of a
+optimization not for a single application, but rather for workloads within a
 multi-user multi-application system environment.
 
-Our approach leverages the expected characteristics of exascale storage
+Our approach targets the expected characteristics of exascale storage
 hardware. The storage layer will be partitioned into multiple heterogenous
-tiers with vastly different performance characteristics. This difference
-between layers will be further exacerbated by the constraints on capacity
-and data lifetime within a layer. Tape archival storage will still maintain
+tiers with vastly different performance characteristics. The layers
+will be further differentiated by the constraints on capacity
+and data lifetime within each layer. Tape archival storage will still maintain
 data long term, but access to this data will be orders of magnitude slower
 than the next layer and naively accessing data from archival storage will
 greatly impact productivity.
 
-To address these challenges we will We are proposing to combine the
-applications knowledge from ORNL, from the ADIOS project, with the SNL
-Lightweight File Systems project and storage system knowledge, the metadata
+To address these challenges we will We are proposing to combine knowledge
+from a wide range of sources including ORNL applications, the ADIOS project,
+the SNL Lightweight File Systems project and storage system knowledge, the metadata
 management and storage systems knowledge of UCSC, and the middleware expertise
-of Rutgers to investigate how to make a data, workflow, and application aware
-storage system.
+of Rutgers. We will integrate this diverse expertise to investigate how to make
+a data, workflow, and application aware storage system.
 
 %ADIOS was developed with the understanding that we must
 %not only address the bottlenecks for current applications and
@@ -85,11 +85,11 @@ storage system.
 %need to consider additional features such as compression and
 %indexing to better cope with the expected tsunami of data.
 
-In this project we extend ADIOS~\cite{adios} with new APIs and novel techniques
-to talk to the storage back-end. The key idea is offering the ability to
+In this project we will extend ADIOS~\cite{adios} with new APIs and novel techniques
+to coordinate with the storage back-end. The key idea is offering the ability to
 negotiate with the storage system to agree on the tradeoff between data quality
-and response time.  We will test our ideas on the next generation OLCF,
-SNL/LANL, and  NERSC systems.
+and response time. We will test our ideas on the next generation OLCF,
+SNL/LANL, and NERSC systems.
 %
 In this project we will make use of the many inovations we discovered in 
 the Lightweight File Systems~\cite{lwfs} (LWFS) project, where Sandia sought to
