@@ -1,3 +1,40 @@
 \subsubsection{Data Reorganization Techniques}
+One of the key element to get efficient data access during reading is the re-organization of the
+data to ensure that the data that will be read back will involve minimal seeks on the file system 
+along with aggregating similar data together to get optimal performance and placing the data
+across multiple disks to get high levels of concurrency during reading. We will create APIs to
+allow users to group similar data together in a data-model, and annotations (initially done in the
+ADIOS layer) to allow relationships of variables to be expressed. We will then investigate both
+system (general) data-re-organization techniques based on the utility of data and the relationships
+of the data, and application-specific routines (for our initial set of evaluation test cases).  Once
+we can generalize the application specific routines to a set of motifs, we can then allow this piece
+of code to propagate to the general routines. In all cases we will investigate re-organzing the data
+into an integer (most likely 8) bins, where they fall into the most likely accessed data to the least
+likely accessed data.
 
-Mark, Scott
+
+
+
+\paragraph{State of the art:}
+\paragraph{Proposed research approach:}
+General methods to re-organize the data fall into the following categories
+\begin{itemize}
+\item Precision based re-organization. This is where the most significant bytes of the data are
+all group together from each object. This data generally will have a higher utility then the data with
+the least significant bytes.
+
+\item Frequency-based re-organization. FFT, Wavelets.
+
+\item Histogram binning. Re-organize the data through histograms to ensure we have enough
+phase-space coverage. Where we have finner coverage we can move that data to other
+quantiles of the storage. 
+
+\item Multi-resolution. Traditionally we can look at every other point, and have a good feeling that 
+this data will give a good estimate of the data.
+
+\item Region of Interest. Using error techniques similar to AMR, we can understand where there
+is data changing more rapidly and save this data at a higher resolution version than the smoother
+regions of space.
+{\bf Mark: can you fill these out much more and talk about the new techniques we will work on}.
+\end{itemize}
+\paragraph{Preliminary work and results:}
