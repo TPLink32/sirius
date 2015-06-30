@@ -46,12 +46,19 @@ disruptions, and the set of policies that applications can use to respond to
 this new information. We will also explore how applications can query the
 storage system to gain insights on available space in different tiers and
 how applications can tailor their output data to match the available space. 
-
 Finally we will study the use of an external data annotation system that can
 provide information to the storage system without requiring the application
 to be recompiled. 
 
-
+\paragraph{Challenges}
+The design of new APIs posses both technical and adoption challenges. Here
+we will only consider the technical challenges. The proposed set of APIs aim
+to expose broad system level environmental information to the application,
+and allow the application to adapt dynamically based on this information.
+One aspect of this challenge is the design of an interrogative API that
+enables a back-and-forth between the application and the storage system to
+enable the application to recieve enough information to make adaptation
+decisions. 
 
 %%% Local Variables:
 %%% mode: latex
