@@ -1,9 +1,14 @@
 \subsubsection{Description of Data}
 
-One of the key advantages for a storage system to communicate through objects rather than 
-bytes is that it gives a meaning and relationship of certain bytes placed together to form one object.
-This permits the system to understand that all of the data in an object needs to be organized together,
-and that commonly the entire object will be written and read. Data Models then constitute a collection
+One of the key advantages of representing data as \textit{objects}, rather than 
+bytes, is that it allows data semantics, user intentions, QoS requirements, and
+the relationship between user data to be readily captured and embedded with the 
+raw data. This description of data, as enabled by managing data as objects, bridges 
+the semantics gap between applictions, middleware, and storage systems,
+and allows the system to understand user-level data, execute QoS requirements, and
+optimize application or system performance.
+
+Data Models then constitute a collection
 of objects which are then placed together via a relationship. In other words, we can think of a
 simulation which contains a three dimensional mesh, and that the coordinates of the mesh, along
 with the connectivity of the mesh will generally be accessed together. This also us to organize
