@@ -129,14 +129,15 @@ decisions to determine what should be done.
 %
 
 One of the key aspects of our approach is to allow the users to define the
-utility (importance) of their data; in other-words, for each data object, users
-need to come up with a way to define pieces of the object which have more
-utility (more importance) . There are many clear research challenges faced with
+utility of their data; in other-words, the system should provide a
+mechanism such that, for each data object, a user can specify pieces of the object
+which have more utility (more importance).
+Clearly there are many research challenges faced with
 this approach including: 1) How do we make this simple enough so that users can
-do this, 2) can we come up with a model to allow the system to then make the
-autonomic decisions to save the data which has the highest utility, and 3) can
-we allow the back-end storage system to interact with this definition so that
-it can optimize not just over one application but across all of the
+do this, 2) Can we define a model to allow the system to make
+autonomic decisions to save the data which has the highest utility, and 3) Can
+we allow the back-end storage system to interact with this model so that
+it can optimize not just a single application but across all of the
 applications.
  %
   In our simple scenario, a user wants to write 1 PB of data every hour
@@ -159,11 +160,11 @@ lower layers of the storage hierarchy more quickly.
 
 Since the data will be a collection of objects placed on the storage system,
 some of the objects will be broken up into multiple pieces by ``plug-ins''
-to the system which will allow data to be characterized in terms of the most
-important pieces, and the next level of details. We can think of this as
+to the system which will allow data to be characterized first in terms of the most
+important pieces, and then by subsequent levels of detail. We can think of this as
 something similar to an Adaptive Mesh Refinement scheme which keeps track of
-the places where there are perhaps steep gradients (large errors on the
-coarser views), and smaller errors. These then allows us to make decisions
+the places where there are features such as steep gradients, which contain large errors on the
+coarser views, as opposed to other areas with smaller errors. These distinctions allow us to make decisions
 about which sub-objects to save (all of the data, which will then go to
 different layers) or just some of the sub-objects? The research questions
 are numerous: How does the user specify their intentions? How does the user
@@ -174,9 +175,9 @@ how does this get into the storage system?
 
 \subsection{Storage System Perspective}
 \label{subsec:storage-perspective}
-From the perspective of the storage system, it needs to manage the data from
-a given user request amongst all of the request and try to optimize the
-entire system. Today the problem is that when a user writes there is a
+From the perspective of the storage system, it is necessary to manage the data from
+a given user request amongst all of the requests from all users, and try to optimize the
+entire system accordingly. Today the problem is that when a user writes there is a
 tremendous amount of interference from other users on the system who may be
 writing or reading at the same time. By requiring a certain quality
 of service the system must potentially lock out users with lower currency
