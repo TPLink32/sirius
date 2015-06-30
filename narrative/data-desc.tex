@@ -1,4 +1,30 @@
 \subsubsection{Description of Data}
 
-content
+One of the key advantages for a storage system to communicate through objects rather than 
+bytes is that it gives a meaning and relationship of certain bytes placed together to form one object.
+This permits the system to understand that all of the data in an object needs to be organized together,
+and that commonly the entire object will be written and read. Data Models then constitute a collection
+of objects which are then placed together via a relationship. In other words, we can think of a
+simulation which contains a three dimensional mesh, and that the coordinates of the mesh, along
+with the connectivity of the mesh will generally be accessed together. This also us to organize
+the data in the storage system in such a way that will allow a user to easily to describe this 
+collection of data together, and it will allow the user to describe relationships between the objects
+in the data model. 
 
+The challenge which all users face today, and will face much more on exascale systems is that 
+the users must prioritize which objects to save, and how often (in a simulation which produces more
+data in time)  to save the information. As this data gets large,  users realize that these objects will
+eventually move from a fast storage into either a slower form of storage, such as tape, or it will be
+purged from the system.  We propose a new technique, described by a utility curve, where objects
+can be cast into multiple buckets of data, and these buckets can be prioritized with one-another.
+Once the data is re-organized, users will be able to use an API to describe the importance of this data.
+This importance will allow users to specify: 1) the relationships of different objects with one another,
+2) the expected lifetime of the object.
+
+The relationship of the objects to one another can be done by
+
+\paragraph{State of the art:} 
+\paragraph{Proposed research approach:} 
+We will first create an API where users can describe the utility based on their expectations of how
+long they want each piece to live in the different storage areas
+\paragraph{Preliminary work and results:}
