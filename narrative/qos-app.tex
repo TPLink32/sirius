@@ -28,7 +28,28 @@ eviction of data from a storage layer, and migration of data sets to a
 different storage layer. 
 
 %execution
+We will design an updated I/O API that will expand on the current POSIX I/O
+semantics by adding new information to the I/O request. We will explore the
+set of application level hints that can be easily provided to the storage
+system in order for the storage system to make the most appropriate
+optimization decisions. In particular, we expect the application to provide
+hints on the length of time before the output data is persistent and
+visible to users, and the expected lifetime of the data for data output
+calls. For read calls we expect the set of hints to combine latency and
+precision requirements. Additional hints will also be investigated. 
 
+We will also develop a new type of querying system that allows application
+to ask the storage system about completion timing information, the response
+being an estimate provided by the storage system. We will explore how these
+query functions can be integrated into common applications with minimal code
+disruptions, and the set of policies that applications can use to respond to
+this new information. We will also explore how applications can query the
+storage system to gain insights on available space in different tiers and
+how applications can tailor their output data to match the available space. 
+
+Finally we will study the use of an external data annotation system that can
+provide information to the storage system without requiring the application
+to be recompiled. 
 
 
 
