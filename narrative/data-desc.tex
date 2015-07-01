@@ -1,4 +1,41 @@
 \subsubsection{Description of Data}
+In order for the middleware and storage layer to understand data,
+I/O intentions, and act accordingly, describing data in a way that can
+be understood by the system is needed. In this project, this is achieved 
+by managing data as \textit{objects}.
+An object is the smallest unit of data that consists of raw data and metadata,
+and a user space variable, such as \textit{temperature}, may consist of a collection
+of objects possibly with different accuracy or resolution.
+A key advantage of representing data as \textit{objects}, rather than 
+bytes, is that it allows data semantics, user intentions, QoS requirements, and
+the relationship between user data to be readily captured and embedded with the 
+raw data. As an example, retrieving a 3D field data generated from a simulation and then visualizing it
+requires the coordinates and connectivity variable 1) to be accessed together and 2) with low
+latency in order to achieve a good user experience. The description of data, 
+as enabled by managing data as objects, bridges 
+the semantics gap between applictions, middleware, and storage systems,
+and allows the system to understand user-level data, execute QoS requirements and policies, and
+optimize application and system performance.
 
-content
+The description of data is essentially metadata and it may include conventional attributes, such as 
+data type, size, dimensionality, relationship to other data, and etc. In this project, a key metadata attribute
+that enables QoS scheduling, data placement, and ???, is \textit{data utility}, which
+captures the priority of objects - it is to our belief that
+users must prioritize a small set of objects to be saved on 
+higher-level capacity-limited storage layer in exascale
+to avoid the slow access to large-capacity lower-level storage, such as tapes.
+We propose a new technique, described by a utility function, where objects
+can be cast into multiple buckets of data, and each bucket can be prioritized differently according
+to its utility value.
+Once the data is re-organized, users will be able to use API (section ??)
+to describe the importance of this data.
 
+\paragraph{State of the art:} ADIOS implements a binary-packed data format that allows
+data characteristics such as min, max and index to be wrapped around data chunks. A
+directy benefit is that each data chunk can be operated independently and I/O concurrenty
+can be maximized. We will build upon this capability and further augment the format
+to incorporate data utility. 
+
+\paragraph{Proposed research approach:} 
+We will design and deveop new APIs through which users can describe the utility of data
+based on their expectations.

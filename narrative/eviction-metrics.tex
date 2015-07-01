@@ -1,4 +1,62 @@
 \subsubsection{Eviction Metrics}
 
-Carlos
+% The title might have to change...
 
+\paragraph{Background:} There is a spectrum of approaches on how
+to leverage a memory and storage hierarchy: On one end of the
+spectrum is to copy or move data from one tier to another, the
+closer the tier to the hierarchy's top, the faster the access to
+the data it contains. On the other end of the spectrum is to use
+higher tiers exclusively for auxiliary data that to some extent
+represents the actual data on the lowest tier. Examples of auxiliary
+data are views, indices, lossy compressions, lower resolution data,
+and summary data (sometimes also known as metadata). There are a
+number of drivers that push approaches to one or the other extreme:
+(1) if a high tier has sufficient room for an application's working
+set, approaches that move the working set into that tier will perform
+well; Conversely, if a high tier very rarely captures working sets,
+it is better to fill it with auxiliary data that speeds up access
+to the working set captured by a lower tier; working sets only
+reduce capacity misses but the concept can be generalized to the
+likelihood of having the right data in place, i.e. proactively
+moving data to high tiers accessed in predictable patterns reduces
+compulsory misses as well; (2) if the application generates parallel
+read/write requests and strong consistency semantics are important,
+approaches that use auxiliary data to speed up access to persistent
+shared data might yield better performance than approaches that
+require coherence overhead to keep all copies on higher tiers
+consistent; (3) if the application's access patterns are mismatched
+with low tier access characteristics, a combination of approaches
+that use auxiliary data and move data between tiers in order to
+convert access patterns into a better match will perform well.
+
+% Any other drivers?
+
+\paragraph{Approach:} This spectrum enables interesting strategies
+to manage space pressure on high tiers: instead of just evicting
+pieces of data (blocks, pages, objects, files), one can free space
+by ``thinning'' data so that accesses within more limited views or
+lower resolutions can still occur without misses while requests
+outside of views or higher resolutions can leverage the information
+stored in auxiliary data. Conversely, data on a high tier can be
+``enriched'' (e.g. turned into a higher resolution) if there is
+value in doing so.
+
+\paragraph{Related Work:} Mention Stanford's Legion system.
+
+\paragraph{Challenge:} The decision on when to thin and when to
+enrich data on a particular level depends on \emph{access patterns}.
+Approaches that leveragee access patterns in application at national
+labs has shown to greatly improve performance and reduce the amount
+of overhead required for data management~\cite{he:hpdc13}. The
+challenge is for applications to communicate these access patterns
+to the I/O stack layers that manages tiers outside of the address
+space. In the proposed work we will develop an abstraction for
+\emph{locality} that allow applications or runtime profilers to
+describe locality properties of access patterns, and implement
+services that leverage locality properties to dynamically determine
+the value of thinning or enriching data at a particular tier.
+Consider the example of a road navigation system: the locality
+properties of each navigation client are based on physical constraints
+of speed, direction, likely resolution of map, and the fact that
+clients almost never go offroad.

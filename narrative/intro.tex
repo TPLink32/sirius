@@ -183,15 +183,15 @@ writing or reading at the same time. By requiring a certain quality
 of service the system must potentially lock out users with lower currency
 they want to place in the reading or writing of their data. The storage
 system must also automatically move data from one tier of the storage to
-another, without effecting the quality of service that it guarantees at the
-time of questioning. The storage system must also look at ways to organize
-data amongst all of the tiers of storage in one consistent way.
+another, without affecting the quality of service that was offered at request
+time. The storage system must be able to organize
+data amongst all of the tiers of storage in a known, consistent way.
 
 One of the clear research objectives of this project is to understand how the
 storage system can interact with the middleware (application-aware) piece so
 that the data with the highest utility is kept on the fastest layers of the
 storage system for as long as specified. Clearly we need to maintain 
-QoS such that fuzzy-estimates of the time it will take to write/read data from
+QoS such that fuzzy estimates of the time it will take to write/read data from
 the different layers informs any migration/eviction decisions, and clearly it
 is critical that the storage system can manage the data across all of the
 layers. We will use learning techniques to automatically migrate data
@@ -213,7 +213,8 @@ another day for doing their analysis or gets frustrated and reads much less
 data than they really need to. Furthermore the user tends to read in just a
 small sample of the data without much knowledge if they are missing
 important pieces of the data.
-
+\subsection{Research Challenges to be address}
+\label{subsec:challenges}
 Our research into the storage system and middle ware layers must address
 many of these challenges including
 \begin{enumerate}
