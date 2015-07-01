@@ -18,24 +18,32 @@ and allows the system to understand user-level data, execute QoS requirements an
 optimize application and system performance.
 
 The description of data is essentially metadata and it may include conventional attributes, such as 
-data type, size, dimensionality, relationship to other data, and etc. In this project, a key metadata attribute
-that enables QoS scheduling, data placement, and ???, is \textit{data utility}, which
+data type, size, dimensionality, relationship to other data, and etc. In particular,
+relationship to other data objects can be captured by implementing \textit{soft links}
+and different types of relationships can be expressed by different types of soft links. 
+In this project, a key metadata attribute
+that enables QoS scheduling, data placement, and ???, is \textit{data utility value}, which
 captures the priority of objects - it is to our belief that
-users must prioritize a small set of objects to be saved on 
-higher-level capacity-limited storage layer in exascale
+for exascale science, users must prioritize a small set of objects to be saved on 
+higher-level capacity-limited storage layer
 to avoid the slow access to large-capacity lower-level storage, such as tapes.
-We propose a new technique, described by a utility function, where objects
+We propose a new technique, described by a utility function plugged in by a user, where objects
 can be cast into multiple buckets of data, and each bucket can be prioritized differently according
 to its utility value.
-Once the data is re-organized, users will be able to use API (section ??)
-to describe the importance of this data.
+Once this is done, the middleware system will construct the description of data, re-organize
+and place data to achieve the desired QoS goals and policies.
+
 
 \paragraph{State of the art:} ADIOS implements a binary-packed data format that allows
 data characteristics such as min, max and index to be wrapped around data chunks. A
-directy benefit is that each data chunk can be operated independently and I/O concurrenty
+direct benefit is that each data chunk can be operated independently and I/O concurrenty
 can be maximized. We will build upon this capability and further augment the format
-to incorporate data utility. 
+to express data utility. Recently DAMSEL \cite{damsel} provides a rich metadata representation
+and management layer that captures the relationship between data blocks for scientific applications.
+This allows application data to be mapped to storage system efficiently, without overburdening
+users to managing complex data model, such as AMR, from the user space. However, the aspect of 
+data importantance hasn't been explored, which we believe will be important for exascale storage solutions. 
 
 \paragraph{Proposed research approach:} 
 We will design and deveop new APIs through which users can describe the utility of data
-based on their expectations.
+based on their expectations. 
