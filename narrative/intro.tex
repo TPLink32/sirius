@@ -23,7 +23,7 @@ Storage Software Infrastructure, integrating services from the middleware
 layer with Storage System features to support the
 novel strategy of distributing data both horizontally and vertically across the storage
 system. 
-The negotation between these layers will be provided as a fundamental service, 
+The negotiation between these layers will be provided as a fundamental service, 
 allowing users to easily save ``the best'' amount of data, automatically placed
 throughout the entire storage stack.
 
@@ -48,6 +48,28 @@ and data lifetime within each layer. Tape archival storage will still maintain
 data long term, but access to this data will be orders of magnitude slower
 than the next layer and naively accessing data from archival storage will
 greatly impact productivity.
+%
+The overarching idea is that data from applications can be characterized by different
+levels of importance and different level of importance over time. 
+Codes such as the XGC1 simulation from C. S. Chang (PPPL), which is one of largest users of Leadership Class Facilities (over 300M hours at ANL, NERSC, and ORNL) has launched a series of simulations which need to write out 100 PB of data on the Titan system. Due to resource limitations, the simulation will only write about 10 PB, but
+when our team considered not only the time it would take to write out 10 PB in 10 days of run, but also where we would store this, which had to be tape since it would take
+over half of the file system, we decided that we couldn't write this amount of data. In other words we had to make decisions of which data to save from the original 100 PB.
+The first thing that we had to discover is how much space we could have on the parallel file system at any given time, and how much time it would take to archive 1 PB of data,
+which turned out to be 10 days, and we could only store 2 PB of data at once. This quickly led us to 1) decide which pieces of data to save from the large amount of data; in 
+other words, we had to prioritize which were the most important pieces. We had to further breakdown the large data into two categories, data which we think we will touch after
+the simulation is complete ( after the 10 days of wallclock time was finished), and what we would do with this data (the access pattern of the large data). We then had to 
+discover application specific data reduction techniques, and encode that into our solution, on top of ADIOS. We then had to implement a crude discovery system to understand
+which pieces of data were stored on the parallel file system and which pieces moved over to PPPL, and which pieces were on tape.  This solution worked well for one day
+but after the second day more problems occurred, the variability of the time it took to write the data made the I/O prohibitively costly, because even though we had the
+majority of the OLCF, the file system was shared and sometimes the writing time took less 100 seconds, and at other times it was over 1,000 seconds. We had no method
+to monitor this time and then write less data when the time was going to be longer.   After the simulation is complete we also need to visualize this reduced data, and 
+an additional problem appeared; just to get a first look at the visualization data seemed like it could take over a month because some of the timesteps were on tape and other
+timesteps were on the file system. We had no method to just look at the data quickly and understand which regions of the simulation to focus on. 
+
+
+
+
+
 
 To address these challenges we are proposing to combine knowledge
 from a wide range of sources including ORNL applications, the ADIOS project,
