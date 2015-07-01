@@ -1,28 +1,62 @@
 \subsubsection{Naming Service}
 
 A traditional POSIX naming service offers a hierarchical space consisting of
-directories and files. LWFS and Sirocco have abandonded this as the default
-model in favor of a container/object/fork/addrress tuple for identifying data.
-LWFS demonstrated a POSIX-style namespace on the side kept in sync using a
-transaction process like D2T~\cite{d2t} showing that this alternative approach
-can support traditional POSIX API calls even though the underlying storage
-system uses a different model.
+directories and files. This structure has led to scalability problems because
+of the serialized access to a single source for creating and accessing files.
+Several efforts~\cite{giga+,pvfs,others} have worked to reduce this contention
+by doing things like reducing the serialized scope to a single directory or
+subtree. While these approaches help, they do not address this key scalability
+limitation.
 
-For this project, we seek to offer a similar POSIX-style namespace for naming
-objects, but store a rich metadata collection with each entry to handle data
-migration, discovery, and writing and retrevial time estimations. Further, we
-will also have to track data stored in different tiers, even at the variable
-subset level. This additional metadata load will require a more complex naming
-service that reacts to automatic data movement while caching current data
-locations accelerating data access operations avoiding any data discovery
-operations.
+Pure object stores, such as those popular in the big data
+domain~\cite{memcached,others} avoid this bottleneck by strictly offering an
+object ID with the application required to manage how this ID maps to something
+of interest. This approach of removing the metadata service from the system
+level completely can work well for scale out applications where data is created
+or consumed by a single process at a time rather than potentially O(1 million)
+processes all actively collectively for a single ``object''. To address this
+case, having some system integrated metadata services to associate names with
+these object is a preferable solution.
 
-In addition to the basic naming operations, we will also need to incorporate
-authorization capabilities. Sirocco currently integrates with a Kerberos
-service for authentication and authorization. Given a capability ticket, a
-user can access different objects as needed.
+LWFS and Sirocco have take an approach similar to the pure object stores, but
+with a focus on the HPC setting. They have abandonded a fully POSIX compliant
+metadata service as the default model in favor of a
+container/object/fork/addrress tuple for identifying data similar to those
+used for pure object stores. By having a service that addresses the object
+collections that comprise a single thing, such as a variable or timestep
+output, just enough metadata is maintained to make the storage system usable
+without additional heavy lifting by clients.  LWFS demonstrated a POSIX-style
+namespace on the side kept in sync using a transaction process like
+D2T~\cite{d2t} showing that this alternative approach can support traditional
+POSIX API calls even though the underlying storage system uses a different
+model.
+
+The challenge this proposal brings is in the additional metadata required to
+track all of the different pieces of a single variable across the storage
+hierarchy both horizontally and vertically and keeping this metadata in sync
+as the storage system (Sirocco) manages data according to user requests and
+system load. Further, the profiled performance for annotating data according to
+future read needs also must be tracked. Overall, since the end-to-end quality
+of service requirements must drive all data placement and movement decisions,
+the metadata and naming service must be rich enough, and low overhead enough,
+to support these operations as well as maintaining data accessibility.
+
+In addition to the basic naming and data tracking operations, we will also need
+to incorporate authorization capabilities. Sirocco currently integrates with a
+Kerberos service for authentication and authorization. Given a capability
+ticket, a user can access different objects as needed. This ticket structure
+offers protection services typically offered on POSIX directories and files,
+but can do it at the fork level instead. This allows a reduced quality data
+version to be available for the general users while the high-quality version
+would be limited to the data creator. This and other considerations for
+security must be incorporated into the entire naming and metadat service.
 
 The main challenge of incorporating the additional, rich metadata will be
-joined by the additional challenge of coordinating with the other storage
-and application-layer services to offer the best access times possible for data
-stored in the system.
+joined by the additional challenge of coordinating with the other storage and
+application-layer services to offer the best access times possible for data
+stored in the system. The developed metadata services that drive data
+compression and subsetting operations must have easy, consistent, and ideally
+non-blocking or locking access to this metadata service. We must investigate
+how to build such a metadata and naming service that also incorporates and
+maintains the additional metadata required to support our advanced
+functionality.
