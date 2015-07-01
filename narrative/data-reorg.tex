@@ -8,22 +8,68 @@ ADIOS layer) to allow relationships of variables to be expressed. We will then i
 system (general) data-re-organization techniques based on the utility of data and the relationships
 of the data, and application-specific routines (for our initial set of evaluation test cases).  Once
 we can generalize the application specific routines to a set of motifs, we can then allow this piece
-of code to propagate to the general routines. In all cases we will investigate re-organzing the data
+of code to propagate to the general routines. In all cases we will investigate re-organizing the data
 into an integer (most likely 8) bins, where they fall into the most likely accessed data to the least
-likely accessed data.
-
-
+likely accessed data. These methods will NOT be used for checkpoint restart data, since this
+data needs to be accessed exactly how it is originally in memory.  We generally see that these
+techniques are highly useful for analysis and  visualization data, where users can inherently place
+their intentions of the data (life time of the data for eviction policies, prioritization of data 
+importance). 
 
 
 \paragraph{State of the art:}
+
 \paragraph{Proposed research approach:}
 General methods to re-organize the data fall into the following categories
 \begin{itemize}
 \item Precision based re-organization. This is where the most significant bytes of the data are
 all group together from each object. This data generally will have a higher utility then the data with
-the least significant bytes.
+the least significant bytes.  This process has the following three steps which need to be
+efficiently implemented when data gets placed to the storage system and from the storage 
+system. 
+%
+First, the data needs to be re-arranged which involves memory operations and needs
+to be done in-situ. This operation involves no communication.  Data needs to be copied, so
+the memory requirements are increased. At most this requires two copies an individual dataset
+in memory, and we will investigate techniques to allocate and deallocate this memory if the user
+will specify that the data will be overwritten after it is written to the storage system. This is often
+the case for many of the data quantities written form the simulation, but there are many cases
+where, for example, we want to write all of the particles from a Particle In Cell (PIC) simulation. 
+Since the particles will be used later in the calculation, we need to duplicate the storage. Our
+observation with working with the XGC1, GTC, Warp, and PiconGPU simulations (all leadership
+class simulations) is that we can temporary increase the storage of the particles, and then 
+release them since the temporary arrays used in the calculations are often freed when a PIC
+iteration is finished.. 
+%
+The second step to give the metadata that allows the system to understand that an object is now contained in multiple bins of data. One of the challenges is the ability to bring together multiple bins
+of data together (the high priority data along with the medium priority data) efficiently when the 
+data is being read.  One research question is how we can manage the metadata efficiently.
+We propose to place this knowledge into the middleware which will communicate this to the 
+storage system.  This will give the storage system potential ways to increase the concurrency 
+when accessing this information. For example, we can place the highest priority bits of an object
+on the fastest storage system, and the next level of importance in the campaign storage. If a 
+user request precision to a level where we need to access both, concurrently we can be
+accessing this data, and moving the data to memory where it can be re-arranged. 
+%
+Since data will be placed in different bins along the hierarchy we will need to understand how
+to initially place this in the fastest storage, and then evict this from the fastest storage without
+effecting the performance of the simulation which is generating this data. Policies must be 
+placed to ensure that we do not create any internal interference during these operations. We
+will investigate doing this with ``meta-bots'' first introduced in the LWFS project and have 
+these bots move the data.{\bf probably belongs in a different section} 
 
 \item Frequency-based re-organization. FFT, Wavelets.
+Another common technique to classify the importance of data is to first re-organize the data
+in frequency space and then specify that as the frequency increases the importance of data
+decreases. This allows us to place the lowest frequency pieces in the fastest storage, and
+the highest frequency either on the slowest storage tiers, or if the data sizes are prohibitively  
+costly, not even write out the highest frequency. This binning of data in frequency space can
+take as an input (storage bandwidth knowledge, storage size limitations, and user intentions
+of how long the majority of the data will be frequently accessed. 
+
+These operations also require data transformations (for example an FFT and an inverse FFT)
+and then re-arranging the data in real-space once we re-organize this. The research questions
+we must address are: 1) what is the cost of re-organzing the data, 2) how do we 
 
 \item Histogram binning. Re-organize the data through histograms to ensure we have enough
 phase-space coverage. Where we have finner coverage we can move that data to other
