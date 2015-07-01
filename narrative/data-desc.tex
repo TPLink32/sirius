@@ -1,14 +1,21 @@
 \subsubsection{Description of Data}
-
-One of the key advantages of representing data as \textit{objects}, rather than 
+In order for the middleware and storage layer to understand data,
+I/O intentions, and act in a smart way, description of data is needed,
+which is achieved by managing data as \textit{objects} in this project.
+An object is the smallest unit of data that consists of raw data and metadata,
+and a user space variable, such as \textit{temperature}, may consist of a collection
+of objects possibly with different accuracy or resolution.
+A key advantage of representing data as \textit{objects}, rather than 
 bytes, is that it allows data semantics, user intentions, QoS requirements, and
 the relationship between user data to be readily captured and embedded with the 
-raw data. This description of data, as enabled by managing data as objects, bridges 
+raw data. As an example, retrieving a 3D field generated from a simulation and visualizing it
+requires the coordinates and connectivity data 1) to be accessed together 2) with low
+latency. This description of data, as enabled by managing data as objects, bridges 
 the semantics gap between applictions, middleware, and storage systems,
-and allows the system to understand user-level data, execute QoS requirements, and
-optimize application or system performance.
+and allows the system to understand user-level data, execute QoS requirements and policies, and
+optimize application and system performance.
 
-Data Models then constitute a collection
+Data models then constitute a collection
 of objects which are then placed together via a relationship. In other words, we can think of a
 simulation which contains a three dimensional mesh, and that the coordinates of the mesh, along
 with the connectivity of the mesh will generally be accessed together. This also us to organize
