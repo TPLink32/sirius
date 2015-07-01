@@ -61,7 +61,10 @@ these bots move the data.{\bf probably belongs in a different section}
 \item Frequency-based re-organization. FFT, Wavelets.
 Another common technique to classify the importance of data is to first re-organize the data
 in frequency space and then specify that as the frequency increases the importance of data
-decreases. This allows us to place the lowest frequency pieces in the fastest storage, and
+decreases.   Common technique which is used for streaming data, and data reduction techniques such as JPEG-2000~\cite{jpeg2000}
+is to  code streams which have regions of interest that offer several mechanisms to support spatial random access or region of interest access at varying degrees of granularity. It is possible to store different parts of the same data using different quality.
+
+This allows us to place the lowest frequency pieces in the fastest storage, and
 the highest frequency either on the slowest storage tiers, or if the data sizes are prohibitively  
 costly, not even write out the highest frequency. This binning of data in frequency space can
 take as an input (storage bandwidth knowledge, storage size limitations, and user intentions
@@ -75,8 +78,9 @@ we must address are: 1) what is the cost of re-organzing the data, 2) how do we
 phase-space coverage. Where we have finner coverage we can move that data to other
 quantiles of the storage. 
 
-\item Multi-resolution. Traditionally we can look at every other point, and have a good feeling that 
-this data will give a good estimate of the data.
+\item Multi-resolution.  
+A
+
 
 \item Region of Interest. Using error techniques similar to AMR, we can understand where there
 is data changing more rapidly and save this data at a higher resolution version than the smoother
