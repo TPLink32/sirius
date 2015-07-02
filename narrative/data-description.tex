@@ -9,13 +9,22 @@ of objects possibly with different accuracy or resolution.
 A key advantage of representing data as \textit{objects}, rather than 
 bytes, is that it allows data semantics, user intentions, QoS requirements, and
 the relationship between user data to be readily captured and embedded with the 
-raw data. As an example, retrieving a 3D field data generated from a simulation and then visualizing it
-requires the coordinates and connectivity variable 1) to be accessed together and 2) with low
-latency in order to achieve a good user experience. The description of data, 
-as enabled by managing data as objects, bridges 
+raw data. As an example, retrieving a 3D field data generated from a simulation 
+and then visualizing it requires the coordinates and connectivity variable 
+1) to be accessed together and 2) with low latency in order to achieve a good user experience. 
+The description of data, as enabled by managing data as objects, bridges 
 the semantics gap between applications, middleware, and storage systems,
 and allows the system to understand user-level data, execute QoS requirements and policies, and
 optimize application and system performance.
+
+%The new APIs will enable the bridge by specifying selectable performance/quality/- cost tradeoffs 
+%from both the application and system perspectives based upon the user guided rules/policy and 
+%runtime system monitoring status. It allows the middleware to make best possible decisions from 
+%the feedback of storage system knowledge, such that it will embed user intentions and the available 
+%system storage. 
+%We want the system to give the users a certain amount of currency 
+%in terms of bandwidth, storage space on each level, and latency expectations. These notions will be fuzzy 
+%but they will allow the user to make ad-hoc decisions to figure out what needs to be saved.
 
 The description of data is essentially metadata and it may include conventional attributes, such as 
 data type, size, dimensionality, relationship to other data, and etc. In particular,
@@ -27,26 +36,32 @@ captures the priority of objects - it is to our belief that
 for exascale science, users must prioritize a small set of objects to be saved on 
 higher-level capacity-limited storage layer
 to avoid the slow access to large-capacity lower-level storage, such as tapes.
-We propose a new technique, described by a utility function plugged in by a user, where objects
-can be cast into multiple buckets of data, and each bucket can be prioritized differently according
-to its utility value.
+We propose a new technique, described by a utility function plugged in by a user, 
+where objects can be cast into multiple buckets of data, and each bucket can be prioritized 
+differently according to its utility value.
 Once this is done, the middleware system will construct the description of data, re-organize
 and place data to achieve the desired QoS goals and policies.
 
-The user would like the ability to get a certain amount of Quality of Service 
+In the meanwhile, the user would like the ability to get a certain amount of Quality of Service 
 such that they can then make decisions when the expected bandwidth, 
 for example is less than what they desire and will then place in a certain set 
 of rules which the system can make autonomic decisions to help decide what should be done.
 A key insight in this proposed project has been the increased interaction of
 the application with the storage system. Towards this end, we propose to
-address the quality of service requirements by proivding the application
+address the quality of service requirements by providing the application
 with mechanisms to specify the quality of I/O service, interrogate the
 storage system, and react to the responses. Guided by our past work in
 ADIOS \cite{lofstead2008flexible} we propose to explore the design of two
-mechanisms for this purpose. Firstly, we will explore the augmentation of
-I/O applicatition programing interfaces (I/O APIs) to allow applications to
+mechanisms for this purpose. 
+
+Firstly, we will explore the augmentation of
+I/O application programing interfaces (I/O APIs) to allow applications to
 both specify timing and quality information and also query the storage
-system for timing estimates. Through this interface we expect the
+system for timing estimates. If user decide to write or read data to or from hierarchical storage systems, 
+they will rely on the API to send their intentions for inquiry and examine the system status, 
+including how much data they would like to write/read, desired bandwidth, data compression method, etc, 
+or the user can express their intension of writing data right now no matter what the traffic is now.
+Through this interface we expect the
 application and user to gain insights into how long a single output or input
 call will take given the required quality information, and then react to
 these estimates by adjusting the quality or restricting the scope of the
@@ -54,7 +69,7 @@ data required. Likewise we will explore how an application can provide
 timing information to the storage system to allow the storage system to make
 optimization decisions to best meet the requirements from the application. 
 
-We will also explore external data annotations, such as those
+Secondly, we will also explore external data annotations, such as those
 provided by the configuration file in ADIOS. Through the use of these
 external augmentation the user can provide insights to the storage system on
 the relative value of the data, expected life time and performance
@@ -63,6 +78,11 @@ this information the storage system can make optimizations specific to a use
 case. We expect these augmentations to be particularly important for
 eviction of data from a storage layer, and migration of data sets to a
 different storage layer. 
+
+The capability of APIs provide dynamic runtime information to user and make the system 
+more transparent to them rather than a black box. The end user could analyze or visualize data 
+in a more comfortable position, where they are able to envision 
+how much longer they are going to wait for data. 
 
 \paragraph{State of the art:} ADIOS implements a binary-packed data format that allows
 data characteristics such as min, max and index to be wrapped around data chunks. A
@@ -103,7 +123,7 @@ Finally we will study the use of an external data annotation system that can
 provide information to the storage system without requiring the application
 to be recompiled. 
 
-\paragraph{Challenges}
+\paragraph{Challenges:}
 The design of new APIs posses both technical and adoption challenges. Here
 we will only consider the technical challenges. The proposed set of APIs aim
 to expose broad system level environmental information to the application,
