@@ -1,24 +1,92 @@
 \subsubsection{QoS}
 
-\paragraph{Background:} ``Quality of Service'' (QoS) refers to the
-properties of the performance qualtiy of a particular service.
+\paragraph{Background:} One of the key differentiating features this project offers is driving storage
+decisions through quality of service (QoS) \emph{reservations} rather than continuing the current model of allowing
+all application to compete, without restriction, for part or all of the storage
+resources. This traditional approach leads to intereference
+effects~\cite{lofstead:2010:adaptive} that can greatly impact IO performance
+predictability. Further, with the introduction of additional tiers in the
+storage stack, the performance variability will increase with greater
+competiion for limited high performance resources. Unfettered, this competition
+will yield lower performance for all users than if applications attempt to reserve performance, thereby enabling the storage system to reason over its performance in terms of reservations and actual performance, accepting reservations that are within resource availability, rejecting those that would lead to overload. 
+
+It is important to note that we use performance reservations to reduce interference and to avoid overload conditions. If the system uses reservations intelligently, its performance is predictable and efficient because resources are not wasted on interference. However, in cases where an appication arrives that needs to run more urgently than any of the other already running applications, administrators can suspend less urgent applications which will save their state and relinquish their performance reservations. Upon restart, these applications make new performance reservations.
+
+There are two fundamental causes that can impede the I/O performance in an extreme-scale SSIO system. One is indirection, where layers of storage tiers are employed either for performance and/or for scalability reasons.  The direct consequence is that there could be multiple traversing paths from application end to the rest place of data, and more often than not, the I/O paths are not under control under any single authority. The other cause is the shared use of resources. The best effort I/O request/response nature and lack of QoS mechanisms imply that there is little guarantee in terms of expected performance.  Both indirection and shared use of resource contribute to a high probability of imbalanced use of resources thus the occurrence of congestion and degraded performance. Traditionally, there is a disconnection between storage infrastructure and rest of system software and applications: the infrastructure details are not exposed anywhere at all. One argument favoring this is to ensure a platform agnostic design. 
+
+As an example to demonstrate that this disconnection will hurt system performance: We launch 4096 processes with each process doing a single file I/O operation against half of the Spider II file system. The traces of those files are analyzed to examine the utilization distribution of different components. Figure (a), (b) and (c) shows the resource usage distribution for OSTs, OSSes, and LNETs, respectively. We observe that there exists a significant variation in usage across components of any given type (e.g., OST, OSS or LNET). For example, some OSTs are used more than 10 times while some others are never used (corresponding to zero frequency count). Similarly, OSSes and LNETs show significant imbalance in usage under the default placement strategy. Consequently, imbalanced resource utilization increases the contention at certain components more than others. 
+
+Given these insights, we advocate the idea that the infrastructure knowledge should find a way to relay to the upper layer for better and more effective use of resources.   We think this is more pertinent and critical given the recent development of multi-tier storage and storage component heterogeneity.  There needs to be a way for application/middleware layer to gain more exposure of storage system for more intelligent processing logic.  One prime example of such exposed knowledge can be request/response time. To most applications, this is a black box. Profiling it at the upper layer is neither efficient nor effective, as it doesn't reflect cross-layer characteristics. However, Most of storage layer does keep a detailed profiling of such information. We therefore envision and propose a histogram-based request/response profiling API that application and middleware layer can leverage and make more informative decisions.
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=\columnwidth]{graphics/infrastructure.pdf}\vspace{-1.2in}
+  \caption{Resource usage distribution for OST(a), OSS(b) and LNETs(c). }
+\end{figure}
+
+
+% This is about finding the relationshiop of workload-dependent to workload-independent metrics. -- Carlos
+ %are driven from multiple different approaches. First, supporting
+%capability runs is a priority for capability machines. We propose to address
+%capability run performance by incorporating monitoring for prepartory runs at
+%smaller scale to profile the application output characteristics both from a
+%writing velocity and volume, but also for example read patterns for the data
+%analytics required to generate scientific insights from the raw data. 
+
+% Not sure how to reuse this ... -- Carlos
+%By
+%discovering approximate data proportions that will likely be the key subsets
+%targeted by the simulation run, we can generate a policy to preserve a certain
+%storage portion for high fidelity data storagae and use slower or perhaps lower
+%fidelity or compressed data storage for less interesting data portions. We will
+%support spreading data appropriately across the storage hierarchy. In
+%particular, we will investigate how to place data across different layers to
+%meet the performance requirements for output while maintaining system
+%availability for other applications and offering the best possible performance
+%for the data analytics that will ultimately process this data.
+
+
+% Not sure how to reuse this... -- Carlos
+%Second, once data has been placed for future performance requirements, policies
+%must be able to address maintaining data on a priority basis in that location
+%to deliver on the placement optimization generated by the capability run
+%profilier.
+
+% This is a matter of metering, not performance reservations. -- Carlos
+%Third, most future NVM devices have limited write endurance prompting
+%management to ensure fair use by all machine users. Technologies like
+%NAND-flash and Phase Change Memory have limited write endurance. By
+%incorporating policies about the proportion of write endurance a compute
+%allocation is entitled to, data placement decisions can be made to ensure fair
+%resource usage. While the offending application will suffer worse IO
+%performance, other applications that more carefully address their data
+%intensity on these limited devices will achieve higher overall performnce. Only
+%by instituting such policies can we encourage application users to adopt
+%technology to manage the limited resources.
+
+
+%We propose to investigate both offering a policy mechanism and how to implement
+%these kinds of policies in a way that addresses offering the shortest
+%end-to-end time for scientific insights.
+
+
+``Quality of Service'' (QoS) refers to the
+properties of the performance qualtiy of a particular service, in this case the storage system.
 Performance quality can be expressed in either relative or absolute
-terms. Examples of relative performance qualities are ``fair'',
+terms. Examples of relative performance terms are ``fair'',
 ``proportional'', or ``priority/class-based'' (``the higher the
 priority the better the service'' or ``1st class is better than
-2nd''). The key advantage of relative performance qualities is that
+2nd''). The key advantage of relative performance terms is that
 they are easy to implement. The key disadvantage is the difficulty
-of making any strong guarantees based on those implementations --
+of making any guarantees based on those implementations --
 even relative guarantees are mired by the well-known effect of
 priority inversion~\cite{lampson:cacm80}. Examples of absolute
-performance qualities are ``rate-based'', ``soft real-time'', and
+performance terms are ``rate-based'', ``soft real-time'', and
 ``hard real-time''. The key advantage of absolute performance
-qualities is that it is principally easier to implement strong
-guarantees: they enable an agreement between a task and a service,
-also known as a \emph{reservation}, does not change meaning depending
-on the service's state, as long as the service is able to isolate
-performance between different tasks. The key disadvantage of absolute
-performance qualities is that their implementation is non-trivial,
+terms are that they enable the implementation of strong
+guarantees: absolute terms enable agreements between application tasks and storage that we call \emph{reservations} and that do not change meaning depending
+on the storage system's workload. The key challenge of absolute
+performance terms is that their implementation is non-trivial,
 especially in large-scale systems.
 
 \paragraph{Approach:} The goals of this proposal require applications
@@ -73,6 +141,11 @@ workload-dependent metric and the workload-independent metric.
 Because of performance isolation, the application has to discover
 this relationship only once.
 
+
+
+\subsubsection{QoS}
+
+
 \paragraph{Related Work:}
 
 \paragraph{Challenges:} The deep and heterogenous memory and storage
@@ -119,3 +192,10 @@ challenge is to minimize duplication of data, at least on fast
 layers and leverage redundancy across layers.
 
 \end{itemize}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../proposal"
+%%% End:
+
