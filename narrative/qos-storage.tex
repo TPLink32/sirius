@@ -8,15 +8,69 @@ effects~\cite{lofstead:2010:adaptive} that can greatly impact IO performance
 predictability. Further, with the introduction of additional tiers in the
 storage stack, the performance variability will increase with greater
 competiion for limited high performance resources. Unfettered, this competition
-will yield lower performance for all users than if applications attempt to reserve performance, thereby enabling the storage system to reason over its performance in terms of reservations and actual performance, accepting reservations that are within resource availability, rejecting those that would lead to overload. 
+will yield lower performance for all users than if applications
+attempt to reserve performance, thereby enabling the storage system
+to reason over its performance in terms of reservations and actual
+performance, accepting reservations that are within resource
+availability, rejecting those that would lead to overload.
 
-It is important to note that we use performance reservations to reduce interference and to avoid overload conditions. If the system uses reservations intelligently, its performance is predictable and efficient because resources are not wasted on interference. However, in cases where an appication arrives that needs to run more urgently than any of the other already running applications, administrators can suspend less urgent applications which will save their state and relinquish their performance reservations. Upon restart, these applications make new performance reservations.
+It is important to note that we use performance reservations to
+reduce interference and to avoid overload conditions. If the system
+uses reservations intelligently, its performance is predictable and
+efficient because resources are not wasted on interference. However,
+in cases where an appication arrives that needs to run more urgently
+than any of the other already running applications, administrators
+can suspend less urgent applications which will save their state
+and relinquish their performance reservations. Upon restart, these
+applications make new performance reservations.
 
-There are two fundamental causes that can impede the I/O performance in an extreme-scale SSIO system. One is indirection, where layers of storage tiers are employed either for performance and/or for scalability reasons.  The direct consequence is that there could be multiple traversing paths from application end to the rest place of data, and more often than not, the I/O paths are not under control under any single authority. The other cause is the shared use of resources. The best effort I/O request/response nature and lack of QoS mechanisms imply that there is little guarantee in terms of expected performance.  Both indirection and shared use of resource contribute to a high probability of imbalanced use of resources thus the occurrence of congestion and degraded performance. Traditionally, there is a disconnection between storage infrastructure and rest of system software and applications: the infrastructure details are not exposed anywhere at all. One argument favoring this is to ensure a platform agnostic design. 
+There are two fundamental causes that can impede the I/O performance
+in an extreme-scale SSIO system. One is indirection, where layers
+of storage tiers are employed either for performance and/or for
+scalability reasons.  The direct consequence is that there could
+be multiple traversing paths from application end to the rest place
+of data, and more often than not, the I/O paths are not under control
+under any single authority. The other cause is the shared use of
+resources. The best effort I/O request/response nature and lack of
+QoS mechanisms imply that there is little guarantee in terms of
+expected performance.  Both indirection and shared use of resource
+contribute to a high probability of imbalanced use of resources
+thus the occurrence of congestion and degraded performance.
+Traditionally, there is a disconnection between storage infrastructure
+and rest of system software and applications: the infrastructure
+details are not exposed anywhere at all. One argument favoring this
+is to ensure a platform agnostic design.
 
-As an example to demonstrate that this disconnection will hurt system performance: We launch 4096 processes with each process doing a single file I/O operation against half of the Spider II file system. The traces of those files are analyzed to examine the utilization distribution of different components. Figure (a), (b) and (c) shows the resource usage distribution for OSTs, OSSes, and LNETs, respectively. We observe that there exists a significant variation in usage across components of any given type (e.g., OST, OSS or LNET). For example, some OSTs are used more than 10 times while some others are never used (corresponding to zero frequency count). Similarly, OSSes and LNETs show significant imbalance in usage under the default placement strategy. Consequently, imbalanced resource utilization increases the contention at certain components more than others. 
+As an example to demonstrate that this disconnection will hurt
+system performance: We launch 4096 processes with each process doing
+a single file I/O operation against half of the Spider II file
+system. The traces of those files are analyzed to examine the
+utilization distribution of different components. Figure (a), (b)
+and (c) shows the resource usage distribution for OSTs, OSSes, and
+LNETs, respectively. We observe that there exists a significant
+variation in usage across components of any given type (e.g., OST,
+OSS or LNET). For example, some OSTs are used more than 10 times
+while some others are never used (corresponding to zero frequency
+count). Similarly, OSSes and LNETs show significant imbalance in
+usage under the default placement strategy. Consequently, imbalanced
+resource utilization increases the contention at certain components
+more than others.
 
-Given these insights, we advocate the idea that the infrastructure knowledge should find a way to relay to the upper layer for better and more effective use of resources.   We think this is more pertinent and critical given the recent development of multi-tier storage and storage component heterogeneity.  There needs to be a way for application/middleware layer to gain more exposure of storage system for more intelligent processing logic.  One prime example of such exposed knowledge can be request/response time. To most applications, this is a black box. Profiling it at the upper layer is neither efficient nor effective, as it doesn't reflect cross-layer characteristics. However, Most of storage layer does keep a detailed profiling of such information. We therefore envision and propose a histogram-based request/response profiling API that application and middleware layer can leverage and make more informative decisions.
+Given these insights, we advocate the idea that the infrastructure
+knowledge should find a way to relay to the upper layer for better
+and more effective use of resources.   We think this is more pertinent
+and critical given the recent development of multi-tier storage and
+storage component heterogeneity.  There needs to be a way for
+application/middleware layer to gain more exposure of storage system
+for more intelligent processing logic.  One prime example of such
+exposed knowledge can be request/response time. To most applications,
+this is a black box. Profiling it at the upper layer is neither
+efficient nor effective, as it doesn't reflect cross-layer
+characteristics. However, Most of storage layer does keep a detailed
+profiling of such information. We therefore envision and propose a
+histogram-based request/response profiling API that application and
+middleware layer can leverage and make more informative decisions.
+
 
 \begin{figure}[tbh]
   \centering
@@ -71,7 +125,8 @@ Given these insights, we advocate the idea that the infrastructure knowledge sho
 
 
 ``Quality of Service'' (QoS) refers to the
-properties of the performance qualtiy of a particular service, in this case the storage system.
+properties of the performance qualtiy of a particular service, in
+this case the storage system.
 Performance quality can be expressed in either relative or absolute
 terms. Examples of relative performance terms are ``fair'',
 ``proportional'', or ``priority/class-based'' (``the higher the
@@ -84,7 +139,9 @@ priority inversion~\cite{lampson:cacm80}. Examples of absolute
 performance terms are ``rate-based'', ``soft real-time'', and
 ``hard real-time''. The key advantage of absolute performance
 terms are that they enable the implementation of strong
-guarantees: absolute terms enable agreements between application tasks and storage that we call \emph{reservations} and that do not change meaning depending
+guarantees: absolute terms enable agreements between application
+tasks and storage that we call \emph{reservations} and that do not
+change meaning depending
 on the storage system's workload. The key challenge of absolute
 performance terms is that their implementation is non-trivial,
 especially in large-scale systems.
@@ -140,11 +197,6 @@ workload an application can discover the relationship between its
 workload-dependent metric and the workload-independent metric.
 Because of performance isolation, the application has to discover
 this relationship only once.
-
-
-
-\subsubsection{QoS}
-
 
 \paragraph{Related Work:}
 
