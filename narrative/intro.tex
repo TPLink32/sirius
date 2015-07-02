@@ -114,8 +114,8 @@ and response time. We will test our ideas on the next generation OLCF,
 SNL/LANL, and NERSC systems.
 %
 We plan to leverage the many inovations we discovered in 
-the Lightweight File Systems~\cite{lwfs} (LWFS) project.
-In this project, Sandia sought to
+the Lightweight File Systems~\cite{lwfs} (LWFS) project and the Ceph storage system project (ceph.com).
+In the LWFS project, Sandia sought to
 demonstrate stripping down a file system to the bare minimum features required
 for any storage system. Then, additional functionality and semantics, such as
 POSIX-style directories and consistency requirements, were added in using
@@ -127,6 +127,25 @@ be developed with exactly the overhead required for different applications. The
 second phase of LWFS, known as Sirocco~\cite{sirocco}, is investigating how to
 manage storage devices for efficient and scalable storage performance.  Sirocco
 has been in process for three years and has developed a usable storage infrastructure.
+
+The Ceph project (ceph.com) started at UC Santa Cruz in 2004 and
+was initially funded by DOE/NNSA involving LLNL, LANL, and Sandia,
+with the goal to create an object-based parallel file system that
+addresses the well-known metadata service bottleneck of creating
+and accessing 1000s of files comprising a checkpoint~\cite{weil:osdi06}.
+However, after the Ceph kernel client was pulled into the Linux
+mainline in 2010, the focus of Ceph shifted to its object-based
+storage subsystem, also called Reliable Autonomous Distributed
+Object Store (RADOS), which now is the dominant storage system in
+OpenStack production-level deployments and was recently selected
+as the new backend for Flickr and Yahoo! Cloud Services. In this
+project we will leverage two of the key innovations of Ceph: (1)
+Controlled Replication Under Scalable Hashing (CRUSH)~\cite{weil:sc06}
+will help making resource identification and predictable performance
+scalable, and (2) extensible storage object classes~\cite{watkins:ucsctr15}
+will provide the main mechanisms of introducing new APIs,
+metadata vocabulary, and quality of service into the storage stack.
+
 
 We will examine the research challenges from the perspective of
 %
