@@ -1,65 +1,67 @@
 \section{Introduction} 
 \label{sec:introduction}
 
-Avoiding impending bottlenecks in exascale scientific discovery will require
-new research into managing and storing the large amounts of data
-that will be produced by simulations and analyzed for months
-afterwards.
-%
-In this project we will demonstrate a cooperative approach for storing data
-where the user and the storage system work together to achieve the best possible data
-quality and performance given data features, storage tier characteristics,
-and current system state. We will investigate novel techniques to facilitate efficient
-mapping of data objects, even partitioning individual variables, from the user
-space onto multiple storage tiers and enable application-guided data
-reductions/transformations to address capacity and bandwidth bottlenecks while
-constraining the error to be within user provided bounds.
-% 
-We will address the associated I/O and storage challenges in the context of
-current and emerging storage landscapes and expedite insights into critical
-scientific processes, while demonstrating the validity of our approach in key DOE
-domains. We will research techniques for creating a Scalable
-Storage Software Infrastructure, integrating services from the middleware
-layer with Storage System features to support the
-novel strategy of distributing data both horizontally and vertically across the storage
-system. 
-The negotiation between these layers will be provided as a fundamental service, 
-allowing users to easily save ``the best'' amount of data, automatically placed
-throughout the entire storage stack.
-
-The metric we are most interested in optimizing is time to knowledge.
-Current approaches to addressing the I/O bottleneck fall into two broad
-categories: parallel file system approaches that optimize the throughput for
-an entire system, and I/O middleware approaches that optimize the
-performance of a single application. Both approaches have been successful to date, but
-are unlikely to overcome the remaining obstacles in reaching exascale. Instead
-of trying to optimize throughput, we will seek to reduce the time to
-knowledge. This is the most significant metric for scientific applications
-where the desired outcome is not storing data, but rather executing a
-knowledge extraction process on the data. Moreover, we aim to perform the
-optimization not for a single application, but rather for workloads within a
-multi-user multi-application system environment.
-
-Our approach targets the expected characteristics of exascale storage
-hardware. The storage layer will be partitioned into multiple heterogeneous
-tiers with vastly different performance characteristics. The layers
-will be further differentiated by the constraints on capacity
-and data lifetime within each layer. Tape archival storage will still maintain
-data long term, but access to this data will be orders of magnitude slower
-than the next layer and naively accessing data from archival storage will
-greatly impact productivity.
-%
 {\em The purpose of computing is insight, not numbers}~\cite{Hamming:book}.
 Richard Hamming's remark, made over 50 years ago at the dawning of the age of
 large scale scientific computation, is even more relevant today as we prepare
 for scientific simulation at the exascale. Hamming was a pioneer in the fields
 of coding theory, scientific computing and information theory who would
 instantly sympathize with the central objective of this proposal--minimizing
-the time to knowledge.  Our approach in this proposal is to enable researchers
-to place more knowledge into the SSIO system so that data can be recast from a bunch of bytes
-to information which the system can then place and optimize the time to gain knowledge from exascale simulations.
-We first motivate this by a problem our team has been working on in the past six months, and then recast this problem into
-a series of research questions and challenges which must be addressed in order to optimize the SSIO system for exascale science.
+the time to knowledge.  
+
+Avoiding impending bottlenecks in exascale scientific discovery will require
+new research into managing and storing the large amounts of data that will be
+produced by simulations and analyzed for months afterwards.
+%
+In this project we will demonstrate a cooperative approach for storing data
+where the user and the storage system work together to achieve the best
+possible data quality and performance given data features, storage tier
+characteristics, and current system state. We will investigate novel techniques
+to facilitate efficient mapping of data objects, even partitioning individual
+variables, from the user space onto multiple storage tiers and enable
+application-guided data reductions/transformations to address capacity and
+bandwidth bottlenecks while constraining the error to be within user provided
+bounds.
+% 
+We will address the associated I/O and storage challenges in the context of
+current and emerging storage landscapes and expedite insights into critical
+scientific processes, while demonstrating the validity of our approach in key
+DOE domains. We will research techniques for creating a Scalable Storage
+Software Infrastructure, integrating services from the middleware layer with
+Storage System features to support the novel strategy of distributing data both
+horizontally and vertically across the storage system.  The negotiation between
+these layers will be provided as a fundamental service, allowing users to
+easily save ``the best'' amount of data, automatically placed throughout the
+entire storage stack.
+
+The metric we are most interested in optimizing is time to knowledge.  Current
+approaches to addressing the I/O bottleneck fall into two broad categories:
+parallel file system approaches that optimize the throughput for an entire
+system, and I/O middleware approaches that optimize the performance of a single
+application. Both approaches have been successful to date, but are unlikely to
+overcome the remaining obstacles in reaching exascale. Instead of trying to
+optimize throughput, we will seek to reduce the time to knowledge. This is the
+most significant metric for scientific applications where the desired outcome
+is not storing data, but rather executing a knowledge extraction process on the
+data. Moreover, we aim to perform the optimization not for a single
+application, but rather for workloads within a multi-user multi-application
+system environment.
+
+Our approach targets the expected characteristics of exascale storage hardware.
+The storage layer will be partitioned into multiple heterogeneous tiers with
+vastly different performance characteristics. The layers will be further
+differentiated by the constraints on capacity and data lifetime within each
+layer. Tape archival storage will still maintain data long term, but access to
+this data will be orders of magnitude slower than the next layer and naively
+accessing data from archival storage will greatly impact productivity.
+%
+Our approach in this proposal is to enable researchers to place more knowledge
+into the SSIO system so that data can be recast from a bunch of bytes to
+information which the system can then place and optimize the time to gain
+knowledge from exascale simulations.  We first motivate this by a problem our
+team has been working on in the past six months, and then recast this problem
+into a series of research questions and challenges which must be addressed in
+order to optimize the SSIO system for exascale science.
 
 The traditional approach to transforming results of scientific computation into
 knowledge consists of storing the numerical output of a simulation on disk,
