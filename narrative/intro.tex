@@ -1,4 +1,4 @@
-\section{Introduction} {\color{red} Scott, Hasan, Gary, Jay - 4 pages}
+\section{Introduction} 
 \label{sec:introduction}
 
 Avoiding impending bottlenecks in exascale scientific discovery will require
@@ -48,6 +48,26 @@ and data lifetime within each layer. Tape archival storage will still maintain
 data long term, but access to this data will be orders of magnitude slower
 than the next layer and naively accessing data from archival storage will
 greatly impact productivity.
+%
+{\em The purpose of computing is insight, not numbers}~\cite{Hamming:book}.
+Richard Hamming's remark, made over 50 years ago at the dawning of the age of
+large scale scientific computation, is even more relevant today as we prepare
+for scientific simulation at the exascale. Hamming was a pioneer in the fields
+of coding theory, scientific computing and information theory who would
+instantly sympathize with the central objective of this proposal--minimizing
+the time to knowledge.  Our approach in this proposal is to enable researchers
+to place more knowledge into the SSIO system so that data can be recast from a bunch of bytes
+to information which the system can then place and optimize the time to gain knowledge from exascale simulations.
+We first motivate this by a problem our team has been working on in the past six months, and then recast this problem into
+a series of research questions and challenges which must be addressed in order to optimize the SSIO system for exascale science.
+
+
+The traditional approach to transforming results of scientific computation into
+knowledge consists of storing the numerical output of a simulation on disk,
+followed by a post-processing or analysis stage that might take place over
+several ensuing weeks or months. The overarching objective is to gain insight,
+or knowledge.  As already mentioned, the anticipated scale of computations
+means that this workflow is simply no longer viable.
 %
 The overarching idea is that data from applications can be characterized by different
 levels of importance and different level of importance over time. 
@@ -254,56 +274,7 @@ another day for doing their analysis or gets frustrated and reads much less
 data than they really need to. Furthermore the user tends to read in just a
 small sample of the data without much knowledge if they are missing
 important pieces of the data.
-\subsection{Research Challenges to be address}
-\label{subsec:challenges}
-Our research into the storage system and middle ware layers must address
-many of these challenges including
-\begin{enumerate}
-\item How do we describe the user intentions at the API layer and have this
-  communicated down to the middle-ware and storage layers?
-\item How do we allow users to define their user defined compression
-  techniques and have this data read back from the storage system layers?
-  Where do we execute the decompression techniques 
-\item How do we evaluate the tradeoffs at runtime to guide data placement,
-  including the movement of data across the network, across the different
-  storage tiers? (data movement and quality tradeoff)
-\item Can we use different forms of learning techniques as daemons on the
-  system to perform data migration from one storage tier to another? For
-  example, if we see that a user is looking at one time slice after another
-  for a certain object in their dataset which is in the slower tiers of the
-  hierarchy, do we automatically propane up the data which has not been
-  requested in the hope that this will be requested data? (prediction and
-  prefetching, user defined compression on movement)
-\item Can we understand the true need of campaign storage and understand the
-  possible impact of the campaign storage if we run a hadoop-like
-  file-system instead of a lustre/gpfs file system? (additional layers)
-\item Can we limit the amount of data duplication? Data space is going to be
-  very constrained on the exascale system so we must ensure that minimal
-  copies are made of data, and when data is duplicated, they are removed
-  through a garbage collection routine. (space management)
-\item Can we build a model to give us the time estimates during the reading
-  and writing phases, so that rules can be in place from the user
-  perspective to make adaptive decisions. For example, if the file system
-  says that reading will take 3 months, users can they place in rules to
-  then read in a subset of data, and they can understand which data can be
-  read quickly and which pieces will take more time. (estimation)
-\item Can we understand how to place code in the system which will allow
-  data-regeneration to take place. (regeneration)
-\item How does the storage system do a better job in managing request from
-  all of the users on a LCF than today? We realize that today users who have
-  a better middlware system can often lock other users from getting high
-  performance when they are running. If we have the concept of currency
-  which is eventually used in the same extent as node-hours, then users will
-  have to be able to think about how much storage and how much bandwidth
-  they can choose. One question that needs to be understood is if there are
-  times when the system sees that there are very few storage system
-  resources being used, then the lucky users can get the bandwidth cheaper
-  than at times of heavy usage. How can we enforce this? (Fairness)
-\item How do we manage all of the metdata not only from the principle
-  objects, but from the sub-objects? How well will this scale when we have
-  users who can potentially create billions of objects from their
-  simulation? (scalability and discovery)
-\end{enumerate}
+
 %
 %Exascale scientific discovery will be severely bottlenecked without
 %sufficient new research into managing and storing the large amounts of data

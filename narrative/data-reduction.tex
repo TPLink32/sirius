@@ -1,19 +1,6 @@
-\subsubsection{Data Reduction Techniques}
+\subsection{Data Refactoring}
 
-{\em The purpose of computing is insight, not numbers}~\cite{Hamming:book}.
-Richard Hamming's remark, made over 50 years ago at the dawning of the age of
-large scale scientific computation, is even more relevant today as we prepare
-for scientific simulation at the exascale. Hamming was a pioneer in the fields
-of coding theory, scientific computing and information theory who would
-instantly sympathize with the central objective of this proposal--minimizing
-the time to knowledge. 
 
-The tradiional approach to transforming results of scientific computation into
-knowledge consists of storing the numerical output of a simulation on disk,
-followed by a post-processing or analysis stage that might take place over
-several ensuing weeks or months. The overarching objective is to gain insight,
-or knowledge.  As already mentioned, the anticipated scale of computations
-means that this workflow is simply no longer viable.
 
 It is useful to classify scientific data into two basic categories: structured
 data (in the sense that it satisfies a known or relatively simple model) or
@@ -96,7 +83,6 @@ operation against the previous data is used as a pre-processor. The fact that
 even such a crude pre- processor is able to deliver reasonable results augurs
 well: Even a relatively crude Auditor can be expected to significantly
 out-perform the XOR and other similar approaches.
-
 
 
 
