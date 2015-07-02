@@ -1,14 +1,14 @@
 \subsection{Naming and Discovery Service}
 
 Given the well documented difficulties with POSIX-compliant naming and our
-approach that decomposes data into potentially large number of objects,
-we must take a new approach to naming.
-Data migration, as a result of system pressures or user/system policies,
-further adds to the complexity of managing naming and discovery. Our naming
-service must maintain sufficient metadata information, track objects
-as they move across storage layers, and facilitates data discovery.
+approach that decomposes what would be a single file into potentially large
+number of objects, we must take a new approach to naming.  Data migration, as a
+result of system pressures or user/system policies, further adds to the
+complexity of managing naming and discovery. Our naming service must maintain
+sufficient metadata information, track or be able to find objects as they move
+across storage layers, and facilitates data discovery.
 
-Hierarchical Storage Management (HSM) systems \cite{hsm} offer a strict caching approach
+Hierarchical Storage Management (HSM) systems~\cite{hsm} offer a strict caching approach
 for managing different storage capacities trading off performance for capacity.
 By maintaining a single namespace across all tiers, it is possible to list a
 single directory view with files stored at different tiers. While this approach
@@ -16,59 +16,67 @@ to managing multi-tier storage works for whole files that fit on single logial
 devices, it is far from ideal for scientific simulations.
 
 Our goal with this proposal is to offer a similar capability but with a finer
-granularity, leveraging the inner structure of scientific data,
-and manage data discovery efficiently, where the data may
-be split and placed on several storage layers, or may have migrated
-based on system pressures or user or system policies. Instead of a single file such as might be used to
-store an entire timestep output for a simulation, we will demonstrate extending
-this capability to a subset of a single variable level. By shifting to a
-finer-grained approach, we will enable more effective use of close/fast/small
-storage tiers and prioritize objects with high importance.
-Traiditional HSM stores an entire file on a tier making room if
-insufficient space is available. With this shift to a partial variable
-granularity, a 1 PB output with 200 GB of ``high interest'' data can limit this
-costly tier ussage to just 200 GB greatly, improving usability and performance while still
-allowing science to be done. This effectively reduces
-pressure forcing data migration. Meanwhile, we need to be
-able to locate the data should it moves.
-Utilizing the description of data (section \ref{}) informed by users and packed by the middleware,
-the resulting naming and discovery service will attach the Sirocco
-contaier/object/fork/address tuple with a special attribute indicating that
-this record is of ``high interest'' strongly encouraging keeping the record
-in close/fast/small storage as long as possible.
+granularity leveraging the inner structure of scientific data. It must also
+handle data discovery efficiently for cases where data is spread across several
+storage layers or some of those pieces may have migrated based on system
+pressures or user or system policies. Instead of a single file, such as might
+be used to store an entire timestep output for a simulation, we will
+demonstrate a metadata service with naming at the science variable level, but
+with an associated list of all of the variable pieces and potentially different
+versions stored throughout the storage system. By shifting to a finer-grained
+approach, we will enable more effective use of close/fast/small storage tiers
+and prioritize objects with high importance.  Traiditional HSM stores an entire
+file on a tier making room if insufficient space is available.  With this shift
+to a partial variable granularity, a 1 PB output with 500 GB of ``high
+interest'' data can limit this costly tier usage to just 500 GB greatly
+improving storage availability in the close/fast/small tier and focus
+performance/capacity costs to get the most science from from the platform.  By
+only placing ``high interest'' data in the close/fast/small tier, we will
+effectively reduce pressure forcing data migration hurting both writing
+performance and the later data analytics required for generating scientific
+insights.  Sirocco identifies a data segment using a
+contaier/object/fork/address tuple that can have associated attributes. We will
+both add a special attribute indicating that this record is of ``high
+interest'' as well adapting the migration mechanisms to use this attribute, if
+present, to strongly encouraging keeping the record in close/fast/small storage
+as long as possible.
 
-The challenge for discovery is that potentially, data will migrate from where
-it is initially stored to a new location within the storage system. Sirocco
-offers an ability to search for data that has moved as well as forcing a
-particular resilience-based replica be the ``authoritative'' version. We will
-investigate if the current Sirocco functionality is capable of supporting the
-new operating modes we wish to offer. Initial expectations suggest having
-bounded time guarantees for finding data are critical for offering the quality
-of service guarantees we wish to offer. Some potential approaches can build on
-CRUSH~\cite{ceph} from Ceph to offer a map of where to search for data
-sequentially. Given our multiple storage tiers, we would extend this using some
-search limiting mechanism indicating to shift to the next tier to continue
-searching because the requested data never made it to this location. This new
-work will be an expansion of Sirocco's currently planned features.
+Meanwhile, we need to be able to locate or ``discover'' the data should it
+move.  The challenge for discovery is that potentially, data will migrate from
+where it is initially stored to a new location within the storage system.
+Sirocco offers an ability to search for data that has moved as well as forcing
+a particular resilience-based replica be the ``authoritative'' version
+migrating the data to a particular location. We will investigate if the current
+Sirocco functionality is capable of supporting the new operating modes we wish
+to offer. Initial expectations suggest having bounded time guarantees for
+finding data are critical for offering the quality of service guarantees we
+wish to offer. Some potential approaches can build on CRUSH~\cite{ceph} from
+Ceph to offer a map of where to search for data sequentially. Given our
+multiple storage tiers, we would extend this using some mechanism to shift to
+the next tier to continue searching because the requested data never made it to
+this location. This new work will be an expansion of Sirocco's currently
+planned features.
 
 The overriding theme for this proposal of providing a cooperative relationship
-between the user and the storage system extends into this area as well. In
-order for the user to negotiate with the storage system for data
-quality/retrieval time tradeoff, additional data is required. Providing this
-functionality requries the naming service be able to both return a list of data
-versions, but also some indication of data quality and estimated retrieval time
-for each. This estimate will be disucssed elsewhere in this proposal.
+between the user and the storage system extends into this area as well.
+Negotiating the data quality/retrieval time tradeoff reuqires additional data.
+Providing this functionality requries the naming service be able to both return
+a list of data versions and an indication of data quality. This will be
+combined with a retrieval time estimate for each verstion by the middleware to
+determine what data version should be retrieved.  This estimate will be
+disucssed elsewhere in this proposal.
 
 Structurally, the traditional POSIX naming service offeriing a hierarchical
 space consisting of directories and files may be maintained for backwards
 compatibility. However, this view will not offer the same strict semantics
-POSIX requires. We must break these strict semantics to address scalability
-problems because of the serialized access to a single source for creating and
+POSIX defines. We must break these strict semantics to address scalability
+problems forced by the serialized access to a single source for creating and
 accessing files.  Several efforts~\cite{giga+,pvfs,others} have worked to
 reduce this contention by doing things like reducing the serialized scope to a
 single directory or subtree. While these approaches help, they do not address
-this key scalability limitation. Instead, we ar willing to offer a short
-duration to eventually consistent POSIX view to offer the performance and
+this key scalability limitation of serialized access--even if the metadata
+service is spread across multiple nodes. Instead, we will offer a
+short duration to consistency POSIX view to offer the performance and
 consistency requirements an exascale application demands.
 
 While pure object stores, such as those popular in the big data
@@ -76,13 +84,14 @@ domain~\cite{memcached,others} avoid this bottleneck by strictly offering an
 object ID with the application required to manage how this ID maps to something
 of interest. This approach of removing the metadata service from the system
 level completely can work well for scale out applications where data is created
-or consumed by a single process at a time rather than potentially O(1 million)
-processes all actively collectively for a single ``object''. To address this
-case, having some system integrated metadata services to associate names with
-these object is a preferable solution. While it will not have the same
-synchronous consistency semantics as POSIX, we will offer something as close as
-possible to address legacy application and command-line style data access and
-migration to other storage types using these POSIX semantics.
+or consumed by a single process at a time or just in a work queue rather than
+potentially O(1 million) processes all actively collectively for a single
+``object''. To address this case, having some system integrated metadata
+services to associate names with these object is a preferable solution. While
+it will not have the same synchronous consistency semantics as POSIX, we will
+offer something as close as possible to address legacy application and
+command-line style data access and migration to other storage types using these
+POSIX semantics.
 
 We plan to address this scalability problem by continuing with the LWFS and
 Sirocco model. LWFS and Sirocco have take an approach similar to the pure
@@ -103,13 +112,13 @@ discovery service scalable under the circumstances outlined above.
 
 In addition to the basic naming and data tracking operations, we will also need
 to incorporate authorization capabilities. Sirocco currently integrates with a
-Kerberos service for authentication and authorization. Given a capability
-ticket, a user can access different objects as needed. This ticket structure
-offers protection services typically offered on POSIX directories and files,
-but can do it at the fork level instead. This allows a reduced quality data
-version to be available for the general users while the high-quality version
-would be limited to the data creator. This and other considerations for
-security must be incorporated into the entire naming and metadat service.
+Kerberos service for authentication. Given a capability ticket, a user can
+access different objects as needed. This ticket structure offers protection
+services typically offered on POSIX directories and files, but can do it at the
+fork level instead. This allows a reduced quality data version to be available
+for the general users while the high-quality version would be limited to the
+data creator. This and other considerations for security must be incorporated
+into the entire naming and metadata service.
 
 While strongly encouraging data to stay in a particular type of storage tier,
 ultimately it must be possible to flush this data to make room for other uses.
@@ -131,13 +140,13 @@ functionality.
 \begin{enumerate}
 
 \item Milestone 1: Demonstrate a metadata service capable of serving both POSIX
-clients and our clients, but without consideration for authentication, authorization, or data migration.
+clients and our clients, but without consideration for authentication,
+authorization, or data migration.
 
 \item Milestone 2: Demonstrate a time bounded search approach for finding data
-within the storage system to identify data the current location and retrieval
-performance characteristics for data since migration. This will update the
-cached information in the metadata service to short-circuit future requests for
-the data presuming that it does not migrate again.
+within the storage system to identify data and the current location.  This will
+update the cached information in the metadata service to short-circuit future
+requests for the data presuming that it does not migrate again soon.
 
 \item Milestone 3: Demonstrate incorporating A\&A and show scalability under
 both application load as well as storage system pressures showing that we can
