@@ -1,7 +1,7 @@
 \subsection{Naming and Discovery Service}
 
 Given the well documented difficulties with POSIX-compliant naming and our
-approach that decomposes data into potentially large number of objects, 
+approach that decomposes data into potentially large number of objects,
 we must take a new approach to naming.
 Data migration, as a result of system pressures or user/system policies,
 further adds to the complexity of managing naming and discovery. Our naming
@@ -16,28 +16,26 @@ to managing multi-tier storage works for whole files that fit on single logial
 devices, it is far from ideal for scientific simulations.
 
 Our goal with this proposal is to offer a similar capability but with a finer
-granularity leveraging the inner structure of scientific data, 
-and manage discovering efficiently, where the data may
+granularity, leveraging the inner structure of scientific data,
+and manage data discovery efficiently, where the data may
 be split and placed on several storage layers, or may have migrated
-based on system pressures. Instead of a single file such as might be used to
-store an entire timestep output for a simulation, we will demonstrate offering
-the same capability at a subset of a single variable level. By shifting to a
+based on system pressures or user or system policies. Instead of a single file such as might be used to
+store an entire timestep output for a simulation, we will demonstrate extending
+this capability to a subset of a single variable level. By shifting to a
 finer-grained approach, we will enable more effective use of close/fast/small
-storage tiers and manage the impact when there is insufficient space forcing
-data to move. Traiditional HSM stores an entire file on a tier making room if
+storage tiers and prioritize objects with high importance.
+Traiditional HSM stores an entire file on a tier making room if
 insufficient space is available. With this shift to a partial variable
-granularity, a 1 PB output with 500 GB of ``high interest'' data can limit this
-costly tier ussage to just 500 GB greatly enhancing usability. This reduces
-pressure forcing data migration, but does not prevent it. We still need to be
-able to find the data should it move based on system pressure.
-
-The resulting naming and discovery service will attach the Sirocco
+granularity, a 1 PB output with 200 GB of ``high interest'' data can limit this
+costly tier ussage to just 200 GB greatly, improving usability and performance while still
+allowing science to be done. This effectively reduces
+pressure forcing data migration. Meanwhile, we need to be
+able to locate the data should it moves.
+Utilizing the description of data (section \ref{}) informed by users and packed by the middleware,
+the resulting naming and discovery service will attach the Sirocco
 contaier/object/fork/address tuple with a special attribute indicating that
-this record is of ``high interest'' strongly encouraging keeping the variable
-in close/fast/small storage as long as possible. In addition to maintaining
-this additional metadata, the application and/or middleware must provide this
-information. The storage system simply needs to act appropriately on this data
-based on the attribute.
+this record is of ``high interest'' strongly encouraging keeping the record
+in close/fast/small storage as long as possible.
 
 The challenge for discovery is that potentially, data will migrate from where
 it is initially stored to a new location within the storage system. Sirocco
