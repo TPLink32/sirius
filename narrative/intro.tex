@@ -41,7 +41,7 @@ optimization not for a single application, but rather for workloads within a
 multi-user multi-application system environment.
 
 Our approach targets the expected characteristics of exascale storage
-hardware. The storage layer will be partitioned into multiple heterogenous
+hardware. The storage layer will be partitioned into multiple heterogeneous
 tiers with vastly different performance characteristics. The layers
 will be further differentiated by the constraints on capacity
 and data lifetime within each layer. Tape archival storage will still maintain
@@ -61,7 +61,6 @@ to information which the system can then place and optimize the time to gain kno
 We first motivate this by a problem our team has been working on in the past six months, and then recast this problem into
 a series of research questions and challenges which must be addressed in order to optimize the SSIO system for exascale science.
 
-
 The traditional approach to transforming results of scientific computation into
 knowledge consists of storing the numerical output of a simulation on disk,
 followed by a post-processing or analysis stage that might take place over
@@ -69,6 +68,11 @@ several ensuing weeks or months. The overarching objective is to gain insight,
 or knowledge.  As already mentioned, the anticipated scale of computations
 means that this workflow is simply no longer viable.
 %
+\section{Scalable Storage Software Infrastructure}
+Our focus in this proposal is in theme 2: Scalable Storage Software Infrastructure. We will focus on a state of the art
+SSIO solution to solve problems which researchers are beginning to face and will make science on exascale systems
+problematic without new insights and solutions.
+
 The overarching idea is that data from applications can be characterized by different
 levels of importance and different level of importance over time. 
 Codes such as the XGC1 simulation from C. S. Chang (PPPL), which is one of largest users of Leadership Class Facilities (over 300M hours at ANL, NERSC, and ORNL) has launched a series of simulations which need to write out 100 PB of data on the Titan system. Due to resource limitations, the simulation will only write about 10 PB, but
@@ -85,10 +89,6 @@ majority of the OLCF, the file system was shared and sometimes the writing time 
 to monitor this time and then write less data when the time was going to be longer.   After the simulation is complete we also need to visualize this reduced data, and 
 an additional problem appeared; just to get a first look at the visualization data seemed like it could take over a month because some of the timesteps were on tape and other
 timesteps were on the file system. We had no method to just look at the data quickly and understand which regions of the simulation to focus on. 
-
-
-
-
 
 
 To address these challenges we are proposing to combine knowledge
@@ -127,44 +127,6 @@ a data, workflow, and application aware storage system.
 %need to consider additional features such as compression and
 %indexing to better cope with the expected tsunami of data.
 
-In this project we will extend ADIOS~\cite{adios} with new APIs and novel techniques
-to coordinate with the storage back-end. The key idea is offering the ability to
-negotiate with the storage system to agree on the tradeoff between data quality
-and response time. We will test our ideas on the next generation OLCF,
-SNL/LANL, and NERSC systems.
-%
-We plan to leverage the many inovations we discovered in 
-the Lightweight File Systems~\cite{lwfs} (LWFS) project and the Ceph storage system project (ceph.com).
-In the LWFS project, Sandia sought to
-demonstrate stripping down a file system to the bare minimum features required
-for any storage system. Then, additional functionality and semantics, such as
-POSIX-style directories and consistency requirements, were added in using
-auxiliary services separate from the stack or by layering providing a new
-interface to the storage system. The project's first phase demonstrated that
-using a core object storage system with integrated security providing
-authentication and authorization services, customized storage interfaces could
-be developed with exactly the overhead required for different applications. The
-second phase of LWFS, known as Sirocco~\cite{sirocco}, is investigating how to
-manage storage devices for efficient and scalable storage performance.  Sirocco
-has been in process for three years and has developed a usable storage infrastructure.
-
-The Ceph project (ceph.com) started at UC Santa Cruz in 2004 and
-was initially funded by DOE/NNSA involving LLNL, LANL, and Sandia,
-with the goal to create an object-based parallel file system that
-addresses the well-known metadata service bottleneck of creating
-and accessing 1000s of files comprising a checkpoint~\cite{weil:osdi06}.
-However, after the Ceph kernel client was pulled into the Linux
-mainline in 2010, the focus of Ceph shifted to its object-based
-storage subsystem, also called Reliable Autonomous Distributed
-Object Store (RADOS), which now is the dominant storage system in
-OpenStack production-level deployments and was recently selected
-as the new backend for Flickr and Yahoo! Cloud Services. In this
-project we will leverage two of the key innovations of Ceph: (1)
-Controlled Replication Under Scalable Hashing (CRUSH)~\cite{weil:sc06}
-will help making resource identification and predictable performance
-scalable, and (2) extensible storage object classes~\cite{watkins:ucsctr15}
-will provide the main mechanisms of introducing new APIs,
-metadata vocabulary, and quality of service into the storage stack.
 
 
 We will examine the research challenges from the perspective of
