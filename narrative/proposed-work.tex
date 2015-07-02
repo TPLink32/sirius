@@ -1,5 +1,6 @@
 \section{Proposed Research and Methods}
 \label{subsec:challenges}
+
 Our research into the storage system and middle ware layers must address
 many of these challenges including
 \begin{enumerate}
@@ -53,8 +54,20 @@ many of these challenges including
 \item Add specific tier destinations command to Sirocco (assuming that the caching mechansism cannot achieve the desired effects).
 \item Develop profiling system to determine how a data set is used during preparation runs prior to a capability run to determine how to optimize data placement for capability run analytics.
 
-
 \end{enumerate}
+
+{\bf \color{red}we need to condense these challenges into a few basic principles - 4 at most - SAK}
+
+We propose to overcome these challenges by pioneering a new {\bf knowledge-centric approach} to a dynamic storage system
+and I/O layer which takes into account user prioritization and utility to optimize the SSIO layer. The approach is based on 
+four underlying principles:
+  
+\underline{Principle 1: A knowledge-centric system} , let user knowledge  to define data policies. talk about this pieces...
+
+\underline{Principle 2: A SSIO system which integrates system knowledge together with application knowledge} to understand
+how to organize data in the deep storage hierarchy
+
+\underline{Principle 3: Predictable Performance in the SSIO layer} so that intelligent choices can be made by both the user and the system
 
 \input{narrative/data-description} % includes data-desc, apis, and qos-app.   
 
