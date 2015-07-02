@@ -1,20 +1,24 @@
 \subsubsection{Naming and Discovery Service}
 
 Given the well documented difficulties with POSIX-compliant naming and our
-potentially heavily decomposed objects, we must take a new approach to naming.
-Adding complexity is data migration based on system pressures. Our naming
-service must support sufficient information to discover or track all variables
-pieces across the entire storage hierarchy.
+approach that decomposes data into potentially large number of objects, 
+we must take a new approach to naming.
+Data migration, as a result of system pressures or user/system policies,
+further adds to the complexity of managing naming and discovery. Our naming
+service must maintain sufficient metadata information, track objects
+as they move across storage layers, and facilitates data discovery.
 
-Hierarchical Storage Management (HSM) systems offer a strct caching approach
+Hierarchical Storage Management (HSM) systems \cite{hsm} offer a strict caching approach
 for managing different storage capacities trading off performance for capacity.
 By maintaining a single namespace across all tiers, it is possible to list a
 single directory view with files stored at different tiers. While this approach
 to managing multi-tier storage works for whole files that fit on single logial
 devices, it is far from ideal for scientific simulations.
 
-Our goal with this proposal is to offer a similar capability, but use a finer
-granularity and also manage discovering where the data may have migrated to
+Our goal with this proposal is to offer a similar capability but with a finer
+granularity leveraging the inner structure of scientific data, 
+and manage discovering efficiently, where the data may
+be split and placed on several storage layers, or may have migrated
 based on system pressures. Instead of a single file such as might be used to
 store an entire timestep output for a simulation, we will demonstrate offering
 the same capability at a subset of a single variable level. By shifting to a
