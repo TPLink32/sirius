@@ -4,10 +4,12 @@
 {\em The purpose of computing is insight, not numbers}~\cite{Hamming:book}.
 Richard Hamming's remark, made over 50 years ago at the dawning of the age of
 large scale scientific computation, is even more relevant today as we prepare
-for scientific simulation at the exascale. Hamming was a pioneer in the fields
-of coding theory, scientific computing and information theory who would
-instantly sympathize with the central objective of this proposal--minimizing
-the time to knowledge.  
+for scientific simulation at exascale. 
+The central objective of this proposal, ``minimizing the time knowledge" from 
+scientific computing, aligns perfectly this sentiment. 
+%Hamming was a pioneer in the fields of coding theory, scientific computing and 
+%information theory who would instantly sympathize with the central objective of 
+%this proposal--minimizing the time to knowledge.  
 
 Avoiding impending bottlenecks in exascale scientific discovery will require
 new research into managing and storing the large amounts of data that will be
@@ -15,23 +17,24 @@ produced by simulations and analyzed for months afterwards.
 %
 In this project we will demonstrate a cooperative approach for storing data
 where the user and the storage system work together to achieve the best
-possible data quality and performance given data features, storage tier
+possible utility and performance given data features, storage tier
 characteristics, and current system state. We will investigate novel techniques
 to facilitate efficient mapping of data objects, even partitioning individual
 variables, from the user space onto multiple storage tiers and enable
 application-guided data reductions/transformations to address capacity and
-bandwidth bottlenecks while constraining the error to be within user provided
+bandwidth bottlenecks, while constraining errors to be within user provided
 bounds.
 % 
+
 We will address the associated I/O and storage challenges in the context of
 current and emerging storage landscapes and expedite insights into critical
 scientific processes, while demonstrating the validity of our approach in key
-DOE domains. We will research techniques for creating a Scalable Storage
-Software Infrastructure, integrating services from the middleware layer with
-Storage System features to support the novel strategy of distributing data both
-horizontally and vertically across the storage system.  The negotiation between
+DOE domains. We will research techniques for creating and using a Scalable 
+Storage Software Infrastructure, and integrating services from the middleware 
+layer with Storage System capabilities to support novel strategies for distributing 
+data both horizontally and vertically across the storage system.  Negotiation between
 these layers will be provided as a fundamental service, allowing users to
-easily save ``the best'' amount of data, automatically placed throughout the
+easily save ``the best'' amount of data, which is automatically placed throughout the
 entire storage stack.
 
 The metric we are most interested in optimizing is time to knowledge.  Current
@@ -39,11 +42,12 @@ approaches to addressing the I/O bottleneck fall into two broad categories:
 parallel file system approaches that optimize the throughput for an entire
 system, and I/O middleware approaches that optimize the performance of a single
 application. Both approaches have been successful to date, but are unlikely to
-overcome the remaining obstacles in reaching exascale. Instead of trying to
-optimize throughput, we will seek to reduce the time to knowledge. This is the
-most significant metric for scientific applications where the desired outcome
-is not storing data, but rather executing a knowledge extraction process on the
-data. Moreover, we aim to perform the optimization not for a single
+overcome the remaining obstacles in reaching exascale. 
+Instead of trying to optimize throughput, we will seek to reduce the time to knowledge. 
+This is the most significant metric for scientific applications where the desired outcome
+is not storing data, but rather executing a knowledge creation and extraction processes 
+on the data. 
+Moreover, we aim to perform the optimization not for a single
 application, but rather for workloads within a multi-user multi-application
 system environment.
 
@@ -57,7 +61,7 @@ accessing data from archival storage will greatly impact productivity.
 %
 Our approach in this proposal is to enable researchers to place more knowledge
 into the SSIO system so that data can be recast from a bunch of bytes to
-information which the system can then place and optimize the time to gain
+information, which the system can then place and optimize the time to gain
 knowledge from exascale simulations.  We first motivate this by a problem our
 team has been working on in the past six months, and then recast this problem
 into a series of research questions and challenges which must be addressed in
@@ -83,8 +87,7 @@ other words, they had to prioritize which were the most important pieces and sav
 They then had to develop new application specific data reduction techniques, and encode that into the application code itself on top of ADIOS, the middleware I/O layer. They then had to implement a crude discovery system to understand
 which pieces of data were stored on the parallel file system and which pieces were on tape, and also which pieces were moved over to PPPL for immediate analysis by the user.
 
-This solution worked well for the first day of run but after the second day more problems occurred: the variability of the time it took to write the data made the I/O prohibitively costly, because even though the project had reserved the majority of resources at the OLCF, the file system was shared and sometimes the writing time took less 100 seconds, and at other times it was over 1,000 seconds. There was no method for the application or the user to monitor and predict this resource usage and to dynamically change to write less data when the I/O time was going to be longer. The greatest problem, however, comes after the simulation is going to be completed: even to visualize the reduced data, just to get a first look at the visualization data, it could take over a month because some of the timesteps will be on tape and other
-timesteps will be on the file system. There is no method to just look at the data quickly at some level of quality quickly and understand which regions of the simulation to focus on in more detail.
+This solution worked well for the first day of run but after the second day more problems occurred: the variability in the time that it took to write the data made the I/O prohibitively expensive, because even though the project had reserved the majority of the resources at the OLCF, the file system was shared and sometimes the writing time took less 100 seconds, and at other times it was over 1,000 seconds. There was no method for the application or the user to monitor and predict this resource usage and to dynamically adapt to write less data when the I/O time was going to be longer. The greatest problem, however, comes after the simulation   completes: even to visualize the reduced data, just to get a first look at the visualization data, it could take over a month because some of the timesteps will be on tape and other timesteps will be on the file system. There is no method to just look at the data quickly at some level of quality quickly and understand which regions of the simulation to focus on in more detail.
 
 The overarching idea of this proposal is that data from applications can be characterized by different
 levels of importance and different levels of importance over time, which then can be used to guide the analysis and visualization later to access the most important data and deliver some level of knowledge without waiting for access to the whole original dataset. Information about the importance of the data at the application level, information about resource status and performance of the multi-level storage system, and flexible data reorganization and reduction operations at all levels can be utilized to provide a quality of service and allow users to gain insight in a timely manner.
