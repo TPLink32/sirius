@@ -1,8 +1,20 @@
 \subsection{Data Refactoring}
 
+It is critical that users give us more information about writing and reading from the SSIO layer
+in order to not only gain performance and predictability, but to also guide them to write and read
+the best possible data in a given period of time. In our example from C. S. Chang, along with most
+of the other scientist we work with, there is a prioritization of data, and this information must be
+sent over to our SSIO layer so that the best possible data is delivered to and from the SSIO layer, 
+and these decisions often involve refactoring (re-organizing and reducing the data) . In this section we
+describe the common methods to reduce data and to re-organize data. Since there are infinite possibilities 
+we need to understand what kind of data re-organization will work and when will it work?  We also need to 
+understand if it would take too much time and resources to perform the ``best methods'' and how can we manage the
+cost of the re-factoring of data compared to the eventual gains we will get?  Finally, another critical research question
+is if the scientist will loose too much value from the data during the refactoring process, and whether or not we can
+control this through error bounds? 
 
-
-It is useful to classify scientific data into two basic categories: structured
+The first step of re-factoring the data is to understand how much this data can be reduced.  Therefore, 
+it is useful to classify scientific data into two basic categories: structured
 data (in the sense that it satisfies a known or relatively simple model) or
 unstructured data (in which information content follows no obvious or explicit
 model).  Although scientific data generally contains random components (due to
@@ -30,30 +42,31 @@ contained in the data is often significantly less than the amount of data.  The
 difficulty stems from the fact that one does not know about this redundancy in
 advance. 
 
+Once we realize that data can be reduced from many different techniques, we understand
+that with more application knowledge, we can reduce the total data size much more than without
+knowledge, so we need to be able to design the SSIO layers to be able to have generic
+data reduction techniques, and generic data re-organization techniques. But we need to system
+to allow give us more semantic knowledge of the data so that we can either: 1) Use an approach
+which can audit the calculation and save values of the objects when the auditor is off more than a given
+amount, and we can also save the auditor in a docker container, which can then be executed as part of 
+SSIO software layer.  
 
-We propose a fresh approach to tackle the data overload problem head-on through
-using preprocessors in which information is not simply stored in the form of
-raw data, but rather in the form of appropriate parameterized algorithms. A
-priori information on the nature of the data is used to choose the basic
-algorithm while the actual values of the data are used to tune the parameters
-used in the reconstruction procedures. We shall refer to this paradigm as an
-Auditor.
+Recognizing access patterns in an application is a key to potentially reducing
+future file read time. Scientific applications often read and analyze data alternately,
+thus by overlapping the two phases with prefetching can significantly
+reduce the overall execution time of the application. Accurate prefetching can
+be achieved with access pattern analysis. This requires an SSIO layer which can
+prefetch data in a asynchronous fashion to take the bytes on the file.
 
-Scientific data is sometimes described as essentially incompressible owing to
-noise and other random effects present in the data, stemming from the numerical
-algorithm, software implementation, system specific behavior etc. The reasoning
-behind the description lies in the mathematical fact that it is impossible to
-achieve lossless compression on completely random data sets \cite{Gray:book}. Even
-recent state of the art lossless compression approaches \cite{GomezCappello} are only
-able to obtain 15\% improvement in lossless compression ratio while reducing
-the time spent in compression of floating point data by one half in some cases.
-Nevertheless, these limitations apply only if one ignores two key features:
-Firstly, randomness in scientific data generally occurs only below some
-threshold related to the accuracy of the measurement apparatus or the numerical
-algorithm. Secondly, lossy compression is perfectly acceptable provided the
-loss level falls below this threshold.
+There are many methods to re-organize the data, and to reduce the data and in this section we will list many
+different known methods.  We then list our different approaches to address the many research challenges using
+many well known methods, and a new method that we have been working on, known as an ``auditor'' which can be
+used ``in situ'' with the calculation during the data generation, and then used to dramatically reduce the impact on the SSIO
+layer for both reading and writing.
 
-Data compression broadly consists of three basic steps: (1) Pre-processing to
+
+\paragraph{State of the art:}
+{\bf Data Reduction Techniques} Data compression broadly consists of three basic steps: (1) Pre-processing to
 extract as much structure as feasible. This step is variously referred to as
 filtering, preconditioning, and pre- processing but in all cases, the objective
 is to represent the data in a form that becomes more amenable to compression.
@@ -79,12 +92,87 @@ Auditor as a pre-processor exploits the wide (and increasing) cost gap between
 CPU operations versus storage-based operations. The preprocessor would ideally
 be employed in situ and is used in a similar fashion to pre-processors in
 standard compression approaches such as FPC \cite{BurtscherFPC} in which an XOR
-operation against the previous data is used as a pre-processor. The fact that
-even such a crude pre- processor is able to deliver reasonable results augurs
-well: Even a relatively crude Auditor can be expected to significantly
-out-perform the XOR and other similar approaches.
+operation against the previous data is used as a pre-processor.
+
+Our previous work~\cite{lakshminarasimhan2011compressing},~\cite{lakshminarasimhan2011compressing},~\cite{gong2012multi},
+~\cite{jenkins2012byte},~\cite{gong2013parlo},~\cite{boyuka2014transparent},~\cite{tang2014improving} has focused on many
+of these well known techniques to not only reduce the data but also re-organize the data. Previously we have examined:
 
 
+\begin{itemize}
+\item Precision based re-organization. This is where the most significant bytes of the data are
+all group together from each object. This data generally will have a higher utility then the data with
+the least significant bytes.  This process has the following three steps which need to be
+efficiently implemented when data gets placed to the storage system and from the storage 
+system. 
+%
+First, the data needs to be re-arranged which involves memory operations and needs
+to be done in-situ. This operation involves no communication.  Data needs to be copied, so
+the memory requirements are increased. At most this requires two copies an individual dataset
+in memory, and we will investigate techniques to allocate and deallocate this memory if the user
+will specify that the data will be overwritten after it is written to the storage system. This is often
+the case for many of the data quantities written form the simulation, but there are many cases
+where, for example, we want to write all of the particles from a Particle In Cell (PIC) simulation. 
+Since the particles will be used later in the calculation, we need to duplicate the storage. Our
+observation with working with the XGC1, GTC, Warp, and PiconGPU simulations (all leadership
+class simulations) is that we can temporary increase the storage of the particles, and then 
+release them since the temporary arrays used in the calculations are often freed when a PIC
+iteration is finished.. 
+%
+\item Frequency-based re-organization. 
+Another common technique to classify the importance of data is to first re-organize the data
+in frequency space and then specify that as the frequency increases the importance of data
+decreases.   Common technique which is used for streaming data, and data reduction techniques such as JPEG-2000~\cite{jpeg2000}
+is to  code streams which have regions of interest that offer several mechanisms to support spatial random access or region of interest access at varying degrees of granularity. It is possible to store different parts of the same data using different quality.
+%
+This allows us to place the lowest frequency pieces in the fastest storage, and
+the highest frequency either on the slowest storage tiers, or if the data sizes are prohibitively  
+costly, not even write out the highest frequency. This binning of data in frequency space can
+take as an input (storage bandwidth knowledge, storage size limitations, and user intentions
+of how long the majority of the data will be frequently accessed. 
 
+In order to fully take advantage of frequency based re-organization we have devised a scheme where the data pre-conditioner first sorts the data
+in bins of 1024 words, and then we maintain the sort order, and then we used wavelets and spline fits to then re-organize the values.
+This re-organization allows us to understand that the resultant data is smoother now, and can be reduced in each one of the bins.
+\end{itemize}
 
+\paragraph{Proposed research approach:} 
+We will be looking at a multi-throng approach to data-refactoring. One approach allows the user to specify information about their data
+to indicate if the data is spatially varying, space-and time varying, just time varying. This allows us to store information in NVRAM on each
+node (when and where necessary) to later preform compression in both space and time . We will examine the different techniques for
+compression and re-organization along with examine techniques to use an error-estimator (gradients) to create a multi-resolution view of the
+data which can then be sampled, and placed in different quantiles of importance. These will then be mapped over into the different layers of 
+the storage hierarchy.  We will also investigate technique which can use ``plug-ins'' for detection of features and store higher resolution data
+around the feature and lower resolution values which are further away from the features. This re-organization must occur without increasinig the
+total amount of storage than what the users intended. We will also investigate the time it takes to re-organize the data and use the multi-layer
+approach to staging to understand where the data gets reduced and where it gets re-organized. Open questions are: 1) do we move the
+data over to other nodes to then reduce and re-organize, 2) do we first reduce the data and then later re-organize this data on different nodes?
+3) do we use different cores on a node to do data-refactoring. Similarly we will examine the cost of reading the data. It is clear that if we only
+read in the high-importance data it should improve the overall time to move the data from the SSIO layer to the application, but what happens
+when users want all of the data? There is an obvious penalty of having to take data in a hierarchical layout and then place this back to
+a single-layer view.  Additional research questions which must be addressed: Will some types of data (PIC data, finite element data, ...) be
+be conducive  for data-refactoring than others? How much semantic-domain knowledge will we need to get a dramatic improvement of the storage
+system over not doing anything special? 
+
+We will measure these methods using the fusion XGC simulation and the corresponding analysis routines which they use for their largest
+simulations. We will also work with Jereon Tromp's SPECFM3D code, and the fusion GTC code from Z. Lin. In all cases
+we will measure their impact from their current simulations, and their projected simulations and analytics on exascale machines. Since 
+all three of these codes are part of the OLCF CAAR~\cite{CAAR} project for early access, there is strong belief that the simulations will
+be close to exascale simulations and we will be able to run these on prototypes of our SSIO layer to examine the full impact of data-refactoring.
+
+\paragraph{HIgh Impact Challenges:}
+Since the greatest form of data reduction on the SSIO layer would be to only write the code, and the input data,
+and then recalculate all of the results, we want to understand how to write a minimal set of information, and then place an auditor 
+code in a docker container so that data can be re-generated with an approximation of the calculation, but only valid over a limited amount 
+of time.This new approach to tackle the data overload by
+using preprocessors in which information is not simply stored in the form of
+raw data, but rather in the form of appropriate parameterized algorithms. A
+priori information on the nature of the data is used to choose the basic
+algorithm while the actual values of the data are used to tune the parameters
+used in the reconstruction procedures. We shall refer to this paradigm as an
+Auditor.
+
+We will examine the use of several auditors for the simulations which we will work with. One approach is to use a fluid-code to audit a kinetic
+code, which can be a good approximation over short periods of time. Once there is a large deviation (specified by the user) from the auditor
+to the original calculation, the data will be saved. This is a local operation, since the deviations will grow differently in space and in time. 
 
