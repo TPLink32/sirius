@@ -61,7 +61,61 @@ maximize its utility to the application and reduce access costs. Our
 approach to data placement will leverage the increased set of knowledge
 about the data available to the middleware and storage system, potentially
 allowing for greater optimizations as compared to other storage solutions. 
+The key components of our research include
 
+\paragraph{Application Hints:}
+As described in Section~\ref{sec:refactor} one of the main components of our
+proposed storage system is the ability to refactor and reduce data as it is
+generated, and to reorgnized and regenerate the data as it is accessed. We
+carry this principle into the placement and movement of data by allowing
+applications to define hints and policies that guide \textbf{what} data is
+placed \textbf{where}. We will explore the use of application hints in two
+distinct areas. Firstly, we will study the challenges and tradeoffs of either
+augmenting the I/O interface with hints or allowing the additional of an
+external specification that defines the use case. Our experience with
+developing modern I/O interfaces has shown that both techniques have value,
+and we will investigate the set of hints that are embedded in the
+application code vs. those that are described within an non-compiled
+specification. Secondly, we will study how hints can guide the initial data
+placement as data is handed off from application to storage ( during a
+write) and from storage to application (during the read). In both cases we
+will study what minimal set of annotations and hints can allow the storage
+system to minimize data movement and optimize the resources consumed by I/O. 
+
+\paragraph{Data Utility:} We will formulate the concept of utility (from an
+application perspective) that is assigned data objects to quantify the
+benefits of placement and/or movement actions to application. These
+utilities may be based on the importance of the data objects, the frequency
+with which they are accessed, etc., and are used during runtime data
+management. For example, data objects will higher utility value may be
+placed closer (e.g., in faster memory) to the accessing application.
+Similarly, when it is time to evict data objects from a higher level storage
+layer, the decision about which object to evict may take the utility into
+account.
+
+\paragraph{Autonomic in-transit data management:} 
+Efficiently placing data objects
+vertically across multiple memory hierarchy layers and storage levels as
+well as horizontally across different storage nodes requires balancing
+competing objectives. In this project we will explore autonomic data
+management strategies that can evaluate utility/cost tradeoffs and
+appropriately place/move data objects at runtime. The autonomic approach
+will leverage both user hints and information gathered at runtime (e.g.,
+runtime data access history, network topology, etc.) to place data object.
+
+\paragraph{ Runtime tracking and estimation:}
+Autonomic data placement and/or
+movement will leverage the information gathered at runtime together with
+predictive analysis requirements. This information may include runtime
+spatial-temporal data access patterns, physical network topology
+information, and etc., which will be tracked and gathered at runtime, and
+then be used to estimate and predict the behavior of coupled applications in
+the rest of simulation-time. A key research aspect here will be to
+anticipate accesses, for example using learning techniques or using
+application knowledge, and use this information to prefetch data objects.
+For example, we will identify and catalogue key phases and access patterns
+in the target workflows and then use it to characterize patterns at runtime
+and trigger appropriate place/movement actions.
 
 \paragraph{State of the art:} NAND flash-based devices are being
 increasingly used in HPC storage systems at different levels and for a
@@ -79,60 +133,6 @@ exchange and access patterns can be both complex and dynamic. Furthermore,
 some of these solutions require hardware modifications or special access
 priorities to the HPC systems, which can limit their use to specific
 resources.
-
-\paragraph{Proposed research approach:} In this project we will utilize
-deep memory hierarchies and multilevel storage structures to support
-staging-based in-transit data management and processing for data-intensive
-scientific workflows at extreme scale. Specifically, we will address the
-coordination and data access/sharing requirements of application workflows,
-as well as the online data management requirements such as for example,
-in-transit online data analysis, check-pointing, data reduction. We will
-also deal with the complexities associated with data placement of data and
-movement in the multiple layers and components of the storage hierarchy. The
-key components of our research include:
-
-{\em Application hints:} Application hints can provide additional
-information to the runtime based on the users' knowledge of the application
-workflow as well as on past experiences, for example, possible data access
-patterns, nature of regions of interest, and domain specific information.
-This application level information will be added to the specification of the
-workflow and can provide advisory inputs to efficiently help the runtime
-make smarter decisions about the placement and/or movement of data objects
-and the scheduling and execution of tasks, as well as to effectively manage
-trade-offs between for example, power consumption and time-to-solution.
-
-{\em Data utility:} We will formulate the concept of utility (from an
-application perspective) that is assigned data objects to quantify the
-benefits of placement and/or movement actions to application. These
-utilities may be based on the importance of the data objects, the frequency
-with which they are accessed, etc., and are used during runtime data
-management. For example, data objects will higher utility value may be
-placed closer (e.g., in faster memory) to the accessing application.
-Similarly, when it is time to evict data objects from a higher level storage
-layer, the decision about which object to evict may take the utility into
-account.
-
-{\em Autonomic in-transit data management:} Efficiently placing data objects
-vertically across multiple memory hierarchy layers and storage levels as
-well as horizontally across different storage nodes requires balancing
-competing objectives. In this project we will explore autonomic data
-management strategies that can evaluate utility/cost tradeoffs and
-appropriately place/move data objects at runtime. The autonomic approach
-will leverage both user hints and information gathered at runtime (e.g.,
-runtime data access history, network topology, etc.) to place data object.
-
-{\em Runtime tracking and estimation:} Autonomic data placement and/or
-movement will leverage the information gathered at runtime together with
-predictive analysis requirements. This information may include runtime
-spatial-temporal data access patterns, physical network topology
-information, and etc., which will be tracked and gathered at runtime, and
-then be used to estimate and predict the behavior of coupled applications in
-the rest of simulation-time. A key research aspect here will be to
-anticipate accesses, for example using learning techniques or using
-application knowledge, and use this information to prefetch data objects.
-For example, we will identify and catalogue key phases and access patterns
-in the target workflows and then use it to characterize patterns at runtime
-and trigger appropriate place/movement actions.
 
 \subsubsection{Migration}
 \label{sec:migration}
