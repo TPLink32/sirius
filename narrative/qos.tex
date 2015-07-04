@@ -1,4 +1,39 @@
-\subsection{QoS}
+\subsection{Resource Management and QoS}
+
+\subsubsection{Resource Management}
+Sirocco currently offers automatic resource management capabilities. However,
+these features are strictly driven on resource capacity and data resilience
+requirements. For this project, we seek to expand the resource management
+capabilities to support additional metrics to guide resource management
+decisions. Our basic goal is to offer data-centric metrics that help guide the
+forced resource management decisions.
+
+As stated in the introduction, we seek to make a storage stack that works with
+the user. Towards that end, we must incorporate data attributes into this
+process. For example, particularly for a capability run, the storage system
+should give priority to data subset tagged with high importance to stay in fast
+storage tiers. Enabling this priority will be driven by other job
+characteristics such as job size or a manually set priority inserted by system
+administrators. It should also store the highest quality data possible given
+the performance requirement. Ideally, the storage system will store the raw
+data at full fidelity. When this tier approaches capacity, data should migrate
+not just based on age, but also based on this priority. This will help ensure
+the shortest time to insight by making sure the most important machine runs
+have priority to use system resources.
+
+Existing efforts on scheduing resources~\cite{io-cop,dorier} attempt to offer
+admission control to maximize storage performance. Unfortunately, these efforts
+are limited to participating applications and only applications from a single
+platform. For this approach to be effective, the storage system must offer an
+approach that handles clients from all connected platforms and does not
+require modification to use new storage access APIs. By using a priority
+tagging system, we will offer defaults suitable for all applications that can
+be informed by simple extensions to the job scheduler or more advanced
+management through new APIs.
+
+What else do we need to talk about?
+
+\subsubsection{QoS}
 
 \paragraph{Background:} One of the key differentiating features this project offers is driving storage
 decisions through quality of service (QoS) \emph{reservations} rather than continuing the current model of allowing
