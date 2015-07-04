@@ -92,6 +92,139 @@ For example, we will identify and catalogue key phases and access patterns
 in the target workflows and then use it to characterize patterns at runtime
 and trigger appropriate place/movement actions.
 
+\subsection{Migration}
+
+One important research question in this proposal is whether and how a liberated
+Hierarchical Storage Manager designed for online use, such as Sirocco, might be
+employed in supporting the higher level concepts discussed previously.
+Conceptually, in this effort, data is accessed by the middleware IO libraries
+at various tiers in the lower-level storage hierarchy. While Sirocco does
+autonomously group the distributed set of media into like groups and manage
+movement of data between these groups the various motivations to do so include
+both the traditional ones found in classical HSM (Hierarchical Storage
+Management) as well as the novel.
+
+Sirocco groups like media into aggregated volumes on a service node, and like
+service nodes with like media into pseudo-tiers. It accomplishes both using
+attributes such as latency to first byte, bandwidth to and from the media, and
+some function representing the resilience capabilities of the attached media.
+In addition to these static attributes, when grouping servers into
+pseudo-tiers, Sirocco also may employ more dynamic attributes such as CPU load
+and the rate-of-change of the media use.
+
+Grouping into pseudo-tiers is not a formal, nor rigid, concept within Sirocco,
+at present. In classic HSM the tiering is often a formally expressed concept,
+embodied both in the architecture and the implementation. In Sirocco, though,
+it is not directly expressed. Instead, a client or server that attempts to make
+a decision relative to migration and staging uses the attributes discussed
+above to constrain the choice of candidates. For instance, a server acting as
+an off-node writeback cache for a compute node might only have access to
+volatile dynamic RAM for use as storage media and a client might deposit data
+that is marked for persistent media as a resilience constraint. At some point,
+then, such a server must copy or move the data to another Sirocco server with
+media matching, or exceeding, the resilience constraint. At that point in time,
+all servers managing appropriate persistent media are candidates but
+second-order attributes, such as latency and bandwidth of a candidate's managed
+media would tend to dominate the ranking. Thus, the concept of a ``tier''
+becomes an artifact of decision rather than a formal concept.
+
+Further complication arises when a Sirocco server is forced to make choices for
+capacity reasons. The Sirocco architecture dictates that a server function as a
+victim cache. As media managed by a server fills the server will begin to
+manage for capacity. In order to do so, currently, it need only verify or make
+a copy of the data on another server that meets the resiliency constraint of
+the held data prior to removing the local copy and in the current
+implementation the server makes no attempt either to remember it ever had the
+data or to notify others about what it is doing.  others that it has removed
+the local copy or remember that it has 
+
+Taken together then, the above at least complicates the higher level research
+questions discussed in this proposal, potentially even renders some
+unachievable since a few involve determinism. We are forced, then, to consider
+either or both mitigating management policies within and between Sirocco
+servers as well as explicitly allowing clients to participate in capacity
+management decisions, for a time at least, on the relevant Sirocco servers.
+
+Our research intent involves short term and long term activities. In the short
+term we will modify the relevant clients to provide hit and miss related data
+and associated activities and explore an enhancement to our storage servers
+that would provide some, hopefully tightly, bounded estimate about time to
+first byte for a potential read operation. In the long term we hope that an
+augmented client-server API providing usage hints will allow us to modify local
+server policy algorithms to more effectively manage it's media and communicate
+to other servers holding copies of the relevant data how they might best manage
+theirs. In the event that this approach proves ineffective at meeting the
+overall approach described in this proposal we will explore modifying Sirocco
+servers to provide notifications about locations of the relevant data as they
+migrate and stage as well as supporting client-directed pinning of location,
+for a period at least. Client-directed pinning could introduce potentially
+serious negative impacts to Sirocco's overarching goals though, since the
+fundamental design of Sirocco assumes much about opaque and unrestricted data
+movement, so this is contemplated only as a last resort.
+
+\subsection{Eviction Metrics}
+
+% The title might have to change...
+
+\paragraph{Background:} There is a spectrum of approaches on how
+to leverage a memory and storage hierarchy: On one end of the
+spectrum is to copy or move data from one tier to another, the
+closer the tier to the hierarchy's top, the faster the access to
+the data it contains. On the other end of the spectrum is to use
+higher tiers exclusively for auxiliary data that to some extent
+represents the actual data on the lowest tier. Examples of auxiliary
+data are views, indices, lossy compressions, lower resolution data,
+and summary data (sometimes also known as metadata). There are a
+number of drivers that push approaches to one or the other extreme:
+(1) if a high tier has sufficient room for an application's working
+set, approaches that move the working set into that tier will perform
+well; Conversely, if a high tier very rarely captures working sets,
+it is better to fill it with auxiliary data that speeds up access
+to the working set captured by a lower tier; working sets only
+reduce capacity misses but the concept can be generalized to the
+likelihood of having the right data in place, i.e. proactively
+moving data to high tiers accessed in predictable patterns reduces
+compulsory misses as well; (2) if the application generates parallel
+read/write requests and strong consistency semantics are important,
+approaches that use auxiliary data to speed up access to persistent
+shared data might yield better performance than approaches that
+require coherence overhead to keep all copies on higher tiers
+consistent; (3) if the application's access patterns are mismatched
+with low tier access characteristics, a combination of approaches
+that use auxiliary data and move data between tiers in order to
+convert access patterns into a better match will perform well.
+
+% Any other drivers?
+
+\paragraph{Approach:} This spectrum enables interesting strategies
+to manage space pressure on high tiers: instead of just evicting
+pieces of data (blocks, pages, objects, files), one can free space
+by ``thinning'' data so that accesses within more limited views or
+lower resolutions can still occur without misses while requests
+outside of views or higher resolutions can leverage the information
+stored in auxiliary data. Conversely, data on a high tier can be
+``enriched'' (e.g. turned into a higher resolution) if there is
+value in doing so.
+
+\paragraph{Related Work:} Mention Stanford's Legion system.
+
+\paragraph{Challenge:} The decision on when to thin and when to
+enrich data on a particular level depends on \emph{access patterns}.
+Approaches that leveragee access patterns in application at national
+labs has shown to greatly improve performance and reduce the amount
+of overhead required for data management~\cite{he:hpdc13}. The
+challenge is for applications to communicate these access patterns
+to the I/O stack layers that manages tiers outside of the address
+space. In the proposed work we will develop an abstraction for
+\emph{locality} that allow applications or runtime profilers to
+describe locality properties of access patterns, and implement
+services that leverage locality properties to dynamically determine
+the value of thinning or enriching data at a particular tier.
+Consider the example of a road navigation system: the locality
+properties of each navigation client are based on physical constraints
+of speed, direction, likely resolution of map, and the fact that
+clients almost never go offroad.
+
 \paragraph{Preliminary work and results:} Our recent work \cite{tongipdps15}
 explored a two-tiered staging method that spans both DRAM and solid state
 disks (SSD). It allows us to support both code coupling and data management
@@ -107,3 +240,4 @@ applications, e.g., coupled combustion simulations (DNS-LES) that are part
 of the ExaCT Exascale Co-design Center and coupled Fusion simulations
 (XGC0-XGCa) that are part of the EPSI SciDAC on current high-end systems
 such Titan at ORNL.
+
