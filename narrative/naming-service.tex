@@ -8,6 +8,19 @@ complexity of managing naming and discovery. Our naming service must maintain
 sufficient metadata information, track or be able to find objects as they move
 across storage layers, and facilitates data discovery.
 
+Our research in this area will address the following questions:\\
+   Which data block and what quality/type do we respond to a query
+    with?;\\
+   How will we scale a fully distributed storage system's metadata
+    management;\\
+   Can we accelerate the discovery process with the addition of an
+    application/user level metadata store that tracks where data was
+    originally written and how was it structured?;\\
+   Can we provide time estimates for read/write calls in the presence of
+    an unbounded discovery system? If not how do we bound the discovery time?
+   How do we amortize the time cost of discovery vs time cost of actually reading the data
+    (latency vs bandwidth essentially)?
+
 Hierarchical Storage Management (HSM) systems~\cite{hsm} offer a strict caching approach
 for managing different storage capacities trading off performance for capacity.
 By maintaining a single namespace across all tiers, it is possible to list a
