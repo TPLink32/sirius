@@ -1,6 +1,21 @@
 \subsection{Data Placement and Movement}
 \newcommand{\Sir}{Sirocco}
 
+%key points based on discussion with Carlos
+%1. Allocation tables and simple search won't be able to scale
+%2. Carlos suggests looking at a determinstic function to decide on
+%placement of data into the storage hierarchy. Instead of storing the
+%metadata that describes where data is stored (which server/tier) we can
+%simple associate a function for each application. 
+%3. Research into what would be an approrpriate function that allows even
+%splitting of data across many servers/tiers
+%4. Similar to our approach for defining utility over time
+%5. Migration can also use a function. We shouldn't distinguish migration
+%from data movement and placement too much
+%6. We need metrics that can decide how the data moves up and down in the
+%hierarchy (so we can enable pre-fetching)
+%7. Carlos suggested that instead of hints we call them service level
+%objectives (and that leads into quality of service)
 The application workflows targeted in this proposal generate very large
 amounts of data, which needs to be processed and analyzed before
 potential insights from the simulations can be realized. 
