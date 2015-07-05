@@ -143,7 +143,7 @@ node (when and where necessary) to later preform compression in both space and t
 compression and re-organization along with examine techniques to use an error-estimator (gradients) to create a multi-resolution view of the
 data which can then be sampled, and placed in different quantiles of importance. These will then be mapped over into the different layers of 
 the storage hierarchy.  We will also investigate technique which can use ``plug-ins'' for detection of features and store higher resolution data
-around the feature and lower resolution values which are further away from the features. This re-organization must occur without increasinig the
+around the feature and lower resolution values which are further away from the features. This re-organization must occur without increasing the
 total amount of storage than what the users intended. We will also investigate the time it takes to re-organize the data and use the multi-layer
 approach to staging to understand where the data gets reduced and where it gets re-organized. Open questions are: 1) do we move the
 data over to other nodes to then reduce and re-organize, 2) do we first reduce the data and then later re-organize this data on different nodes?
