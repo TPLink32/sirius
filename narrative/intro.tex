@@ -60,7 +60,7 @@ this data will be orders of magnitude slower than the next layer and naively
 accessing data from archival storage will greatly impact productivity.
 %
 Our approach in this proposal is to enable researchers to place more knowledge
-into the SSIO system so that data can be recast from a bunch of bytes to
+into the SSIO system so that data can be recast from a sequence of bytes to
 information, which the system can then place and optimize the time to gain
 knowledge from exascale simulations.  We first motivate this by a problem our
 team has been working on in the past six months, and then recast this problem
@@ -70,9 +70,9 @@ order to optimize the SSIO system for exascale science.
 The traditional approach to transforming results of scientific computation into
 knowledge consists of storing the numerical output of a simulation on disk,
 followed by a post-processing or analysis stage that might take place over
-several ensuing weeks or months. The overarching objective is to gain insight,
-or knowledge.  As already mentioned, the anticipated scale of computations
-means that this workflow is simply no longer viable.
+several ensuing weeks or months. Clearly, given the computation expected at the
+exascale, this type of workflow is simply not viable.
+
 %
 \section{Scalable Storage Software Infrastructure}
 Our focus in this proposal is in theme 2: Scalable Storage Software Infrastructure. We will focus on a state of the art
