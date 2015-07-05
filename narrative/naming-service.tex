@@ -12,20 +12,20 @@ integration, we must address how to bridge the drastic differences between the
 decomposed objects of potentially varying fidelity with potentially multiple
 version with a POSIX API-compatible interface.
 
-Our research in this area will address the following questions:\\
-Since our metadata is distributed and partitioned, how do we respond to user
+Our research in this area will address the following questions:
+(1) Since our metadata is distributed and partitioned, how do we respond to user
   requests within a specified time bound with accuracy? How do we estimate the
-  completeness of the response?\\
-For POSIX API requests, how do we respond if only varying data fidelity levels
-  are available for the requested data object?\\
-What level of metadata should we maintain and keep in sync to enhance response
-  quality within time-bound requests?\\
-How much time should be allowed for searching for metadata given the user
+  completeness of the response?
+(2) For POSIX API requests, how do we respond if only varying data fidelity levels
+  are available for the requested data object?
+(3) What level of metadata should we maintain and keep in sync to enhance response
+  quality within time-bound requests?
+(4) How much time should be allowed for searching for metadata given the user
   specified limits for data retrieval since the user will still have to spend
   the data retrieval time from different devices? How do we integrate the read
-  time overhead into the metadata requests?\\
-How do we provide appropriate security while maintaining scalability,
-  particularly with the distributed metadata stores?\\
+  time overhead into the metadata requests?
+(5) How do we provide appropriate security while maintaining scalability,
+  particularly with the distributed metadata stores?
 % Which data block and what quality/type do we respond to a query with?;\\
 % How will we scale a fully distributed storage system's metadata management;\\
 % Can we accelerate the discovery process with the addition of an
