@@ -1,7 +1,30 @@
 \subsection{Resource Management and QoS}
 
-\paragraph{Background:} One of the key differentiating features this project offers is driving storage
-decisions through quality of service (QoS) \emph{reservations}, rather than continuing the current model
+\paragraph{Background:} 
+Quality of Service (QoS) refers to the
+properties of the performance quality of a particular service, in
+this case the storage system.
+Performance quality can be expressed in either relative or absolute
+terms. Examples of relative performance terms are ``fair'',
+``proportional'', or ``priority/class-based'' (``the higher the
+priority the better the service'' or ``1st class is better than
+2nd''). The key advantage of relative performance terms is that
+they are easy to implement. The key disadvantage is the difficulty
+of making any guarantees based on those implementations --
+even relative guarantees are mired by the well-known effect of
+priority inversion~\cite{lampson:cacm80}. Examples of absolute
+performance terms are ``rate-based'', ``soft real-time'', and
+``hard real-time''. The key advantage of absolute performance
+terms are that they enable the implementation of strong
+guarantees: absolute terms enable agreements between application
+tasks and storage that we call \emph{reservations} and that do not
+change meaning depending
+on the storage system's workload. The key challenge of absolute
+performance terms is that their implementation is non-trivial,
+especially in large-scale systems.
+
+One of the key differentiating features this project offers is driving storage
+decisions through QoS \emph{reservations}, rather than continuing the current model
 of allowing applications to compete freely without restriction, for part or all of the storage
 resources. This traditional approach leads to intereference effects
 \cite{lofstead:2010:adaptive,liu_hotstorage} that can greatly impact IO performance predictability. 
@@ -14,8 +37,6 @@ than the case where applications attempt to reserve storage resources, thereby e
 to reason over its performance in terms of reservations and actual
 performance, accepting reservations that are within resource
 availability and don't violate user or system policies.
-
-{\bf {\color{red}Will connect to text on policies- Gary}}
 
 It is important to note that we use performance reservations to
 reduce interference and to avoid overload conditions. If the system
@@ -61,20 +82,21 @@ usage under the default placement strategy. Consequently, imbalanced
 resource utilization increases the contention at certain components
 more than others.
 
-Given these insights, we advocate the idea that the infrastructure
-knowledge should find a way to relay to the upper layer for better
-and more effective use of resources. We think this is more pertinent
-and critical given the recent development of multi-tier storage and
-storage component heterogeneity.  There needs to be a way for
-application/middleware layer to gain more exposure of storage system
-for more intelligent processing logic.  One prime example of such
-exposed knowledge can be request/response time. To most applications,
-this is a black box. Profiling it at the upper layer is neither
-efficient nor effective, as it doesn't reflect cross-layer
-characteristics. However, Most of storage layer does keep a detailed
-profiling of such information. We therefore envision and propose a
-histogram-based request/response profiling API that application and
-middleware layer can leverage and make more informative decisions.
+% Don't know how to integrate this. Gary
+%Given these insights, we advocate the idea that the infrastructure
+%knowledge should find a way to relay to the upper layer for better
+%and more effective use of resources. We think this is more pertinent
+%and critical given the recent development of multi-tier storage and
+%storage component heterogeneity.  There needs to be a way for
+%application/middleware layer to gain more exposure of storage system
+%for more intelligent processing logic.  One prime example of such
+%exposed knowledge can be request/response time. To most applications,
+%this is a black box. Profiling it at the upper layer is neither
+%efficient nor effective, as it doesn't reflect cross-layer
+%characteristics. However, Most of storage layer does keep a detailed
+%profiling of such information. We therefore envision and propose a
+%histogram-based request/response profiling API that application and
+%middleware layer can leverage and make more informative decisions.
 
 
 \begin{figure}[tbh]
@@ -128,28 +150,28 @@ middleware layer can leverage and make more informative decisions.
 %these kinds of policies in a way that addresses offering the shortest
 %end-to-end time for scientific insights.
 
-
-``Quality of Service'' (QoS) refers to the
-properties of the performance qualtiy of a particular service, in
-this case the storage system.
-Performance quality can be expressed in either relative or absolute
-terms. Examples of relative performance terms are ``fair'',
-``proportional'', or ``priority/class-based'' (``the higher the
-priority the better the service'' or ``1st class is better than
-2nd''). The key advantage of relative performance terms is that
-they are easy to implement. The key disadvantage is the difficulty
-of making any guarantees based on those implementations --
-even relative guarantees are mired by the well-known effect of
-priority inversion~\cite{lampson:cacm80}. Examples of absolute
-performance terms are ``rate-based'', ``soft real-time'', and
-``hard real-time''. The key advantage of absolute performance
-terms are that they enable the implementation of strong
-guarantees: absolute terms enable agreements between application
-tasks and storage that we call \emph{reservations} and that do not
-change meaning depending
-on the storage system's workload. The key challenge of absolute
-performance terms is that their implementation is non-trivial,
-especially in large-scale systems.
+% Lifted the following paragraph to the beginning. Gary
+%``Quality of Service'' (QoS) refers to the
+%properties of the performance qualtiy of a particular service, in
+%this case the storage system.
+%Performance quality can be expressed in either relative or absolute
+%terms. Examples of relative performance terms are ``fair'',
+%``proportional'', or ``priority/class-based'' (``the higher the
+%priority the better the service'' or ``1st class is better than
+%2nd''). The key advantage of relative performance terms is that
+%they are easy to implement. The key disadvantage is the difficulty
+%of making any guarantees based on those implementations --
+%even relative guarantees are mired by the well-known effect of
+%priority inversion~\cite{lampson:cacm80}. Examples of absolute
+%performance terms are ``rate-based'', ``soft real-time'', and
+%``hard real-time''. The key advantage of absolute performance
+%terms are that they enable the implementation of strong
+%guarantees: absolute terms enable agreements between application
+%tasks and storage that we call \emph{reservations} and that do not
+%change meaning depending
+%on the storage system's workload. The key challenge of absolute
+%performance terms is that their implementation is non-trivial,
+%especially in large-scale systems.
 
 \paragraph{Approach:} The goals of this proposal require applications
 to demand guarantees in terms of absolute performance qualities.
