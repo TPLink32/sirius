@@ -6,27 +6,42 @@ number of objects, we must take a new approach to naming.  Data migration, as a
 result of system pressures or user/system policies, further adds to the
 complexity of managing naming and discovery. Our naming service must maintain
 sufficient metadata information, track or be able to find objects as they move
-across storage layers, and facilitates data discovery.
+across storage layers, and facilitates data discovery. Since we need to also
+support access through POSIX APIs for existing application and system
+integration, we must address how to bridge the drastic differences between the
+decomposed objects of potentially varying fidelity with potentially multiple
+version with a POSIX API-compatible interface.
 
 Our research in this area will address the following questions:\\
-   Which data block and what quality/type do we respond to a query
-    with?;\\
-   How will we scale a fully distributed storage system's metadata
-    management;\\
-   Can we accelerate the discovery process with the addition of an
-    application/user level metadata store that tracks where data was
-    originally written and how was it structured?;\\
-   Can we provide time estimates for read/write calls in the presence of
-    an unbounded discovery system? If not how do we bound the discovery time?
-   How do we amortize the time cost of discovery vs time cost of actually reading the data
-    (latency vs bandwidth essentially)?
+Since our metadata is distributed and partitioned, how do we respond to user
+  requests within a specified time bound with accuracy? How do we estimate the
+  completeness of the response?\\
+For POSIX API requests, how do we respond if only varying data fidelity levels
+  are available for the requested data object?\\
+What level of metadata should we maintain and keep in sync to enhance response
+  quality within time-bound requests?\\
+How much time should be allowed for searching for metadata given the user
+  specified limits for data retrieval since the user will still have to spend
+  the data retrieval time from different devices? How do we integrate the read
+  time overhead into the metadata requests?\\
+How do we provide appropriate security while maintaining scalability,
+  particularly with the distributed metadata stores?\\
+% Which data block and what quality/type do we respond to a query with?;\\
+% How will we scale a fully distributed storage system's metadata management;\\
+% Can we accelerate the discovery process with the addition of an
+%    application/user level metadata store that tracks where data was
+%    originally written and how was it structured?;\\
+% Can we provide time estimates for read/write calls in the presence of
+%    an unbounded discovery system? If not how do we bound the discovery time?
+% How do we amortize the time cost of discovery vs time cost of actually
+%    reading the data (latency vs bandwidth essentially)?
 
-Hierarchical Storage Management (HSM) systems~\cite{hsm} offer a strict caching approach
-for managing different storage capacities trading off performance for capacity.
-By maintaining a single namespace across all tiers, it is possible to list a
-single directory view with files stored at different tiers. While this approach
-to managing multi-tier storage works for whole files that fit on single logial
-devices, it is far from ideal for scientific simulations.
+Hierarchical Storage Management (HSM) systems~\cite{hsm} offer a strict caching
+approach for managing different storage capacities trading off performance for
+capacity.  By maintaining a single namespace across all tiers, it is possible
+to list a single directory view with files stored at different tiers. While
+this approach to managing multi-tier storage works for whole files that fit on
+single logial devices, it is far from ideal for scientific simulations.
 
 Our goal with this proposal is to offer a similar capability but with a finer
 granularity leveraging the inner structure of scientific data. It must also
@@ -72,12 +87,12 @@ planned features.
 
 The overriding theme for this proposal of providing a cooperative relationship
 between the user and the storage system extends into this area as well.
-Negotiating the data quality/retrieval time tradeoff reuqires additional data.
-Providing this functionality requries the naming service be able to both return
-a list of data versions and an indication of data quality. This will be
-combined with a retrieval time estimate for each verstion by the middleware to
-determine what data version should be retrieved.  This estimate will be
-disucssed elsewhere in this proposal.
+Negotiating the data quality/retrieval time tradeoff reuqires additional
+metadata.  Providing this functionality requries the naming service be able to
+both return a list of data versions and an indication of data quality. This
+will be combined with a retrieval time estimate for each verstion by the
+middleware to determine what data version should be retrieved.  This estimate
+will be disucssed elsewhere in this proposal.
 
 Structurally, the traditional POSIX naming service offeriing a hierarchical
 space consisting of directories and files may be maintained for backwards
@@ -86,11 +101,13 @@ POSIX defines. We must break these strict semantics to address scalability
 problems forced by the serialized access to a single source for creating and
 accessing files.  Several efforts~\cite{giga+,pvfs,others} have worked to
 reduce this contention by doing things like reducing the serialized scope to a
-single directory or subtree. While these approaches help, they do not address
-this key scalability limitation of serialized access--even if the metadata
-service is spread across multiple nodes. Instead, we will offer a
-short duration to consistency POSIX view to offer the performance and
-consistency requirements an exascale application demands.
+single directory or subtree or allowing a single process in a collective file
+operation talk with the metadata service and distribute a handle to other
+participants. While these approaches help, they do not address this key
+scalability limitation of serialized access--even if the metadata service is
+spread across multiple nodes. Instead, we will offer a short duration to
+consistency POSIX view to offer the performance and consistency requirements an
+exascale application demands.
 
 While pure object stores, such as those popular in the big data
 domain~\cite{memcached,others} avoid this bottleneck by strictly offering an
