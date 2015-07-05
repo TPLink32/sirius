@@ -31,23 +31,25 @@ tagging system, we will offer defaults suitable for all applications that can
 be informed by simple extensions to the job scheduler or more advanced
 management through new APIs.
 
-What else do we need to talk about?
-
 \subsubsection{QoS}
 
 \paragraph{Background:} One of the key differentiating features this project offers is driving storage
-decisions through quality of service (QoS) \emph{reservations} rather than continuing the current model of allowing
-all application to compete, without restriction, for part or all of the storage
+decisions through quality of service (QoS) \emph{reservations} rather than continuing the current model
+of allowing applications to compete, without restriction, for part or all of the storage
 resources. This traditional approach leads to intereference
 effects~\cite{lofstead:2010:adaptive,liu_hotstorage} that can greatly impact IO performance
-predictability. Further, with the introduction of additional tiers in the
-storage stack, the performance variability will increase with greater
-competiion for limited high performance resources. Unfettered, this competition
-will yield lower performance for all users than if applications
+predictability. 
+%Further, with the introduction of additional tiers in the
+%storage stack, the performance variability will increase with greater
+%competiion for limited high performance resources. 
+%% Temporaily commented out the above sentence, because it may not be true for the next DOE systems. 
+Unfettered, this competition will yield lower performance for all users than if applications
 attempt to reserve performance, thereby enabling the storage system
 to reason over its performance in terms of reservations and actual
 performance, accepting reservations that are within resource
 availability, rejecting those that would lead to overload.
+
+{\bf {\color{red}Will connect to text on policies. Gary}}
 
 It is important to note that we use performance reservations to
 reduce interference and to avoid overload conditions. If the system
@@ -55,9 +57,9 @@ uses reservations intelligently, its performance is predictable and
 efficient because resources are not wasted on interference. However,
 in cases where an appication arrives that needs to run more urgently
 than any of the other already running applications, administrators
-can suspend less urgent applications which will save their state
-and relinquish their performance reservations. Upon restart, these
-applications make new performance reservations.
+can rapidly respond to it by reducing the amount of resources taken 
+by less urgent applications, allowing the urgent application to finish,
+and reverting back to the previous committed resource level.
 
 There are two fundamental causes that can impede the I/O performance
 in an extreme-scale SSIO system. One is indirection, where layers
