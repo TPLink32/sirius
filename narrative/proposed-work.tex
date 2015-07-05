@@ -2,60 +2,59 @@
 \label{subsec:challenges}
 \label{sec:proposed}
 
-\begin{enumerate}
-\item Re-factoring of the data
-  \begin{itemize}
-  \item What kind of reorganization would work when?
-  \item Would it take too much time and resources + memory and how can we
-    manage the cost of the reorganization
-  \item Will the users loose too much value from the data during refactoring
-    and how can we control/bound this loss of value
-  \end{itemize}
-\item Quality of Service
-  \begin{itemize}
-  \item Can we make any gurantees in a scalable decentralized system?
-  \item What quality of service metrics can be make gurantees on in a scalable
-    way?
-  \item What kind of error rates will we have in our estimation and what error
-    rates are acceptable?
-  \item How much will the qos scheduler, admission control, manager cost in
-    terms of resources and time
-  \item How do we make the scheduler scalable with the size of the system?
-  \end{itemize}
-\item Discovery and naming
-  \begin{itemize}
-  \item Which data block and what quality/type do we respond to a query
-    with?
-  \item How will we scale a fully distributed storage system's metadata
-    management
-  \item Can we accelerate the discovery process with the addition of an
-    application/user level metadata store that tracks where data was
-    originally written and how was it structured?
-  \item Can we provide time estimates for read/write calls in the presence of
-    an unbounded discovery system? If not how do we bound the discovery time?
-  \item Time cost of discovery vs time cost of actually reading the data
-    (latency vs bandwidth essentially)
-  \end{itemize}
-\item Migration
-  \begin{itemize}
-  \item Can we do scalable migration without making the discovery process
-    unbounded
-  \item What are the parameters and input for migration
-  \item Can we use the additional application level knowledge of data to purge
-    portions of the data from storage without making the data too much less
-    valuable?
-  \item With so many objects and no centralized directory how do we know what
-    is actually in the storage to be purged?
-  \item How do purge in a way that doesn't require a central authority,
-    doesn't interfere with other I/O and isn't bottlenecked by some sort of
-    global consistency
-  \end{itemize}
-\end{enumerate}
+%\begin{enumerate}
+%\item Re-factoring of the data
+%  \begin{itemize}
+%  \item What kind of reorganization would work when?
+%  \item Would it take too much time and resources + memory and how can we
+%    manage the cost of the reorganization
+%  \item Will the users loose too much value from the data during refactoring
+%    and how can we control/bound this loss of value
+%  \end{itemize}
+%\item Quality of Service
+%  \begin{itemize}
+%  \item Can we make any guarantees in a scalable decentralized system?
+%  \item What quality of service metrics can be make guarantees on in a scalable
+%    way?
+%  \item What kind of error rates will we have in our estimation and what error
+%    rates are acceptable?
+%  \item How much will the qos scheduler, admission control, manager cost in
+%    terms of resources and time
+%  \item How do we make the scheduler scalable with the size of the system?
+%  \end{itemize}
+%\item Discovery and naming
+%  \begin{itemize}
+%  \item Which data block and what quality/type do we respond to a query
+%    with?
+%  \item How will we scale a fully distributed storage system's metadata
+%    management
+%  \item Can we accelerate the discovery process with the addition of an
+%    application/user level metadata store that tracks where data was
+%    originally written and how was it structured?
+%  \item Can we provide time estimates for read/write calls in the presence of
+%    an unbounded discovery system? If not how do we bound the discovery time?
+%  \item Time cost of discovery vs time cost of actually reading the data
+%    (latency vs bandwidth essentially)
+%  \end{itemize}
+%\item Migration
+%  \begin{itemize}
+%  \item Can we do scalable migration without making the discovery process
+%    unbounded
+%  \item What are the parameters and input for migration
+%  \item Can we use the additional application level knowledge of data to purge
+%    portions of the data from storage without making the data too much less
+%    valuable?
+%  \item With so many objects and no centralized directory how do we know what
+%    is actually in the storage to be purged?
+%  \item How do purge in a way that doesn't require a central authority,
+%    doesn't interfere with other I/O and isn't bottlenecked by some sort of
+%    global consistency
+%  \end{itemize}
+%\end{enumerate}
 
 
-{\bf {\color{red}Norbert will clean these pieces}}
-Our research into the storage system and middle ware layers must address
-many of these challenges including
+%Our research into the storage system and middle ware layers must address
+%many of these challenges including
 % \begin{enumerate}
 % \item How do we describe the user intentions at the API layer and have this
 %   communicated down to the middle-ware and storage layers?
@@ -102,27 +101,34 @@ many of these challenges including
 %   users who can potentially create billions of objects from their
 %   simulation? (scalability and discovery)
 
-\paragraph{Deliverables and artifacts}
-
-\begin{enumerate}
-\item Add plug-in architecture to Sirocco to support selective data compression
-\item Add specific tier destinations command to Sirocco (assuming that the caching mechansism cannot achieve the desired effects).
-\item Develop profiling system to determine how a data set is used during preparation runs prior to a capability run to determine how to optimize data placement for capability run analytics.
-
-\end{enumerate}
-
-{\bf \color{red}we need to condense these challenges into a few basic principles - 4 at most - SAK}
+%\paragraph{Deliverables and artifacts}
+%
+%\begin{enumerate}
+%\item Add plug-in architecture to Sirocco to support selective data compression
+%\item Add specific tier destinations command to Sirocco (assuming that the caching mechansism cannot achieve the desired effects).
+%\item Develop profiling system to determine how a data set is used during preparation runs prior to a capability run to determine how to optimize data placement for capability run analytics.
+%
+%\end{enumerate}
+%
+%{\bf \color{red}we need to condense these challenges into a few basic principles - 4 at most - SAK}
 
 We propose to overcome these challenges by pioneering a new {\bf knowledge-centric approach} to a dynamic storage system
 and I/O layer which takes into account user prioritization and utility to optimize the SSIO layer. The approach is based on 
-four underlying principles:
+three underlying principles:
 
-\underline{Principle 1: A knowledge-centric system} , let user knowledge  to define data policies. talk about this pieces...
+\underline{Principle 1:} A knowledge-centric system , let user knowledge  to define data policies. Today Storage System and I/O
+layers are written in a stove-pipe fashion, and quite often don't allow optimizations to take place. We propose to re-design the
+layer in a highly integrated fashion where user will place their intentions into the system and actions will dynamically and statically
+take place to optimize for both the system and for individual requests.
 
-\underline{Principle 2: A SSIO system which integrates system knowledge together with application knowledge} to understand
-how to organize data in the deep storage hierarchy
+\underline{Principle 2}: Predictable Performance in the SSIO layer needs to be established so more science can be done on the
+exascale Systems. Without predictable performance, the I/O layer performance must be guessed by the users, which quite often
+mean that science is not performed well.
 
-\underline{Principle 3: Predictable Performance in the SSIO layer} so that intelligent choices can be made by both the user and the system
+\underline{Principle 3:} In a data-centric SSIO system, we need user goals to define the data policies. We introduce data-driven
+SSIO optimizations by enabling users to define data manipulations (re-organizations) at a high level and then we express
+policy goals by associating intentions (hints) with data;' e.g. ``this data at this level should be accessible in the next three months.''
+These high level specifications of desired results will be used in our system for data migration and eviction policies.
 
 \input{narrative/data-description} % includes data-desc, apis, and qos-app.   
 
@@ -135,7 +141,6 @@ how to organize data in the deep storage hierarchy
 
 
 %\input{narrative/qos-app}
-{\bf {\color{red}Hasan will integrate these pieces, Manish after Hasan}}
 \input{narrative/placement}
 \input{narrative/migration}
 \input{narrative/eviction-metrics}
@@ -145,11 +150,10 @@ how to organize data in the deep storage hierarchy
 
 % \subsection{Storage System}
 
-{\bf {\color{red}Gary will integrate these pieces}}
 %\input{narrative/resource-mgmt}
 \input{narrative/qos}
 %\input{narrative/discovery}
-{\bf {\color{red}Jay  will integrate these pieces}}
+
 \input{narrative/naming-service}
 % \input{narrative/time-estimation}
 \input{narrative/infrastructure}

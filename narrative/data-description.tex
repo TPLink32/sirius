@@ -54,6 +54,9 @@ storage system, and react to the responses. Guided by our past work in
 ADIOS \cite{lofstead2008flexible} we propose to explore the design of two
 mechanisms for this purpose. 
 
+Our research will address the following questions: 1) How can users interact with the SSIO system efficiently?,
+2) How can users express their intentions into actionable items which can take place in the SSIO layer?
+3) How can users give utility to the data?
 
 
 \paragraph{State of the art:} ADIOS implements a binary-packed data format that allows
@@ -98,17 +101,6 @@ Finally we will study the use of an external data annotation system that can
 provide information to the storage system without requiring the application
 to be recompiled. 
 
-\begin{wrapfigure}{r}{0.7\textwidth}
-%\vspace{0ex}
-        \begin{centering} 
-	\includegraphics[scale=0.77]{graphics/SSIO-bucket.pdf}
-        %\vspace{1ex}
-        \caption{Data is given as a set of objects which includes utility which contains the lifetime in a storage layer, and the priority of the layer.}
-        \label{fig:ssio-bucket}
-        \end{centering}
-%        \vspace{1ex}
-\end{wrapfigure}
-
 %
 We will explore these APIs through our ADIOS framework and work with many of our applications, 
 including XGC1, GTC, and SPECFM3D, and understand: 1) what hints the users can give us, 2) how
@@ -129,6 +121,19 @@ two highest priority buckets of the particle data will be stored in the Parallel
 lower in the storage stack. As the system needs to purge the data from the Parallel File System, it can understand that the P2 layer of
 data can be removed. 
 %
+
+
+\begin{wrapfigure}{r}{0.7\textwidth}
+%\vspace{0ex}
+        \begin{centering} 
+	\includegraphics[scale=0.77]{graphics/SSIO-bucket.pdf}
+        %\vspace{1ex}
+        \caption{Data is given as a set of objects which includes utility which contains the lifetime in a storage layer, and the priority of the layer.}
+        \label{fig:ssio-bucket}
+        \end{centering}
+%        \vspace{1ex}
+\end{wrapfigure}
+
 
 We will design new APIs that the users can use as part of a data mover, or the system can automatically use, to raise or lower these sub-objects
 up and down the storage stack. The SSIO layer will then manage the system metadata so that the user can transparently access any of these
