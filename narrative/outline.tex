@@ -1,91 +1,91 @@
-\label{outline}
-{\color{red}
-Outline and writing assignments:
-\begin{enumerate}
-\item Introduction - Scott - Hasan - Gary - Jay 4 pages
-   \begin{enumerate}
-      \item resource drivers
-      \item application drivers
-      \item overall example which we will use for the test
-      \item  need to answer the questions what we are doing, research  , prototype, aim, and what is new
-   \end{enumerate}
-\item Enabling Technologies - Jay - 1 page
-   \begin{enumerate}
-   	\item Sirocco
-   	\item ADIOS
-   	\item DataSpaces
-   	\item Anything else
-   \end{enumerate}
- \item {Proposed Research and Methods} - 14 pages
-          Proposed work
-          Execution path
-          Related work
-
-    \begin{enumerate}
-       \item Application interface - Hasan, Manish, Gary, Kimmy, Jay, Mark
-          \begin{enumerate}
-            \item APIS - Kimmy  (rules/policy, user decision of data compression, quick feedback from system monitoring, QoS)
-            \item description of data - Gary `` how we describe the structure and semantic of the data, how will it be stored, application level importance, utility curve''
-            \item collection of data reduction techniques - Mark
-            \item data re-organization specification - Scott, Mark
-            \item QoS - Hasan/Gary/Carlos - emission control, some guarantees on the estimates
-            \item data placement and movement (anticipatory and on-demand)  - Manish, Gary 
-            \item policies - Jay
-          \end{enumerate}
-      \item Storage System - Jay, Carlos, Manish, Lee, Matthew, Feyi
-      \begin{enumerate}
-         \item migration - Lee
-         \item Match organization of data with the medium characteristics - Carlos, Hasan
-         \item Eviction metrics - Carlos, Hasan
-         \item resource management -Jay
-         \item QoS - Carlos 
-         \item Discovery - Jay - moves things based on pressure on the system, getting to some things take effort because it is at different places, understand what our different options in terms of data quality... ability to decide the trade-offs 
-         \item Naming Service (not completely sure what this is?) - Jay
-          \item data placement and movement (anticipatory and on-demand) from a storage system perspective - Manish 
-         \item Estimation of Times - Feyi
-      \end{enumerate}
-    \end{enumerate}
-\item Evaluation - 1 pages - Scott
-\item Timetable of Activities - 1/2 page
-\item Project Management Plan - 1 page - Scott
-\item Project Objective  1/2 page
-\end{enumerate}
-
-
-
-\begin{itemize}
-
-\item describe data size problems for getting scientific results out
-\item describe annotating and differentiating data storage according to both
-  use and inherent data qualities (e.g., contains desireable features)
-\item describe idea of using heavy compression for less interesting areas
-  and less or no compression for more interesting areas.
-\item describe inherent errors in scientific calculations
-\item describe lossy compression within error bounds
-\item describe how incorporating plug-ins for application aware data
-  compression opportunities to aid data storage
-\item describe Sirocco's current state and future designs as a solid
-  foundation on which to work
-\item describe how these new features can enhance a system like Sirocco to
-  reduce data intensity
-\item describe metadata challenges that we will also have to face.
-
-\end{itemize}
-
-every section should include:
-
-Problem and background, one or more solution approaches, and investigation
-goals/questions.
-
-Technical Areas
- 
-1. Application Intentions.\\
-2. Metadata Management (middleware and storage system)\\
-3. Pluggable infrastructure for data transformation (storage system)\\
-4. Intelligent (autonomic, application-aware) data mapping to storage/memory hierarchies (middleware and storage system)\\
-5. Predictable Performance and resolution tradeoffs\\
-6. Data re-generation. (middleware \& storage)\\
-7. Learning Motifs and data re-organization.\\
-
-
-}
+%\label{outline}
+%{\color{red}
+%Outline and writing assignments:
+%\begin{enumerate}
+%\item Introduction - Scott - Hasan - Gary - Jay 4 pages
+%   \begin{enumerate}
+%      \item resource drivers
+%      \item application drivers
+%      \item overall example which we will use for the test
+%      \item  need to answer the questions what we are doing, research  , prototype, aim, and what is new
+%   \end{enumerate}
+%\item Enabling Technologies - Jay - 1 page
+%   \begin{enumerate}
+%   	\item Sirocco
+%   	\item ADIOS
+%   	\item DataSpaces
+%   	\item Anything else
+%   \end{enumerate}
+% \item {Proposed Research and Methods} - 14 pages
+%          Proposed work
+%          Execution path
+%          Related work
+%
+%    \begin{enumerate}
+%       \item Application interface - Hasan, Manish, Gary, Kimmy, Jay, Mark
+%          \begin{enumerate}
+%            \item APIS - Kimmy  (rules/policy, user decision of data compression, quick feedback from system monitoring, QoS)
+%            \item description of data - Gary `` how we describe the structure and semantic of the data, how will it be stored, application level importance, utility curve''
+%            \item collection of data reduction techniques - Mark
+%            \item data re-organization specification - Scott, Mark
+%            \item QoS - Hasan/Gary/Carlos - emission control, some guarantees on the estimates
+%            \item data placement and movement (anticipatory and on-demand)  - Manish, Gary 
+%            \item policies - Jay
+%          \end{enumerate}
+%      \item Storage System - Jay, Carlos, Manish, Lee, Matthew, Feyi
+%      \begin{enumerate}
+%         \item migration - Lee
+%         \item Match organization of data with the medium characteristics - Carlos, Hasan
+%         \item Eviction metrics - Carlos, Hasan
+%         \item resource management -Jay
+%         \item QoS - Carlos 
+%         \item Discovery - Jay - moves things based on pressure on the system, getting to some things take effort because it is at different places, understand what our different options in terms of data quality... ability to decide the trade-offs 
+%         \item Naming Service (not completely sure what this is?) - Jay
+%          \item data placement and movement (anticipatory and on-demand) from a storage system perspective - Manish 
+%         \item Estimation of Times - Feyi
+%      \end{enumerate}
+%    \end{enumerate}
+%\item Evaluation - 1 pages - Scott
+%\item Timetable of Activities - 1/2 page
+%\item Project Management Plan - 1 page - Scott
+%\item Project Objective  1/2 page
+%\end{enumerate}
+%
+%
+%
+%\begin{itemize}
+%
+%\item describe data size problems for getting scientific results out
+%\item describe annotating and differentiating data storage according to both
+%  use and inherent data qualities (e.g., contains desireable features)
+%\item describe idea of using heavy compression for less interesting areas
+%  and less or no compression for more interesting areas.
+%\item describe inherent errors in scientific calculations
+%\item describe lossy compression within error bounds
+%\item describe how incorporating plug-ins for application aware data
+%  compression opportunities to aid data storage
+%\item describe Sirocco's current state and future designs as a solid
+%  foundation on which to work
+%\item describe how these new features can enhance a system like Sirocco to
+%  reduce data intensity
+%\item describe metadata challenges that we will also have to face.
+%
+%\end{itemize}
+%
+%every section should include:
+%
+%Problem and background, one or more solution approaches, and investigation
+%goals/questions.
+%
+%Technical Areas
+% 
+%1. Application Intentions.\\
+%2. Metadata Management (middleware and storage system)\\
+%3. Pluggable infrastructure for data transformation (storage system)\\
+%4. Intelligent (autonomic, application-aware) data mapping to storage/memory hierarchies (middleware and storage system)\\
+%5. Predictable Performance and resolution tradeoffs\\
+%6. Data re-generation. (middleware \& storage)\\
+%7. Learning Motifs and data re-organization.\\
+%
+%
+%}
