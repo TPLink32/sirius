@@ -92,10 +92,11 @@ references}
 We will design and develop new techniques for data management, description,
 and access that allow users to describe the data utility based on their
 expectations. This can be done by allowing users to plug in functions that
-partition user level data into chunks, which are then executed by the middleware to
-calculate the utility value for each chunk. This value, along with other
-metadata, will be encapsulated by the middleware and utilized by the underlying
-storage system to manage data placement.
+provide data-specific functionality to the middleware and storage system.
+These functions may be executed by the system to
+calculate the utility value for each chunk, handle custom compression
+and decompression, and perform other data-specific services, thus allowing
+the system to more effectively manage data placement and retrieval.
 %
 %We will design an updated I/O API that will expand on the current POSIX I/O
 %semantics by adding new information to the I/O request.
@@ -112,12 +113,12 @@ also be investigated.
 
 We will also develop a new type of querying system that allows an application
 to ask the storage system about completion timing information. The response
-would be an estimated elapsed time for the described operation. We will explore
+would be an estimated time for the described operation. We will explore
 how these query functions can be integrated into common applications with
 minimal code disruptions and the set of policies that applications can use to
 respond to this new information. We will also explore how applications can
 query the storage system to gain insights on available space in different tiers
-and how applications can tailor their output data to match the available space.
+and how applications can tailor their output data to most effectively use the available space.
 Finally we will study the use of an external data annotation system that can
 provide information to the storage system without requiring the application to
 be recompiled. 
@@ -125,25 +126,27 @@ be recompiled.
 %
 From an application level, we will explore these techniques through our ADIOS
 framework using many of the applications to which we have access, including
-XGC1, GTC, and SPECFM3D. We will understand: 1) what hints the users can give
-us, 2) how the users can take away much of their application specific code to
+XGC1, GTC, and SPECFM3D. We will investigate: 1) what hints the users can give
+the system, 2) how the users can replace much of their
+application specific code with
 ``system level code'' through the use of these hints.  We will design an API
-that will integrate through the storage layer to give time estimations so that
+that will be integrated with the storage layer to give time estimations so that
 users can decide which data priorities will be written and read. The utility
-value for each chunk will place it into one of ``n'' bins where the first bin
-is the most important data and the last bin is the least important data. The
-bin will give it a lifetime in the highest level of storage that the user thinks
-will be needed. For example: in Figure~\ref{fig:ssio-bucket} we have data that
+value for each chunk will be used to sort the chunks into prioritized bins.
+Chunks in a particular bin will be assigned an appropriate storage
+ tier and lifetime, which can be decided by the user through the API.
+For example: in Figure~\ref{fig:ssio-bucket} we have data that
 comes from the XGC1 code.  The user can pick a data-refactoring scheme (see
 Sec~\ref{sec:data-refactor}) which will bucket the particle data into 4
 prioritization levels.  The user can then pick a data utility, such as 3 months
 for the highest priority items and 12 months for the lowest priority data.
-The user will then call an API when they specify all of the chunks they want
+The user will then call a function, provided by the API, that allows them
+to specify all of the chunks they want
 written (particles, two fields, and a mesh in this example) and the system
 will return an estimate of the time it will take to write. The user can then
-use another API call which will determine the lowest priority element (in this
+use another call which will determine the lowest priority element (in this
 case the user will write all of the data (P1-P4). The data will then be stored
-on all of the layers of the file system where the two highest priority buckets
+across the layers of the file system where the two highest priority buckets
 will be stored in the Parallel File System, but the next highest priority items
 will be stored lower in the storage stack. 
 %
