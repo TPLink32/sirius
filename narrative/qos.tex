@@ -57,14 +57,12 @@ Unfettered, this competition can yield a lower system and application performanc
 than the case where applications attempt to reserve storage resources, thereby enabling the storage system
 to reason over its performance in terms of reservations and actual
 performance.
-If the system uses reservations intelligently, its performance is predictable and
-efficient because resources are not wasted on interference.
 In the cases where an appication arrives that needs to run more urgently
 than any of the other already running applications, the system
 can rapidly respond to it by reducing the amount of resources taken 
 by less urgent applications, allowing the urgent application to finish,
-and later reverting back to the previous committed resource level for the rest. This can
-be automatically enforced via user- (or adiminstrator-) specified \textit{policies}
+and later reverting back to the previous committed resource level for the rest.
+This can be automatically enforced via user- (or adiminstrator-) specified \textit{policies}
 (section \ref{}).
 
 There are two fundamental causes that can impede the I/O performance
@@ -76,13 +74,9 @@ of data, and more often than not, the I/O paths are not under control
 under any single authority. The other cause is the shared use of
 resources. The best effort I/O request/response nature and lack of
 QoS mechanisms imply that there is little guarantee in terms of
-expected performance.  Both indirection and shared use of resource
+expected performance. Both indirection and shared use of resource
 contribute to a high probability of imbalanced use of resources
 thus the occurrence of congestion and degraded performance.
-Traditionally, there is a disconnection between storage infrastructure
-and rest of system software and applications: the infrastructure
-details are not exposed anywhere at all. One argument favoring this
-is to ensure a platform agnostic design.
 
 As an example to demonstrate that this disconnection will hurt
 system performance: We launch 4096 processes with each process doing
