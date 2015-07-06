@@ -11,7 +11,7 @@ with respect to scientific computing, aligns perfectly with this sentiment.
 %information theory who would instantly sympathize with the central objective of 
 %this proposal--minimizing the time to knowledge.  
 
-As we move forward, avoiding impending bottlenecks in exascale scientific discovery will require
+Avoiding impending bottlenecks in exascale scientific discovery will require
 new research into managing and storing the large volumes of data that are 
 produced by simulations and analyzed for months afterwards.
 %
@@ -21,84 +21,123 @@ possible utility and performance given data features, storage tier
 characteristics, and current system state. We will investigate novel techniques
 to facilitate efficient mapping of data objects
 from the user space onto multiple storage tiers and enable
-application-guided data reductions/transformations to address capacity and
+application-guided data reductions and transformations to address capacity and
 bandwidth bottlenecks, while constraining errors to be within user provided
 bounds.
 % 
+Our proposed research program is guided by the following overarching objectives. 
 
+{\em Address emerging storage architecture/technology landscape:}
 We will address the associated I/O and storage challenges in the context of
-current and emerging storage landscapes and expedite insights into critical
-scientific processes, while demonstrating the validity of our approach in key
-DOE domains. We will research techniques for creating and using a Scalable 
-Storage Software Infrastructure, and integrating services from the middleware 
-layer with Storage System capabilities to support novel strategies for distributing 
-data both horizontally and vertically across the storage system.  Negotiation between
-these layers will be provided as a fundamental service, allowing users to
+current and emerging storage landscapes,
+% and expedite insights into critical
+%scientific processes, while demonstrating the validity of our approach in key
+%DOE domains. 
+%We will research techniques for creating and using a Scalable 
+%Storage Software Infrastructure, and integrating services from the middleware 
+%layer with Storage System capabilities to support 
+and will develop novel strategies for distributing 
+data both horizontally and vertically across the layers of these storage systems.  
+Negotiation between these layers will be provided as a fundamental service, allowing users to
 easily save ``the best'' amount of data, which is automatically placed throughout the
 entire storage stack.
 
-The metric we are most interested in optimizing is time to knowledge.  Current
-approaches to addressing the I/O bottleneck fall into two broad categories:
-parallel file system approaches that optimize the throughput for an entire
-system, and I/O middleware approaches that optimize the performance of a single
-application. Both approaches have been successful to date, but are unlikely to
-overcome the remaining obstacles in reaching exascale. 
-Instead of trying to optimize throughput, we will seek to reduce the time to knowledge. 
+{\em Develop a science driven, system aware approach:}
+%Our approach targets the expected characteristics of exascale storage hardware.
+%The storage layer will be partitioned into multiple heterogeneous tiers with
+%vastly different performance characteristics. The layers will be further
+%differentiated by the constraints on capacity and data lifetime within each
+%layer. Tape archival storage will still maintain data long term, but access to
+%this data will be orders of magnitude slower than the next layer and naively
+%accessing data from archival storage will greatly impact productivity.
+%
+Given that storage systems will be composed of multiple heterogeneous tiers with
+vastly different performance characteristics and constraints on capacity and 
+data lifetime they can support, our approach will enable researchers to 
+place more knowledge into the SSIO system so that data can be recast from 
+a sequence of bytes to information, which the system can then place and 
+optimize the time to gain knowledge from exascale simulations. 
+
+%The traditional approach to transforming results of scientific computation into
+%knowledge consists of storing the numerical output of a simulation on disk,
+%followed by a post-processing or analysis stage that might take place over
+%several ensuing weeks or months. Clearly, given the computation expected at the
+%exascale, this type of workflow is simply not viable.
+
+{\em Emphasize impacts on science:}
+%The metric we are most interested in optimizing is time to knowledge.  
+%Current approaches to addressing the I/O bottleneck fall into two broad categories:
+%parallel file system approaches that optimize the throughput for an entire
+%system, and I/O middleware approaches that optimize the performance of a single
+%application. Both approaches have been successful to date, but are unlikely to
+%overcome the remaining obstacles in reaching exascale. 
+Instead of trying to optimize throughput, we will seek to reduce the time to knowledge.
 This is the most significant metric for scientific applications where the desired outcome
-is not storing data, but rather executing a knowledge creation and extraction processes 
+is not storing data, but rather executing knowledge creation and extraction processes 
 on the data. 
 Moreover, we aim to perform the optimization not for a single
 application, but rather for workloads within a multi-user multi-application
 system environment.
 
-Our approach targets the expected characteristics of exascale storage hardware.
-The storage layer will be partitioned into multiple heterogeneous tiers with
-vastly different performance characteristics. The layers will be further
-differentiated by the constraints on capacity and data lifetime within each
-layer. Tape archival storage will still maintain data long term, but access to
-this data will be orders of magnitude slower than the next layer and naively
-accessing data from archival storage will greatly impact productivity.
-%
-Our approach in this proposal is to enable researchers to place more knowledge
-into the SSIO system so that data can be recast from a sequence of bytes to
-information, which the system can then place and optimize the time to gain
-knowledge from exascale simulations.  We first motivate this by a problem our
-team has been working on in the past six months, and then recast this problem
-into a series of research questions and challenges which must be addressed in
-order to optimize the SSIO system for exascale science.
-
-The traditional approach to transforming results of scientific computation into
-knowledge consists of storing the numerical output of a simulation on disk,
-followed by a post-processing or analysis stage that might take place over
-several ensuing weeks or months. Clearly, given the computation expected at the
-exascale, this type of workflow is simply not viable.
-
-%
-\section{Scalable Storage Software Infrastructure}
-Our focus in this proposal is in theme 2: Scalable Storage Software Infrastructure. We will focus on a state of the art
-SSIO solution to solve problems which researchers are beginning to face and will make science on exascale systems
-problematic without new insights and solutions.
-
-Take for example the latest use case for the XGC1~\cite{chang2006integrated} simulation from C. S. Chang (PPPL), who is one of the largest users of Leadership Class Facilities (over 300M hours at ALCF, NERSC, and OLCF). They launched a series of simulations, planning to produce 100~PB of data over 10 days of total runtime on the Titan system. An expert team was assembled from the user group, the middleware I/O team to help with the application I/O (ADIOS), the local experts of the Lustre file-system and the tape archival system (HPSS). Due to physical resource limitations, the simulation was restricted to write about 10~PB initially. However, once the time to write and read, together with the financial cost to archive this much data were more fully explored, this plan was again significantly reduced. At each stage, the particular expert knowledge regarding the lustre file system and the archival tape storage were not known to the user team. As these particulars were realized, significant modifications in the plans were made. Eventually, the user was forced to make very hard decisions in reducing the desired 100~PB over a 10-day run to a mere 5~PB of data. A maximum of 2~PB would be on disk, and the rest would be archived.
-
-This forced the team to carefully scrutinize the large amount of data to be generated and save only the very most important pieces. Further, they had to break this greatly reduced data into two categories: first data they thought they would need to access while the simulation was running or shortly thereafter, and second data they would need after the simulation was finished. The former category would be stored on disk, and the later would be archived. Additionally, they needed to figure out how to efficiently retrieve these different categories of data for post-processing, analysis and visualization.
-
-Finally, the team had to develop new application specific data reduction techniques and encode them into the ADIOS middleware I/O layer. In order to do this, they had to implement a rudimentary discovery system to determine which data were located on disk, and which were on tape archive.  Additionally, some pieces of data needed to be moved to PPPL for immediate analysis.
-
-This solution worked well for the first day of the run but after the second day significant problems occurred: I/O variability became prohibitively expensive. Although the team had reserved resources for the run, the file system was shared, and a 10X variability in I/O speeds was observed. What is needed for this problem is a system to monitor, predict and manage resource usage in a dynamically adaptable way. Such a system could write more data when the resource is idle, and less data when it is very busy.
-
-However, the most significant problem occurs after the simulation run completes. Basic visualizations from the reducted data, just to get a high-level view of the simulation, can take significant time. While some timesteps might be on disk, others are archived on tape (where transfer could take weeks). Further, visualization and analysis of detailed views of the simulation are even more complicated.
 
 The overarching idea of this proposal is that data from applications can be characterized by different
-levels of importance and different levels of importance over time, which then can be used to guide the analysis and visualization later to access the most important data and deliver some level of knowledge without waiting for access to the whole original dataset. Information about the importance of the data at the application level, information about resource status and performance of the multi-level storage system, and flexible data reorganization and reduction operations at all levels can be utilized to provide a quality of service and allow users to gain insight in a timely manner.
+%levels of importance and different 
+levels of importance over time, which then can be used to guide the analysis and visualization later to access the most important data and deliver some level of knowledge without waiting for access to the whole original dataset. Information about the importance of the data at the application level, information about resource status and performance of the multi-level storage system, and flexible data reorganization and reduction operations at all levels can be utilized to provide a quality of service and allow users to gain insight in a timely manner.
 
-
-To address these challenges we are proposing to combine knowledge
+This proposal combines knowledge and expertise 
 from a wide range of sources including ORNL applications, the ADIOS project,
 the SNL Lightweight File Systems project and storage system knowledge, the metadata
 management and storage systems knowledge of UCSC, and the middleware expertise
 of Rutgers. We will integrate this diverse expertise to investigate how to make
 a data, workflow, and application aware storage system.
+This project brings together a team with strong expertise in I/O middleware (ORNL, Rutgers), 
+file system (SNL, UCSC) and storage (UCSC), and connects and
+coordinates these key storage components in a seamless fashion.
+
+
+%
+%\section{Scalable Storage Software Infrastructure}
+%Our focus in this proposal is in Theme 2: {\em Scalable Storage Software Infrastructure} 
+%We will focus on a state of the art SSIO solution to solve problems which researchers are 
+%beginning to face and will make science on exascale systems
+%problematic without new insights and solutions.
+Our proposal will be responsive to Theme 2: {\em Scalable Storage Software Infrastructure} of the call, as summarize in Table~\ref{ab:call}.
+\begin{table}[htbp]
+\vspace{2ex}
+\begin{center}
+\begin{tabular}{ | p {0.2cm} | p{5cm} | p{7.5cm} | p{1.6cm} |}\hline
+\multicolumn{2}{|c|}{\bf Call area} & \multicolumn{1}{|c|}{\bf Relevant S2E2 work} & \multicolumn{1}{|c|}{\bf See} \\\hline\hline
+%\multicolumn{2}{|c|}{Collaboration} & 
+\multicolumn{2}{|p {5.5cm}|}{Approaches to improve the ability of SSIO software to support checkpoint/restart;} & 
+General piece we are doing for this... & 
+\S\ref{sec:?}, \S\ref{sec:??}, \\\hline
+1 & Data abstractions & What will we do & \S\ref{sec:?}, \S\ref{sec:?}, \S\ref{sec:?} \\\hline
+2 & Mapping science data models onto hierarchical storage & What we are doing & \S\ref{sec:?}, \S\ref{sec:?} \\\hline
+3 & Mechanisms for data movement across the storage hierarchy & what are we doing. & \S\ref{sec:?} \\\hline
+4 &  Extend the interaction of IO middleware with the resource management system & What we are doing & \S\ref{sec:?}, \S\ref{sec:?}  \\\hline
+5 & Design and implement of IO middleware architectures  & What we are doing & \S\ref{sec:?}, \S\ref{sec:?}, \S\ref{sec:?} \\
+\hline
+\end{tabular}
+\end{center}
+\label{tab:call}
+\end{table}
+
+%
+\section{An Illustrative Example}
+The challenges addressed by this proposal are illustrated by a problem our team has been working on in the past six months. We use this motivating example to formulate a series of research questions and challenges that must be addressed in order to support exascale science.
+
+Take for example the latest use case for the XGC1~\cite{chang2006integrated} simulation from C. S. Chang (PPPL), who is one of the largest users of Leadership Class Facilities (over 300M hours at ALCF, NERSC, and OLCF). They launched a series of simulations, planning to produce 100~PB of data over 10 days of total runtime on the Titan system. An expert team was assembled from the user group, the middleware I/O team to help with the application I/O (ADIOS), the local experts of the Lustre file-system and the tape archival system (HPSS). Due to physical resource limitations, the simulation was restricted to write about 10~PB initially. However, once the time to write and read, together with the financial cost to archive this much data were more fully explored, this plan was again significantly reduced. At each stage, the particular expert knowledge regarding the lustre file system and the archival tape storage were not known to the user team. As these particulars were realized, significant modifications in the plans were made. Eventually, the user was forced to make very hard decisions in reducing the desired 100~PB over a 10-day run to a mere 5~PB of data. A maximum of 2~PB would be on disk at any time, and the rest would be archived.
+
+This forced the team to carefully scrutinize the large amount of data to be generated and save only the very most important pieces. Further, they had to break this greatly reduced data into two categories: first data they thought they would need to access while the simulation was running or shortly thereafter, and second data they would need after the whole campaign was finished. The former category would be stored on disk, and the later would be archived. Additionally, they needed to figure out how to efficiently retrieve these different categories of data for post-processing, analysis and visualization.
+
+Finally, the team had to develop new application specific data reduction techniques and encode them into the ADIOS middleware I/O layer. In order to do this, they had to implement a rudimentary discovery system to determine which data were located on disk, and which were on tape archive.  Additionally, some pieces of data needed to be moved to PPPL for immediate analysis.
+
+This solution worked well for the first day of the run but after the second day significant problems occurred: I/O variability became prohibitively expensive. Although the team had reserved resources for the run, the file system was shared, and a 10X variability in I/O speeds was observed. What is needed for this problem is a system to monitor, predict and manage resource usage in a dynamically adaptable way. Such a system could write more data when the resource is idle, and less data when it is very busy.
+
+However, the most significant problem occurs after the simulation run completes. Basic visualizations from the reduced data, just to get a high-level view of the simulation, can take significant time. While some timesteps might be on disk, others are archived on tape (where transfer could take weeks). Further, visualization and analysis of detailed views of the simulation are even more complicated.
+
+
+\subsection{Overview of the proposed approach (can be shortened)} 
 
 %ADIOS was developed with the understanding that we must
 %not only address the bottlenecks for current applications and
@@ -129,8 +168,6 @@ a data, workflow, and application aware storage system.
 %need to consider additional features such as compression and
 %indexing to better cope with the expected tsunami of data.
 
-
-
 We will examine the research challenges from the perspective of
 %
 (1) the user of the system who is attempting to run an exascale simulation,
@@ -140,29 +177,6 @@ the users, and finally
 %
 (3) the user of the system who is attempting to understand the data
 produced by a set of simulations.
-
-Our proposal will be responsive to theme 2 in the call, and we summarize them in the following table.
-\begin{table}[htbp]
-\vspace{2ex}
-\begin{center}
-\begin{tabular}{ | p {0.2cm} | p{5cm} | p{7.5cm} | p{1.6cm} |}\hline
-\multicolumn{2}{|c|}{\bf Call area} & \multicolumn{1}{|c|}{\bf Relevant S2E2 work} & \multicolumn{1}{|c|}{\bf See} \\\hline\hline
-%\multicolumn{2}{|c|}{Collaboration} & 
-\multicolumn{2}{|p {5.5cm}|}{Approaches to improve the ability of SSIO software to support checkpoint/restart;} & 
-General piece we are doing for this... & 
-\S\ref{sec:?}, \S\ref{sec:??}, \\\hline
-1 & Data abstractions & What will we do & \S\ref{sec:?}, \S\ref{sec:?}, \S\ref{sec:?} \\\hline
-2 & Mapping science data models onto hierarchical storage & What we are doing & \S\ref{sec:?}, \S\ref{sec:?} \\\hline
-3 & Mechanisms for data movement across the storage hierarchy & what are we doing. & \S\ref{sec:?} \\\hline
-4 &  Extend the interaction of IO middleware with the resource management system & What we are doing & \S\ref{sec:?}, \S\ref{sec:?}  \\\hline
-5 & Design and implement of IO middleware architectures  & What we are doing & \S\ref{sec:?}, \S\ref{sec:?}, \S\ref{sec:?} \\
-\hline
-\end{tabular}
-\end{center}
-\end{table}
-
-
-
 
 \subsection{Writing Perspective}
 \label{subsec:sim-perspective}
@@ -226,10 +240,9 @@ From the perspective of the storage system, it is necessary to manage the data f
 a given user request amongst all of the requests from all users, and try to optimize the
 entire system accordingly. Today the problem is that when a user writes there is a
 tremendous amount of interference from other users on the system who may be
-writing or reading at the same time. By requiring a certain quality
-of service the {\bf  system must potentially lock out users with lower currency
-they want to place in the reading or writing of their data}. The storage
-system must also automatically move data from one tier of the storage to
+writing or reading at the same time and the time to perform an operation is unpredictable. 
+By requiring a certain quality of service the system could potentially lock out other users. 
+The storage system must also automatically move data from one tier of the storage to
 another, without affecting the quality of service that was offered at request
 time. The storage system must be able to organize
 data amongst all of the tiers of storage in a known, consistent way.
