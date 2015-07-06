@@ -34,7 +34,7 @@
         Year = {2006},
         Bdsk-Url-1 = {http://gaston.sandia.gov/cfupload/ccim_pubs_prod/SAND2006-3057.pdf}}
 
-@inproceedings{lofstead:adaptible,
+@inproceedings{lofstead:2009:adaptible,
         Address = {Rome, Italy},
         Author = {Jay Lofstead and Fang Zheng and Scott Klasky and Karsten Schwan},
         Booktitle = ipdps2009,
@@ -141,3 +141,80 @@ Our D2T system offers a mechanism to support these kinds of operations by provid
         Month = nov,
         Title = {Managing Variability in the {IO} Performance of Petascale Storage Systems},
         Year = {2010}}
+
+@INPROCEEDINGS{zheng:2010:predata,
+    author = {Fang Zheng and Hasan Abbasi and Ciprian Docan and Jay Lofstead and Scott Klasky and Qing Liu and Manish Parashar and Norbert Podhorszki and Karsten Schwan and Matthew Wolf},
+    title = {{PreDatA }- Preparatory Data Analytics on {Peta-Scale} Machines},
+    abstract = {Peta-scale scientific applications running on High
+End Computing (HEC) platforms can generate large volumes
+of data. For high performance storage and in order to be
+useful to science end users, such data must be organized in
+its layout, indexed, sorted, and otherwise manipulated for subsequent
+data presentation, visualization, and detailed analysis.
+In addition, scientists desire to gain insights into selected data
+characteristics `hidden' or `latent' in these massive datasets
+while data is being produced by simulations. PreDatA, short for
+Preparatory Data Analytics, is an approach to preparing and
+characterizing data while it is being produced by the large scale
+simulations running on peta-scale machines. By dedicating
+additional compute nodes on the machine as `staging' nodes
+and by staging simulations' output data through these nodes,
+PreDatA can exploit their computational power to perform
+select data manipulations with lower latency than attainable
+by first moving data into file systems and storage. Such intransit
+manipulations are supported by the PreDatA middleware
+through asynchronous data movement to reduce write
+latency, application-specific operations on streaming data that
+are able to discover latent data characteristics, and appropriate
+data reorganization and metadata annotation to speed up
+subsequent data access. PreDatA enhances the scalability and
+exibility of the current I/O stack on HEC platforms and
+is useful for data pre-processing, runtime data analysis and
+inspection, as well as for data exchange between concurrently
+running simulations.},
+    booktitle = {In Proceedings of 24th IEEE International Parallel and Distributed Processing Symposium, April, Atlanta, Georgia},
+    year = {2010}
+}
+
+@article{docan:2010:dataspaces,
+author = {C. Docan and M. Parashar and S. Klasky},
+title = {{DataSpaces}: An Interaction and Coordination Framework for Coupled Simulation Workflows},
+abstract = {Emerging high-performance distributed computing environ-
+ments are enabling new end-to-end formulations in science
+and engineering that involve multiple interacting processes
+and data-intensive application workflows. For example, cur-
+rent fusion simulation efforts are exploring coupled models
+and codes that simultaneously simulate separate application
+processes, such as the core and the edge turbulence, and run
+on different high performance computing resources. These
+components need to interact, at runtime, with each other
+and with services for data monitoring, data analysis and vi-
+sualization, and data archiving. As a result, they require effi-
+cient support for dynamic and flexible couplings and interac-
+tions, which remains a challenge. This paper presents Data-
+Spaces, a flexible interaction and coordination substrate that
+addresses this challenge. DataSpaces essentially implements
+a semantically specialized virtual shared space abstraction
+that can be associatively accessed by all components and
+services in the application workflow. It enables live data
+to be extracted from running simulation components, in-
+dexes this data online, and then allows it to be monitored,
+queried and accessed by other components and services via
+the space using semantically meaningful operators. The un-
+derlying data transport is asynchronous, low-overhead and
+largely memory-to-memory. The design, implementation,
+and experimental evaluation of DataSpaces using a coupled
+fusion simulation workflow is presented.},
+journal = {HPDC '10: Proceedings of the 18th international symposium on High performance distributed computing},
+year = {2010},
+address = {Chicago, IL, USA},
+}
+
+@inproceedings{oldfield:2006:nessie,
+Address = {Barcelona, Spain},
+Author = {Ron A. Oldfield and Patrick Widener and Arthur B. Maccabe and Lee Ward and Todd Kordenbrock},
+Booktitle = hiperio2006,
+Month = sep,
+Title = {Efficient Data-Movement for Lightweight {I/O}},
+Year = {2006}
+}

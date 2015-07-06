@@ -34,20 +34,20 @@ Sirocco API is much more complex than a standard POSIX call prompting layering
 a more user friendly interface on top. Placing a thin, optimized layer as part
 of the storage system will offer the kinds of functionality and semantics this
 project proposes. From the user perspective, something like the
-ADIOS~\cite{lofstead:adaptible} API offers an API nearly as simple as POSIX, but with the
+ADIOS~\cite{lofstead:2009:adaptible} API offers an API nearly as simple as POSIX, but with the
 ability to change the actual data transport mechanism without changing the
 source code. This affords writing to a single output API while shifting from
 writing to a POSIX file system, some middleware like
-DataSpaces~\cite{dataspaces}, or some other system like Sirocco all without
+DataSpaces~\cite{docan:2010:dataspaces}, or some other system like Sirocco all without
 changing the source code. ADIOS has proven effective for writing to POSIX file
-systems, data staging systems~\cite{predata,dataspaces,nessie}, workflow
+systems, data staging systems~\cite{zheng:2010:predata,docan:2010:dataspaces,oldfield:2006:nessie}, workflow
 systems~\cite{flexpath}, and even nothing through the use of a NULL transport.
 Part of this project's goals seeks to understand where the dividing line
 between the storage layer shared by all users and middleware being used by a
 single or small number of users.
 
 At a similar level as ADIOS, but can be used in conjunction, are tools like
-DataSpaces~\cite{dataspaces}. They offer a way to request data set portions
+DataSpaces~\cite{docan:2010:dataspaces}. They offer a way to request data set portions
 from a one component by the next componet in a data flow. In DataSpaces case,
 the data transfer does not have to correspond to the data from a single
 process.  Instead, DataSpaces will determine where the data is and issue
@@ -64,7 +64,7 @@ we will be able to deliver a complete end-to-end system. We will investigate
 which functionality works best at the different layers for usability and
 scalability.
 
-In this project we will extend ADIOS~\cite{lofstead:adaptible} with new APIs and novel
+In this project we will extend ADIOS~\cite{lofstead:2009:adaptible} with new APIs and novel
 techniques to coordinate with the storage back-end. The key idea is offering
 the ability to negotiate with the storage system to agree on the tradeoff
 between data quality and response time. We will test our ideas on the next
