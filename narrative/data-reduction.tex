@@ -7,11 +7,11 @@ information when writing and reading from the SSIO layer in order to gain
 performance and predictability, and to prioritize I/O so that the data that
 is most useful for end-user can be written in the time available. 
 
-In the case of C. S. Chang described earlier, in commmon with most other
+In the case of C. S. Chang described earlier, in common with most other
 applications scientists with whom we collaborate, information is provided on
 which data should be sent over to our SSIO layer in order that the best
-possible information is available the subsequent analysis. The decision as how
-this should be accomplished generally involves refactoring (re-organizing and
+possible information is available for the subsequent analysis. The decision as how
+this should be accomplished generally involves data refactoring (re-organizing and
 reducing the data). 
 
 In this section we describe some common methods to reduce and re-organize data.
@@ -35,7 +35,7 @@ Broadly speaking, the path from data to knowledge consists of extracting
 underlying models or patterns from the datasets, and interpreting the resulting
 models. 
 
-Ideally, the scientist would perform the entire analysis stage {\em in situ} to
+Ideally, the scientists would perform the entire analysis stage {\em in situ} to
 extract the relevant information and, in the unlikely event of this being
 possible, would effectively circumvent the large data issue completely.  The
 problem of course is that this is unlikely to be possible since, by their
@@ -163,16 +163,21 @@ approach to data-refactoring. One approach allows the user to specify
 information about their data to indicate if the data is spatially varying,
 space-and time varying, just time varying. This allows us to store information
 in NVRAM on each node (when and where necessary) to later preform compression
-in both space and time . We will examine the different techniques for
+in both space and time. 
+
+We will examine the different techniques for
 compression and re-organization along with examine techniques to use an
 error-estimator (gradients) to create a multi-resolution view of the data which
 can then be sampled, and placed in different quantiles of importance. These
 will then be mapped over into the different layers of the storage hierarchy.
+
 We will also investigate technique which can use ``plug-ins'' for detection of
 features and store higher resolution data around the feature and lower
 resolution values which are further away from the features. This
 re-organization must occur without increasing the total amount of storage than
-what the users intended. We will also investigate the time it takes to
+what the users intended. 
+
+We will also research the time it takes to
 re-organize the data and use the multi-layer approach to staging to understand
 where the data gets reduced and where it gets re-organized. Open questions are:
 1) do we move the data over to other nodes to then reduce and re-organize, 2)
