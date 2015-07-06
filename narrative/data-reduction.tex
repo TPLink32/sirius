@@ -43,34 +43,32 @@ nature, large scale simulations aim to discover new information that is often
 hidden in the form of higher order effects amongst the data deluge. In
 particular, this means if data thinning or truncation is applied willy nilly
 then one is in danger of effectively throwing out the baby with the bath water.
-One cannot store the entire data set in easily accessible source, due to sheer
-size, yet one cannot reduce it prior to archival without risking losing the
-information one is trying to extract.  
+One cannot store the entire data set in an easily accessible source, due to
+sheer size, yet one cannot reduce it prior to archival without risking losing
+the information one is trying to extract.  Viewed in this way, the problem
+would appear intractable. However, the above discussion fails to recognize that
+much of the data is redundant in the information theoretic sense.  That is to
+say, the amount of information contained in the data is often significantly
+less than the amount of data.  The difficulty stems from the fact that one does
+not know about this redundancy in advance \emph{without the benefit of 
+priori knowledge}. This knowledge can often be provided by the user or can 
+be acquired through experience of dealing with differing runs of the same
+code. 
 
-Viewed in this way, the problem would appear intractable. However, the above
-discussion fails to recognize that much of the data is redundant in the
-information theoretic sense.  That is to say, the amount of information
-contained in the data is often significantly less than the amount of data.  The
-difficulty stems from the fact that one does not know about this redundancy in
-advance. 
+Application knowledge means one can sometimes achieve drastically superior
+reduction in the total data compared with what one might achieve otherwise.
+However, in the absence of such knowledge, we must equip the SSIO layers with
+generic data reduction techniques and re-organization techniques.
+Nevertheless, certain basic information on the semantics of the data is needed 
+and must be supported by the overall infrastructure. 
 
-Once we realize that data can be reduced from many different techniques, we
-understand that with more application knowledge, we can reduce the total data
-size much more than without knowledge, so we need to be able to design the SSIO
-layers to be able to have generic data reduction techniques, and generic data
-re-organization techniques. But we need to system to allow give us more
-semantic knowledge of the data so that we can either: 1) Use an approach which
-can audit the calculation and save values of the objects when the auditor is
-off more than a given amount, and we can also save the auditor in a docker
-container, which can then be executed as part of SSIO software layer.  
-
-Recognizing access patterns in an application is a key to potentially reducing
-future file read time. Scientific applications often read and analyze data
-alternately, thus by overlapping the two phases with prefetching can
-significantly reduce the overall execution time of the application. Accurate
-prefetching can be achieved with access pattern analysis. This requires an SSIO
-layer which can prefetch data in a asynchronous fashion to take the bytes on
-the file.
+Another important consideration is knowledge regarding typical access patterns
+for data in a given application. Scientific applications often read and analyze
+data in a structured fashion and failure to respect this pattern, or to exploit
+it through prefetching, can significantly increase the overall execution time
+of the application. Accurate prefetching can only be achieved with access
+pattern analysis. This requires an SSIO layer which can prefetch data in a
+asynchronous fashion to take the bytes on the file.
 
 There are many methods to re-organize the data, and to reduce the data and in
 this section we will list many different known methods.  We then list our
