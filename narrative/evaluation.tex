@@ -40,32 +40,32 @@ to evaluate the leading edge applications along with the system performance.
 We will use the systems at both SNL and OLCF, which have multiple layers of
 storage. For example, the sith cluster at the OLCF
 (https://www.olcf.ornl.gov/computing-resources/sith/) has its own Lustre
-storage system, SSDs on each node, and is connected to the centerwide Lustre
-file system. We will perform test in both the system level (on sith) and in
+storage system, SSDs on each node, and is connected to the center-wide Lustre
+file system. We will perform testing in both the system level (on sith) and in
 the user level (on titan), and evaluate our results using our application
 knowledge.
 
 Our evaluation will include how accurately we can set the bounds on
 time estimates for applications. We will measure these estimates when data
-is on just one level of the storage hierarchy, along with the time estimates
-when data chunks are split. We will evaluate how fast data can be discovered
-when it is split between the hierarchy, allowing us to better understand how
-many pieces data can be split into before it takes too long to access most
-of the data. We will also evaluate our techniques to examine how well we can
+is on just one level of the storage hierarchy, as well as
+accesses that include data chunks on multiple levels.
+We will evaluate how fast data can be discovered
+when it is split between levels, allowing us to better understand how
+finely data can be split before it takes too long to access.
+We will also evaluate our techniques to examine how well we can
 migrate data and update our server to determine if data might get
 out-of-sync between data chunks. We will need to clearly understand how well
 this system works on current systems and we will need to investigate this on
-the next generation OLCF system (Summitt) which we will have early access,
-along with all of the applications we will be investigating.
+the next generation OLCF system such as Summit, to which we will have early access.
 
-Another area of investigation will be in how accurate data can be read in
+Another area of investigation will be in how accurately data can be read 
 when there are time constraints due to users wanting to read in many time
 slices in a given amount of time. For example, in J. Tromp's visualization,
-we may contain hundreds of time slices, but when we visualize this data we
-would like very fast access to the ``first look' of the data. The question
-is whether the data will be highly representative of the overall data. Can
+we may be interested in looking at hundreds of time slices, but when we visualize this data we
+would like very fast access to the ``first look'' of the data. The question
+is whether the high priority data will be sufficiently representative of the overall data. Can
 we make accurate visualization from the less accurate data? We will work
-with our application partners to access this, and we will determine the
+with our application partners to assess this, and we will determine the
 accuracy in time-constrained test vs. test which will not place any bounds
 on the time to retrieve the data.
 
@@ -75,7 +75,7 @@ utilize more of the storage hierarchy by understanding these intentions and
 creating autonomic rules to self-optimize? Furthermore we will want to see
 if users can give us more accurate policies which can then be used for
 better system resource utilization. If we have more knowledge we would like
-to be able to illustrate that this will translate into higher levels of
+to be able to show that this will translate into higher levels of
 system utilization.
 
 One of the risks we face in our design is the unwillingness of users to add
@@ -90,16 +90,17 @@ the initial burden of placing this knowledge the burden decreases as more
 knowledge is placed into the system, and thus, they will be more inclined to
 increase the knowledge into the system as the benefits increase.
 
-We will also need to evaluate how more knowledge into the system will lead
-into more performance they get from placing the most important pieces at the
+We will also need to evaluate to what extent more knowledge about
+the data will lead to increased performance achieved by placing the most important pieces at the
 higher layers of the hierarchy. We will evaluate this by increasing and
-decreasing this knowledge. For example, if the user doesn't want their data
+decreasing this knowledge, and comparing the effects. For example, if the user doesn't want their data
 broken into priority chunks, then the data will be at the mercy of what the
 system does with no knowledge. If the user then gives us information that
-allows us to use ``generic'' rouitnes based on frequency, or accuracy, then
+allows us to use ``generic'' routines based on frequency, or accuracy, then
 we can use that knowledge to decompose the objects into chunks which can be
-placed. We can evaluate these against users who will give us more knowledge
-which allows us to perform application level binning of data (for example
+placed. We can evaluate these questions by working with specific users who
+are in a position give us more knowledge,
+allowing us to perform application level binning of data (for example
 for C.S. Chang), or for level of features (for J. Tromp).
 
 
