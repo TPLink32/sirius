@@ -164,35 +164,39 @@ will be stored lower in the storage stack.
 \end{wrapfigure}
 
 
-We will design new techniques that users can use as part of a data mover, or
-the system can automatically use, to raise or lower these sub-chunks up and
+We will design new techniques, available to both users and the storage system,
+to raise or lower these sub-chunks up and
 down the storage stack. The SSIO layer will then manage the system metadata so
 that the user can transparently access any of these sub-chunks without
-knowledge of the layer. This requires that when reading the data, the APIs will
-then get a time estimate of reading, and then allow the users to determine if
-they will read less (only the highest priority sub-chunks) if the time estimate
+the need to know where the data currently resides.
+This requires that when reading the data, the middleware will
+provide a time estimate of reading, and then allow the users to decide if
+they will read less (e.g., only the highest priority sub-chunks)
+if the time estimate
 for reading exceeds their expectations. Existing Sirocco functionality may be
 sufficient for these purposes, but it must still be proven in practice.
 %
 
 Users will also need to describe information about the data in order to choose
-the ``most optimal'' data-refactoring routine. Currently, we understand that
+the optimal data-refactoring routine. Currently, we understand that
 users can tell us that the data represents: 1) phase-space (e.g., the particles
 in our example), 2) spatial-changes (e.g., the mesh), 3) space-time (e.g.,
-the fields on the mesh). We need this information to get the best possible data
-refactoring methods. Although users can request a user-defined data-refactoring
-method, system-level methods can use this information to make better decisions.
-We will investigate new techniques and new semantics to take this information
-and use this to best prioritize and re-organize information.
+the fields on the mesh). We need this information to select
+the best possible data
+refactoring methods. Although users can insert a user-defined data-refactoring
+method, system-level methods can also use this information to make better decisions.
+We will investigate new techniques and new semantics capable of using
+this information to best prioritize and re-organize data.
 
-Finally we will investigate additional information on top of the data model.
+Finally we will investigate the use of additional information
+on top of the data model.
 This information will be used to indicate data associations that exceed
 traditional data models. For example, the fields and mesh in our example have
 an inherent relationship. A common data model will describe all of the
 variables in the mesh (the coordinates, the units, and the types of elements if
 this were a finite-element mesh). We will explore new mechanisms that will
 group data together making it explicit that M1, F1, and G1 need to be organized
-together.  In otherwords, in will not be helpful if data from M1 and M2 were
+together.  In other words, it will not be helpful if data from M1 and M2 were
 organized together along with only F1. When the users wants to visualize data
 from the field, F1, they will need only M1 and M2 would be additional
 information. Likewise, if the user wants to see F1 and F2, then they will need
@@ -207,9 +211,10 @@ occurs and how the users can specify additional information to ensure they get
 the best possible data from the SSIO layer.
 
 We seek to provide dynamic runtime information to the user and make the
-system more transparent. The end user could analyze or visualize data in a more
-predictable way since they have confidence how much longer they have to wait
-for the data.
+system more transparent. This would allow the end user to analyze or
+visualize data in a more
+predictable way since they would have more confidence of how much time
+the data retrieval process would take.
 
 %Firstly, we will explore the augmentation of I/O application programing
 %interfaces (I/O APIs) to allow applications to both specify timing and quality
@@ -247,8 +252,8 @@ negotiation between the application and the storage system to make adaptation
 decisions.  Since we will work closely with many of the leading LCF
 applications, we need to make sure that our additional APIs and semantics in
 the storage layer will be accepted by these applications and eventually by the
-rest of the community. This requires careful examination of all possible
-design choices to ensure stable APIs and semantics that do not burden the users
-with confusing APIS and semantics that cannot even be used by the system.
+rest of the community. This requires careful examination of the full range
+of possible
+design choices to ensure stable APIs and useful semantics.
 
 

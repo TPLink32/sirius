@@ -1,76 +1,118 @@
 \section{Evaluation}
 \label{sec:evaluation}
-In order to determine if our guiding principles are being met, and we can optimize the system from these guiding principles, 
-we will evaluate our work using the Table~\ref{table:eval}.
- 
 
+In order to determine if our guiding principles are being met, and we can
+optimize the system from these guiding principles, we will evaluate our work
+using the Table~\ref{table:eval}.
+
+To determine the effectiveness of the components of our proposed work we will
+partition the problem along the lines of our two guiding principles. 
+We will evaluate how the knowledge centric system design we employ can
+provide a more predictable level of performance and data quality. 
+
+
+%I dont think this table is right. Knowledge is our independent variable
+%and predictability is our dependent variable
 \begin{tabular}{ | l | l | l | }
 
-\hline
-	{\bf Principle/Metric}                   & {\bf User perspective metric}   & {\bf System perspective metric }\\ \hline
-	{\bf Knowledge-centric}                  & More knowledge = faster access  &  More knowledge = better \\
-        {\bf system}                             & to higher quality data          &  resource utilization across \\
-                                                 &                                 & the entire hierarchy \\ \hline
+  \hline
+  {\bf Principle/Metric}                   & {\bf User perspective metric}   & {\bf System perspective metric }\\ \hline
+  {\bf Knowledge-centric}                  & More knowledge = faster access  &  More knowledge = better \\
+  {\bf system}                             & to higher quality data          &  resource utilization across \\
+                                           &                                 & the entire hierarchy \\ \hline
                                                                                                                                         
                                                                                                                                          
                                                                                                                                              
-        {\bf Predictable Performance} & More predictability =                     &  Accuracy of the time bounds \\
-        {\bf Accuracy}                & better quality of data                    &  across multiple layers of the\\
-                                      &                                           &  storage hierarchy wrote/read \\ 
-                                      &                                           &  in time constrained\\
-                                      &                                           &  situations \\ \hline
+  {\bf Predictable Performance} & More predictability =                     &  Accuracy of the time bounds \\
+  {\bf Accuracy}                & better quality of data                    &  across multiple layers of the\\
+                                           &                                           &  storage hierarchy wrote/read \\ 
+                                           &                                           &  in time constrained\\
+                                           &                                           &  situations \\ \hline
                                                                                                                                          
                                                                                                                                             
 \end{tabular}
 
-In addition to benchmarking the various S2E2 methods and tools in isolation, we will work with our science partners at
-Princeton University (J. Tromp), PPPL (C. S. Chang), and U. C. Irvine (Z. Lin), along with the OLCF  and SNL, to evaluate the 
-leading edge applications along with the system performance. We will use the systems at both SNL and OLCF, which have 
-multiple layers of storage. For example, the sith cluster at the OLCF (https://www.olcf.ornl.gov/computing-resources/sith/) 
-has its own Lustre storage system, SSDs on each node, and is connected to the centerwide Lustre file system. We will perform 
-test in both the system level (on sith) and in the user level (on titan), and evaluate our results using our application knowledge.
 
-Part of our evaluation will include how accurate we can set the bounds on time estimates for applications. We will measure these
-estimates when data is on just one level of the storage hierarchy, along with the time estimates when data chunks are split. We 
-will evaluate how fast data can be discovered when it is split between the hierarchy, allowing us to better understand how many 
-pieces data can be split into before it takes too long to access most of the data.  We will also evaluate our techniques to examine
-how well we can migrate data and update our server to determine if data might get out-of-sync between data chunks. We will
-need to clearly understand how well this system works on current systems and we will need to investigate this on the next generation
-OLCF system (Summitt) which we will have early access, along with all of the applications we will be investigating.
+In addition to benchmarking the various S2E2 methods and tools in isolation,
+we will work with our science partners at Princeton University (J. Tromp),
+PPPL (C. S. Chang), and U. C. Irvine (Z. Lin), along with the OLCF and SNL,
+to evaluate the leading edge applications along with the system performance.
+We will use the systems at both SNL and OLCF, which have multiple layers of
+storage. For example, the sith cluster at the OLCF
+(https://www.olcf.ornl.gov/computing-resources/sith/) has its own Lustre
+storage system, SSDs on each node, and is connected to the centerwide Lustre
+file system. We will perform test in both the system level (on sith) and in
+the user level (on titan), and evaluate our results using our application
+knowledge.
 
-Another area of investigation will be in how accurate data can be read in when there are time constraints due to users wanting
-to read in many time slices in a given amount of time. For example, in J. Tromp's visualization, we may contain hundreds of time
-slices, but when we visualize this data we would like very fast access to the ``first look' of the data. The question is whether the data
-will be highly representative of the overall data. Can we make accurate visualization from the less accurate data?  We will work
-with our application partners to access this, and we will determine the accuracy in time-constrained test vs. test which will not 
-place any bounds on the time to retrieve the data.
+Our evaluation will include how accurately we can set the bounds on
+time estimates for applications. We will measure these estimates when data
+is on just one level of the storage hierarchy, along with the time estimates
+when data chunks are split. We will evaluate how fast data can be discovered
+when it is split between the hierarchy, allowing us to better understand how
+many pieces data can be split into before it takes too long to access most
+of the data. We will also evaluate our techniques to examine how well we can
+migrate data and update our server to determine if data might get
+out-of-sync between data chunks. We will need to clearly understand how well
+this system works on current systems and we will need to investigate this on
+the next generation OLCF system (Summitt) which we will have early access,
+along with all of the applications we will be investigating.
 
-We will also want to access how well our data migration and eviction policies work with user-knowledge. Will the overall system
-be able to utilize more of the storage hierarchy by understanding these intentions and creating autonomic rules to self-optimize?
-Furthermore we will want to see if users can give us more accurate policies which can then be used for better system resource
-utilization. If we have more knowledge we would like to be able to illustrate that this will translate into higher levels of system
-utilization.
+Another area of investigation will be in how accurate data can be read in
+when there are time constraints due to users wanting to read in many time
+slices in a given amount of time. For example, in J. Tromp's visualization,
+we may contain hundreds of time slices, but when we visualize this data we
+would like very fast access to the ``first look' of the data. The question
+is whether the data will be highly representative of the overall data. Can
+we make accurate visualization from the less accurate data? We will work
+with our application partners to access this, and we will determine the
+accuracy in time-constrained test vs. test which will not place any bounds
+on the time to retrieve the data.
 
-We will also test to see the burden of users to place more knowledge into the system compared to the overall effect of more optimal
-performance they will get. We realize that initially it will be a large burden for users to place initial knowledge into the system, but 
-we will evaluate the results as users increase the knowledge placed into the system with the overall burden. Our hypothesis from 
-working with many LCF users is that once they get over the initial burden of placing this knowledge the burden decreases as more 
-knowledge is placed into the system, and thus, they will be more inclined to increase the knowledge into the system as the benefits
-increase.
+We will also want to assess how well our data migration and eviction
+policies work with user-knowledge. Will the overall system be able to
+utilize more of the storage hierarchy by understanding these intentions and
+creating autonomic rules to self-optimize? Furthermore we will want to see
+if users can give us more accurate policies which can then be used for
+better system resource utilization. If we have more knowledge we would like
+to be able to illustrate that this will translate into higher levels of
+system utilization.
 
-We will also need to evaluate how more knowledge into the system will lead into more performance they get from placing
-the most important pieces at the higher layers of the hierarchy. We will evaluate this by increasing and decreasing this knowledge.
-For example, if the user doesn't want their data broken into priority chunks, then the data will be at the mercy of what the system
-does with no knowledge. If the user then gives us information that allows us to use ``generic'' rouitnes based on frequency, or 
-accuracy, then we can use that knowledge to decompose the objects into chunks which can be placed. We can evaluate these
-against users who will give us more knowledge which allows us to perform application level binning of data (for example for
-C.S. Chang), or for level of features (for J. Tromp).
+One of the risks we face in our design is the unwillingness of users to add
+more knowledge to the system. To better understand the burden on the user we
+will attempt to quantify the additional burden on the users in relation to
+the additional knowledge required for optimization. 
+ We realize that initially it will be a large burden for users to
+place initial knowledge into the system, but we will evaluate the results as
+users increase the knowledge placed into the system with the overall burden.
+Our hypothesis from working with many LCF users is that once they get over
+the initial burden of placing this knowledge the burden decreases as more
+knowledge is placed into the system, and thus, they will be more inclined to
+increase the knowledge into the system as the benefits increase.
+
+We will also need to evaluate how more knowledge into the system will lead
+into more performance they get from placing the most important pieces at the
+higher layers of the hierarchy. We will evaluate this by increasing and
+decreasing this knowledge. For example, if the user doesn't want their data
+broken into priority chunks, then the data will be at the mercy of what the
+system does with no knowledge. If the user then gives us information that
+allows us to use ``generic'' rouitnes based on frequency, or accuracy, then
+we can use that knowledge to decompose the objects into chunks which can be
+placed. We can evaluate these against users who will give us more knowledge
+which allows us to perform application level binning of data (for example
+for C.S. Chang), or for level of features (for J. Tromp).
 
 
 
-How will we quantify the quality of data?
-We will look at errors after analytics.
+% How will we quantify the quality of data? We will look at errors after
+% analytics.
 
-How well does the system utilize all of its resources. We feel the more knowledge means the better the system can utilize all of the resources.
+% How well does the system utilize all of its resources. We feel the more
+% knowledge means the better the system can utilize all of the resources.
 
-predictability ... are teh errors bounded, 
+%predictability ... are the errors bounded,
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../proposal"
+%%% End:
