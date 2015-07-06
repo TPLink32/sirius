@@ -2,20 +2,19 @@
 \label{sec:qos}
 
 \paragraph{Resource Management Background:} There is an important connection between finding the resources
-that can help fulfill a particular request and the performance predictability of that request, which demands
-careful resource management strategies. This connection is particularly important for reading - in very large 
-scale systems, finding a resource to read can be a significant, if not dominant, component of overall read 
-latency. 
-
+that can help fulfill a particular request and the performance predictability of that request, and this demands
+careful resource management strategies that deal with large number of data chunks spread across storage hierarchy. 
+%This connection is particularly important for data retrieval 
+%- in large scale storage systems, finding a resource to read can be a significant, if not dominant, 
+%component of overall read latency. 
 Locating resources is a typical distributed systems problem. Centralized solutions are limited in their
-scalability, because typically there exists a single entity that tracks every update in the system. 
-Traditional file systems are good examples 
-for this: most updates to files require updates to their centrally maintained block allocation tables. 
+scalability, because there exists a single entity that tracks updates in the system. 
+Traditional file systems are good examples for this: most updates to files require updates 
+to their centrally maintained block allocation tables. 
 The opposite of file systems are ``pile'' systems, which, instead of keeping track of updates, search for 
 resources at request time. Pile systems allow very efficient writes because clients can write whereever
-there is free space and there is very low bookkeeping overhead. Furthermore, pile systems have great
-flexibility for moving resources around, for example to ensure durability. However, reads require a 
-potentially unbounded search, especially if it is not clear whether the resource actually exists. 
+there is free space and there is very low bookkeeping overhead. However, unbounded search is possible, 
+if it is unclear whether the resource actually exists. 
 Methods to make searches more efficient without reverting to centralized bookkeeping usually involves 
 some kind of partitioning of the search space and a method to limit the search to a small number of partitions. 
 
