@@ -58,12 +58,12 @@ than the case where applications attempt to reserve storage resources, thereby e
 to reason over its performance in terms of reservations and actual
 performance.
 If the system uses reservations intelligently, its performance is predictable and
-efficient because resources are not wasted on interference. However,
-in cases where an appication arrives that needs to run more urgently
+efficient because resources are not wasted on interference.
+In the cases where an appication arrives that needs to run more urgently
 than any of the other already running applications, the system
 can rapidly respond to it by reducing the amount of resources taken 
 by less urgent applications, allowing the urgent application to finish,
-and reverting back to the previous committed resource level. This can
+and later reverting back to the previous committed resource level for the rest. This can
 be automatically enforced via user- (or adiminstrator-) specified \textit{policies}
 (section \ref{}).
 
@@ -241,13 +241,12 @@ workload an application can discover the relationship between its
 workload-dependent metric and the workload-independent metric.
 Because of performance isolation, the application has to discover
 this relationship only once.
-
 To achieve effective performance isolation, we seek to expand the resource management
-capabilities in Sirocco to support additional metrics to guide resource management
-decisions. Currently Sirocco offers automatic resource management capabilities,
-based on resource capacity and data resilience requirements. 
- Our basic goal is to offer data-centric metrics that help guide the
-forced resource management decisions.
+capabilities in Sirocco to support additional utilization 
+metrics to guide resource management
+decisions. Currently, Sirocco offers automatic resource management capabilities,
+based on resource capacity and data resilience requirements, and it needs to be extended
+to offer data-centric metrics that help guide the forced QoS decisions.
 
 As stated in the introduction, we seek to make a storage stack that works with
 the user. Towards that end, we must incorporate data attributes into this
@@ -262,7 +261,10 @@ not just based on age, but also based on this priority. This will help ensure
 the shortest time to insight by making sure the most important machine runs
 have priority to use system resources.
 
-\paragraph{Related Work:} Existing efforts on scheduing resources~\cite{io-cop,dorier} attempt to offer
+\paragraph{Related Work:} On current HPC systems, absolute IO performance
+guarantees are not possible. Previous work \cite{lofstead:2010:adaptive,liu_hotstorage} 
+from this project team uses a client-assisted approach to mitigate IO variablity.
+Existing efforts on scheduing resources~\cite{io-cop,dorier} attempt to offer
 admission control to maximize storage performance. Unfortunately, these efforts
 are limited to participating applications and only applications from a single
 platform. For this approach to be effective, the storage system must offer an
