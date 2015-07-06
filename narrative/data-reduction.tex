@@ -17,8 +17,8 @@ reducing the data).
 In this section we describe some common methods to reduce and re-organize data.
 There are many possibilities and the best choice will generally vary from case
 to case but, once settled, will not change from run to run. It will be
-important understand when the time and resources to required to identify and
-perform the ``best methods'' outweighs the eventual gains. Another critical
+important to understand when the time and resources required to identify and
+perform the ``best methods'' outweighs any eventual gains. Another critical
 research question concerns the quantification and control of the loss of
 information resulting from refactoring the data and using a reduced 
 dataset. 
@@ -43,48 +43,36 @@ nature, large scale simulations aim to discover new information that is often
 hidden in the form of higher order effects amongst the data deluge. In
 particular, this means if data thinning or truncation is applied willy nilly
 then one is in danger of effectively throwing out the baby with the bath water.
-One cannot store the entire data set in easily accessible source, due to sheer
-size, yet one cannot reduce it prior to archival without risking losing the
-information one is trying to extract.  
+One cannot store the entire data set in an easily accessible source, due to
+sheer size, yet one cannot reduce it prior to archival without risking losing
+the information one is trying to extract.  Viewed in this way, the problem
+would appear intractable. However, the above discussion fails to recognize that
+much of the data is redundant in the information theoretic sense.  That is to
+say, the amount of information contained in the data is often significantly
+less than the amount of data.  The difficulty stems from the fact that one does
+not know about this redundancy in advance \emph{without the benefit of 
+priori knowledge}. This knowledge can often be provided by the user or can 
+be acquired through experience of dealing with differing runs of the same
+code. 
 
-Viewed in this way, the problem would appear intractable. However, the above
-discussion fails to recognize that much of the data is redundant in the
-information theoretic sense.  That is to say, the amount of information
-contained in the data is often significantly less than the amount of data.  The
-difficulty stems from the fact that one does not know about this redundancy in
-advance. 
-
-Once we realize that data can be reduced from many different techniques, we
-understand that with more application knowledge, we can reduce the total data
-size much more than without knowledge, so we need to be able to design the SSIO
-layers to be able to have generic data reduction techniques, and generic data
-re-organization techniques. But we need to system to allow give us more
-semantic knowledge of the data so that we can either: 1) Use an approach which
-can audit the calculation and save values of the objects when the auditor is
-off more than a given amount, and we can also save the auditor in a docker
-container, which can then be executed as part of SSIO software layer.  
-
-Recognizing access patterns in an application is a key to potentially reducing
-future file read time. Scientific applications often read and analyze data
-alternately, thus by overlapping the two phases with prefetching can
-significantly reduce the overall execution time of the application. Accurate
-prefetching can be achieved with access pattern analysis. This requires an SSIO
-layer which can prefetch data in a asynchronous fashion to take the bytes on
-the file.
-
-There are many methods to re-organize the data, and to reduce the data and in
-this section we will list many different known methods.  We then list our
-different approaches to address the many research challenges using many well
-known methods, and a new method that we have been working on, known as an
-``auditor'' which can be used ``in situ'' with the calculation during the data
-generation, and then used to dramatically reduce the impact on the SSIO layer
-for both reading and writing.
-
+Application knowledge means one can sometimes achieve drastically superior
+reduction in the total data compared with what one might achieve otherwise.
+However, in the absence of such knowledge, we must equip the SSIO layers with
+generic data reduction techniques and re-organization techniques.
+Nevertheless, certain basic information on the semantics of the data is needed
+and must be supported by the overall infrastructure.  Likewise, another
+important consideration is knowledge regarding typical access patterns for data
+in a given application. Scientific applications often read and analyze data in
+a structured fashion and failure to respect this pattern, or to exploit it
+through prefetching, can significantly increase the overall execution time of
+the application. Accurate prefetching can only be achieved with access pattern
+analysis. This requires an SSIO layer which is able to prefetch data in an
+asynchronous fashion to take the bytes on the file.
 
 \paragraph{State of the art:} {\bf Data Reduction Techniques} Data compression
 broadly consists of three basic steps: (1) Pre-processing to extract as much
 structure as feasible. This step is variously referred to as filtering,
-preconditioning, and pre- processing but in all cases, the objective is to
+preconditioning, and preprocessing but in all cases, the objective is to
 represent the data in a form that becomes more amenable to compression.  (2)
 Removal of redundancy such as omission of duplicates etc.  Finally, (3) the
 resulting data is compressed using entropy coding. The level of compression
@@ -99,16 +87,20 @@ Research in the construction of pre-processing techniques is still in its
 infancy, especially in context of exascale simulations. Techniques that have
 been advocated range from simple difference filtering, bit-sorting, prefix
 transformation through to simply reordering the data.  What these, and other
-catchall methods, fail to exploit is a priori information on the nature and
-provenance of the data.
+catch-all methods, fail to exploit is a priori information on the nature and
+provenance of the data. Moreover, it is now widely recognized that any
+opportunities for {\em in situ} analysis should be exploited as far as
+possible. What is less well understood, is how one should incorporate a priori
+information and how one can identify possibilities for {\em in situ} analysis.
 
-As we have already observed, the incorporation of a priori information of this
-type is vital if one is to obtain significant data reduction. The use of an
-Auditor as a pre-processor exploits the wide (and increasing) cost gap between
-CPU operations versus storage-based operations. The preprocessor would ideally
-be employed in situ and is used in a similar fashion to pre-processors in
-standard compression approaches such as FPC \cite{BurtscherFPC} in which an XOR
-operation against the previous data is used as a pre-processor.
+We shall exploit a priori information in the preprocessing stage through the
+use of relatively computationally intensive preprocessors that attempt to
+extract structure in the data {\em in situ}. This approach takes advantage of
+the increasingly wide cost gap between CPU operations versus storage-based
+operations. The preprocessor would generally be employed in situ and is used in
+a similar fashion to pre-processors in standard compression approaches such as
+FPC \cite{BurtscherFPC} in which an XOR operation against the previous data is
+used as a pre-processor.
 
 Our previous
 work~\cite{lakshminarasimhan2011compressing,lakshminarasimhan2011compressing,%
