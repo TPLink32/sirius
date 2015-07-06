@@ -1,11 +1,11 @@
 \subsection{Data Description}
 In order for the middleware and storage layer to understand data, I/O
 intentions, and act accordingly, data must be described in a way that can be
-understood by the system. In this project, we use the smallest chunk of data
-stored in the storage system as a \textit{chunk}.  A chunk consists of raw
+understood by the system. In this project, we use the label the smallest unit of data
+saved in the storage system as a \textit{chunk}.  A chunk consists of raw
 data and metadata.  A user space variable, such as \textit{temperature}, may
-consist of a collection of chunks possibly with different accuracy or
-resolution with each chunk representing a different portion of the variable.
+consist of a collection of chunks, possibly with different accuracy or
+resolution, with each chunk representing a different portion of the variable.
 A key advantage of having attributes at this lowest level is that data
 semantics, user intentions, QoS requirements, and the relationship between user
 data to be readily captured and embedded with the raw data so that these
