@@ -36,7 +36,7 @@ Our research in this area will address the following questions:
 % How do we amortize the time cost of discovery vs time cost of actually
 %    reading the data (latency vs bandwidth essentially)?
 
-Hierarchical Storage Management (HSM) systems~\cite{hsm} offer a strict caching
+Hierarchical Storage Management (HSM) systems~\cite{blaze:1992:hsm} offer a strict caching
 approach for managing different storage capacities trading off performance for
 capacity.  By maintaining a single namespace across all tiers, it is possible
 to list a single directory view with files stored at different tiers. While
@@ -110,7 +110,7 @@ consistency POSIX view to offer the performance and consistency requirements an
 exascale application demands.
 
 While pure object stores, such as those popular in the big data
-domain~\cite{memcached,others} avoid this bottleneck by strictly offering an
+domain~\cite{Fitzpatrick:2004:memcached,others} avoid this bottleneck by strictly offering an
 object ID with the application required to manage how this ID maps to something
 of interest. This approach of removing the metadata service from the system
 level completely can work well for scale out applications where data is created
