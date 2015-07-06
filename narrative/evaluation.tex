@@ -1,10 +1,18 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
-In order to determine if our guiding principles are being met, and we can optimize the system from these guiding principles, 
-we will evaluate our work using the Table~\ref{table:eval}.
- 
+In order to determine if our guiding principles are being met, and we can
+optimize the system from these guiding principles, we will evaluate our work
+using the Table~\ref{table:eval}.
 
+To determine the effectiveness of the components of our proposed work we will
+partition the problem along the lines of our two guiding principles. 
+We will evaluate how the knowledge centric system design we employ can
+provide a more predictable level of performance and data quality. 
+
+
+%I dont think this table is right. Knowledge is our independent variable
+%and predictability is our dependent variable
 \begin{tabular}{ | l | l | l | }
 
   \hline
@@ -24,6 +32,7 @@ we will evaluate our work using the Table~\ref{table:eval}.
                                                                                                                                             
 \end{tabular}
 
+
 In addition to benchmarking the various S2E2 methods and tools in isolation,
 we will work with our science partners at Princeton University (J. Tromp),
 PPPL (C. S. Chang), and U. C. Irvine (Z. Lin), along with the OLCF and SNL,
@@ -36,7 +45,7 @@ file system. We will perform test in both the system level (on sith) and in
 the user level (on titan), and evaluate our results using our application
 knowledge.
 
-Part of our evaluation will include how accurate we can set the bounds on
+Our evaluation will include how accurately we can set the bounds on
 time estimates for applications. We will measure these estimates when data
 is on just one level of the storage hierarchy, along with the time estimates
 when data chunks are split. We will evaluate how fast data can be discovered
@@ -60,7 +69,7 @@ with our application partners to access this, and we will determine the
 accuracy in time-constrained test vs. test which will not place any bounds
 on the time to retrieve the data.
 
-We will also want to access how well our data migration and eviction
+We will also want to assess how well our data migration and eviction
 policies work with user-knowledge. Will the overall system be able to
 utilize more of the storage hierarchy by understanding these intentions and
 creating autonomic rules to self-optimize? Furthermore we will want to see
@@ -69,9 +78,11 @@ better system resource utilization. If we have more knowledge we would like
 to be able to illustrate that this will translate into higher levels of
 system utilization.
 
-We will also test to see the burden of users to place more knowledge into
-the system compared to the overall effect of more optimal performance they
-will get. We realize that initially it will be a large burden for users to
+One of the risks we face in our design is the unwillingness of users to add
+more knowledge to the system. To better understand the burden on the user we
+will attempt to quantify the additional burden on the users in relation to
+the additional knowledge required for optimization. 
+ We realize that initially it will be a large burden for users to
 place initial knowledge into the system, but we will evaluate the results as
 users increase the knowledge placed into the system with the overall burden.
 Our hypothesis from working with many LCF users is that once they get over
@@ -93,13 +104,13 @@ for C.S. Chang), or for level of features (for J. Tromp).
 
 
 
-How will we quantify the quality of data? We will look at errors after
-analytics.
+% How will we quantify the quality of data? We will look at errors after
+% analytics.
 
-How well does the system utilize all of its resources. We feel the more
-knowledge means the better the system can utilize all of the resources.
+% How well does the system utilize all of its resources. We feel the more
+% knowledge means the better the system can utilize all of the resources.
 
-predictability ... are teh errors bounded,
+%predictability ... are the errors bounded,
 
 %%% Local Variables:
 %%% mode: latex
