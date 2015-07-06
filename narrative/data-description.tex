@@ -1,19 +1,23 @@
 \subsection{Data Description}
-In order for the middleware and storage layer to understand data, I/O
-intentions, and act accordingly, data must be described in a way that can be
-understood by the system. In this project, we use the label the smallest unit of data
-saved in the storage system as a \textit{chunk}.  A chunk consists of raw
-data and metadata.  A user space variable, such as \textit{temperature}, may
+In order for the middleware and storage layer to make decisions
+that are appropriate given the user's intentions, data must be
+described in a way that communicates these intentions to
+the system. In this project, we label the smallest unit of data
+saved in the storage system as a \textit{chunk}.  A chunk consists of not only
+raw data, but also metadata that expresses additional
+knowledge about that data.
+A user space variable, such as \textit{temperature}, may
 consist of a collection of chunks, possibly with different accuracy or
-resolution, with each chunk representing a different portion of the variable.
-A key advantage of having attributes at this lowest level is that data
+resolution, and with each chunk representing
+a different portion of the variable.
+A key advantage of having attributes at this lowest level is that it allows data
 semantics, user intentions, QoS requirements, and the relationship between user
 data to be readily captured and embedded with the raw data so that these
 smallest pieces can each be managed independently or collectively, depending on
 the need. As an example, retrieving 3D field data generated from a simulation
-and then visualizing it requires the coordinates and connectivity variable be
-accessed both together and with low latency to achieve a good user experience.
-The data description, as enabled by managing data at this smallest level,
+and then visualizing it requires the coordinates and connectivity variables be
+accessed simultaneously and with low latency to achieve a good user experience.
+Managing data at this low level
 bridges the semantics gap between applications, middleware, and storage
 systems and allows the system to understand user-level data, execute QoS
 requirements and policies, and optimize application and system performance.
