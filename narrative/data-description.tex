@@ -34,7 +34,7 @@ requirements and policies, and optimize application and system performance.
 %saved.
 
 The data description may be stored with the individual chunks or within a
-seprate metadata service or both to aid QoS requirements. It would contain
+separate metadata service or both to aid QoS requirements. It would contain
 conventional attributes such as data type, size, dimensionality, and the
 relationship to other data. In particular, the relationship to other chunks can
 be captured by including \textit{typed links} each representing a different
@@ -50,13 +50,17 @@ differently according to its utility value.  Once this is done, the middleware
 system will construct the data description and re-organize and place data to
 achieve the desired QoS goals and policies.
 
-In the meanwhile, the user would like a certain Quality of Service such that
+A key insight in this proposed project has been the increased interaction of
+the application with the storage system.
+The user would like to have the ability to obtain information about, and even
+negotiate with the system to determin what
+level of Quality of Service is possible given
+a prospective set of I/O operations and current state of the system, so that
 they can then make decisions about what data to access when.
 %for example is less than what they desire and will then place in a certain set
 %of rules which the system can make autonomic decisions to help decide what
 %should be done.
-A key insight in this proposed project has been the increased interaction of
-the application with the storage system. Towards this end, we propose to
+Towards this end, we propose to
 address the QoS requirements by providing the application with mechanisms to
 specify the quality of I/O service, interrogate the storage system, and react
 to the responses. Guided by our past work we propose to explore the design of
