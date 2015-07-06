@@ -48,7 +48,7 @@ One of the key differentiating features this project offers is driving storage
 decisions through QoS \emph{reservations}, rather than continuing the current model
 of allowing applications to compete freely without restriction, for part or all of the storage
 resources. This traditional approach leads to intereference effects
-\cite{lofstead:2010:adaptive,liu_hotstorage} that can greatly impact IO performance predictability. 
+\cite{lofstead:2010:io-variability,liu_hotstorage} that can greatly impact IO performance predictability. 
 %Further, with the introduction of additional tiers in the
 %storage stack, the performance variability will increase with greater
 %competiion for limited high performance resources. 
@@ -262,7 +262,7 @@ the shortest time to insight by making sure the most important machine runs
 have priority to use system resources.
 
 \paragraph{Related Work:} On current HPC systems, absolute IO performance
-guarantees are not possible. Previous work \cite{lofstead:2010:adaptive,liu_hotstorage} 
+guarantees are not possible. Previous work \cite{lofstead:2010:io-variability,liu_hotstorage} 
 from this project team uses a client-assisted approach to mitigate IO variablity.
 Existing efforts on scheduing resources~\cite{io-cop,dorier} attempt to offer
 admission control to maximize storage performance. Unfortunately, these efforts

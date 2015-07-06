@@ -1,0 +1,143 @@
+@inproceedings{oldfield:lwfs,
+        Abstract = {Today?s high-end massively parallel processing (MPP) machines have
+        thousands to tens of thousands of processors, with next-generation
+        systems planned to have in excess of one hundred thousand processors.
+        For systems of such scale, efficient I/O is a significant challenge
+        that cannot be solved using traditional approaches. In particular,
+        general purpose parallel file systems that limit applications to
+        standard interfaces and access policies do not scale and will likely
+        be a performance bottleneck for many scientific applications.
+
+        In this paper, we investigate the use of a ?lightweight? approach
+        to I/O that requires the application or I/O-library developer to
+        extend a core set of critical I/O functionality with the minimum
+        set of features and services required by its target applications.
+        We argue that this approach allows the development of I/O libraries
+        that are both scalable and secure. We support our claims with preliminary
+        results for a lightweight checkpoint operation on a development cluster
+        at Sandia.},
+        Address = {Barcelona, Spain},
+        Author = {Ron A. Oldfield and Arthur B. Maccabe and Sarala Arunagiri and Todd Kordenbrock and Rolf Riesen and Lee Ward and Patrick Widener},
+        Booktitle = cluster2006,
+        Comment = {Also see extended version raoldfi:lwfs-tr.},
+        Date-Modified = {2011-03-31 11:35:20 -0600},
+        Doi = {10.1109/CLUSTR.2006.311853},
+        File = {SAND2006-3057.pdf:http\://gaston.sandia.gov/cfupload/ccim_pubs_prod/SAND2006-3057.pdf:PDF},
+        Institution = {Sandia National Laboratories},
+        Keywords = {lightweight storage, checkpoint, scalable-io, LWFS, pario-bib},
+        Month = sep,
+        Owner = {raoldfi},
+        Timestamp = {2006.05.15},
+        Title = {Lightweight {I/O} for Scientific Applications},
+        Url = {http://doi.ieeecomputersociety.org/10.1109/CLUSTR.2006.311853},
+        Vitatype = {refConference},
+        Year = {2006},
+        Bdsk-Url-1 = {http://gaston.sandia.gov/cfupload/ccim_pubs_prod/SAND2006-3057.pdf}}
+
+@inproceedings{lofstead:adaptible,
+        Address = {Rome, Italy},
+        Author = {Jay Lofstead and Fang Zheng and Scott Klasky and Karsten Schwan},
+        Booktitle = ipdps2009,
+        Date-Added = {2009-10-14 13:52:24 -0600},
+        Date-Modified = {2009-10-14 13:55:04 -0600},
+        Keywords = {application programmer interface, pario-bib},
+        Title = {Adaptable, metadata rich {IO} methods for portable high performance {IO}},
+        Year = {2009}}
+
+@inproceedings{lofstead:2012:txn,
+ author= {Jay Lofstead and Jai Dayal and Karsten Schwan and Ron Oldfield},
+ title = {D2T: Doubly Distributed Transactions for High Performance and Distributed Computing},
+ abstract = {Current exascale computing projections suggest rather than a monolithic simulation running for the majority of the machine, a collection of components comprising the scientific discovery process will be employed in an online workflow. This move to an online workflow scenario requires knowledge that inter-step operations are completed and correct before the next phase begins. Further, dynamic load balancing or fault tolerance techniques may dynamically deploy or redeploy resources for optimal use of computing resources. These newly configured resources should only be used if they are successfully deployed.
+Our D2T system offers a mechanism to support these kinds of operations by providing database-like transactions with distributed servers and clients. Ultimately, with adequate hardware support, full ACID compliance is possible for the transactions. To prove the viability of this approach, we show that the D2T protocol has less than 1.2 seconds of overhead using 4096 clients and 32 servers with good scaling characteristics using this initial prototype implementation.},
+ year = {2012},
+ month = {September},
+ booktitle = {IEEE Cluster Conference},
+ address = {Beijing, China},
+}
+
+@inproceedings{patil:2007:giga+,
+  author    = {Swapnil Patil and
+               Garth A. Gibson and
+               Samuel Lang and
+               Milo Polte},
+  title     = {GIGA+: scalable directories for shared file systems},
+  booktitle = {PDSW},
+  year      = {2007},
+  pages     = {26-29},
+  ee        = {http://doi.acm.org/10.1145/1374596.1374604},
+  crossref  = {DBLP:conf/sc/2007pdsw},
+  bibsource = {DBLP, http://dblp.uni-trier.de}
+}
+
+@inproceedings{carns:pvfs,
+        Abstract = {As Linux clusters have matured as platforms for low-cost, high-performance
+        parallel computing, software packages to provide many key services
+        have emerged, especially in areas such as message passing and networking.
+        One area devoid of support, however, has been parallel file systems,
+        which are critical for high-performance I/O on such clusters. We
+        have developed a parallel file system for Linux clusters, called
+        the Parallel Virtual File System (PVFS). PVFS is intended both as
+        a high-performance parallel file system that anyone can download
+        and use and as a tool for pursuing further research in parallel I/O
+        and parallel file systems for Linux clusters. \par In this paper,
+        we describe the design and implementation of PVFS and present performance
+        results on the Chiba City cluster at Argonne. We provide performance
+        results for a workload of concurrent reads and writes for various
+        numbers of compute nodes, I/O nodes, and I/O request sizes. We also
+        present performance results for MPI-IO on PVFS, both for a concurrent
+        read/write workload and for the BTIO benchmark. We compare the I/O
+        performance when using a Myrinet network versus a fast-ethernet network
+        for I/O-related communication in PVFS. We obtained read and write
+        bandwidths as high as 700~Mbytes/sec with Myrinet and 225~Mbytes/sec
+        with fast ethernet.},
+        Address = {Atlanta, GA},
+        Author = {Philip H. Carns and Walter B. {Ligon III} and Robert B. Ross and Rajeev Thakur},
+        Booktitle = {Proceedings of the 4th Annual Linux Showcase and Conference},
+        Comment = {won the Best Paper Award.},
+        Keywords = {parallel I/O, parallel file system, cluster file system, Linux, pario-bib},
+        Month = oct,
+        Pages = {317--327},
+        Publisher = {USENIX Association},
+        Title = {{PVFS}: A Parallel File System for Linux Clusters},
+        Toread = {5},
+        Url = {http://www.mcs.anl.gov/~thakur/papers/pvfs.ps},
+        Year = {2000},
+        Bdsk-Url-1 = {http://www.mcs.anl.gov/~thakur/papers/pvfs.ps}}
+
+@inproceedings{weil:ceph,
+        Abstract = {We have developed Ceph, a distributed file system that provides excellent
+        performance, reliability, and scalability. Ceph maximizes the separation
+        between data and metadata management by replacing allocation tables
+        with a pseudo-random data distribution function (CRUSH) designed
+        for heterogeneous and dynamic clusters of unreliable object storage
+        devices (OSDs). We leverage device intelligence by distributing data
+        replication, failure detection and recovery to semi-autonomous OSDs
+        running a specialized local object file system. A dynamic distributed
+        metadata cluster provides extremely efficient metadata management
+        and seamlessly adapts to a wide range of general purpose and scientific
+        computing file system workloads. Performance measurements under a
+        variety of workloads show that Ceph has excellent I/O performance
+        and scalable metadata management, supporting more than 250,000 metadata
+        operations per second.},
+        Author = {Sage A. Weil and Scott A. Brandt and Ethan L. Miller and Darrell D. E. Long and Carlos Maltzahn},
+        Booktitle = osdi2006,
+        Date-Modified = {2009-01-06 17:33:31 -0700},
+        Keywords = {distributed file systems, metadata scaling, object storage, distributed metadata, pario-bib},
+        Organization = {University of California, Santa Cruz},
+        Owner = {raoldfi},
+        Pages = {307--320},
+        Timestamp = {2007.03.27},
+        Title = {Ceph: A Scalable, High-Performance Distributed File System},
+        Url = {http://www.usenix.org/events/osdi06/tech/weil.html},
+        Year = {2006},
+        Bdsk-Url-1 = {http://www.usenix.org/events/osdi06/tech/weil.html}}
+
+@inproceedings{lofstead:2010:io-variability,
+        Author = {Jay Lofstead and Fang Zheng and Qing Liu and Scott Klasky and Ron Oldfield and Todd Kordenbrock and Karsten Schwan and Matthew Wolf},
+        Booktitle = sc2010,
+        Date-Added = {2010-06-21 17:16:42 -0600},
+        Date-Modified = {2010-06-21 17:21:14 -0600},
+        Keywords = {variability studies, pario-bib},
+        Month = nov,
+        Title = {Managing Variability in the {IO} Performance of Petascale Storage Systems},
+        Year = {2010}}

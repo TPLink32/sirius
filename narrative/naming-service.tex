@@ -99,7 +99,7 @@ space consisting of directories and files may be maintained for backwards
 compatibility. However, this view will not offer the same strict semantics
 POSIX defines. We must break these strict semantics to address scalability
 problems forced by the serialized access to a single source for creating and
-accessing files.  Several efforts~\cite{giga+,pvfs,others} have worked to
+accessing files.  Several efforts~\cite{patil:2007:giga+,carns:pvfs} have worked to
 reduce this contention by doing things like reducing the serialized scope to a
 single directory or subtree or allowing a single process in a collective file
 operation talk with the metadata service and distribute a handle to other
@@ -133,7 +133,7 @@ collections that comprise a single thing, such as a variable or timestep
 output, just enough metadata is maintained to make the storage system usable
 without additional heavy lifting by clients.  LWFS demonstrated a POSIX-style
 namespace on the side kept in sync using a transaction process like
-D2T~\cite{d2t} showing that this alternative approach can support traditional
+D2T~\cite{lofstead:2012:txn} showing that this alternative approach can support traditional
 POSIX API calls even though the underlying storage system uses a different
 model. Because we are not requiring the entire storage space be addressible
 from a single tree root, we can offer multiple independent roots using the

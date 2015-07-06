@@ -3,7 +3,7 @@
 Significant existing work will serve as the foundation upon which this project
 will be performed.
 
-At the lowest level is the Lightweight File Systems (LWFS) project~\cite{lwfs}.
+At the lowest level is the Lightweight File Systems (LWFS) project~\cite{oldfield:lwfs}.
 As mentioned above, LWFS's goal is to provide the simplest core services for
 a storage system and investigate adding functionality by using auxiliary
 services or layering an API on top that offers more functionality. For example,
@@ -34,7 +34,7 @@ Sirocco API is much more complex than a standard POSIX call prompting layering
 a more user friendly interface on top. Placing a thin, optimized layer as part
 of the storage system will offer the kinds of functionality and semantics this
 project proposes. From the user perspective, something like the
-ADIOS~\cite{adios} API offers an API nearly as simple as POSIX, but with the
+ADIOS~\cite{lofstead:adaptible} API offers an API nearly as simple as POSIX, but with the
 ability to change the actual data transport mechanism without changing the
 source code. This affords writing to a single output API while shifting from
 writing to a POSIX file system, some middleware like
@@ -64,14 +64,14 @@ we will be able to deliver a complete end-to-end system. We will investigate
 which functionality works best at the different layers for usability and
 scalability.
 
-In this project we will extend ADIOS~\cite{adios} with new APIs and novel
+In this project we will extend ADIOS~\cite{lofstead:adaptible} with new APIs and novel
 techniques to coordinate with the storage back-end. The key idea is offering
 the ability to negotiate with the storage system to agree on the tradeoff
 between data quality and response time. We will test our ideas on the next
 generation OLCF, SNL/LANL, and NERSC systems.
 
 We plan to leverage the many inovations we discovered in the Lightweight File
-Systems~\cite{lwfs} (LWFS) project and the Ceph~\cite{weil:osdi06} storage
+Systems~\cite{oldfield:lwfs} (LWFS) project and the Ceph~\cite{weil:osdi06} storage
 system project.  In the LWFS project, Sandia sought to demonstrate stripping
 down a file system to the bare minimum features required for any storage
 system. Then, additional functionality and semantics, such as POSIX-style
