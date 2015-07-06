@@ -56,12 +56,8 @@ resources. This traditional approach leads to intereference effects
 Unfettered, this competition can yield a lower system and application performance 
 than the case where applications attempt to reserve storage resources, thereby enabling the storage system
 to reason over its performance in terms of reservations and actual
-performance, accepting reservations that are within resource
-availability and don't violate user or system policies.
-
-It is important to note that we use performance reservations to
-reduce interference and to avoid overload conditions. If the system
-uses reservations intelligently, its performance is predictable and
+performance.
+If the system uses reservations intelligently, its performance is predictable and
 efficient because resources are not wasted on interference. However,
 in cases where an appication arrives that needs to run more urgently
 than any of the other already running applications, the system
