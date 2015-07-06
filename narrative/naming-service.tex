@@ -1,5 +1,6 @@
 \subsection{Naming and Discovery Service}
 
+\paragraph{Background:}
 Given the well documented difficulties with POSIX-compliant naming and our
 approach that decomposes what would be a single file into potentially large
 number of objects, we must take a new approach to naming.  Data migration, as a
@@ -12,37 +13,41 @@ integration, we must address how to bridge the drastic differences between the
 decomposed objects of potentially varying fidelity with potentially multiple
 version with a POSIX API-compatible interface.
 
-Our research in this area will address the following questions:
-(1) Since our metadata is distributed and partitioned, how do we respond to user
-  requests within a specified time bound with accuracy? How do we estimate the
-  completeness of the response?
-(2) For POSIX API requests, how do we respond if only varying data fidelity levels
-  are available for the requested data object?
-(3) What level of metadata should we maintain and keep in sync to enhance response
-  quality within time-bound requests?
-(4) How much time should be allowed for searching for metadata given the user
-  specified limits for data retrieval since the user will still have to spend
-  the data retrieval time from different devices? How do we integrate the read
-  time overhead into the metadata requests?
-(5) How do we provide appropriate security while maintaining scalability,
-  particularly with the distributed metadata stores?
-% Which data block and what quality/type do we respond to a query with?;\\
-% How will we scale a fully distributed storage system's metadata management;\\
-% Can we accelerate the discovery process with the addition of an
-%    application/user level metadata store that tracks where data was
-%    originally written and how was it structured?;\\
-% Can we provide time estimates for read/write calls in the presence of
-%    an unbounded discovery system? If not how do we bound the discovery time?
-% How do we amortize the time cost of discovery vs time cost of actually
-%    reading the data (latency vs bandwidth essentially)?
+Hierarchical Storage Management (HSM) systems~\cite{blaze:1992:hsm} offer a
+strict caching approach for managing different storage capacities trading off
+performance for capacity.  By maintaining a single namespace across all tiers,
+it is possible to list a single directory view with files stored at different
+tiers. While this approach to managing multi-tier storage works for whole files
+that fit on single logial devices, it is far from ideal for scientific
+simulations.
 
-Hierarchical Storage Management (HSM) systems~\cite{blaze:1992:hsm} offer a strict caching
-approach for managing different storage capacities trading off performance for
-capacity.  By maintaining a single namespace across all tiers, it is possible
-to list a single directory view with files stored at different tiers. While
-this approach to managing multi-tier storage works for whole files that fit on
-single logial devices, it is far from ideal for scientific simulations.
+The overriding theme for this proposal of providing a cooperative relationship
+between the user and the storage system extends into this area as well.
+Negotiating the data quality/retrieval time tradeoff reuqires additional
+metadata.  Providing this functionality requries the naming service be able to
+both return a list of data versions and an indication of data quality. This
+will be combined with a retrieval time estimate for each verstion by the
+middleware to determine what data version should be retrieved.  This estimate
+will be disucssed elsewhere in this proposal.
 
+In addition to the basic naming and data tracking operations, we will also need
+to incorporate authorization capabilities. Sirocco currently integrates with a
+Kerberos service for authentication. Given a capability ticket, a user can
+access different objects as needed. This ticket structure offers protection
+services typically offered on POSIX directories and files, but can do it at the
+fork level instead. This allows a reduced quality data version to be available
+for the general users while the high-quality version would be limited to the
+data creator. This and other considerations for security must be incorporated
+into the entire naming and metadata service.
+
+While strongly encouraging data to stay in a particular type of storage tier,
+ultimately it must be possible to flush this data to make room for other uses.
+Sirocco offers a ``flush'' operation that forcibly migrates data to the
+long-term resilience requirements freeing space in the scare resources. In
+many, if not most cases, this will move data towards or actually on to a device
+like tape intended for long-term storage.
+
+\paragraph{Approach:}
 Our goal with this proposal is to offer a similar capability but with a finer
 granularity leveraging the inner structure of scientific data. It must also
 handle data discovery efficiently for cases where data is spread across several
@@ -78,85 +83,61 @@ migrating the data to a particular location. We will investigate if the current
 Sirocco functionality is capable of supporting the new operating modes we wish
 to offer. Initial expectations suggest having bounded time guarantees for
 finding data are critical for offering the quality of service guarantees we
-wish to offer. Some potential approaches can build on CRUSH~\cite{weil:ceph} from
-Ceph to offer a map of where to search for data sequentially. Given our
+wish to offer. Some potential approaches can build on CRUSH~\cite{weil:ceph}
+from Ceph to offer a map of where to search for data sequentially. Given our
 multiple storage tiers, we would extend this using some mechanism to shift to
 the next tier to continue searching because the requested data never made it to
 this location. This new work will be an expansion of Sirocco's currently
 planned features.
 
-The overriding theme for this proposal of providing a cooperative relationship
-between the user and the storage system extends into this area as well.
-Negotiating the data quality/retrieval time tradeoff reuqires additional
-metadata.  Providing this functionality requries the naming service be able to
-both return a list of data versions and an indication of data quality. This
-will be combined with a retrieval time estimate for each verstion by the
-middleware to determine what data version should be retrieved.  This estimate
-will be disucssed elsewhere in this proposal.
-
-Structurally, the traditional POSIX naming service offeriing a hierarchical
-space consisting of directories and files may be maintained for backwards
-compatibility. However, this view will not offer the same strict semantics
-POSIX defines. We must break these strict semantics to address scalability
-problems forced by the serialized access to a single source for creating and
-accessing files.  Several efforts~\cite{patil:2007:giga+,carns:pvfs} have worked to
-reduce this contention by doing things like reducing the serialized scope to a
-single directory or subtree or allowing a single process in a collective file
-operation talk with the metadata service and distribute a handle to other
-participants. While these approaches help, they do not address this key
-scalability limitation of serialized access--even if the metadata service is
-spread across multiple nodes. Instead, we will offer a short duration to
-consistency POSIX view to offer the performance and consistency requirements an
-exascale application demands.
-
-While pure object stores, such as those popular in the big data
-domain~\cite{Fitzpatrick:2004:memcached,others} avoid this bottleneck by strictly offering an
-object ID with the application required to manage how this ID maps to something
-of interest. This approach of removing the metadata service from the system
-level completely can work well for scale out applications where data is created
-or consumed by a single process at a time or just in a work queue rather than
-potentially O(1 million) processes all actively collectively for a single
-``object''. To address this case, having some system integrated metadata
-services to associate names with these object is a preferable solution. While
-it will not have the same synchronous consistency semantics as POSIX, we will
-offer something as close as possible to address legacy application and
-command-line style data access and migration to other storage types using these
-POSIX semantics.
-
-We plan to address this scalability problem by continuing with the LWFS and
-Sirocco model. LWFS and Sirocco have take an approach similar to the pure
-object stores, but with a focus on the HPC setting. They have abandonded a
-fully POSIX compliant metadata service as the default model in favor of a
+We plan to address scalability problems by continuing with the LWFS and Sirocco
+model. LWFS and Sirocco have take an approach similar to the pure object
+stores, but with a focus on the HPC setting. They have abandonded a fully POSIX
+compliant metadata service as the default model in favor of a
 container/object/fork/addrress tuple for identifying data similar to those used
 for pure object stores. By having a service that addresses the object
 collections that comprise a single thing, such as a variable or timestep
 output, just enough metadata is maintained to make the storage system usable
 without additional heavy lifting by clients.  LWFS demonstrated a POSIX-style
 namespace on the side kept in sync using a transaction process like
-D2T~\cite{lofstead:2012:txn} showing that this alternative approach can support traditional
-POSIX API calls even though the underlying storage system uses a different
-model. Because we are not requiring the entire storage space be addressible
-from a single tree root, we can offer multiple independent roots using the
-Sirocco object storage. We will investigate how to make the naming and
-discovery service scalable under the circumstances outlined above.
+D2T~\cite{lofstead:2012:txn} showing that this alternative approach can support
+traditional POSIX API calls even though the underlying storage system uses a
+different model. Because we are not requiring the entire storage space be
+addressible from a single tree root, we can offer multiple independent roots
+using the Sirocco object storage. We will investigate how to make the naming
+and discovery service scalable under the circumstances outlined above.
 
-In addition to the basic naming and data tracking operations, we will also need
-to incorporate authorization capabilities. Sirocco currently integrates with a
-Kerberos service for authentication. Given a capability ticket, a user can
-access different objects as needed. This ticket structure offers protection
-services typically offered on POSIX directories and files, but can do it at the
-fork level instead. This allows a reduced quality data version to be available
-for the general users while the high-quality version would be limited to the
-data creator. This and other considerations for security must be incorporated
-into the entire naming and metadata service.
+\paragraph{Related Work:}
+Structurally, the traditional POSIX naming service offeriing a hierarchical
+space consisting of directories and files may be maintained for backwards
+compatibility. However, this view will not offer the same strict semantics
+POSIX defines. We must break these strict semantics to address scalability
+problems forced by the serialized access to a single source for creating and
+accessing files.  Several efforts~\cite{patil:2007:giga+,carns:pvfs} have
+worked to reduce this contention by doing things like reducing the serialized
+scope to a single directory or subtree or allowing a single process in a
+collective file operation talk with the metadata service and distribute a
+handle to other participants. While these approaches help, they do not address
+this key scalability limitation of serialized access--even if the metadata
+service is spread across multiple nodes. Instead, we will offer a short
+duration to consistency POSIX view to offer the performance and consistency
+requirements an exascale application demands.
 
-While strongly encouraging data to stay in a particular type of storage tier,
-ultimately it must be possible to flush this data to make room for other uses.
-Sirocco offers a ``flush'' operation that forcibly migrates data to the
-long-term resilience requirements freeing space in the scare resources. In
-many, if not most cases, this will move data towards or actually on to a device
-like tape intended for long-term storage.
+While pure object stores, such as those popular in the big data
+domain~\cite{Fitzpatrick:2004:memcached,others} avoid this bottleneck by
+strictly offering an object ID with the application required to manage how this
+ID maps to something of interest. This approach of removing the metadata
+service from the system level completely can work well for scale out
+applications where data is created or consumed by a single process at a time or
+just in a work queue rather than potentially O(1 million) processes all
+actively collectively for a single ``object''. To address this case, having
+some system integrated metadata services to associate names with these object
+is a preferable solution. While it will not have the same synchronous
+consistency semantics as POSIX, we will offer something as close as possible to
+address legacy application and command-line style data access and migration to
+other storage types using these POSIX semantics.
 
+\paragraph{Challenge:}
 The main challenge of incorporating the additional, rich metadata will be
 joined by the additional challenge of coordinating with the other storage and
 application-layer services to offer the best access times possible for data
@@ -166,6 +147,21 @@ non-blocking or locking access to this metadata service. We must investigate
 how to build such a metadata and naming service that also incorporates and
 maintains the additional metadata required to support our advanced
 functionality.
+
+Our research in this area will address the following questions:
+(1) Since our metadata is distributed and partitioned, how do we respond to user
+  requests within a specified time bound with accuracy? How do we estimate the
+  completeness of the response?
+(2) For POSIX API requests, how do we respond if only varying data fidelity
+  levels are available for the requested data object?
+(3) What level of metadata should we maintain and keep in sync to enhance
+  response quality within time-bound requests?
+(4) How much time should be allowed for searching for metadata given the user
+  specified limits for data retrieval since the user will still have to spend
+  the data retrieval time from different devices? How do we integrate the read
+  time overhead into the metadata requests?
+(5) How do we provide appropriate security while maintaining scalability,
+  particularly with the distributed metadata stores?
 
 \begin{enumerate}
 
