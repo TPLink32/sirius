@@ -26,25 +26,24 @@ Specifically, we will address the following research questions:\\
 Quality of Service (QoS) refers to the
 properties of the performance quality of a particular service, in
 this case the storage system.
-Performance quality can be expressed in either relative or absolute
-terms. Examples of relative performance terms are ``fair'',
-``proportional'', or ``priority/class-based'' (``the higher the
-priority the better the service'' or ``1st class is better than
-2nd''). The key advantage of relative performance terms is that
-they are easy to implement. The key disadvantage is the difficulty
-of making any guarantees based on those implementations --
-even relative guarantees are mired by the well-known effect of
-priority inversion~\cite{lampson:cacm80}. Examples of absolute
-performance terms are ``rate-based'', ``soft real-time'', and
-``hard real-time''. The key advantage of absolute performance
-terms are that they enable the implementation of strong
-guarantees: absolute terms enable agreements between application
-tasks and storage that we call \emph{reservations} and that do not
-change meaning depending
-on the storage system's workload. The key challenge of absolute
-performance terms is that their implementation is non-trivial,
-especially in large-scale systems.
-
+%Performance quality can be expressed in either relative or absolute
+%terms. Examples of relative performance terms are ``fair'',
+%``proportional'', or ``priority/class-based'' (``the higher the
+%priority the better the service'' or ``1st class is better than
+%2nd''). The key advantage of relative performance terms is that
+%they are easy to implement. The key disadvantage is the difficulty
+%of making any guarantees based on those implementations --
+%even relative guarantees are mired by the well-known effect of
+%priority inversion~\cite{lampson:cacm80}. Examples of absolute
+%performance terms are ``rate-based'', ``soft real-time'', and
+%``hard real-time''. The key advantage of absolute performance
+%terms are that they enable the implementation of strong
+%guarantees: absolute terms enable agreements between application
+%tasks and storage that we call \emph{reservations} and that do not
+%change meaning depending
+%on the storage system's workload. The key challenge of absolute
+%performance terms is that their implementation is non-trivial,
+%especially in large-scale systems.
 One of the key differentiating features this project offers is driving storage
 decisions through QoS \emph{reservations}, rather than continuing the current model
 of allowing applications to compete freely without restriction, for part or all of the storage
@@ -201,7 +200,7 @@ The first key enabler for any service to make absolute guarantees
 is \emph{performance isolation}, i.e. the ability to shield the
 performance impact of one task from another. The most straight-forward
 but least flexible strategy is to simply cap the latency of each
-task, irregardless of its completeness (see for
+task, regardless of its completeness (see for
 example~\cite{decandia:sosp07}). This strategy is applicable when
 incomplete tasks still have value and missing results are either
 not important or can be easily retrieved in subsequent tasks. A
