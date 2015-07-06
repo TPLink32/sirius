@@ -117,7 +117,7 @@ knowledge-centric approach} to a dynamic storage system and I/O layer which
 takes into account user prioritization and utility to optimize the SSIO layer.
 The approach is based on three underlying principles:
 
-\underline{Principle 1:} A knowledge-centric system , let user knowledge  to
+\underline{Principle 1:} {\bf A knowledge-centric system}, let user knowledge  to
 define data policies. Today Storage System and I/O layers are written in a
 stove-pipe fashion, and quite often do not allow optimizations to take place.
 We propose to re-design the layer in a highly integrated fashion where user
@@ -125,13 +125,13 @@ will place their intentions into the system and actions will dynamically and
 statically take place to optimize for both the system and for individual
 requests.
 
-\underline{Principle 2}: Predictable Performance in the SSIO layer needs to be
+\underline{Principle 2}: {\bf Predictable Performance in the SSIO layer} needs to be
 established so more science can be done on the exascale systems. Without
 predictable performance, the I/O layer performance must be guessed by the
 users, which quite often mean that science is not performed well.
 
-\underline{Principle 3:} In a data-centric SSIO system, we need user goals to
-define the data policies. We introduce data-driven SSIO optimizations by
+\underline{Principle 3:} {\bf Users goals define data policies} In a data-centric SSIO system. 
+We introduce data-driven SSIO optimizations by
 enabling users to define data manipulations (re-organizations) at a high level
 and then we express policy goals by associating intentions (hints) with data;
 e.g. ``this data at this level should be accessible within 100 seconds in the
