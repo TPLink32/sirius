@@ -184,7 +184,7 @@ sufficient for these purposes, but it must still be proven in practice.
 Users will also need to describe information about the data in order to choose
 the optimal data-refactoring routine. Currently, we understand that
 users can tell us that the data represents: 1)~phase-space (e.g., the particles
-in our example), 2)~spatial-changes (e.g., the mesh), 3)~space-time (e.g.,
+in our example), 2)~spatial-changes (e.g., the mesh), and 3)~space-time (e.g.,
 the fields on the mesh). We need this information to select
 the best possible data
 refactoring methods. Although users can insert a user-defined data-refactoring
@@ -202,14 +202,14 @@ this were a finite-element mesh). We will explore new mechanisms that will
 group data together making it explicit that M1, F1, and G1 need to be organized
 together.  In other words, it will not be helpful if data from M1 and M2 were
 organized together along with only F1. When the users wants to visualize data
-from the field, F1, they will need only M1 and M2 would be additional
+from the field, F1, they will need only M1, and M2 would be additional
 information. Likewise, if the user wants to see F1 and F2, then they will need
 the mesh from M1 and M2. This requires that the time to access all of this
-data is approximately the same requiring similar access times for all of the
-data.  We will investigate what choices the SSIO system must make in order to
+data is approximately the same.
+We will investigate what choices the SSIO system must make in order to
 keep these pieces ``together'', from a performance perspective. Can the storage
 system move everything to a lower layer when all of it doesn't fit or is there
-other, less tightly related data can be evicted to preserve the collective
+other, less tightly related data that can be evicted to preserve the collective
 retrieval performance?  We need to investigate the potential problems when this
 occurs and how the users can specify additional information to ensure they get
 the best possible data from the SSIO layer.
