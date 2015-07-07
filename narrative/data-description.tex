@@ -113,20 +113,20 @@ hints that provide latency and precision requirements. Additional hints will
 also be investigated.
 
 We will also develop a new type of querying system that allows an application
-to ask the storage system about completion timing information. The response
-would be an estimated time for the described operation. We will explore
+to get estimated timing information for operations on the storage system.
+We will explore
 how these query functions can be integrated into common applications with
 minimal code disruptions and the set of policies that applications can use to
 respond to this new information. We will also explore how applications can
-query the storage system to gain insights on available space in different tiers
-and how applications can tailor their output data to most effectively use the available space.
+query the storage system on space availability across different tiers and how
+applications their tailor their output data to make the most effective use of
+available space.
 Finally we will study the use of an external data annotation system that can
-provide information to the storage system without requiring the application to
-be recompiled. 
+provide information to the storage system without requiring recompilation of the application.
 
 %
 From an application level, we will explore these techniques through our ADIOS
-framework using many of the applications to which we have access, including
+framework using many of our existing application partners, including
 XGC1, GTC, and SPECFM3D. We will investigate: 1) what hints the users can give
 the system, 2) how the users can replace much of their
 application specific code with
@@ -135,19 +135,19 @@ that will be integrated with the storage layer to give time estimations so that
 users can decide which data priorities will be written and read. The utility
 value for each chunk will be used to sort the chunks into prioritized bins.
 Chunks in a particular bin will be assigned an appropriate storage
- tier and lifetime, which can be decided by the user through the API.
-For example: in Figure~\ref{fig:ssio-bucket} we have data that
-comes from the XGC1 code.  The user can pick a data-refactoring scheme (see
-Sec~\ref{sec:data-refactor}) which will bucket the particle data into 4
-prioritization levels in the memory. The user can then pick a data utility, such as 3 months
+tier and lifetime, which can be specified by the user through the API.
+As an example, Figure~\ref{fig:ssio-bucket} illustrates a use case for the XGC1 code.
+The user can pick a data-refactoring scheme (see
+Sec~\ref{sec:data-refactor}) which will classify the particle data into 4 different
+prioritization levels. The user can then pick a data utility, such as 3 months
 for the highest priority items and 12 months for the lowest priority data.
-The user will then call a function, provided by the API, that allows them
+The user will then call an API function that allows them
 to specify all of the chunks they want
 written (particles, two fields, and a mesh in this example) and the system
-will return an estimate of the time it will take to write. If that it unacceptably large, the user can 
-use another call to specify the lowest priority element that they want to actually write, 
-skipping the rest too save time (in this
-example the user will write all of the data). The data will then be stored
+will return a time estimate for this write operation.
+If this time estimate is too large, an API call can be made to 
+specify the lowest priority element to be written, skipping the rest in order to save time.
+The data will then be stored
 across the layers of the file system where the two highest priority buckets
 will be stored in the Parallel File System, but the next highest priority items
 will be stored lower in the storage stack. Depending on the capabilities of the actual storage system, 
