@@ -157,27 +157,6 @@ stage through the use of relatively computationally intensive preprocessors
 This approach takes advantage of the increasingly wide cost gap between CPU
 operations versus storage-based operations. 
 
-Ideally, the scientists would perform the entire analysis stage {\em in situ}
-to extract the relevant information and in so doing would effectively
-circumvent the large data issue completely.  The problem of course is that this
-is unlikely to be possible since, by their nature, large scale simulations aim
-to discover new information that is often hidden in the form of higher order
-effects amongst the data deluge. In particular, this means if data thinning or
-truncation is applied willy nilly then one is in danger of effectively throwing
-out the information one is seeking. It would seem that one cannot store the
-entire data set in an easily accessible source, due to sheer size, yet one
-cannot reduce it prior to archival without risking losing the information one
-is trying to extract.  Viewed in this way, the problem would appear
-intractable. However, the above discussion fails to recognize that much of the
-data is redundant in an information theoretic sense.  That is to say, the
-amount of information contained in the dataset is often significantly less than
-the amount of data.  The difficulty stems from the fact that one does not know
-about this redundancy in advance \emph{without the benefit of priori
-knowledge}. This knowledge can sometimes be provided by the user, can be
-acquired through experience of dealing with differing runs of the same code, or
-acquired during a run by adaptively selecting and tuning the algorithm based on
-metrics during runtime. 
-
 We will assemble a suite of general techniques for refactoring of data that
 will be embedded in the system and can be selected either by the user or by the
 application itself. The techniques will range from crude catch all methods such
