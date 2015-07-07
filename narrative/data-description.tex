@@ -79,7 +79,7 @@ allows data characteristics such as min, max and index to be wrapped around
 data chunks. A direct benefit is that each data chunk can be operated upon
 independently and I/O concurrency can be maximized. We will build upon this
 capability and further augment the format to express data utility.
-Recently
+Recently,
 DAMSEL~\cite{damsel} has provided a rich metadata representation and management
 layer that captures the relationship between data blocks for scientific
 applications.  This allows application data to be mapped to storage system
@@ -92,9 +92,9 @@ references}
 \paragraph{Proposed research approach:} 
 We will design and develop new techniques for data management, description,
 and access that allow users to describe the data utility based on their
-expectations. This can be done by allowing users to plug in functions that
+expectations. This can be done by allowing users to apply plugins
 provide data-specific functionality to the middleware and storage system.
-These functions may be executed by the system to
+These plugins may be executed by the system to
 calculate the utility value for each chunk, handle custom compression
 and decompression, and perform other data-specific services, thus allowing
 the system to more effectively manage data placement and retrieval.
@@ -102,7 +102,7 @@ the system to more effectively manage data placement and retrieval.
 %We will design an updated I/O API that will expand on the current POSIX I/O
 %semantics by adding new information to the I/O request.
 
-We will explore the space of application level hints that can be provided easily
+We will explore the space of application level hints that can be easily provided
 to the storage system. These hints will enable the storage system to make the
 most appropriate optimization decisions for this user in the context of the
 multi-user environment rather than trying to rely on a one-size-fits-all
@@ -110,7 +110,7 @@ approach. In particular, we expect the application to provide hints on the
 length of time before the output data is persistent and visible to users and
 the expected data lifetime for output sets. For read calls we envision
 hints that provide latency and precision requirements. Additional hints will
-also be investigated. 
+also be investigated.
 
 We will also develop a new type of querying system that allows an application
 to ask the storage system about completion timing information. The response
