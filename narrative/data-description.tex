@@ -54,7 +54,7 @@ achieve the desired QoS goals and policies.
 A key insight in this proposed project has been the increased interaction of
 the application with the storage system.
 The user would like to have the ability to obtain information about, and even
-negotiate with the system to determin what
+negotiate with the system to determine what
 level of Quality of Service is possible given
 a prospective set of I/O operations and current state of the system, so that
 they can then make decisions about what data to access when.
@@ -139,29 +139,32 @@ Chunks in a particular bin will be assigned an appropriate storage
 For example: in Figure~\ref{fig:ssio-bucket} we have data that
 comes from the XGC1 code.  The user can pick a data-refactoring scheme (see
 Sec~\ref{sec:data-refactor}) which will bucket the particle data into 4
-prioritization levels.  The user can then pick a data utility, such as 3 months
+prioritization levels in the memory. The user can then pick a data utility, such as 3 months
 for the highest priority items and 12 months for the lowest priority data.
 The user will then call a function, provided by the API, that allows them
 to specify all of the chunks they want
 written (particles, two fields, and a mesh in this example) and the system
-will return an estimate of the time it will take to write. The user can then
-use another call which will determine the lowest priority element (in this
-case the user will write all of the data (P1-P4). The data will then be stored
+will return an estimate of the time it will take to write. If that it unacceptably large, the user can 
+use another call to specify the lowest priority element that they want to actually write, 
+skipping the rest too save time (in this
+example the user will write all of the data). The data will then be stored
 across the layers of the file system where the two highest priority buckets
 will be stored in the Parallel File System, but the next highest priority items
-will be stored lower in the storage stack. 
+will be stored lower in the storage stack. Depending on the capabilities of the actual storage system, 
+SSIO will decide if the data has to go through the parallel file system 
+towards a lower stack or can be staged to that stack directly. 
 %
 
 
-\begin{wrapfigure}{r}{0.7\textwidth}
-%\vspace{0ex}
+\begin{wrapfigure}{r}{0.6\textwidth}
+        \vspace{-2ex}
         \begin{centering} 
-	\includegraphics[scale=0.75]{graphics/SSIO-bucket.pdf}
+	\includegraphics[scale=0.8]{graphics/SSIO-bucket.pdf}
         %\vspace{1ex}
         \caption{The system manages the data across the various stages of the data lifecycle}
         \label{fig:ssio-bucket}
         \end{centering}
-%        \vspace{1ex}
+       \vspace{-1ex}
 \end{wrapfigure}
 
 
@@ -180,8 +183,8 @@ sufficient for these purposes, but it must still be proven in practice.
 
 Users will also need to describe information about the data in order to choose
 the optimal data-refactoring routine. Currently, we understand that
-users can tell us that the data represents: 1) phase-space (e.g., the particles
-in our example), 2) spatial-changes (e.g., the mesh), 3) space-time (e.g.,
+users can tell us that the data represents: 1)~phase-space (e.g., the particles
+in our example), 2)~spatial-changes (e.g., the mesh), 3)~space-time (e.g.,
 the fields on the mesh). We need this information to select
 the best possible data
 refactoring methods. Although users can insert a user-defined data-refactoring
