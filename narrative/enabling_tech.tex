@@ -57,7 +57,7 @@ further integrate the I/O (ADIOS) layer with the storage layer (Sirocco).
 %requests to pull the data from the source to the sink in an on demand process.
 
 For this project, we plan to use the Sirocco data storage mechanism to manage
-the actual data storage on all of the different tiers. We will add data management functionality as part of the storage
+the actual data storage across the different tiers. We will add data management functionality as part of the storage
 system layer to handle data discovery and metadata tasks. At the middleware
 layer, we will investigate offering differing data compression, fidelity,
 storage placement, and retrieval selection options.  Through this combination,
@@ -68,7 +68,7 @@ techniques to coordinate with the storage back-end. The key idea is offering
 the ability to negotiate with the storage system to agree on the trade-off
 between data quality and response time. 
 
-We will also take advantage of the many innovations we discovered the Ceph~\cite{weil:osdi06} storage
+We will also take advantage of the many innovations discovered in the Ceph~\cite{weil:osdi06} storage
 system project. 
 %
 %  In the LWFS project, Sandia sought to demonstrate stripping
@@ -87,7 +87,7 @@ system project.
 The Ceph project (ceph.com) started at UC Santa Cruz in 2004 and was initially
 funded by DOE/NNSA involving LLNL, LANL, and Sandia, with the goal to create an
 object-based parallel file system that addresses the well-known metadata
-service bottleneck of creating and accessing 1000s of files comprising a
+service bottleneck of creating and accessing 1000s of files from a typical 
 checkpoint~\cite{weil:osdi06}.  However, after the Ceph kernel client was
 pulled into the Linux mainline in 2010, the focus of Ceph shifted to its
 object-based storage subsystem, also called Reliable Autonomous Distributed
@@ -95,7 +95,7 @@ Object Store (RADOS), which now is the dominant storage system in OpenStack
 production-level deployments and was recently selected as the new backend for
 Flickr and Yahoo! Cloud Services. In this project we will leverage two of the
 key innovations of Ceph: (1) Controlled Replication Under Scalable Hashing
-(CRUSH)~\cite{weil:sc06} will help making resource identification and
+(CRUSH)~\cite{weil:sc06} will help make resource identification and
 predictable performance scalable, and (2) extensible storage object
 classes~\cite{watkins:ucsctr15} will provide the main mechanisms of introducing
 new APIs, metadata vocabulary, and quality of service into the storage stack.
