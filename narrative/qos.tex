@@ -1,28 +1,54 @@
 \subsection{Resource Management and QoS}
 \label{sec:qos}
 
-\paragraph{Resource Management Background:} There is an important connection between finding the resources
-that can help fulfill a particular request and the performance predictability of that request, and this demands
-careful resource management strategies that deal with large number of data chunks spread across storage hierarchy. 
+\subsubsection{Resource Management}
+\paragraph{Background:} There is an important connection between finding the resources
+that can fulfill a particular request and the performance predictability of that request, and this demands
+careful resource management strategies that can deal with placing and retrieving a large number of data 
+chunks spread across the entire storage hierarchy. 
 %This connection is particularly important for data retrieval 
 %- in large scale storage systems, finding a resource to read can be a significant, if not dominant, 
 %component of overall read latency. 
 Locating resources is a typical distributed systems problem. Centralized solutions are limited in their
-scalability, because there exists a single entity that tracks updates in the system. 
-Traditional file systems are good examples for this: most updates to files require updates 
+scalability, because they require a single entity that tracks updates in the system. 
+Traditional file systems are good examples for this - most updates to files require updates 
 to their centrally maintained block allocation tables. 
 The opposite of file systems are ``pile'' systems, which, instead of keeping track of updates, search for 
 resources at request time. Pile systems allow very efficient writes because clients can write whereever
-there is free space and there is very low bookkeeping overhead. However, unbounded search is possible, 
-if it is unclear whether the resource actually exists. 
+there is free space and there is very low bookkeeping overhead. However, unbounded search in pile systems
+is possible, e.g., when it is unclear whether the resource actually exists. 
 Methods to make searches more efficient without reverting to centralized bookkeeping usually involves 
-some kind of partitioning of the search space and a method to limit the search to a small number of partitions. 
+partitioning of the search space and a method to limit the search to a small number of partitions. 
 
-Frequently this involves a hash function that is relatively stable against changes to its range, such as failures or updates to the hardware of the system (see for example consistent hashing~\cite{karger:stoc97}). Consistent hashing is scalable since it can be well-known throughout a system of any size and only requires minimal movement of data in the presence of failures or system changes. Consistent hash functions can also have sets of ordered but infinite lists as their range (which works well with primary replication)~\cite{honicky:ipdps04}, implement declustering (limiting overlap between partitions), and support placement policy rules~\cite{weil:sc06}.
+Frequently this involves a hash function that is relatively stable against changes to its range, 
+such as failures or updates to the hardware of the system. Consistent hashing~\cite{karger:stoc97}
+is scalable since it can be well-known throughout a system of any size and only requires minimal 
+movement of data in the presence of failures or system changes. 
+%Consistent hash functions can also
+%have sets of ordered but infinite lists as their range (which works well with primary replication)
+%~\cite{honicky:ipdps04}, implement declustering (limiting overlap between partitions), and support
+%placement policy rules~\cite{weil:sc06}.
 
-In this proposal we will investigate the trade-off in terms of predictable performance between ``filing'' data, making an upfront investment to ensure finding data quickly, and ``piling'' data, pushing the cost of finding to the moment when the data is actually needed. This trade-off has a parallel in data management where there are two alternative paths to achieve knowledge: the analogue to filing is ``extract, transform, and load'' (ETL) data into a warehouse, paying an upfront ingest cost to achieve fast querying; the analogue to piling is to not pay any upfront cost and query the raw data directly by using data processing platforms such as Hadoop. Recent work has found that the combination of these two techniques can be optimized to perform better than any one technique alone~\cite{lefevre:sigmod14a}. We believe that a similar opportunity exists for combining filing and piling approaches to achieve performance predictability without sacrificing too much flexibility.
+\paragraph{Approach:} 
+In this proposal we will investigate the trade-off in terms of predictable performance between 
+``filing'' data, making an upfront investment to ensure finding data quickly, and ``piling'' 
+data, pushing the cost of finding to the moment when the data is actually needed. This trade-off 
+has a parallel in data management where there are two alternative paths to achieve knowledge: 
+the analogue to filing is ``extract, transform, and load'' (ETL) data into a warehouse, paying 
+an upfront ingest cost to achieve fast querying; the analogue to piling is to not pay any upfront 
+cost and query the raw data directly by using data processing platforms such as Hadoop. Recent work 
+has found that the combination of these two techniques can be optimized to perform better than 
+any one technique alone~\cite{lefevre:sigmod14a}. We believe that a similar opportunity exists 
+for combining filing and piling approaches to achieve performance predictability without sacrificing 
+too much flexibility.
 
-More specifically, the coarseness of a search space partitioning limits the search time within a partition, i.e. finely partitioned search spaces require little or no search within a partition but offer little placement flexibility. Partitioning can also be fine in one dimension and coarse in another to allow flexibility where it is most needed while still ensuring fast finding. For example, a hash function can finely partition a low storage tier but each partition can extend across multiple tiers so that a search still has to occur in order to find a resource on a particular tier. 
+More specifically, the coarseness of a search space partitioning limits the search time within 
+a partition, i.e. finely partitioned search spaces require little or no search within a partition 
+but offer little placement flexibility. Partitioning can also be fine in one dimension and coarse 
+in another to allow flexibility where it is most needed while still ensuring fast finding. For 
+example, a hash function can finely partition a low storage tier but each partition can extend 
+across multiple tiers so that a search still has to occur in order to find a resource on a particular 
+tier. 
 
 Specifically, we will address the following research questions:\\
   1) Can we make any guarantees in a scalable decentralized system?; \\
@@ -35,8 +61,8 @@ Specifically, we will address the following research questions:\\
   5) How do we make the scheduler scalable with the size of the system?
 
 
-\paragraph{QoS Background:} 
-Quality of Service (QoS) refers to the
+\subsubsection{QoS}
+\paragraph{Background:} Quality of Service (QoS) refers to the
 properties of the performance quality of a particular service, in
 this case the storage system.
 %Performance quality can be expressed in either relative or absolute
