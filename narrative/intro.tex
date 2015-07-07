@@ -12,22 +12,22 @@ with respect to scientific computing, aligns perfectly with this sentiment.
 %this proposal--minimizing the time to knowledge.  
 
 Avoiding impending bottlenecks in exascale scientific discovery will require
-new research into managing and storing the large volumes of data that are 
+new research into managing, storing and retreiving the large volumes of data that are 
 produced by simulations and analyzed for months afterwards.
 %
 In this project we will demonstrate a cooperative approach for storing data
-where the user and the storage system work together to achieve the best
-possible utility and performance given data features, storage tier
-characteristics, and current system state. We will investigate novel techniques
-to facilitate efficient mapping of data objects
-from the user space onto multiple storage tiers and enable
-application-guided data reductions and transformations to address capacity and
-bandwidth bottlenecks, while constraining errors to be within user provided
-bounds.
-% 
-Our proposed research program is guided by the following overarching objectives. 
+where the user and the storage system work together to optimize performance with
+respect to user requirements, current system state, and characteristics of the tiered-storage system.
+Our investigation will include the novel techniques for the efficient mapping of data objects
+from the user space across a hierarchical tiered storage. These techniques will
+include support for application-guided data reductions with user-defined error bounds
+and transformations to optimize performance, capacity and minimize bandwidth bottlenecks.
 
-{\em Address emerging storage architecture/technology landscape:}
+% 
+Our proposed research program is guided by the following overarching objectives:
+\begin{itemize}
+\item
+{\em Address emerging storage architecture and technology landscape:}
 We will address the associated I/O and storage challenges in the context of
 current and emerging storage landscapes,
 % and expedite insights into critical
@@ -41,7 +41,7 @@ data both horizontally and vertically across the layers of these storage systems
 Negotiation between these layers will be provided as a fundamental service, allowing users to
 easily save ``the best'' amount of data, which is automatically placed throughout the
 entire storage stack.
-
+\item
 {\em Develop a science driven, system aware approach:}
 %Our approach targets the expected characteristics of exascale storage hardware.
 %The storage layer will be partitioned into multiple heterogeneous tiers with
@@ -53,10 +53,11 @@ entire storage stack.
 %
 Given that storage systems will be composed of multiple heterogeneous tiers with
 vastly different performance characteristics and constraints on capacity and 
-data lifetime they can support, our approach will enable researchers to 
+supported data lifetime, our approach will enable researchers to 
 place more knowledge into the SSIO system so that data can be recast from 
-a sequence of bytes to information, which the system can then place and 
-optimize the time to gain knowledge from exascale simulations. 
+a sequence of bytes to information rich data. This information rich data can the
+be used by the system to placement within the tiered storage that will optimize the time
+to gain knowledge and insight from exascale simulations.
 
 %The traditional approach to transforming results of scientific computation into
 %knowledge consists of storing the numerical output of a simulation on disk,
@@ -64,6 +65,7 @@ optimize the time to gain knowledge from exascale simulations.
 %several ensuing weeks or months. Clearly, given the computation expected at the
 %exascale, this type of workflow is simply not viable.
 
+\item
 {\em Emphasize impacts on science:}
 %The metric we are most interested in optimizing is time to knowledge.  
 %Current approaches to addressing the I/O bottleneck fall into two broad categories:
@@ -72,28 +74,32 @@ optimize the time to gain knowledge from exascale simulations.
 %application. Both approaches have been successful to date, but are unlikely to
 %overcome the remaining obstacles in reaching exascale. 
 Instead of trying to optimize throughput, we will seek to reduce the time to knowledge.
-This is the most significant metric for scientific applications where the desired outcome
-is not storing data, but rather executing knowledge creation and extraction processes 
-on the data. 
-Moreover, we aim to perform the optimization not for a single
-application, but rather for workloads within a multi-user multi-application
-system environment.
+As extracting knowledge is the only metric that matters for scientific applications, we will
+focus not only upon data storage, but upon efficient execution of knowledge create and extraction
+workflows.
+Moreover, we aim to perform the optimization not only for a single
+application, but rather for multiple workloads running on a multi-user, multi-application
+system.
+\end{itemize}
 
+This proposal can be summarized as research into using the varying importance of simulation data over time to
+ensure that the right portions of data, in the right format and resolution are available to scientists when they are needed.
+Application-specific information about the importance of data will be used in conjuction with system- and resource-specific information
+to optimize the scientists experience interacting with, and extracing knowledge and insight from simulation data.
 
-The overarching idea of this proposal is that data from applications can be characterized by different
-%levels of importance and different 
-levels of importance over time, which then can be used to guide the analysis and visualization later to access the most important data and deliver some level of knowledge without waiting for access to the whole original dataset. Information about the importance of the data at the application level, information about resource status and performance of the multi-level storage system, and flexible data reorganization and reduction operations at all levels can be utilized to provide a quality of service and allow users to gain insight in a timely manner.
+%The overarching idea of this proposal is that data from applications can be characterized by different
+%%levels of importance and different 
+%levels of importance over time, which then can be used to guide the analysis and visualization later to access the most important data and deliver some level of knowledge without waiting for access to the whole original dataset. Information about the importance of the data at the application level, information about resource status and performance of the multi-level storage system, and flexible data reorganization and reduction operations at all levels can be utilized to provide a quality of service and allow users to gain insight in a timely manner.
 
 This proposal combines knowledge and expertise 
-from a wide range of sources including ORNL applications, the ADIOS project,
+from a wide range of sources including applications running at ORNL, the ADIOS project,
 the SNL Lightweight File Systems project and storage system knowledge, the metadata
 management and storage systems knowledge of UCSC, and the middleware expertise
-of Rutgers. We will integrate this diverse expertise to investigate how to make
+of Rutgers. We will integrate this diverse expertise to investigate how to create
 a data, workflow, and application aware storage system.
-This project brings together a team with strong expertise in I/O middleware (ORNL, Rutgers), 
+This project brings together a team with strong expertise in I/O middleware (ORNL, Rutgers),
 file system (SNL, UCSC) and storage (UCSC), and connects and
 coordinates these key storage components in a seamless fashion.
-
 
 %
 %\section{Scalable Storage Software Infrastructure}
@@ -102,6 +108,7 @@ coordinates these key storage components in a seamless fashion.
 %beginning to face and will make science on exascale systems
 %problematic without new insights and solutions.
 Our proposal will be responsive to Theme 2: {\em Scalable Storage Software Infrastructure} of the call, as summarize in Table~\ref{tab:call}.
+
 \begin{table}[htbp]
 \vspace{2ex}
 \begin{center}
@@ -119,6 +126,8 @@ General piece we are doing for this... &
 \hline
 \end{tabular}
 \end{center}
+%\caption {WRITE A CAPTION FOR THIS TABLE}
+\caption {}
 \label{tab:call}
 \end{table}
 
@@ -178,46 +187,35 @@ the users, and finally
 (3) the user of the system who is attempting to understand the data
 produced by a set of simulations.
 
-\subsection{Writing Perspective}
+\subsection{Writing Perspective (is there a better name for this section????)}
 \label{subsec:sim-perspective}
 The simulation scientist ideally should be able to
-obtain an estimate of how much time will be required to write their data,
-and how much storage space they will be able to get during the lifetime of
-their simulations. Furthermore, they would like the ability to get an assurance
-of Quality of Service such that they can react appropriately when the
-expected bandwidth, for example, is less than what they desire. Ideally, the user
-would specify a set of rules with which the system can make autonomic
-decisions to determine what should be done.
+obtain an estimate of how much time will be required to write the data,
+and how much storage space is available during the simulations lifetime.
+Further, they would like Quality of Service assurances so that reactions
+to varying bandwidth can be handled appropriately. Ideally, a set of
+user-specified rules would allow the system to make autonomic decisions dynamically.
 %
 
-One of the key aspects of our approach is to allow the users to define the
-utility of their data; in other-words, the system should provide a
-mechanism such that, for each data object, a user can specify pieces of the object
-which have more utility (more importance).
-There are many research challenges faced with
-this approach including: 1) How do we make this simple enough so that users can
-do this, 2) Can we define a model to allow the system to make
-autonomic decisions to save the data which has the highest utility, and 3) Can
-we allow the back-end storage system to interact with this model so that
-it can optimize not just a single application but across all of the
-applications.
+Central to our approach is giving users the ability to define the importance, or utility of their data.
+This includes the ability to assign varying levels of importance to individual data objects in their entirety, or specific
+subsets and pieces.
+Research challenges include 1) an expressive and easy to use interface, 2) a model for the system supporting
+autonomic decision for saving data using the user-defined importance and utility of data, and 3) the interface between
+the system and the back-end storage across both single, and multiple running applications.
+
  %
   In our simple scenario, a user wants to write 1~PB of data every hour
-for checkpoint/restart, and they wish to write 500~TB of data every 15
-minutes to save data for analysis and visualization. At this stage, they will ask the system to
-write the data, and they would like to get an estimated time from which they can
-then figure out, through a series of rules, whether they want to write out all
-of the data, postpone the write until a later time, or write a reduced amount
-of data using in situ reduction techniques, along with some code
-container that allows for regenerating the data with a specified level of
-accuracy.  Furthermore, they realize that the analysis data will be saved on
-either the parallel file system, long-term tape storage, or on the campaign storage,
-which is a medium-term storage
-area with lower bandwidth than the parallel file system.
-For each piece of data, the user will specify the lifetime so
-that the data with the highest utility is kept around in fast storage for the longest
-period of time, while the data with the least utility may be the first to be migrated to
-lower layers of the storage hierarchy. 
+for checkpoint/restart, and write 500~TB of data every 15
+minutes for analysis and visualization.
+The user would then specify a set of rules that governed the actual behaviour while the simulation is running.
+If the system resources are available and the estimated write times are in order, the write can proceed.
+Or, the write can be postponed to a later time-step, or data processed via in situ techniques
+or a reduced set of data along with a regenerating code container at a given accuracy can be saved.
+Data importance or utility will be used to place the various data on the proper resources
+either the parallel file system, long-term tape storage, or on the campaign storage (medium-term storage with lower bandwidth).
+The user specified lifetime for each data ensures that the data with the highest utility is preserved in fast storage
+for the longest period of time, and the least utility are migrated to lower layers in the storage hierarchy.
 
 Since the data will be a collection of objects placed on the storage system,
 some of the objects will be broken up into multiple pieces by ``plug-ins''
