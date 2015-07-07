@@ -2,17 +2,19 @@
 \label{sec:enabling-technologies}
 Significant existing work will serve as the foundation upon which this project
 will be performed.
-
-At the lowest level is the Lightweight File Systems (LWFS) project~\cite{oldfield:lwfs}.
-As mentioned above, LWFS's goal is to provide the simplest core services for
-a storage system and investigate adding functionality by using auxiliary
-services or layering an API on top that offers more functionality. For example,
-by eliminating consistency checks from the core system, applications already
-managing consistency can eliminate the redundant check enhancing performance.
-
-The current LWFS project phase is investigating new ways for managing storage
-devices. This project, Sirocco, offers a peer-to-peer style data storage device
-mesh wtih data migrating based on use, required resilience, and available
+%1
+At the lowest level is the Lightweight File Systems ({\bf LWFS}) project~\cite{oldfield:lwfs}.
+which had the  goal  to provide the simplest core services for
+a storage system and having  added functionality  using auxiliary
+services. 
+%For example,
+%by eliminating consistency checks from the core system, applications already
+%managing consistency can eliminate the redundant check enhancing performance.
+%
+%The current LWFS project phase is investigating new ways for managing storage
+%devices. This project, 
+{\bf Sirocco} cam out of the LWFS project and offers a peer-to-peer style data storage device
+mesh with data migrating based on use, required resilience, and available
 resources. For example, when writing data initially into Sirocco, required
 resilience characteristics are provided prompting Sirocco to ensure the data is
 stored on appropriate storage device(s) that meet the resilience requirement.
@@ -28,63 +30,61 @@ store different versions or aspects of the same data.  For this project, we
 will build on this Sirocco foundation for data placement, migration, and the
 version storage (via the fork mechanism). 
 
-The LWFS philosophy focuses on providing a universal core with additional
-semantics and services layered on top or run along side. For this project, the
-Sirocco API is much more complex than a standard POSIX call prompting layering
-a more user friendly interface on top. Placing a thin, optimized layer as part
-of the storage system will offer the kinds of functionality and semantics this
-project proposes. From the user perspective, something like the
-ADIOS~\cite{lofstead:2009:adaptible} API offers an API nearly as simple as POSIX, but with the
+%The LWFS philosophy focuses on providing a universal core with additional
+%semantics and services layered on top or run along side. For this project, the
+%Sirocco API is much more complex than a standard POSIX call prompting layering
+%a more user friendly interface on top. Placing a thin, optimized layer as part
+%of the storage system will offer the kinds of functionality and semantics this
+%project proposes.
+
+  From the user perspective, something like the
+{\bf ADIOS}~\cite{lofstead:2009:adaptible} API offers an API nearly as simple as POSIX, but with the
 ability to change the actual data transport mechanism without changing the
 source code. This affords writing to a single output API while shifting from
-writing to a POSIX file system, some middleware like
-DataSpaces~\cite{docan:2010:dataspaces}, or some other system like Sirocco all without
+writing to a file system to operating on the data using in situ techniques, without
 changing the source code. ADIOS has proven effective for writing to POSIX file
 systems, data staging systems~\cite{zheng:2010:predata,docan:2010:dataspaces,oldfield:2006:nessie}, workflow
-systems~\cite{Dayal:2014:flexpath}, and even nothing through the use of a NULL transport.
+systems~\cite{Dayal:2014:flexpath}, and even through the WAN network 
 Part of this project's goals seeks to understand where the dividing line
 between the storage layer shared by all users and middleware being used by a
-single or small number of users.
-
-At a similar level as ADIOS, but can be used in conjunction, are tools like
-DataSpaces~\cite{docan:2010:dataspaces}. They offer a way to request data set portions
-from a one component by the next componet in a data flow. In DataSpaces case,
-the data transfer does not have to correspond to the data from a single
-process.  Instead, DataSpaces will determine where the data is and issue
-requests to pull the data from the source to the sink in an on demand process.
+single or small number of users. We will utilize DataSpaces~\cite{docan:2010:dataspaces} to 
+ further integrate the I/O (ADIOS) layer with the storage layer (Sirocco).
+%
+% 
+%They offer a way to request data set portions
+%from a one component by the next componet in a data flow. In DataSpaces case,
+%the data transfer does not have to correspond to the data from a single
+%process.  Instead, DataSpaces will determine where the data is and issue
+%requests to pull the data from the source to the sink in an on demand process.
 
 For this project, we plan to use the Sirocco data storage mechanism to manage
-the actual data storage on all of the different tiers. Our initial thought on
-where the dividing line between the storage layer and the middleware is as
-follows. We will add a data management functionality as part of the storage
+the actual data storage on all of the different tiers. We will add data management functionality as part of the storage
 system layer to handle data discovery and metadata tasks. At the middleware
 layer, we will investigate offering differing data compression, fidelity,
 storage placement, and retrieval selection options.  Through this combination,
 we will be able to deliver a complete end-to-end system. We will investigate
 which functionality works best at the different layers for usability and
-scalability.
-
-In this project we will extend ADIOS~\cite{lofstead:2009:adaptible} with new APIs and novel
+scalability. Furthermore we will  extend ADIOS~\cite{lofstead:2009:adaptible} with new APIs and novel
 techniques to coordinate with the storage back-end. The key idea is offering
-the ability to negotiate with the storage system to agree on the tradeoff
-between data quality and response time. We will test our ideas on the next
-generation OLCF, SNL/LANL, and NERSC systems.
+the ability to negotiate with the storage system to agree on the trade-off
+between data quality and response time. 
 
-We plan to leverage the many inovations we discovered in the Lightweight File
-Systems~\cite{oldfield:lwfs} (LWFS) project and the Ceph~\cite{weil:osdi06} storage
-system project.  In the LWFS project, Sandia sought to demonstrate stripping
-down a file system to the bare minimum features required for any storage
-system. Then, additional functionality and semantics, such as POSIX-style
-directories and consistency requirements, were added in using auxiliary
-services separate from the stack or by layering providing a new interface to
-the storage system. The project's first phase demonstrated that using a core
-object storage system with integrated security providing authentication and
-authorization services, customized storage interfaces could be developed with
-exactly the overhead required for different applications. The second phase of
-LWFS, known as Sirocco~\cite{sirocco}, is investigating how to manage storage
-devices for efficient and scalable storage performance.  Sirocco has been in
-process for three years and has developed a usable storage infrastructure.
-
+We will also take advantage of the many innovations we discovered the Ceph~\cite{weil:osdi06} storage
+system project. 
+%
+%  In the LWFS project, Sandia sought to demonstrate stripping
+%down a file system to the bare minimum features required for any storage
+%system. Then, additional functionality and semantics, such as POSIX-style
+%directories and consistency requirements, were added in using auxiliary
+%services separate from the stack or by layering providing a new interface to
+%the storage system. The project's first phase demonstrated that using a core
+%object storage system with integrated security providing authentication and
+%authorization services, customized storage interfaces could be developed with
+%exactly the overhead required for different applications. The second phase of
+%LWFS, known as Sirocco~\cite{sirocco}, is investigating how to manage storage
+%devices for efficient and scalable storage performance.  Sirocco has been in
+%process for three years and has developed a usable storage infrastructure.
+%
 The Ceph project (ceph.com) started at UC Santa Cruz in 2004 and was initially
 funded by DOE/NNSA involving LLNL, LANL, and Sandia, with the goal to create an
 object-based parallel file system that addresses the well-known metadata
