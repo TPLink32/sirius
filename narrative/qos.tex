@@ -14,7 +14,7 @@ scalability, because they require a single entity that tracks updates in the sys
 Traditional file systems are good examples for this - most updates to files require updates 
 to their centrally maintained block allocation tables. 
 The opposite of file systems are ``pile'' systems, which, instead of keeping track of updates, search for 
-resources at request time. Pile systems allow very efficient writes because clients can write whereever
+resources at request time. Pile systems allow very efficient writes because clients can write wherever
 there is free space and there is very low bookkeeping overhead. However, unbounded search in pile systems
 is possible, e.g., when it is unclear whether the resource actually exists. 
 Methods to make searches more efficient without reverting to centralized bookkeeping usually involves 
@@ -86,7 +86,7 @@ this case the storage system.
 One of the key differentiating features this project offers is driving storage
 decisions through QoS \emph{reservations}, rather than continuing the current model
 of allowing applications to compete freely without restriction, for part or all of the storage
-resources. This traditional approach leads to intereference effects
+resources. This traditional approach leads to interference effects
 \cite{lofstead:2010:io-variability,liu_hotstorage} that can greatly impact IO performance predictability. 
 %Further, with the introduction of additional tiers in the
 %storage stack, the performance variability will increase with greater
@@ -96,12 +96,12 @@ Unfettered, this competition can yield a lower system and application performanc
 than the case where applications attempt to reserve storage resources, thereby enabling the storage system
 to reason over its performance in terms of reservations and actual
 performance.
-In the cases where an appication arrives that needs to run more urgently
+In the cases where an application arrives that needs to run more urgently
 than any of the other already running applications, the system
 can rapidly respond to it by reducing the amount of resources taken 
 by less urgent applications, allowing the urgent application to finish,
 and later reverting back to the previous committed resource level for the rest.
-This can be automatically enforced via user- (or adiminstrator-) specified \textit{policies}
+This can be automatically enforced via user- (or administrator-) specified \textit{policies}
 (section \ref{}).
 
 There are two fundamental causes that can impede the I/O performance
@@ -307,7 +307,7 @@ tagging system, we will offer defaults suitable for all applications that can
 be informed by simple extensions to the job scheduler or more advanced
 management through new APIs.
 
-\paragraph{Challenges:} The deep and heterogenous memory and storage
+\paragraph{Challenges:} The deep and heterogeneous memory and storage
 hierarchy we are assuming for this proposal complicates the
 relationship between workload-dependent and workload-independent
 metrics: the performance of a task can significantly differ depending
@@ -336,7 +336,7 @@ again, pseudo-random selection could reduce the number of resources
 that would be involved, thereby increasing scalability.
 
 \item The complexity of a utilization model involving the entire
-storage hieararchy with 100,000s of devices is potentially daunting.
+storage hierarchy with 100,000s of devices is potentially daunting.
 However, the utilization model can be simplified by modeling classes
 of devices as well as classes of requests. In particular, each
 device could restrict access to its content via a set of well-defined
