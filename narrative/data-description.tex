@@ -173,11 +173,11 @@ to raise or lower these sub-chunks up and
 down the storage stack. The SSIO layer will then manage the system metadata so
 that the user can transparently access any of these sub-chunks without
 the need to know where the data currently resides.
-This requires that when reading the data, the middleware will
-provide a time estimate of reading, and then allow the users to decide if
+At read time, the middleware will be required to 
+provide a time estimate, and then allow the users to decide if
 they will read less (e.g., only the highest priority sub-chunks)
 if the time estimate
-for reading exceeds their expectations. Existing Sirocco functionality may be
+for reading does not meet requirements. Existing Sirocco functionality may be
 sufficient for these purposes, but it must still be proven in practice.
 %
 
