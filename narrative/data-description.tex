@@ -9,14 +9,14 @@ raw data, but also metadata that expresses additional
 knowledge about that data.
 A user space variable, such as \textit{temperature}, may
 consist of a collection of chunks, possibly with different accuracy or
-resolution, and with each chunk representing
+resolution, and each chunk representing
 a different portion of the variable.
 A key advantage of having attributes at this lowest level is that it allows data
-semantics, user intentions, QoS requirements, and the relationship between user
+semantics, user intentions, QoS requirements, and the relationships between user
 data to be readily captured and embedded with the raw data so that these
 smallest pieces can each be managed independently or collectively, depending on
-the need. As an example, retrieving 3D field data generated from a simulation
-and then visualizing it requires the coordinates and connectivity variables be
+the need. As an example, retrieving and visualizing 3D field data generated from a simulation
+requires the mesh (consiting of coordinates and connectivity variables) be
 accessed simultaneously and with low latency to achieve a good user experience.
 Managing data at this low level
 bridges the semantics gap between applications, middleware, and storage
