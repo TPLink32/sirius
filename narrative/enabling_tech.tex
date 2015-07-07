@@ -36,18 +36,18 @@ version storage (via the fork mechanism).
 %of the storage system will offer the kinds of functionality and semantics this
 %project proposes.
 
-  From the user perspective, something like the
-{\bf ADIOS}~\cite{lofstead:2009:adaptible} API offers an API nearly as simple as POSIX, but with the
+From the user perspective,
+{\bf ADIOS}~\cite{lofstead:2009:adaptible} offers an API nearly as simple as POSIX, but with the
 ability to change the actual data transport mechanism without changing the
-source code. This affords writing to a single output API while shifting from
-writing to a file system to operating on the data using in situ techniques, without
-changing the source code. ADIOS has proven effective for writing to POSIX file
+source code. This flexibility allows users to shift from writing data to a file system
+to operating on data with in situ techniques without changing the source code.
+ADIOS has proven effective for writing to POSIX file
 systems, data staging systems~\cite{zheng:2010:predata,docan:2010:dataspaces,oldfield:2006:nessie}, workflow
 systems~\cite{Dayal:2014:flexpath}, and even through the WAN network 
-Part of this project's goals seeks to understand where the dividing line
+Part of this project's goals are to understand where the dividing line
 between the storage layer shared by all users and middleware being used by a
 single or small number of users. We will utilize DataSpaces~\cite{docan:2010:dataspaces} to 
- further integrate the I/O (ADIOS) layer with the storage layer (Sirocco).
+further integrate the I/O (ADIOS) layer with the storage layer (Sirocco).
 %
 % 
 %They offer a way to request data set portions
