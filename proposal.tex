@@ -93,39 +93,110 @@
 
 %%%%% Bibliography %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\renewcommand{\bibname}{Literature Cited}
-\bibliographystyle{cv}
+\renewcommand{\bibname}{ }
+%\bibliographystyle{cv}
 
 % Multiple bib files are possible.  Format is comma separated list,
 % relative to this directory, without .bib suffix.  So bib/a,bib/b,...
 
-\bibliography{bib/klasky,bib/abbasi,bib/maltzahn,bib/rutgers,bib/ainsworth,bib/liu,bib/lofstead}
 
-%%%%% Biographical Sketches %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%%%%%  BIOSKETCHES
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Appendix 1. Biographical sketches}
+\section*{Appendix 1: Biographical sketches}
 \input{bios}
 
-%%%%% Facilities %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+
+%%%%% 3.9 CURRENT AND PENDING SUPPORT
+\clearpage
+\addcontentsline{toc}{chapter}{Appendix 2. Current and pending support of the investigators}
+\section*{Appendix 2: Current and pending support}
+
+\vspace{2ex}
+\noindent
+Other support of the investigators follow in alphabetical order.
+\input{other-support}
+
+
+%%%%% Bibliography %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+%\addtocounter{chapter}{1}
+%\addcontentsline{toc}{chapter}{Literature Cited}
+\addcontentsline{toc}{chapter}{Appendix 3. Literature cited}
+\phantomsection
+\bibliographystyle{abbrv}
+\bibliography{bib/klasky,bib/abbasi,bib/maltzahn,bib/rutgers,bib/ainsworth,bib/liu,bib/lofstead}
+
+%%%%% 3.10 FACILITIES %%%%%
+\clearpage
+\addcontentsline{toc}{chapter}{Appendix 4. Description of facilities and resources}
+\section*{Appendix 4: Description of facilities and resources}
 
 \input{facilities}
 
-%%%%% Other Support %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% DATA MANAGEMENT PLAN %%%%%
+\clearpage
+\addcontentsline{toc}{chapter}{Appendix 5. Equipment}
 
-\input{other-support}
+\section*{Appendix 5: Equipment}
 
-%%%%% Appendices %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% \appendix
-%% \adjustmtc
 
-% Have we added the appendix line to the TOC?
-\provBoolDflt{addedappendixtoc}{false}
+\vspace{2ex}
+\noindent
+All equipment is listed in Appendix 4.
 
-\IfFileExists{appendices.tex}{ 
-  %% \phantomsection % Needed by hyperref because of the unnumbered section
-  %% \addcontentsline{toc}{chapter}{Appendices}
-  %% \setboolean{addedappendixtoc}{true}
-  \input{appendices} 
-}
+%%%%% DATA MANAGEMENT PLAN %%%%%
+\clearpage
+\addcontentsline{toc}{chapter}{Appendix 6. Data management plan}
+
+\phantomsection
+\input{appendix-data-management-plan.tex}
+
+
+%
+%%
+%\clearpage
+%%\addtocounter{chapter}{1}
+%%\addcontentsline{toc}{chapter}{Literature Cited}
+%\addcontentsline{toc}{chapter}{Appendix 3. Literature cited }
+%\phantomsection
+%\bibliographystyle{abbrv}
+%\bibliography{bib/klasky,bib/abbasi,bib/maltzahn,bib/rutgers,bib/ainsworth,bib/liu,bib/lofstead}
+%
+%
+%%
+%
+%%%%%% Biographical Sketches %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  %\input{bios}
+%%
+%%\section*{Appendix 2:Biographical sketches}
+%%%%%% Other Support %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\input{other-support}
+%
+%
+%%%%%% Facilities %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\input{facilities}
+%
+%
+%%%%%% Appendices %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% \appendix
+%%% \adjustmtc
+%
+%% Have we added the appendix line to the TOC?
+%\provBoolDflt{addedappendixtoc}{false}
+%
+%\IfFileExists{appendices.tex}{ 
+%  %% \phantomsection % Needed by hyperref because of the unnumbered section
+%  %% \addcontentsline{toc}{chapter}{Appendices}
+%  %% \setboolean{addedappendixtoc}{true}
+%  \input{appendices} 
+%}
 
 % Normally only have this post-award
 %% \ifthenelse{\boolean{includerevisedsow}}{
