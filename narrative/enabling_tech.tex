@@ -3,17 +3,16 @@
 Significant existing work will serve as the foundation upon which this project
 will be performed.
 %1
-At the lowest level is the Lightweight File Systems ({\bf LWFS}) project~\cite{oldfield:lwfs}.
-which had the  goal  to provide the simplest core services for
-a storage system and having  added functionality  using auxiliary
-services. 
+At the lowest level is the Lightweight File Systems ({\bf LWFS}) project~\cite{oldfield:lwfs},
+which provides the simplest core services for a storage system with additional functionality
+for using auxiliary services.
 %For example,
 %by eliminating consistency checks from the core system, applications already
 %managing consistency can eliminate the redundant check enhancing performance.
 %
 %The current LWFS project phase is investigating new ways for managing storage
 %devices. This project, 
-{\bf Sirocco} cam out of the LWFS project and offers a peer-to-peer style data storage device
+{\bf Sirocco} came out of the LWFS project and offers a peer-to-peer style data storage device
 mesh with data migrating based on use, required resilience, and available
 resources. For example, when writing data initially into Sirocco, required
 resilience characteristics are provided prompting Sirocco to ensure the data is
@@ -22,10 +21,10 @@ When a particular device is full, Sirocco determines if it should migrate the
 data to a new location or if it is a copy beyond the resilience requirement. If
 this copy must still be protected, Sirocco will find a place of sufficient 
 resilience to move the data to before deleting the local copy. Further, when
-data is requested, a client can ask any Sirocco server and Sirocco will find
-the data returning it to the client. If desired, the canonical data location
-can be moved on client request to offer better performance for the client. In
-additional features, a stored object can have multiple data forks that can
+data are requested, a client can ask any Sirocco server and Sirocco will find
+the data and return it to the client. If desired, the canonical data location
+can be moved on client request to offer better performance. Additionally,
+a stored object can have multiple data forks that can
 store different versions or aspects of the same data.  For this project, we
 will build on this Sirocco foundation for data placement, migration, and the
 version storage (via the fork mechanism). 
