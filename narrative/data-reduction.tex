@@ -213,14 +213,5 @@ to tune the parameters used in the reconstruction procedures. We shall refer to
 this paradigm as an Auditor.  We will examine the use of several auditors for
 the simulations which we will work with. One approach is to use a fluid-code to
 audit a kinetic code, which can be a good approximation over short periods of
-time. Once there is a large deviation (specified by the user) from the auditor
-to the original calculation, the data will be saved. This is a local operation,
-since the deviations will grow differently in space and in time. 
+time. 
 
-%%%%%%%%%%%%%
-We will be looking at a multi-throng
-approach to data-refactoring. One approach allows the user to specify
-information about their data to indicate if the data is spatially varying,
-space-and time varying, just time varying. This allows us to store information
-in NVRAM on each node (when and where necessary) to later preform compression
-in both space and time. 

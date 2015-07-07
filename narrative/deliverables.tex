@@ -1,10 +1,39 @@
 \section{Deliverables}
+The following are the per year project deliverables:
 
+\textbf{Year 1}
 \begin{itemize}
-\item plug-in architecture for Sirocco
-\item storage APIs to manipulate storing and retrieving data to specific tiers
-\item metadata management for data stored in multiple tiers using different compression
-\item metadata management for deeper data knowledge
-\item middleware hooks to manage new storage APIs
-\item example lossy and lossless compression plug-ins to demonstrate the effectiveness of this approach
+\item Develop new techniques for data description that allow users to 
+describe the data utility based on their expectations. (ORNL)
+
+\item Assemble and evaluate general techniques for refactoring of data
+that will be embedded in the system and can be selected by users or applications. (Brown/ORNL)
+\item Explore the use of application hints and utility of data to guide the initial placement of data. 
+(Rutgers/ORNL)
+\item Investigate the trade-off between ``filing'' and ``piling'' data. (UCSC/Sandia)
+\item Demonstrate a metadata service capable of serving both POSIX clients and our clients,
+but without consideration for authentication, authorization, or data migration. (Sandia/UCSC)
+\end{itemize}
+
+\textbf{Year 2}
+\begin{itemize}
+\item Develop a new type of querying system that allows an application to ask the storage system
+about completion timing information. (ORNL)
+\item Research autonomic data management strategies that
+can evaluate utility/cost tradeoff, and appropriately place/move data objects at runtime.
+\item Demonstrate a time bounded search approach for finding data within the storage system
+to identify data and the current location. This will update the cached information in the metadata
+service to short-circuit future requests for the data presuming that it does not migrate again soon. 
+\item Extend Sirocco to enforce data-centric metrics that help guide the QoS decisions.
+(Sandia/UCSC)
+\end{itemize}
+
+\textbf{Year 3}
+\begin{itemize}
+\item Work with DOE applicationexsiting ADIOS-enabled applications, framework using many of the applications to which we have access, including XGC1, GTC, and SPECFM3D
+%\item storage APIs to manipulate storing and retrieving data to specific tiers
+%\item metadata management for data stored in multiple tiers using different compression
+%\item metadata management for deeper data knowledge
+%\item middleware hooks to manage new storage APIs
+%\item example lossy and lossless compression plug-ins to demonstrate the effectiveness of this approach
 \end{itemize}
