@@ -3,25 +3,24 @@
 The classical workflow whereby the entire dataset is written to storage for
 later analysis is no longer viable owing to the sheer amount of data being
 generated. In future, it will be vital to take advantage of a priori
-information when writing and reading from the SSIO layer in order to gain
+information when a) writing and reading from the SSIO layer in order to gain
 performance and predictability, and to prioritize I/O so that the data that
-is most useful for end-user can be written in the time available. 
+is most useful for end-user can be written in the time available, and b) in
+performing {\em in situ} analysis before storing the information. 
 
 In the case of C. S. Chang described earlier, in common with most other
 applications scientists with whom we collaborate, information is provided on
 which data should be sent over to our SSIO layer in order that the best
-possible information is available for the subsequent analysis. The decision as how
-this should be accomplished generally involves data refactoring (re-organizing and
-reducing the data). 
+possible information is available for the subsequent analysis. The decision as
+how this should be accomplished generally involves data refactoring
+(re-organizing and reducing the data). 
 
-In this section we describe some common methods to reduce and re-organize data.
-There are many possibilities and the best choice will generally vary from case
-to case but, once settled, will not change from run to run. It will be
-important to understand when the time and resources required to identify and
-perform the ``best methods'' outweighs any eventual gains. Another critical
-research question concerns the quantification and control of the loss of
-information resulting from refactoring the data and using a reduced 
-dataset. 
+There are many possibilities for refactoring and the best choice will generally
+vary from case to case but, once settled, will not change from run to run. It
+will be important to understand when the time and resources required to
+identify and perform the ``best methods'' outweighs any eventual gains. Another
+critical research question concerns the quantification and control of the loss
+of information resulting from refactoring the data and using a reduced dataset. 
 
 A basic issue allied to refactoring is to understand how much information is
 actually present in a dataset and whether a refactoring based on a reduced
@@ -35,39 +34,38 @@ Broadly speaking, the path from data to knowledge consists of extracting
 underlying models or patterns from the datasets, and interpreting the resulting
 models. 
 
-Ideally, the scientists would perform the entire analysis stage {\em in situ} to
-extract the relevant information and, in the unlikely event of this being
-possible, would effectively circumvent the large data issue completely.  The
-problem of course is that this is unlikely to be possible since, by their
-nature, large scale simulations aim to discover new information that is often
-hidden in the form of higher order effects amongst the data deluge. In
-particular, this means if data thinning or truncation is applied willy nilly
-then one is in danger of effectively throwing out the baby with the bath water.
-One cannot store the entire data set in an easily accessible source, due to
-sheer size, yet one cannot reduce it prior to archival without risking losing
-the information one is trying to extract.  Viewed in this way, the problem
-would appear intractable. However, the above discussion fails to recognize that
-much of the data is redundant in the information theoretic sense.  That is to
-say, the amount of information contained in the data is often significantly
-less than the amount of data.  The difficulty stems from the fact that one does
-not know about this redundancy in advance \emph{without the benefit of 
-priori knowledge}. This knowledge can often be provided by the user or can 
-be acquired through experience of dealing with differing runs of the same
-code. 
+Ideally, the scientists would perform the entire analysis stage {\em in situ}
+to extract the relevant information and in so doing would effectively
+circumvent the large data issue completely.  The catch, of course, is that this
+is unlikely to be possible since, by their nature, large scale simulations aim
+to discover new information that is often hidden in the form of higher order
+effects amongst the data deluge. In particular, this means if data thinning or
+truncation is applied willy nilly then one is in danger of effectively throwing
+out the information one is seeking. It would seem that one cannot store the
+entire data set in an easily accessible source, due to sheer size, yet one
+cannot reduce it prior to archival without risking losing the information one
+is trying to extract.  Viewed in this way, the problem would appear
+intractable. However, the above discussion fails to recognize that much of the
+data is redundant in an information theoretic sense.  That is to say, the
+amount of information contained in the dataset is often significantly less than
+the amount of data.  The difficulty stems from the fact that one does not know
+about this redundancy in advance \emph{without the benefit of priori
+knowledge}. This knowledge can often be provided by the user or can be acquired
+through experience of dealing with differing runs of the same code. 
 
-Application knowledge means one can sometimes achieve drastically superior
+Deep application knowledge means one can sometimes achieve drastically superior
 reduction in the total data compared with what one might achieve otherwise.
-However, in the absence of such knowledge, we must equip the SSIO layers with
-generic data reduction techniques and re-organization techniques.
-Nevertheless, certain basic information on the semantics of the data is needed
-and must be supported by the overall infrastructure.  Likewise, another
-important consideration is knowledge regarding typical access patterns for data
-in a given application. Scientific applications often read and analyze data in
-a structured fashion and failure to respect this pattern, or to exploit it
-through prefetching, can significantly increase the overall execution time of
-the application. Accurate prefetching can only be achieved with access pattern
-analysis. This requires an SSIO layer which is able to prefetch data in an
-asynchronous fashion to take the bytes on the file.
+However, even in the absence of such high level knowledge, we must equip the
+SSIO layers with generic data reduction techniques and re-organization
+techniques. For instance, certain basic information on the semantics of the
+data is needed and must be supported by the overall infrastructure. Likewise,
+information regarding typical access patterns for data in a given application
+should be placed in the SSIO layers. Scientific applications often read and
+analyze data in a structured fashion and failure to respect this pattern, or to
+exploit it through prefetching, can significantly increase the overall
+execution time of the application. Accurate prefetching can only be achieved
+with access pattern analysis. This requires an SSIO layer which is capable of
+prefetching data in an asynchronous fashion to take the bytes on the file.
 
 \paragraph{State of the art:} {\bf Data Reduction Techniques} Data compression
 broadly consists of three basic steps: (1) Pre-processing to extract as much
@@ -88,25 +86,13 @@ infancy, especially in context of exascale simulations. Techniques that have
 been advocated range from simple difference filtering, bit-sorting, prefix
 transformation through to simply reordering the data.  What these, and other
 catch-all methods, fail to exploit is a priori information on the nature and
-provenance of the data. Moreover, it is now widely recognized that any
-opportunities for {\em in situ} analysis should be exploited as far as
-possible. What is less well understood, is how one should incorporate a priori
-information and how one can identify possibilities for {\em in situ} analysis.
-
-We shall exploit a priori information in the preprocessing stage through the
-use of relatively computationally intensive preprocessors that attempt to
-extract structure in the data {\em in situ}. This approach takes advantage of
-the increasingly wide cost gap between CPU operations versus storage-based
-operations. The preprocessor would generally be employed in situ and is used in
-a similar fashion to pre-processors in standard compression approaches such as
-FPC \cite{BurtscherFPC} in which an XOR operation against the previous data is
-used as a pre-processor.
+provenance of the data. 
 
 Our previous
 work~\cite{lakshminarasimhan2011compressing,lakshminarasimhan2011compressing,%
 gong2012multi,jenkins2012byte,gong2013parlo,boyuka2014transparent,%
 tang2014improving}
-has focused on many of these well known techniques to not only reduce the data
+has focused on several alternative techniques to not only reduce the data
 but also re-organize the data. Previously we have examined:
 
 
@@ -158,68 +144,104 @@ but also re-organize the data. Previously we have examined:
 	that the resultant data is smoother now, and can be reduced in each one
 	of the bins.  \end{itemize}
 
-\paragraph{Proposed research approach:} We will be looking at a multi-throng
+\paragraph{Proposed research approach:} It is now widely recognized that any
+opportunities for {\em in situ} analysis should be exploited as far as
+possible. What is less well understood, is how one should incorporate a priori
+information and how one can identify possibilities for {\em in situ} analysis.
+A preprocessor would be employed in situ and used in a similar fashion to
+pre-processors in standard compression approaches such as FPC
+\cite{BurtscherFPC} in which an XOR operation against the previous data is used
+as a pre-processor.  We shall exploit a priori information in the preprocessing
+stage through the use of relatively computationally intensive preprocessors
+(compared with FPC) that seek to extract structure in the data {\em in situ}.
+This approach takes advantage of the increasingly wide cost gap between CPU
+operations versus storage-based operations. 
+
+Ideally, the scientists would perform the entire analysis stage {\em in situ}
+to extract the relevant information and in so doing would effectively
+circumvent the large data issue completely.  The problem of course is that this
+is unlikely to be possible since, by their nature, large scale simulations aim
+to discover new information that is often hidden in the form of higher order
+effects amongst the data deluge. In particular, this means if data thinning or
+truncation is applied willy nilly then one is in danger of effectively throwing
+out the information one is seeking. It would seem that one cannot store the
+entire data set in an easily accessible source, due to sheer size, yet one
+cannot reduce it prior to archival without risking losing the information one
+is trying to extract.  Viewed in this way, the problem would appear
+intractable. However, the above discussion fails to recognize that much of the
+data is redundant in an information theoretic sense.  That is to say, the
+amount of information contained in the dataset is often significantly less than
+the amount of data.  The difficulty stems from the fact that one does not know
+about this redundancy in advance \emph{without the benefit of priori
+knowledge}. This knowledge can sometimes be provided by the user, can be
+acquired through experience of dealing with differing runs of the same code, or
+acquired during a run by adaptively selecting and tuning the algorithm based on
+metrics during runtime. 
+
+We will assemble a suite of general techniques for refactoring of data that
+will be embedded in the system and can be selected either by the user or by the
+application itself. The techniques will range from crude catch all methods such
+as those employed by general compression routines such as FPC, through to
+multi-resolution analysis using wavelets, including the methods on which we
+have worked (cited above).  These will then be mapped over into the different
+layers of the storage hierarchy.  We will also cater for user supplied
+``plug-ins'' for detection of features and store higher resolution data around
+the feature and lower resolution values which are further away from the
+features. The plug-ins could be used to override the general embedded
+techniques and would provide a mechanism for the transfer of a priori knowledge
+from the user to the hierarchy without imposing a burden on either. 
+
+We will also research the time it takes to re-organize the data and use the
+multi-layer approach to staging to understand where the data gets reduced and
+where it gets re-organized. Open questions are: 1) do we move the data over to
+other nodes to then reduce and re-organize, 2) do we first reduce the data and
+then later re-organize this data on different nodes?  3) do we use different
+cores on a node to do data-refactoring.  Similarly we will examine the cost of
+reading the data. It is clear that if we only read in the high-importance data
+it should improve the overall time to move the data from the SSIO layer to the
+application, but what happens when users want all of the data? There is an
+obvious penalty of having to take data in a hierarchical layout and then place
+this back to a single-layer view.  Additional research questions which must be
+addressed: Will some types of data (PIC data, finite element data, ...) be be
+conducive  for data-refactoring than others? How much semantic-domain knowledge
+will we need to get a dramatic improvement of the storage system over not doing
+anything special? 
+
+We will measure these methods using the fusion XGC simulation and the
+corresponding analysis routines which they use for their largest simulations.
+We will also work with Jeroen Tromp's SPECFM3D~\cite{SPECFEM3D} code, and the
+fusion GTC~\cite{klasky2003grid} code.  In all cases we will measure their
+impact from their current simulations, and their projected simulations and
+analytics on exascale machines. Since all three of these codes are part of the
+OLCF CAAR~\cite{CAAR} project for early access, there is strong belief that the
+simulations will be close to exascale simulations and we will be able to run
+these on prototypes of our SSIO layer to examine the full impact of
+data-refactoring.
+
+\paragraph{High Impact Challenges:} Maximal data reduction on the SSIO layer
+would result from storing only the code and the input parameters, and simply
+recalculating all of the results. This extreme is not feasible in practice
+owingto the size of the computation involved, but sheds light on the path to
+achieving a step change in data reduction. We shall investigate the possibility
+of writing a minimal set of information, and placing an ``auditor'' code in a
+docker container so that data can be re-generated with a {\em local}
+approximation of the full simulation. This is an entirely new approach to
+tackle the data overload by using preprocessors in which information is not
+simply stored in the form of raw data, but rather in the form of appropriate
+parameterized algorithms. A priori information on the nature of the data is
+used to choose the basic algorithm while the actual values of the data are used
+to tune the parameters used in the reconstruction procedures. We shall refer to
+this paradigm as an Auditor.  We will examine the use of several auditors for
+the simulations which we will work with. One approach is to use a fluid-code to
+audit a kinetic code, which can be a good approximation over short periods of
+time. Once there is a large deviation (specified by the user) from the auditor
+to the original calculation, the data will be saved. This is a local operation,
+since the deviations will grow differently in space and in time. 
+
+%%%%%%%%%%%%%
+We will be looking at a multi-throng
 approach to data-refactoring. One approach allows the user to specify
 information about their data to indicate if the data is spatially varying,
 space-and time varying, just time varying. This allows us to store information
 in NVRAM on each node (when and where necessary) to later preform compression
 in both space and time. 
-
-We will examine the different techniques for
-compression and re-organization along with examine techniques to use an
-error-estimator (gradients) to create a multi-resolution view of the data which
-can then be sampled, and placed in different quantiles of importance. These
-will then be mapped over into the different layers of the storage hierarchy.
-
-We will also investigate technique which can use ``plug-ins'' for detection of
-features and store higher resolution data around the feature and lower
-resolution values which are further away from the features. This
-re-organization must occur without increasing the total amount of storage than
-what the users intended. 
-
-We will also research the time it takes to
-re-organize the data and use the multi-layer approach to staging to understand
-where the data gets reduced and where it gets re-organized. Open questions are:
-1) do we move the data over to other nodes to then reduce and re-organize, 2)
-do we first reduce the data and then later re-organize this data on different
-nodes?  3) do we use different cores on a node to do data-refactoring.
-Similarly we will examine the cost of reading the data. It is clear that if we
-only read in the high-importance data it should improve the overall time to
-move the data from the SSIO layer to the application, but what happens when
-users want all of the data? There is an obvious penalty of having to take data
-in a hierarchical layout and then place this back to a single-layer view.
-Additional research questions which must be addressed: Will some types of data
-(PIC data, finite element data, ...) be be conducive  for data-refactoring than
-others? How much semantic-domain knowledge will we need to get a dramatic
-improvement of the storage system over not doing anything special? 
-
-We will measure these methods using the fusion XGC simulation and the
-corresponding analysis routines which they use for their largest simulations.
-We will also work with Jeroen Tromp's SPECFM3D code, and the fusion GTC code
-from Z. Lin. In all cases we will measure their impact from their current
-simulations, and their projected simulations and analytics on exascale
-machines. Since all three of these codes are part of the OLCF CAAR~\cite{CAAR}
-project for early access, there is strong belief that the simulations will be
-close to exascale simulations and we will be able to run these on prototypes of
-our SSIO layer to examine the full impact of data-refactoring.
-
-\paragraph{High Impact Challenges:} Since the greatest form of data reduction
-on the SSIO layer would be to only write the code, and the input data, and then
-recalculate all of the results, we want to understand how to write a minimal
-set of information, and then place an auditor code in a docker container so
-that data can be re-generated with an approximation of the calculation, but
-only valid over a limited amount of time.This new approach to tackle the data
-overload by using preprocessors in which information is not simply stored in
-the form of raw data, but rather in the form of appropriate parameterized
-algorithms. A priori information on the nature of the data is used to choose
-the basic algorithm while the actual values of the data are used to tune the
-parameters used in the reconstruction procedures. We shall refer to this
-paradigm as an Auditor.
-
-We will examine the use of several auditors for the simulations which we will
-work with. One approach is to use a fluid-code to audit a kinetic code, which
-can be a good approximation over short periods of time. Once there is a large
-deviation (specified by the user) from the auditor to the original calculation,
-the data will be saved. This is a local operation, since the deviations will
-grow differently in space and in time. 
-
