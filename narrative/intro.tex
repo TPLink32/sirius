@@ -120,7 +120,7 @@ Our proposal will be responsive to Theme 2: {\em Scalable Storage Software Infra
 3 & Mechanisms for data movement across the storage hierarchy & what are we doing. & \S \ref{sec:managing-data-life},  \S\ref{sec:migration} \\\hline
 4 &  Extend the interaction of IO middleware with the resource management system & We will manage data from the application  to the middleware to the storage system and allow them to have an autonomic interaction & \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery}  \\\hline
 5 & Design and implement of IO middleware architectures  & We will create APIs to guide the placement of chunks of data across the SSIO and autonomically move data when necessary& \S\ref{sec:data-description}, \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery} \\ \hline
-6 & Approaches to improve the ability of SSIO software to support checkpoint/restart & We will have utility functions defined for the lifetime of data, and allow CR data to be automatically placed in the fastest storage and then purged when it is no longer needed & \S \ref{sec:???}  \\
+6 & Approaches to improve the ability of SSIO software to support checkpoint/restart & We will have utility functions defined for the lifetime of data, and allow CR data to be automatically placed in the fastest storage and then purged when it is no longer needed & \S \ref{fig:ssio-bucket}  \\
 \hline
 \end{tabular}
 \end{center}
