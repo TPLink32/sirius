@@ -27,31 +27,39 @@ end systems to process the data close to where it is generated.
 However, given current architectural trends, emerging systems will have a
 vastly great gulf between the computing capability (the capability to
 generate data) and the storage capability (the capability to store the
-generated data). Moreoever, the complexity and heterogeniety of the
+generated data). Moreover, the complexity and heterogeneity of the
 architecture will introduce new tiers in the storage system. Instead of
-being a flat, roughly homogenous space in which data can be stored, the new
+being a flat, roughly homogeneous space in which data can be stored, the new
 storage hierarchy will be multi-tiered and greatly heterogeneous. 
-
-We address three main concerns for the data lifecycle in this work. First,
-we will explore the initial placement of data during the output process.
-Second, we will study techniques that can enhance migration without making
-the eventual lookup of data unbounded. And finally, we will study how data
-at each tier is managed. %FIXME
+%
+We address three main concerns for the data life-cycle in this work. First,
+we will {\it explore the initial placement} of data during the output process.
+Second, we will study techniques that can {\it enhance migration} without making
+the eventual lookup of data unbounded. And finally, we will study {\it manage each tier} in a scalable fashion. %FIXME
 
 Towards this end, we will utilize the faster layer of the
-storage hierarchies, such as DRAM, NVRAM and remote NVRAM, as the target for
+storage hierarchies, such as DRAM and NVRAM as the target for
 the initial write from an application. To mitigate the space concerns, we
-will use the techniques described in Section~\ref{sec:refactoring} to
+will use the techniques described in \S~\ref{sec:data-refactor} to
 identify and partition the segments of data with the highest utility for the
 application and use case. The rest of the data will be stored on the
-parallel file system, as is done today. We will leverage the supported data
-mirgration techniques in \Sir to determine the most appropriate location to
+lower layers of the file system, such as the parallel file system, as is done today. 
+We will leverage the supported data
+migration techniques in \Sir~to determine the most appropriate location to
 move the data once its in stable storage. This migration will be guided by a
 combination of the utility function defined by the application and the
-resources avialable to the storage system. Knowing the specific structural
+resources available to the storage system. Knowing the specific structural
 and semantic information (including relationships between data segments)
 about the data will enable migration to partition the data further to
-optimize access to data for reader. 
+optimize access to data for reader. For example, in Fig.~\ref{fig:ssio-bucket},
+P3 is initially placed in Campaign storage, since it's size and utility allow our system
+to place data there, but as the utility of data allows this chunk to be migrated to the 
+Long Term, and slower, storage layer to allow other data chunks from other users to take advantage
+of this space. Similar, P2 migrates from the Parallel FS to Campaign storage to clear room for other
+users. We will utilize this migration and eviction strategy for Checkpoint/Restart (C/R) data as well, 
+where data can be initially placed on NVRAM and then purged after the next (or next two) C/R files
+are written to NVRAM.
+
 We will also explore policies that combine the knowledge of data, its
 utility to users, the cost of maintaining data in long term storage and
 other metrics to decide how to purge irrelevant data from the storage
