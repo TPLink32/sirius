@@ -99,7 +99,7 @@ but also re-organize the data. Previously we have examined:
 \begin{itemize} 
 	
 \item Precision based re-organization. This is where the most significant bytes
-	of the data are all group together from each object. This data
+	of the data are all grouped together from each object. This data
 	generally will have a higher utility then the data with the least
 	significant bytes.  This process has the following three steps which
 	need to be efficiently implemented when data gets placed to the storage
@@ -111,7 +111,7 @@ but also re-organize the data. Previously we have examined:
 	techniques to allocate and deallocate this memory if the user will
 	specify that the data will be overwritten after it is written to the
 	storage system. This is often the case for many of the data quantities
-	written form the simulation, but there are many cases where, for
+	written from the simulation, but there are many cases where, for
 	example, we want to write all of the particles from a Particle In Cell
 	(PIC) simulation.  Since the particles will be used later in the
 	calculation, we need to duplicate the storage. Our observation with
@@ -181,7 +181,7 @@ it should improve the overall time to move the data from the SSIO layer to the
 application, but what happens when users want all of the data? There is an
 obvious penalty of having to take data in a hierarchical layout and then place
 this back to a single-layer view.  Additional research questions which must be
-addressed: Will some types of data (PIC data, finite element data, ...) be be
+addressed: Will some types of data (PIC data, finite element data, ...) be
 conducive  for data-refactoring than others? How much semantic-domain knowledge
 will we need to get a dramatic improvement of the storage system over not doing
 anything special? 
@@ -200,7 +200,7 @@ data-refactoring.
 \paragraph{High Impact Challenges:} Maximal data reduction on the SSIO layer
 would result from storing only the code and the input parameters, and simply
 recalculating all of the results. This extreme is not feasible in practice
-owingto the size of the computation involved, but sheds light on the path to
+owing to the size of the computation involved, but sheds light on the path to
 achieving a step change in data reduction. We shall investigate the possibility
 of writing a minimal set of information, and placing an ``auditor'' code in a
 docker container so that data can be re-generated with a {\em local}
