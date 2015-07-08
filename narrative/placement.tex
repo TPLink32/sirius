@@ -58,8 +58,8 @@ decision to purge may be made by the system based on operational metrics from
 system administrators or by the user. This phase optimizes the space available in the
 system. % to prevent out of space concerns for applications. 
 
-Our proposed research will address the management of data across the entire life cycle 
-in an application driven and system aware manner. 
+Our proposed research will address data management challenges across the entire 
+data life cycle in an application driven and system aware manner. 
 %given our thesis that more knowledge, and more specific knowledge about the
 %data, can allow the management of data to be optimized with reduced cost.
 Some of the high level research questions that we will explore are as follows: 
@@ -156,32 +156,47 @@ optimized at runtime, both from the application and system perspective?
 %     doesn't interfere with other I/O and isn't bottlenecked by some sort of
 %     global consistency?
 
-\subsubsection{Initial Placement of Data}
+\subsubsection{Data Placement}
 \label{sec:init-plac-data}
 
 \paragraph{Background:}
-When an application outputs data the storage and middleware layer needs to
-decide \textit{what} data is placed \textit{where} amongst the storage
-resource available to the system. This decision has far reaching impact
-throughout the life time of the data. Past work on data
-staging\cite{tongipdps15,qiansc15}\cite{docan2012dataspaces}\cite{abbasi2010datastager}
-in HPC systems has shown that different output techniques targetting
-different layers of the storage hierarchy can have a significant impact on
-the overhead observed by the application for I/O operations. The key
-requirements here are application-driven runtime mechanisms for dynamically, and
-deterministically, 
-managing data placement across the layers of the distributed storage
-hierarchy, coordinating data movement and data sharing between the
-components of the application workflow so as to maximize its utility to the
-application and reduce access costs. Our approach to data placement will
-leverage the increased set of knowledge about the data available to the
-middleware and storage system, potentially allowing for greater
-optimizations as compared to other storage solutions.
+When an application outputs data the storage and middleware layers needs to
+decide \textit{what} data is placed \textit{where} in the multi-level storage system. 
+This placement decision can have a significant impact on data management 
+throughout the life time of the data. For example, our past work on data 
+staging~\cite{tongipdps15,qiansc15,docan2012dataspaces,abbasi2010datastager} 
+on HPC systems with multi-level memory structures has shown that different 
+output techniques targeting different layers of the storage hierarchy can have a 
+significant impact on the overhead observed by the application for I/O operations. 
 
-\paragraph{Application Hints:}
+%The key requirements here are application-driven runtime mechanisms for dynamically, 
+%and deterministically, managing data placement across the layers of the distributed storage 
+%hierarchy, coordinating data movement and data sharing between the components of the 
+%application workflow so as to maximize its utility to the application and reduce access costs. 
+
+A key requirement is application-driven runtime mechanisms for dynamically managing 
+data placement across the layers of the distributed storage hierarchy throughout the 
+data lifecycle, coordinating data movement and data sharing between the components 
+of the application workflow, with the overarching goal of maximizing the relative utility 
+to the application as well as the system while reducing access costs. 
+%
+As noted before, the complexities of heterogeneous multi-level storage structures requires 
+adaptive placement policies are required to be implemented to optimally utilize storage 
+resources vertically (across deep memory hierarchies) and horizontally (across nodes 
+within a memory level) while accommodating dynamic application requirements and transient 
+system states. 
+%
+Our approach in the proposal is to increase knowledge about the data and its use within the 
+application, and leverage this knowledge to drive data placement and overall management. 
+
+%Our approach to data placement will leverage the increased set of knowledge about the data 
+%available to the middleware and storage system, potentially allowing for greater optimizations 
+%as compared to other storage solutions.
+
+\paragraph{Soliciting application {\em hints}:}
 As described in \S\ref{sec:data-refactor} one of the main components of our
 proposed storage system is the ability to refactor and reduce data as it is
-generated, and to reorgnized and regenerate the data as it is accessed. We
+generated, and to reorganized and regenerate the data as it is accessed. We
 carry this principle into the placement and movement of data by allowing
 applications to define hints and policies that guide \textbf{what} data is
 placed \textbf{where}. We will explore the use of application hints in two
@@ -197,7 +212,10 @@ write) and from storage to application (during the read). In both cases we
 will study what minimal set of annotations and hints can allow the storage
 system to minimize data movement and optimize the resources consumed by I/O. 
 
-\paragraph{Data Utility:} We will formulate the concept of utility (from an
+Application hints can provide additional information to the runtime based on the users' knowledge of the application workflow as well as on past experiences, for example, possible data access patterns, nature of regions of interest, and domain specific information. This application level information will be added to the specification of the workflow and can provide advisory inputs to efficiently help the runtime make smarter decisions about the placement and/or movement of data objects and the scheduling and execution of tasks, as well as to effectively manage trade-offs between for example, power consumption and time-to-solution. 
+
+
+\paragraph{Defining data utility:} We will formulate the concept of utility (from an
 application perspective) that is assigned data objects to quantify the
 benefits of placement and/or movement actions to application. These
 utilities may be based on the importance of the data objects, the frequency

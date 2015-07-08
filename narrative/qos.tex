@@ -48,17 +48,19 @@ but offer little placement flexibility. Partitioning can also be fine in one dim
 in another to allow flexibility where it is most needed while still ensuring fast finding. For 
 example, a hash function can finely partition a low storage tier but each partition can extend 
 across multiple tiers so that a search still has to occur in order to find a resource on a particular 
-tier.  Specifically, we will address the following research questions:
-\begin{tightItemize}
-  \item Can we make any guarantees in a scalable decentralized system?; 
- \item  What quality of service metrics can be make guarantees on in a scalable
-    way?;
-  \item What kind of error rates will we have in our estimation and what error
-    rates are acceptable?;
-  \item How much will the qos scheduler, admission control, manager cost in
-    terms of resources and time?;
-  \item  How do we make the scheduler scalable with the size of the system?
-\end{tightItemize}
+tier.  
+
+%Specifically, we will address the following research questions:
+%\begin{tightItemize}
+%  \item Can we make any guarantees in a scalable decentralized system?; 
+% \item  What quality of service metrics can be make guarantees on in a scalable
+%    way?;
+%  \item What kind of error rates will we have in our estimation and what error
+%    rates are acceptable?;
+%  \item How much will the qos scheduler, admission control, manager cost in
+%    terms of resources and time?;
+%  \item  How do we make the scheduler scalable with the size of the system?
+%\end{tightItemize}
 
 \subsubsection{QoS}
 \paragraph{Background:} Quality of Service (QoS) refers to the
@@ -292,9 +294,11 @@ not just based on age, but also based on this priority. This will help ensure
 the shortest time to insight by making sure the most important machine runs
 have priority to use system resources.
 
-\paragraph{Related Work:} On current HPC systems, absolute IO performance
+\paragraph{Related Work:} On current production HPC systems, absolute IO performance
 guarantees are not possible. Previous work \cite{lofstead:2010:io-variability,liu_hotstorage} 
-from this project team uses a client-assisted approach to mitigate IO variablity.
+from this project team uses a client-assisted approach to mitigate IO variablity at scale (100,000-core).
+Recently server side QoS scheduling has also been studied for HPC applications \cite{Dai:2014}.
+However, the key hurdle of scalability has not been solved.
 Existing efforts on scheduing resources~\cite{thapaliya:2014:io-cop,dorier:2014:calciom} attempt to offer
 admission control to maximize storage performance. Unfortunately, these efforts
 are limited to participating applications and only applications from a single
@@ -303,7 +307,11 @@ approach that handles clients from all connected platforms and does not
 require modification to use new storage access APIs. By using a priority
 tagging system, we will offer defaults suitable for all applications that can
 be informed by simple extensions to the job scheduler or more advanced
-management through new APIs.
+management through new APIs. On the other hand, storage QoS has been
+studied for enterprise applications and systems \cite {Gulati:2007,Gulati:2010,Gulati:2012}
+in virtualized environments. It is not straightforward to adapt these solutions
+to HPC storage systems because of the scalability and efficiency concerns, despite
+they achieved very good performance isolations.
 
 \paragraph{Challenges:} The deep and heterogeneous memory and storage
 hierarchy we are assuming for this proposal complicates the
