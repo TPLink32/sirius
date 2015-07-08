@@ -1,11 +1,11 @@
 \subsection{Data Refactoring} \label{sec:data-refactor} 
 
-The classical workflow whereby the entire dataset is written to storage for
-later analysis is no longer viable owing to the sheer amount of data being
-generated. In future, it will be vital to take advantage of a priori
+The classical workflow where the entire dataset is written to storage for
+later analysis is no longer viable simply because the amount of generated data is too large.
+In future, it will be vital to take advantage of a priori
 information when 1) writing and reading from the SSIO layer in order to gain
 performance and predictability, and to prioritize I/O so that the data that
-is most useful for end-user can be written in the time available, and 2) in
+is most useful for end-user can be written in the time available, and 2)
 performing {\em in situ} operations and analysis before storing the information.
 
 In the case of C. S. Chang described earlier, and common with most other
@@ -15,7 +15,7 @@ important information is available for subsequent analysis.
 This is generally accomplished using refactoring, which includes re-organization and reductions of the data.
 
 There are many possibilities for refactoring and the best choice will generally
-vary from case to case but, once settled, will not change from run to run. It
+vary from case to case but, once settled, will typically not change from run to run. It
 will be important to understand when the time and resources required to
 identify and perform the ``best methods'' outweighs any eventual gains. Another
 critical research question concerns the quantification and control of the loss
