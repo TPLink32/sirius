@@ -130,6 +130,19 @@ established so more science can be done on the exascale systems. Without
 predictable performance, the I/O layer performance must be guessed by the
 users, which quite often means that science is not performed well.
 
+Our work is to take much of the ``magic'' and ``tricks''
+away from optimizations necessary for users to understand to gain optimizations
+on current file systems, and provide a systematic approach to describing enough
+of their intentions and knolwedge from the {\it user} space along with much
+of the hidden knowledge of the underlying storage layers. For example,
+   ADIOS contains most of the ``best practices'' for I/O optimizations for
+   each file system, and as users place more knowledge into ADIOS, ADIOS
+   can make optimizations. This becomes much more difficult as users want to
+   describe more about the storage hiearchy and more about the priorities of
+   different chunks of data. Our research is aimed to allow users to simply
+   describe this and get the descriptions of system knowledge so that the
+   best optimizations can be made.
+
 %\underline{Principle 3:} {\bf Users goals define data policies} In a data-centric SSIO system. 
 %We introduce data-driven SSIO optimizations by
 %enabling users to define data manipulations (re-organizations) at a high level
