@@ -212,6 +212,9 @@ write) and from storage to application (during the read). In both cases we
 will study what minimal set of annotations and hints can allow the storage
 system to minimize data movement and optimize the resources consumed by I/O. 
 
+Application hints can provide additional information to the runtime based on the users' knowledge of the application workflow as well as on past experiences, for example, possible data access patterns, nature of regions of interest, and domain specific information. This application level information will be added to the specification of the workflow and can provide advisory inputs to efficiently help the runtime make smarter decisions about the placement and/or movement of data objects and the scheduling and execution of tasks, as well as to effectively manage trade-offs between for example, power consumption and time-to-solution. 
+
+
 \paragraph{Defining data utility:} We will formulate the concept of utility (from an
 application perspective) that is assigned data objects to quantify the
 benefits of placement and/or movement actions to application. These
