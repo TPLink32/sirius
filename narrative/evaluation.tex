@@ -26,12 +26,12 @@ In addition to benchmarking the various S2E2 methods and tools in isolation,
 we will work with our science partners at Princeton University (J. Tromp),
 PPPL (C. S. Chang), and U. C. Irvine (Z. Lin), along with the OLCF and SNL,
 to evaluate the leading edge applications working with the storage system to
-determine performance predictability and data quality.  Our evaluation will
+determine performance predictability and data quality.  Our evaluation 
 will use the multiple storage layers available on systems at both SNL and the
 OLCF.  For example, the sith cluster at the OLCF
 (https://www.olcf.ornl.gov/computing-resources/sith/) has its own Lustre
 storage system, SSDs on each node, and is connected to the center-wide Lustre
-file system. We will perform test in both the system level (on sith) and in
+file system. We will perform tests in both the system level (on sith) and in
 the user level (on titan), and evaluate our results using our application
 knowledge.
 
@@ -44,14 +44,14 @@ the data; and (3) how well we can migrate data and update our server to
 determine if data might get out-of-sync between data chunks.  We will need to
 clearly understand how well this system works on current systems and we will
 need to investigate this on the next generation OLCF system (Summitt) and the
-SNL system (Trinity) which we will have early access, along with all of the
+SNL system (Trinity) which we will have early access along with all of the
 applications we will be investigating.
 
 The second part of our evaluation will cover data accuracy for data read when
 there are time constraints due to users wanting to read in many time slices in
 a given amount of time. For example, J. Tromp's visualization may contain
 hundreds of time slices, but when we visualize this data, we would like very
-fast access to the data ``first look''. We will determine if the data will be
+fast access to the data ``first look.'' We will determine if the data will be
 sufficiently representative of the overall data.  We will work with our
 application partners to assess the visualization accuracy using different data
 qualities including comparisons between a time-constrained test vs. a test

@@ -117,7 +117,7 @@ Our proposal will be responsive to Theme 2: {\em Scalable Storage Software Infra
 \multicolumn{2}{|c|}{\bf Call area} & \multicolumn{1}{|c|}{\bf Relevant S2E2 work} & \multicolumn{1}{|c|}{\bf See} \\\hline\hline
 1 & Data abstractions & Create new APIs  and annotations for users to guide the system for placement  & \S\ref{sec:data-description} \\\hline
 2 & Mapping science data models onto hierarchical storage &  Create the ability to re-organize, reduce and prioritize data chunks from an object& \S\ref{sec:data-refactor}, \S\ref{sec:data-description},  \S\ref{sec:managing-data-life}\\\hline
-3 & Mechanisms for data movement across the storage hierarchy & what are we doing. & \S \ref{sec:managing-data-life},  \S\ref{sec:migration} \\\hline
+3 & Mechanisms for data movement across the storage hierarchy & {\color{red}what are we doing. CHECK-tsr} & \S \ref{sec:managing-data-life},  \S\ref{sec:migration} \\\hline
 4 &  Extend the interaction of I/O middleware with the resource management system & We will manage data from the application  to the middleware to the storage system and allow them to have an autonomic interaction & \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery}  \\\hline
 5 & Design and implement of I/O middleware architectures  & We will create APIs to guide the placement of chunks of data across the SSIO and autonomically move data when necessary& \S\ref{sec:data-description}, \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery} \\ \hline
 6 & Approaches to improve the ability of SSIO software to support checkpoint/restart & We will have utility functions defined for the lifetime of data, and allow CR data to be automatically placed in the fastest storage and then purged when it is no longer needed & \S \ref{fig:ssio-bucket}  \\
@@ -137,7 +137,7 @@ The challenges addressed by this proposal are illustrated by a problem our team 
 The latest use case is from  the XGC1~\cite{chang2006integrated} simulation from C. S. Chang (PPPL), who is one of the largest users of Leadership Class Facilities (over 300M hours at DOE facilities). They launched a series of simulations, planning to produce 100~PB of data over 10 days of total runtime on the Titan system. An expert team was assembled from the user group, the  I/O, and storage  team to help with ensuring that the maximum amount of information would be
 saved. Due to physical resource limitations, the simulation was restricted to write about 10~PB initially. However, once the time to write and read, together with the financial cost to archive this much data were fully explored, this plan was significantly reduced. At each stage, the particular expert knowledge regarding the file system and the archival storage were not known to the user team. As these particulars were realized, significant modifications in the plans were made. Eventually, they were forced to make very hard decisions in reducing the desired 100~PB over a 10-day run to only 5~PB of data. 
 
-This forced the team to carefully scrutinize the large amount of data to be generated and save only the very most important pieces. Further, they had to break this greatly reduced data into two categories: first data they thought they would need to access while the simulation was running or shortly thereafter, and second, data they would need after the whole campaign was finished. The former category would be stored on disk, and the later would be archived. Additionally, they needed to figure out how to efficiently retrieve these different categories of data for post-processing, analysis and visualization.
+This forced the team to carefully scrutinize the large amount of data to be generated and save only the very most important pieces. Further, they had to break this greatly reduced data into two categories: first, data they thought they would need to access while the simulation was running or shortly thereafter, and second, data they would need after the whole campaign was finished. The former category would be stored on disk, and the later would be archived. Additionally, they needed to figure out how to efficiently retrieve these different categories of data for post-processing, analysis and visualization.
 
 Finally, the team had to develop new application specific data reduction techniques and encode them into the ADIOS middleware I/O layer. In order to do this, they had to implement a rudimentary discovery system to determine which data were located on disk, and which were on tape archive.  
 
@@ -232,9 +232,9 @@ a given user request amongst all of the requests from all users, and try to opti
 entire system accordingly. Today the problem is that when a user writes there is a
 tremendous amount of interference from other users on the system who may be
 writing or reading at the same time, leading to unpredictable performance.
-By requiring a certain quality of service the system could potentially lock out other users. 
+By requiring a certain QoS of service the system could potentially lock out other users. 
 The storage system must also automatically move data from one tier of the storage to
-another, without affecting the quality of service that was offered at request
+another, without affecting the QoS that was offered at request
 time. The storage system must be able to organize
 data amongst all of the tiers of storage in a known, consistent way.
 
@@ -258,7 +258,7 @@ simulations, and then operate on this data and possibly write data, we see
 that in general these users will be running on much less compute resources
 than the users who are running the simulation. One of the important aspects
 of this class of user is that they want a reduction of latency and they
-require a certain amount of quality of service as well. When someone is
+require a certain amount of QoS as well. When someone is
 doing interactive analysis and expects that the data they read in is about
 10s, but it turns into 1,000s, the user typically tends to either wait
 another day for doing their analysis or gets frustrated and reads much less

@@ -11,7 +11,7 @@ across storage layers, and facilitates data discovery. Since we need to also
 support access through POSIX APIs for existing application and system
 integration, we must address how to bridge the drastic differences between the
 decomposed objects of potentially varying fidelity with potentially multiple
-version with a POSIX API-compatible interface.
+version{\color{red}s?} with a POSIX API-compatible interface.
 
 Hierarchical Storage Management (HSM) systems~\cite{blaze:1992:hsm} offer a
 strict caching approach for managing different storage capacities trading off
@@ -43,9 +43,9 @@ into the entire naming and metadata service.
 While strongly encouraging data to stay in a particular type of storage tier,
 ultimately it must be possible to flush this data to make room for other uses.
 Sirocco offers a ``flush'' operation that forcibly migrates data to the
-long-term resilience requirements freeing space in the scare resources. In
+long-term resilience requirements, freeing space in the {\color{red}scare CHECK-tsr} resources. In
 many, if not most cases, this will move data towards or actually on to a device
-like tape intended for long-term storage.
+like tape, intended for long-term storage.
 
 \paragraph{Approach:}
 Our goal with this proposal is to offer a similar capability but with a finer
@@ -61,18 +61,18 @@ approach, we will enable more effective use of close/fast/small storage tiers
 and prioritize objects with high importance.  Traditional HSM stores an entire
 file on a tier making room if insufficient space is available.  With this shift
 to a partial variable granularity, a 1 PB output with 500 GB of ``high
-interest'' data can limit this costly tier usage to just 500 GB greatly
+interest'' data can limit this costly tier usage to just 500 GB, greatly
 improving storage availability in the close/fast/small tier and focus
-performance/capacity costs to get the most science from from the platform.  By
+performance/capacity costs to get the most science from the platform.  By
 only placing ``high interest'' data in the close/fast/small tier, we will
 effectively reduce pressure forcing data migration hurting both writing
 performance and the later data analytics required for generating scientific
 insights.  Sirocco identifies a data segment using a
-contaier/object/fork/address tuple that can have associated attributes. We will
-both add a special attribute indicating that this record is of ``high
+container/object/fork/address tuple that can have associated attributes. {\color{red}We will
+add both a special attribute indicating that this record is of ``high
 interest'' as well adapting the migration mechanisms to use this attribute, if
 present, to strongly encouraging keeping the record in close/fast/small storage
-as long as possible.
+as long as possible. CHECK sentence-tsr}
 
 Meanwhile, we need to be able to locate or ``discover'' the data should it
 move.  The challenge for discovery is that potentially, data will migrate from
@@ -91,10 +91,10 @@ this location. This new work will be an expansion of Sirocco's currently
 planned features.
 
 We plan to address scalability problems by continuing with the LWFS and Sirocco
-model. LWFS and Sirocco have take an approach similar to the pure object
+model. LWFS and Sirocco have taken an approach similar to the pure object
 stores, but with a focus on the HPC setting. They have abandonded a fully POSIX
 compliant metadata service as the default model in favor of a
-container/object/fork/addrress tuple for identifying data similar to those used
+container/object/fork/address tuple for identifying data similar to those used
 for pure object stores. By having a service that addresses the object
 collections that comprise a single thing, such as a variable or timestep
 output, just enough metadata is maintained to make the storage system usable
@@ -108,14 +108,14 @@ using the Sirocco object storage. We will investigate how to make the naming
 and discovery service scalable under the circumstances outlined above.
 
 \paragraph{Related Work:}
-Structurally, the traditional POSIX naming service offeriing a hierarchical
+Structurally, the traditional POSIX naming service offering a hierarchical
 space consisting of directories and files may be maintained for backwards
 compatibility. However, this view will not offer the same strict semantics
 POSIX defines. We must break these strict semantics to address scalability
 problems forced by the serialized access to a single source for creating and
 accessing files.  Several efforts~\cite{patil:2007:giga+,carns:pvfs} have
 worked to reduce this contention by doing things like reducing the serialized
-scope to a single directory or subtree or allowing a single process in a
+scope to a single directory or subtree, or allowing a single process in a
 collective file operation talk with the metadata service and distribute a
 handle to other participants. While these approaches help, they do not address
 this key scalability limitation of serialized access--even if the metadata
@@ -151,15 +151,15 @@ functionality.
 Our research in this area will address the following questions:
 (1) Since our metadata is distributed and partitioned, how do we respond to user
   requests within a specified time bound with accuracy? How do we estimate the
-  completeness of the response?
+  completeness of the response?, 
 (2) For POSIX API requests, how do we respond if only varying data fidelity
-  levels are available for the requested data object?
+  levels are available for the requested data object?, 
 (3) What level of metadata should we maintain and keep in sync to enhance
-  response quality within time-bound requests?
+  response quality within time-bound requests?, 
 (4) How much time should be allowed for searching for metadata given the user
   specified limits for data retrieval since the user will still have to spend
   the data retrieval time from different devices? How do we integrate the read
-  time overhead into the metadata requests?
+  time overhead into the metadata requests?, and
 (5) How do we provide appropriate security while maintaining scalability,
   particularly with the distributed metadata stores?
 
@@ -174,8 +174,8 @@ within the storage system to identify data and the current location.  This will
 update the cached information in the metadata service to short-circuit future
 requests for the data presuming that it does not migrate again soon.
 
-\item {\bf Milestone 3:} Demonstrate incorporating A\&A and show scalability under
-both application load as well as storage system pressures showing that we can
+\item {\bf Milestone 3:} Demonstrate incorporating {\color{red}A\&A (what does this stand for CHECK-tsr)} and show scalability under
+both application load as well as storage system pressures, showing that we can
 tolerate both loads and maintain quality of service.
 
 \end{tightEnumerate}

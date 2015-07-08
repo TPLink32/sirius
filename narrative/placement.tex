@@ -67,7 +67,7 @@ Some of the high level research questions that we will explore are as follows:
 %What methods can be utilized in the initial placement of data that do not impose expensive
 %costs on discovery, consumption and migration? 
 (2) How can the placement and migration of data across a multi-tiered storage hierarchy be 
-optimized at runtime, both from the application and system perspective?,
+optimized at runtime, both from the application and system perspective?, {\color{red} where is 3?} 
 %(3) How can we migrate data throughout the layers of storage
 %without making the discovery process unbounded? 
 (4) How can knowledge about the application used to better prepare the data for consumption?, and 
@@ -196,18 +196,18 @@ application, and leverage this knowledge to drive data placement and overall man
 \paragraph{Soliciting application {\em hints}:}
 As described in \S\ref{sec:data-refactor} one of the main components of our
 proposed storage system is the ability to refactor and reduce data as it is
-generated, and to reorganized and regenerate the data as it is accessed. We
+generated, and to reorganize and regenerate the data as it is accessed. We
 carry this principle into the placement and movement of data by allowing
 applications to define hints and policies that guide \textbf{what} data is
 placed \textbf{where}. We will explore the use of application hints in two
 distinct areas. Firstly, we will study the challenges and tradeoffs of either
-augmenting the I/O interface with hints or allowing the additional of an
+augmenting the I/O interface with hints, or allowing the addition of an
 external specification that defines the use case. Our experience with
 developing modern I/O interfaces has shown that both techniques have value,
 and we will investigate the set of hints that are embedded in the
 application code vs. those that are described within an non-compiled
 specification. Secondly, we will study how hints can guide the initial data
-placement as data is handed off from application to storage ( during a
+placement as data is handed off from application to storage (during a
 write) and from storage to application (during the read). In both cases we
 will study what minimal set of annotations and hints can allow the storage
 system to minimize data movement and optimize the resources consumed by I/O. 
@@ -220,7 +220,7 @@ application perspective) that is assigned data objects to quantify the
 benefits of placement and/or movement actions to application. These
 utilities may be based on the importance of the data objects, the frequency
 with which they are accessed, etc., and are used during runtime data
-management. For example, data objects will higher utility value may be
+management. For example, data objects with higher utility value may be
 placed closer (e.g., in faster memory) to the accessing application.
 Similarly, when it is time to evict data objects from a higher level storage
 layer, the decision about which object to evict may take the utility into
@@ -234,7 +234,7 @@ Autonomic data placement and/or
 movement will leverage the information gathered at runtime together with
 predictive analysis requirements. This information may include runtime
 spatial-temporal data access patterns, physical network topology
-information, and etc., which will be tracked and gathered at runtime, and
+information, {\color {red}and etc., CHECK-tsr} which will be tracked and gathered at runtime, and
 then be used to estimate and predict the behavior of coupled applications in
 the rest of simulation-time. A key research aspect here will be to
 anticipate accesses, for example using learning techniques or using
@@ -375,8 +375,7 @@ bounded estimates about time to first byte for a potential read operation.
 \label{sec:manag-data-mult}
 
 \paragraph{Background:} Providing data to users for knowledge discovery is
-one of the primary purposes of our storage system design. There is
-There is a
+one of the primary purposes of our storage system design. There is a
 spectrum of approaches on how
 this can be accomplished: On one end the storage system can aim to maintain
 full resolution data in the highest tiers of the storage hierarchy. This
@@ -439,7 +438,7 @@ clients almost never go offroad.
 
 \subsubsection{Purging data from the system}
 \label{sec:purging-data}
-(only outline since I have to go)
+{\color{red}(only outline since I have to go)}
 1. Purging is important from the perspective of preventing uncontrolled
 growth of data on a system
 2. Purging is hard because no one wants to lose data and we need to explore

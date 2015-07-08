@@ -25,7 +25,7 @@ A basic issue allied to refactoring is to understand how much information is
 actually present in a dataset and whether a refactoring based on a reduced
 order representation might prove effective. It is useful to classify scientific
 data into two basic categories: structured data (in the sense that it satisfies
-a known or relatively simple model) or unstructured data (in which information
+a known or relatively simple model), or unstructured data (in which information
 content follows no obvious or explicit model).  Although scientific data
 generally contains random components (due to finite precision, measurement and
 calibration effects etc.), useful scientific data is never purely random.
@@ -105,11 +105,11 @@ but also re-organize the data. Previously we have examined:
 	system and from the storage system.  First, the data needs to be
 	re-arranged which involves memory operations and needs to be done
 	in-situ. This operation involves no communication.  Data needs to be
-	copied, so the memory requirements are increased. At most this requires
+	copied, so the memory requirements are increased. {\color{red}At most this requires
 	two copies an individual dataset in memory, and we will investigate
 	techniques to allocate and deallocate this memory if the user will
 	specify that the data will be overwritten after it is written to the
-	storage system. This is often the case for many of the data quantities
+	storage system CHECK sentence-tsr}. This is often the case for many of the data quantities
 	written from the simulation, but there are many cases where, for
 	example, we want to write all of the particles from a Particle In Cell
 	(PIC) simulation.  Since the particles will be used later in the
@@ -133,7 +133,7 @@ but also re-organize the data. Previously we have examined:
 	highest frequency either on the slowest storage tiers, or if the data
 	sizes are prohibitively  costly, not even write out the highest
 	frequency. This binning of data in frequency space can take as an input
-	(storage bandwidth knowledge, storage size limitations, and user
+	(storage  {\color{red}ending )? CHECK-tsr} bandwidth knowledge, storage size limitations, and user
 	intentions of how long the majority of the data will be frequently
 	accessed.  In order to fully take advantage of frequency based
 	re-organization we have devised a scheme where the data pre-conditioner
@@ -157,7 +157,7 @@ This approach takes advantage of the increasingly wide cost gap between CPU
 operations versus storage-based operations. 
 We will assemble a suite of general techniques for refactoring of data that
 will be embedded in the system and can be selected either by the user or by the
-application itself. The techniques will range from crude catch all methods such
+application itself. The techniques will range from crude catch-all methods such
 as those employed by general compression routines such as FPC, through to
 multi-resolution analysis using wavelets, including the methods on which we
 have worked (cited above).  These will then be mapped over into the different
