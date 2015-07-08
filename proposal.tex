@@ -142,13 +142,17 @@ Other support of the investigators follow in alphabetical order.
 
 
 %%%%% Bibliography %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \clearpage
 %\addtocounter{chapter}{1}
 %\addcontentsline{toc}{chapter}{Literature Cited}
 \addcontentsline{toc}{chapter}{Appendix 3. Literature cited}
 \phantomsection
+\begingroup
+\renewcommand{\chapter}[2]{}%
 \bibliographystyle{abbrv}
 \bibliography{bib/klasky,bib/abbasi,bib/maltzahn,bib/rutgers,bib/ainsworth,bib/liu,bib/lofstead}
+\endgroup
 
 %%%%% 3.10 FACILITIES %%%%%
 \clearpage
@@ -236,3 +240,4 @@ All equipment is listed in Appendix 4.
 %%% mode: latex
 %%% TeX-master: t
 %%% End:
+\grid
