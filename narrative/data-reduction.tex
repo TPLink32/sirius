@@ -88,7 +88,7 @@ catch-all methods, fail to exploit is a priori information on the nature and
 provenance of the data. 
 
 Our previous
-work~\cite{lakshminarasimhan2011compressing,lakshminarasimhan2011compressing,%
+work~\cite{lakshminarasimhan2011compressing,%
 gong2012multi,jenkins2012byte,gong2013parlo,boyuka2014transparent,%
 tang2014improving}
 has focused on several alternative techniques to not only reduce the data
@@ -179,14 +179,14 @@ it should improve the overall time to move the data from the SSIO layer to the
 application, but what happens when users want all of the data? There is an
 obvious penalty of having to take data in a hierarchical layout and then place
 this back to a single-layer view.  Additional research questions which must be
-addressed: Will some types of data (PIC data, finite element data, ...) be
+addressed: Will some types of data (e.g. PIC data) be more
 conducive  for data-refactoring than others? How much semantic-domain knowledge
 will we need to get a dramatic improvement of the storage system over not doing
 anything special? 
 
 We will measure these methods using the fusion XGC simulation and the
 corresponding analysis routines which they use for their largest simulations.
-We will also work with Jeroen Tromp's SPECFM3D~\cite{SPECFEM3D} code, and the
+We will also work with the SPECFM3D~\cite{SPECFEM3D} code, and the
 fusion GTC~\cite{klasky2003grid} code.  In all cases we will measure their
 impact from their current simulations, and their projected simulations and
 analytics on exascale machines. Since all three of these codes are part of the
