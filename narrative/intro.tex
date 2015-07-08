@@ -54,7 +54,7 @@ entire storage stack.
 Given that storage systems will be composed of multiple heterogeneous tiers with
 vastly different performance characteristics and constraints on capacity and 
 supported data lifetime, our approach will enable researchers to 
-place more knowledge into the SSIO system so that data can be recast from 
+place more knowledge into the Storage Systems and Input/Output (SSIO) system so that data can be recast from 
 a sequence of bytes to information rich data. This information rich data can then
 be used by the system to guide the  placement within the tiered storage and will optimize the time
 to gain knowledge and insight from exascale simulations.
@@ -118,8 +118,8 @@ Our proposal will be responsive to Theme 2: {\em Scalable Storage Software Infra
 1 & Data abstractions & Create new APIs  and annotations for users to guide the system for placement  & \S\ref{sec:data-description} \\\hline
 2 & Mapping science data models onto hierarchical storage &  Create the ability to re-organize, reduce and prioritize data chunks from an object& \S\ref{sec:data-refactor}, \S\ref{sec:data-description},  \S\ref{sec:managing-data-life}\\\hline
 3 & Mechanisms for data movement across the storage hierarchy & what are we doing. & \S \ref{sec:managing-data-life},  \S\ref{sec:migration} \\\hline
-4 &  Extend the interaction of IO middleware with the resource management system & We will manage data from the application  to the middleware to the storage system and allow them to have an autonomic interaction & \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery}  \\\hline
-5 & Design and implement of IO middleware architectures  & We will create APIs to guide the placement of chunks of data across the SSIO and autonomically move data when necessary& \S\ref{sec:data-description}, \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery} \\ \hline
+4 &  Extend the interaction of I/O middleware with the resource management system & We will manage data from the application  to the middleware to the storage system and allow them to have an autonomic interaction & \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery}  \\\hline
+5 & Design and implement of I/O middleware architectures  & We will create APIs to guide the placement of chunks of data across the SSIO and autonomically move data when necessary& \S\ref{sec:data-description}, \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery} \\ \hline
 6 & Approaches to improve the ability of SSIO software to support checkpoint/restart & We will have utility functions defined for the lifetime of data, and allow CR data to be automatically placed in the fastest storage and then purged when it is no longer needed & \S \ref{fig:ssio-bucket}  \\
 \hline
 \end{tabular}

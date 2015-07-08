@@ -91,7 +91,7 @@ references}
 
 \paragraph{Proposed research approach:} 
 We will design and develop new techniques for data management, description,
-and access that allow users to describe the data utility based on their
+and access that allows users to describe the data utility based on their
 expectations. This can be done by allowing users to apply plugins
 provide data-specific functionality to the middleware and storage system.
 These plugins may be executed by the system to
@@ -121,14 +121,14 @@ respond to this new information. We will also explore how applications can
 query the storage system on space availability across different tiers and how
 applications their tailor their output data to make the most effective use of
 available space.
-Finally we will study the use of an external data annotation system that can
+Finally, we will study the use of an external data annotation system that can
 provide information to the storage system without requiring recompilation of the application.
 
 %
 From an application level, we will explore these techniques through our ADIOS
 framework using many of our existing application partners, including
 XGC1, GTC, and SPECFM3D. We will investigate: 1) what hints the users can give
-the system, 2) how the users can replace much of their
+the system, and 2) how the users can replace much of their
 application specific code with
 ``system level code'' through the use of these hints.  We will design an API
 that will be integrated with the storage layer to give time estimations so that
@@ -138,8 +138,8 @@ Chunks in a particular bin will be assigned an appropriate storage
 tier and lifetime, which can be specified by the user through the API.
 As an example, Figure~\ref{fig:ssio-bucket} illustrates a use case for the XGC1 code.
 The user can pick a data-refactoring scheme (see
-Sec~\ref{sec:data-refactor}) which will classify the particle data into 4 different
-prioritization levels. The user can then pick a data utility, such as 3 months
+Sec~\ref{sec:data-refactor}) which will classify the particle data into four different
+prioritization levels. The user can then pick a data utility, such as three months
 for the highest priority items and 12 months for the lowest priority data.
 The user will then call an API function that allows them
 to specify all of the chunks they want
@@ -207,8 +207,8 @@ information. Likewise, if the user wants to see F1 and F2, then they will need
 the mesh from M1 and M2. This requires that the time to access all of this
 data is approximately the same.
 We will investigate what choices the SSIO system must make in order to
-keep these pieces ``together'', from a performance perspective. Can the storage
-system move everything to a lower layer when all of it doesn't fit or is there
+keep these pieces "together,'' from a performance perspective. Can the storage
+system move everything to a lower layer when all of it doesn't fit, or is there
 other, less tightly related data that can be evicted to preserve the collective
 retrieval performance?  We need to investigate the potential problems when this
 occurs and how the users can specify additional information to ensure they get

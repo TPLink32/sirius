@@ -2,7 +2,7 @@
 
 The classical workflow where the entire dataset is written to storage for
 later analysis is no longer viable simply because the amount of generated data is too large.
-In future, it will be vital to take advantage of a priori
+In the future, it will be vital to take advantage of a priori
 information when 1) writing and reading from the SSIO layer in order to gain
 performance and predictability, and to prioritize I/O so that the data that
 is most useful for end-user can be written in the time available, and 2)
@@ -66,12 +66,12 @@ execution time of the application. Accurate prefetching can only be achieved
 with access pattern analysis. This requires an SSIO layer which is capable of
 prefetching data in an asynchronous fashion to take the bytes on the file.
 
-\paragraph{State of the art:} {\bf Data Reduction Techniques} Data compression
+\paragraph{State of the art:} {\bf Data Reduction Techniques.} Data compression
 broadly consists of three basic steps: (1) Pre-processing to extract as much
 structure as feasible. This step is variously referred to as filtering,
 preconditioning, and preprocessing. But in all cases, the objective is to
 represent the data in a form that becomes more amenable to compression.  (2)
-Removal of redundancy such as omission of duplicates etc.  Finally, (3) the
+Removal of redundancy such as omission of duplicates, etc.  Finally, (3) the
 resulting data is compressed using entropy coding. The level of compression
 that can be achieved in the final step is limited by the Shannon information
 content of the data \cite{Gray:book}, and many standard tools are available for
@@ -84,7 +84,7 @@ Research in the construction of pre-processing techniques is still in its
 infancy, especially in context of exascale simulations. Techniques that have
 been advocated range from simple difference filtering, bit-sorting, prefix
 transformation through to simply reordering the data.  What these, and other
-catch-all methods, fail to exploit is a priori information on the nature and
+catch-all methods fail to exploit is a priori information on the nature and
 provenance of the data. 
 
 Our previous
@@ -137,7 +137,7 @@ but also re-organize the data. Previously we have examined:
 	intentions of how long the majority of the data will be frequently
 	accessed.  In order to fully take advantage of frequency based
 	re-organization we have devised a scheme where the data pre-conditioner
-	first sorts the data in bins of 1024 words, and then we maintain the
+	first sorts the data in bins of 1024 words, then we maintain the
 	sort order, and then we used wavelets and spline fits to then
 	re-organize the values.  This re-organization allows us to understand
 	that the resultant data is smoother now, and can be reduced in each one
@@ -172,7 +172,7 @@ We will also research the time it takes to re-organize the data and use the
 multi-layer approach to staging to understand where the data gets reduced and
 where it gets re-organized. Open questions are: 1) do we move the data over to
 other nodes to then reduce and re-organize, 2) do we first reduce the data and
-then later re-organize this data on different nodes?  3) do we use different
+then later re-organize this data on different nodes?, or 3) do we use different
 cores on a node to do data-refactoring.  Similarly we will examine the cost of
 reading the data. It is clear that if we only read in the high-importance data
 it should improve the overall time to move the data from the SSIO layer to the
