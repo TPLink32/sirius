@@ -1,11 +1,11 @@
 \subsection{Data Refactoring} \label{sec:data-refactor} 
 
-The classical workflow whereby the entire dataset is written to storage for
-later analysis is no longer viable owing to the sheer amount of data being
-generated. In future, it will be vital to take advantage of a priori
+The classical workflow where the entire dataset is written to storage for
+later analysis is no longer viable simply because the amount of generated data is too large.
+In future, it will be vital to take advantage of a priori
 information when 1) writing and reading from the SSIO layer in order to gain
 performance and predictability, and to prioritize I/O so that the data that
-is most useful for end-user can be written in the time available, and 2) in
+is most useful for end-user can be written in the time available, and 2)
 performing {\em in situ} operations and analysis before storing the information.
 
 In the case of C. S. Chang described earlier, and common with most other
@@ -15,7 +15,7 @@ important information is available for subsequent analysis.
 This is generally accomplished using refactoring, which includes re-organization and reductions of the data.
 
 There are many possibilities for refactoring and the best choice will generally
-vary from case to case but, once settled, will not change from run to run. It
+vary from case to case but, once settled, will typically not change from run to run. It
 will be important to understand when the time and resources required to
 identify and perform the ``best methods'' outweighs any eventual gains. Another
 critical research question concerns the quantification and control of the loss
@@ -33,13 +33,13 @@ Broadly speaking, the path from data to knowledge consists of extracting
 underlying models or patterns from the datasets, and interpreting the resulting
 models. 
 
-Ideally, the scientists would perform the entire analysis stage {\em in situ}
+Ideally,  scientists would like to perform the entire analysis stage {\em in situ}
 to extract the relevant information and in so doing would effectively
 circumvent the large data issue completely.  The catch, of course, is that this
 is unlikely to be possible since, by their nature, large scale simulations aim
 to discover new information that is often hidden in the form of higher order
 effects amongst the data deluge. In particular, this means if data thinning or
-truncation is applied willy nilly then one is in danger of effectively throwing
+truncation is applied haphazardly then one is in danger of effectively throwing
 out the information one is seeking. It would seem that one cannot store the
 entire data set in an easily accessible source, due to sheer size, yet one
 cannot reduce it prior to archival without risking losing the information one
@@ -69,7 +69,7 @@ prefetching data in an asynchronous fashion to take the bytes on the file.
 \paragraph{State of the art:} {\bf Data Reduction Techniques} Data compression
 broadly consists of three basic steps: (1) Pre-processing to extract as much
 structure as feasible. This step is variously referred to as filtering,
-preconditioning, and preprocessing but in all cases, the objective is to
+preconditioning, and preprocessing. But in all cases, the objective is to
 represent the data in a form that becomes more amenable to compression.  (2)
 Removal of redundancy such as omission of duplicates etc.  Finally, (3) the
 resulting data is compressed using entropy coding. The level of compression
@@ -77,7 +77,7 @@ that can be achieved in the final step is limited by the Shannon information
 content of the data \cite{Gray:book}, and many standard tools are available for
 efficient and perfect entropy coding. The potential for compression through
 removal of redundancy is generally minor. The main scope for achieving
-significant compression (a compression rate of two or better say) therefore
+significant compression (e.g. a compression rate of two) therefore
 lies in the pre-processing step.
 
 Research in the construction of pre-processing techniques is still in its
@@ -88,7 +88,7 @@ catch-all methods, fail to exploit is a priori information on the nature and
 provenance of the data. 
 
 Our previous
-work~\cite{lakshminarasimhan2011compressing,lakshminarasimhan2011compressing,%
+work~\cite{lakshminarasimhan2011compressing,%
 gong2012multi,jenkins2012byte,gong2013parlo,boyuka2014transparent,%
 tang2014improving}
 has focused on several alternative techniques to not only reduce the data
@@ -179,14 +179,14 @@ it should improve the overall time to move the data from the SSIO layer to the
 application, but what happens when users want all of the data? There is an
 obvious penalty of having to take data in a hierarchical layout and then place
 this back to a single-layer view.  Additional research questions which must be
-addressed: Will some types of data (PIC data, finite element data, ...) be
+addressed: Will some types of data (e.g. PIC data) be more
 conducive  for data-refactoring than others? How much semantic-domain knowledge
 will we need to get a dramatic improvement of the storage system over not doing
 anything special? 
 
 We will measure these methods using the fusion XGC simulation and the
 corresponding analysis routines which they use for their largest simulations.
-We will also work with Jeroen Tromp's SPECFM3D~\cite{SPECFEM3D} code, and the
+We will also work with the SPECFM3D~\cite{SPECFEM3D} code, and the
 fusion GTC~\cite{klasky2003grid} code.  In all cases we will measure their
 impact from their current simulations, and their projected simulations and
 analytics on exascale machines. Since all three of these codes are part of the

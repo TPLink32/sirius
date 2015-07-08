@@ -18,17 +18,17 @@ strict caching approach for managing different storage capacities trading off
 performance for capacity.  By maintaining a single namespace across all tiers,
 it is possible to list a single directory view with files stored at different
 tiers. While this approach to managing multi-tier storage works for whole files
-that fit on single logial devices, it is far from ideal for scientific
+that fit on single logical devices, it is far from ideal for scientific
 simulations.
 
 The overriding theme for this proposal of providing a cooperative relationship
 between the user and the storage system extends into this area as well.
-Negotiating the data quality/retrieval time tradeoff reuqires additional
-metadata.  Providing this functionality requries the naming service be able to
+Negotiating the data quality/retrieval time tradeoff requires additional
+metadata.  Providing this functionality requires the naming service be able to
 both return a list of data versions and an indication of data quality. This
-will be combined with a retrieval time estimate for each verstion by the
+will be combined with a retrieval time estimate for each version by the
 middleware to determine what data version should be retrieved.  This estimate
-will be disucssed elsewhere in this proposal.
+will be discussed elsewhere in this proposal.
 
 In addition to the basic naming and data tracking operations, we will also need
 to incorporate authorization capabilities. Sirocco currently integrates with a
@@ -58,7 +58,7 @@ demonstrate a metadata service with naming at the science variable level, but
 with an associated list of all of the variable pieces and potentially different
 versions stored throughout the storage system. By shifting to a finer-grained
 approach, we will enable more effective use of close/fast/small storage tiers
-and prioritize objects with high importance.  Traiditional HSM stores an entire
+and prioritize objects with high importance.  Traditional HSM stores an entire
 file on a tier making room if insufficient space is available.  With this shift
 to a partial variable granularity, a 1 PB output with 500 GB of ``high
 interest'' data can limit this costly tier usage to just 500 GB greatly
