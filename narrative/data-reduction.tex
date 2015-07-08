@@ -69,7 +69,7 @@ prefetching data in an asynchronous fashion to take the bytes on the file.
 \paragraph{State of the art:} {\bf Data Reduction Techniques} Data compression
 broadly consists of three basic steps: (1) Pre-processing to extract as much
 structure as feasible. This step is variously referred to as filtering,
-preconditioning, and preprocessing but in all cases, the objective is to
+preconditioning, and preprocessing. But in all cases, the objective is to
 represent the data in a form that becomes more amenable to compression.  (2)
 Removal of redundancy such as omission of duplicates etc.  Finally, (3) the
 resulting data is compressed using entropy coding. The level of compression
@@ -77,7 +77,7 @@ that can be achieved in the final step is limited by the Shannon information
 content of the data \cite{Gray:book}, and many standard tools are available for
 efficient and perfect entropy coding. The potential for compression through
 removal of redundancy is generally minor. The main scope for achieving
-significant compression (a compression rate of two or better say) therefore
+significant compression (e.g. a compression rate of two) therefore
 lies in the pre-processing step.
 
 Research in the construction of pre-processing techniques is still in its
