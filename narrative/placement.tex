@@ -58,17 +58,6 @@ decision to purge may be made by the system based on operational metrics from
 system administrators or by the user. This phase optimizes the space available in the
 system. % to prevent out of space concerns for applications. 
 
-A key requirement is application-driven runtime mechanisms for dynamically managing 
-data placement across the layers of the distributed storage hierarchy throughout the 
-data lifecycle, coordinating data movement and data sharing between the components 
-of the application workflow, with the overarching goal of maximizing the relative utility 
-to the application as well as the system while reducing access costs. As notes before,
-the complexities of heterogeneous multi-level storage structures requires adaptive 
-placement policies are required to be implemented to optimally utilize storage resources 
-vertically (across deep memory hierarchies) and horizontally (across nodes within a 
-memory level) while accommodating dynamic application requirements and  transient 
-system states. 
-
 Our proposed research will address data management challenges across the entire 
 data life cycle in an application driven and system aware manner. 
 %given our thesis that more knowledge, and more specific knowledge about the
@@ -185,12 +174,29 @@ significant impact on the overhead observed by the application for I/O operation
 %hierarchy, coordinating data movement and data sharing between the components of the 
 %application workflow so as to maximize its utility to the application and reduce access costs. 
 
-Our approach to data placement will leverage the increased set of knowledge about the data available to the middleware and storage system, potentially allowing for greater optimizations as compared to other storage solutions.
+A key requirement is application-driven runtime mechanisms for dynamically managing 
+data placement across the layers of the distributed storage hierarchy throughout the 
+data lifecycle, coordinating data movement and data sharing between the components 
+of the application workflow, with the overarching goal of maximizing the relative utility 
+to the application as well as the system while reducing access costs. 
+%
+As noted before, the complexities of heterogeneous multi-level storage structures requires 
+adaptive placement policies are required to be implemented to optimally utilize storage 
+resources vertically (across deep memory hierarchies) and horizontally (across nodes 
+within a memory level) while accommodating dynamic application requirements and transient 
+system states. 
+%
+Our approach in the proposal is to increase knowledge about the data and its use within the 
+application, and leverage this knowledge to drive data placement and overall management. 
+
+%Our approach to data placement will leverage the increased set of knowledge about the data 
+%available to the middleware and storage system, potentially allowing for greater optimizations 
+%as compared to other storage solutions.
 
 \paragraph{Soliciting application {\em hints}:}
 As described in \S\ref{sec:data-refactor} one of the main components of our
 proposed storage system is the ability to refactor and reduce data as it is
-generated, and to reorgnized and regenerate the data as it is accessed. We
+generated, and to reorganized and regenerate the data as it is accessed. We
 carry this principle into the placement and movement of data by allowing
 applications to define hints and policies that guide \textbf{what} data is
 placed \textbf{where}. We will explore the use of application hints in two
