@@ -123,6 +123,7 @@
 %%%%%  BIOSKETCHES
 \clearpage
 \phantomsection
+\markboth{}{}
 \addcontentsline{toc}{chapter}{Appendix 1. Biographical sketches}
 \section*{Appendix 1: Biographical sketches}
 \input{bios}
@@ -144,6 +145,7 @@ Other support of the investigators follow in alphabetical order.
 %%%%% Bibliography %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \clearpage
+\markboth{}{}
 %\addtocounter{chapter}{1}
 %\addcontentsline{toc}{chapter}{Literature Cited}
 \addcontentsline{toc}{chapter}{Appendix 3. Literature cited}
@@ -159,22 +161,25 @@ Other support of the investigators follow in alphabetical order.
 \clearpage
 \addcontentsline{toc}{chapter}{Appendix 4. Description of facilities and resources}
 \section*{Appendix 4: Description of facilities and resources}
-
+\phantomsection
 \input{facilities}
 
 %%%%% DATA MANAGEMENT PLAN %%%%%
 \clearpage
+\markboth{}{}
 \addcontentsline{toc}{chapter}{Appendix 5. Equipment}
-
 \section*{Appendix 5: Equipment}
-
 
 \vspace{2ex}
 \noindent
-All equipment is listed in Appendix 4.
+ORNL has access to leading-edge computing platforms and services for the project through Oak Ridge Leadership Computing Facility (OLCF) as well as a mid-size cluster for data stream testing and workflow automation.
+Our group at ORNL has access to a 40-node Opteron-based Infiniband cluster running Linux. The system is provided as an end-to-end resource for center users. It is used for workflow automation for jobs running from Titan and for advanced data analysis. The system contains 40 compute nodes. Each compute node contains four 2.3 GHz 8 core AMD Opteron processors, and 64 GB of memory. The system is configured with a 86 TB Lustre file system for scratch space, and has two SSD on each compute node.
+The system is also connected to the center-wide spider system. In this proposal we will use the Lustre storage as ``campaign''
+storage, and the SSD for testing our algorithms.
 
 %%%%% DATA MANAGEMENT PLAN %%%%%
 \clearpage
+\markboth{}{}
 \addcontentsline{toc}{chapter}{Appendix 6. Data management plan}
 
 \phantomsection
