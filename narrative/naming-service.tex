@@ -11,7 +11,7 @@ across storage layers, and facilitates data discovery. Since we need to also
 support access through POSIX APIs for existing application and system
 integration, we must address how to bridge the drastic differences between the
 decomposed objects of potentially varying fidelity with potentially multiple
-version{\color{red}s?} with a POSIX API-compatible interface.
+versions with a POSIX API-compatible interface.
 
 Hierarchical Storage Management (HSM) systems~\cite{blaze:1992:hsm} offer a
 strict caching approach for managing different storage capacities trading off
@@ -43,7 +43,7 @@ into the entire naming and metadata service.
 While strongly encouraging data to stay in a particular type of storage tier,
 ultimately it must be possible to flush this data to make room for other uses.
 Sirocco offers a ``flush'' operation that forcibly migrates data to the
-long-term resilience requirements, freeing space in the {\color{red}scare CHECK-tsr} resources. In
+long-term resilience requirements, freeing space in the scarce resources. In
 many, if not most cases, this will move data towards or actually on to a device
 like tape, intended for long-term storage.
 
@@ -68,11 +68,10 @@ only placing ``high interest'' data in the close/fast/small tier, we will
 effectively reduce pressure forcing data migration hurting both writing
 performance and the later data analytics required for generating scientific
 insights.  Sirocco identifies a data segment using a
-container/object/fork/address tuple that can have associated attributes. {\color{red}We will
+container/object/fork/address tuple that can have associated attributes. We will
 add both a special attribute indicating that this record is of ``high
-interest'' as well adapting the migration mechanisms to use this attribute, if
-present, to strongly encouraging keeping the record in close/fast/small storage
-as long as possible. CHECK sentence-tsr}
+interest'' as well adapting a migration mechanisms to use this attribute, if
+present, to strongly encourage keeping the record in  the highest storage tier as possible. 
 
 Meanwhile, we need to be able to locate or ``discover'' the data should it
 move.  The challenge for discovery is that potentially, data will migrate from
@@ -92,7 +91,7 @@ planned features.
 
 We plan to address scalability problems by continuing with the LWFS and Sirocco
 model. LWFS and Sirocco have taken an approach similar to the pure object
-stores, but with a focus on the HPC setting. They have abandonded a fully POSIX
+stores, but with a focus on the HPC setting. They have abandoned a fully POSIX
 compliant metadata service as the default model in favor of a
 container/object/fork/address tuple for identifying data similar to those used
 for pure object stores. By having a service that addresses the object
@@ -124,7 +123,7 @@ duration to consistency POSIX view to offer the performance and consistency
 requirements an exascale application demands.
 
 While pure object stores, such as those popular in the big data
-domain~\cite{Fitzpatrick:2004:memcached,others} avoid this bottleneck by
+domain~\cite{Fitzpatrick:2004:memcached}, others avoid this bottleneck by
 strictly offering an object ID with the application required to manage how this
 ID maps to something of interest. This approach of removing the metadata
 service from the system level completely can work well for scale out

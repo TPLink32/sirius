@@ -109,13 +109,13 @@ but also re-organize the data. Previously we have examined:
 	two copies of an individual dataset in memory, and we will investigate
 	techniques to allocate and deallocate this memory if the user will
 	specify that the data will be overwritten after it is written to the
-	storage system. This is often the case for many of the data quantities
+	storage system. This is often the case for many of the  quantities
 	written from the simulation, but there are many cases where, for
 	example, we want to write all of the particles from a Particle In Cell
 	(PIC) simulation.  Since the particles will be used later in the
 	calculation, we need to duplicate the storage. Our observation with
-	working with the XGC1, GTC, Warp, and PiconGPU simulations (all
-	leadership class simulations) is that we can temporary increase the
+	working with the XGC1, GTC, and PiconGPU simulations 
+	 is that we can temporary increase the
 	storage of the particles, and then release them since the temporary
 	arrays used in the calculations are often freed when a PIC iteration is
 	finished. 
@@ -123,7 +123,7 @@ but also re-organize the data. Previously we have examined:
 \item Frequency-based re-organization.  Another common technique to classify
 	the importance of data is to first re-organize the data in frequency
 	space and then specify that as the frequency increases the importance
-	of data decreases.   Common technique which is used for streaming data,
+	of data decreases.   Common techniques  used for streaming data,
 	and data reduction techniques such as JPEG-2000~\cite{jpeg2000} is to
 	code streams which have regions of interest that offer several
 	mechanisms to support spatial random access or region of interest

@@ -32,11 +32,11 @@ movement of data in the presence of failures or system changes.
 \paragraph{Approach:} 
 In this proposal we will investigate the trade-off in terms of predictable performance between 
 ``filing'' data, making an upfront investment to ensure finding data quickly, and ``piling'' 
-data, pushing the cost of finding to the moment when the data is actually needed. {\color{red}This trade-off 
+data, pushing the cost of finding to the moment when the data is actually needed. This trade-off 
 has a parallel in data management where there are two alternative paths to achieve knowledge: 
-the analogue to filing is ``extract, transform, and load'' (ETL) data into a warehouse, paying 
-an upfront ingest cost to achieve fast querying; the analogue to piling is to not pay any upfront 
-cost and query the raw data directly by using data processing platforms such as Hadoop sentence CHECK-tsr}. Recent work 
+the analogue to filing is  to ``extract, transform, and load'' (ETL) data into a warehouse, paying 
+an upfront ingest cost to achieve fast querying; and the analogue to piling is to not pay any upfront 
+cost and later querying   the raw data directly by using a data processing platform such as Hadoop.  Recent work 
 has found that the combination of these two techniques can be optimized to perform better than 
 any one technique alone~\cite{lefevre:sigmod14a}. We believe that a similar opportunity exists 
 for combining filing and piling approaches to achieve performance predictability without sacrificing 
@@ -62,7 +62,7 @@ tier.
 %  \item  How do we make the scheduler scalable with the size of the system?
 %\end{tightItemize}
 
-\subsubsection{QoS}
+\subsubsection{Quality of Service (QoS)}
 \paragraph{Background:} QoS refers to the
 properties of the performance quality of a particular service, in
 this case the storage system.
@@ -154,7 +154,7 @@ more than others.
   \includegraphics[width=\columnwidth]{graphics/infrastructure.pdf}\vspace{-1.2in}
   \caption{Resource usage distribution for OST(a), OSS(b) and LNETs(c) }
 \end{figure}
-
+\vskip -1.5in
 
 % This is about finding the relationshiop of workload-dependent to workload-independent metrics. -- Carlos
  %are driven from multiple different approaches. First, supporting
