@@ -141,7 +141,7 @@ Chunks in a particular bin will be assigned an appropriate storage
 tier and lifetime, which can be specified by the user through the API.
 As an example, Figure~\ref{fig:ssio-bucket} illustrates a use case for the XGC1 code.
 The user can pick a data-refactoring scheme (see
-Sec~\ref{sec:data-refactor}) which will classify the particle data into four different
+\S~\ref{sec:data-refactor}) which will classify the particle data into four different
 prioritization levels. The user can then pick a data utility, such as three months
 for the highest priority items and 12 months for the lowest priority data.
 The user will then call an API function that allows them
@@ -182,7 +182,7 @@ their knowledge discovery.
 The assumptions which we will make in choosing a utility function is that:
 1) There will only be a small number of priority levels that users will use
 to re-prioritize their data; 2) The number of tiers in the storage system will
-also be small (e.g. NVRAM, PFS, Campaign Storage, HPSS), 3) The default
+be small (e.g. NVRAM, PFS, Campaign Storage, HPSS), 3) The default
 lifetime of objects in each tier will be specified by the resource by
 a tuple (size, lifetime).  The user can then utilize this information to
 place information to the system such as: store the highest priority data
@@ -190,7 +190,7 @@ as high up on the hierarchy for 6 months, and then migrate this data to tape.
 The user can also define the utility for CR files as that they have high
 priority but their lifetime is for a short period of time; i.e. when the
 next CR file appears on the system or the next two CR files. Research in
-describing this utility function will be in conjunction with our users
+describing this utility function will be in conjunction with users
 and we will evaluate how policies can be placed in the system and how well
 this utility function can be observed by the user.
 
