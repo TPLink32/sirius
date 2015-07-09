@@ -15,13 +15,13 @@ service nodes with like media into pseudo-tiers. It accomplishes both using
 attributes such as latency to first byte, bandwidth to and from the media, and
 some function representing the resilience capabilities of the attached media.
 In addition to these static attributes, when grouping servers into
-pseudo-tiers, Sirocco also may employ more dynamic attributes such as CPU load
+pseudo-tiers, Sirocco may also employ more dynamic attributes such as CPU load
 and the rate-of-change of the media use.
 
 Grouping into pseudo-tiers is not a formal, nor rigid, concept within Sirocco,
 at present. In classic HSM the tiering is often a formally expressed concept,
-embodied both in the architecture and the implementation. In Sirocco, though,
-it is not directly expressed. Instead, a client or server that attempts to make
+embodied both in the architecture and the implementation. In Sirocco
+it is not directly expressed; instead, a client or server that attempts to make
 a decision relative to migration and staging uses the attributes discussed
 above to constrain the choice of candidates. For instance, a server acting as
 an off-node writeback cache for a compute node might only have access to
