@@ -156,11 +156,11 @@ optimized at runtime, both from the application and system perspective?, {\color
 %     doesn't interfere with other I/O and isn't bottlenecked by some sort of
 %     global consistency?
 
-\subsubsection{Data Placement}
+\subsubsection{Data Placement and Movement}
 \label{sec:init-plac-data}
 
 \paragraph{Background:}
-When an application outputs data the storage and middleware layers needs to
+When an application outputs or accesses data the storage and middleware layers needs to
 decide \textit{what} data is placed \textit{where} in the multi-level storage system. 
 This placement decision can have a significant impact on data management 
 throughout the life time of the data. For example, our past work on data 
@@ -195,53 +195,59 @@ application, and leverage this knowledge to drive data placement and overall man
 
 \paragraph{Soliciting application {\em hints}:}
 As described in \S\ref{sec:data-refactor} one of the main components of our
-proposed storage system is the ability to refactor and reduce data as it is
-generated, and to reorganize and regenerate the data as it is accessed. We
-carry this principle into the placement and movement of data by allowing
+proposed storage system is the ability to reorganize, refactor and reduce data 
+as it is generated, and to reorganize and possibly regenerate the data as it is accessed. 
+We carry this principle into the placement and movement of data by allowing
 applications to define hints and policies that guide \textbf{what} data is
 placed \textbf{where}. We will explore the use of application hints in two
-distinct areas. Firstly, we will study the challenges and trade-offs of either
+distinct areas. First, we will study the challenges and trade-offs of either
 augmenting the I/O interface with hints, or allowing the addition of an
 external specification that defines the use case. Our experience with
-developing modern I/O interfaces has shown that both techniques have value,
-and we will investigate the set of hints that are embedded in the
+developing modern I/O interfaces has shown that both techniques 
+have value~\cite{tongipdps15,qiansc15}, and we will investigate the set of hints that are embedded in the
 application code vs. those that are described within an non-compiled
-specification. Secondly, we will study how hints can guide the initial data
+specification. Second, we will study how hints can guide data
 placement as data is handed off from application to storage (during a
 write) and from storage to application (during the read). In both cases we
 will study what minimal set of annotations and hints can allow the storage
 system to minimize data movement and optimize the resources consumed by I/O. 
 
-Application hints can provide additional information to the runtime based on the users' knowledge of the application workflow as well as on past experiences, for example, possible data access patterns, nature of regions of interest, and domain specific information. This application level information will be added to the specification of the workflow and can provide advisory inputs to efficiently help the runtime make smarter decisions about the placement and/or movement of data objects and the scheduling and execution of tasks, as well as to effectively manage trade-offs between for example, power consumption and time-to-solution. 
+%Application hints can provide additional information to the runtime based on the users' knowledge of the application workflow as well as on past experiences, for example, possible data access patterns, nature of regions of interest, and domain specific information. 
+%This application level information will be added to the specification of the workflow and can provide advisory inputs to efficiently help the runtime make smarter decisions about the placement and/or movement of data objects and the scheduling and execution of tasks, as well as to effectively manage trade-offs between for example, power consumption and time-to-solution. 
 
 
 \paragraph{Defining data utility:} We will formulate the concept of utility (from an
 application perspective) that is assigned data objects to quantify the
 benefits of placement and/or movement actions to application. These
 utilities may be based on the importance of the data objects, the frequency
-with which they are accessed, etc., and are used during runtime data
-management. For example, data objects with higher utility value may be
+with which they are accessed, etc., and can be used during runtime data
+management to evaluate and compare different placement/movement options. 
+For example, data objects with higher utility value may be
 placed closer (e.g., in faster memory) to the accessing application.
 Similarly, when it is time to evict data objects from a higher level storage
 layer, the decision about which object to evict may take the utility into
-account. We will also explore the balancing of the data across the memory
-hierarchy autonomically. The autonomic approach will leverage both user
-hints and information gathered at runtime (e.g., runtime data access
-history, network topology, etc.) to place data object.
+account. Our initial work in defining such a utility is presented in~\cite{tongipdps15}.
+ We will also explore autonomic approaches for balancing of the placement and 
+ movement of data across the memory hierarchy autonomically, which will be driven 
+ by the data utility and will leverage both user hints and information gathered at runtime (e.g., runtime data access
+history, network topology, etc.).
+Finally, we will explore a complementary notion of utility from a system-wide perspective 
+that will capture and quantify, for example, the impact of placement decisions on 
+the overall utilization of storage across multiple applications, and will enable system level runtime optimization. 
+
 
 \paragraph{ Runtime tracking and estimation:}
-Autonomic data placement and/or
-movement will leverage the information gathered at runtime together with
-predictive analysis requirements. This information may include runtime
-spatial-temporal data access patterns, and/or physical network topology
-information, which will be tracked and gathered at runtime, and
-then be used to estimate and predict the behavior of coupled applications in
-the rest of simulation-time. A key research aspect here will be to
-anticipate accesses, for example using learning techniques or using
+Autonomic data placement and/or movement will leverage the information gathered 
+at runtime together with predictive analysis requirements. This information may include 
+runtime spatial-temporal data access patterns, and/or physical network topology
+information, which will be tracked at runtime, and then be used to estimate and predict 
+the data access behaviors of application workflow at runtime. 
+A key research aspect here will be to anticipate accesses, for example using learning techniques or using
 application knowledge, and use this information to prefetch data objects.
 For example, we will identify and catalog key phases and access patterns
 in the target workflows and then use it to characterize patterns at runtime
-and trigger appropriate place/movement actions.
+and trigger appropriate placement and/or movement actions. Our initial 
+work explore these ideas is presented in~\cite{qiansc15}.
 
 % \paragraph{State of the art:} NAND flash-based devices are being
 % increasingly used in HPC storage systems at different levels and for a
@@ -259,14 +265,16 @@ and trigger appropriate place/movement actions.
 % some of these solutions require hardware modifications or special access
 % priorities to the HPC systems, which can limit their use to specific
 % resources.
+
 \subsubsection{Migration}
 \label{sec:migration}
 
 \paragraph{Background:} 
-Once the system has completed the initial data placement with minimal
-overhead to the application, it is up to the storage system to manage the
-migration of data to other storage servers and across the hierarchy. An
-important research aspect here is how a liberated Hierarchical Storage
+A complementary aspects of the data lifecycle management is the management and 
+%Once the system has completed the initial data placement with minimal
+%overhead to the application, it is up to the storage system to manage the
+migration of data across storage servers and across the hierarchy. 
+An important research aspect here is how a liberated Hierarchical Storage
 Manager (HSM) designed for on-line use, such as Sirocco, might be employed in
 providing support for the migration of data. Sirocco autonomously groups the
 distributed set of media and service nodes into like groups and manages the
@@ -300,7 +308,7 @@ defined by the application and the user.
 
 \paragraph{Migration Policies:}
 The policies that govern the migration of data across groups and across
-tiers have similar challenges as initial data placement. The migration
+tiers have similar challenges as data placement. The migration
 policy must encapsulate, at a high level, the constraints defined by the
 application, but must also manage resources on each server for capacity and
 load reasons. We will explore policy formulations that allow \Sir to move
@@ -436,18 +444,32 @@ properties of each navigation client are based on physical constraints
 of speed, direction, likely resolution of map, and the fact that
 clients almost never go off-road.
 
-\subsubsection{Purging data from the system}
+\subsubsection{Purging}
 \label{sec:purging-data}
-{\color{red}(only outline since I have to go)}
-1. Purging is important from the perspective of preventing uncontrolled
-growth of data on a system
-2. Purging is hard because no one wants to lose data and we need to explore
-the policies that govern it
-3. If we have a good utility function and a good way to refactor the data we
-could purge the ``less important'' pieces and maintain a high level of
-knowledge without requiring very high amount of storage
-3. Purging needs to happen in a decentralized way but global utility has to
-be maximized - thats a pretty hard problem 
+An important phase of the data lifecycle is the purging of data from the system, 
+which presents significant challenges, both from the systems and policy perspectives. 
+Deciding what data to purge and when to purge it can be non-trivial, and it is 
+essential that this is done with the application in the loop. One approach we will 
+explore in this efforts will be extending the notion of system and application utility. 
+The former can be used to determine when data object need to purged while the 
+latter can help determine the relative importance of data objects to the 
+application and identify which data objects can be purged. Developing policies 
+for purging is a more challenging problem and will required engaging with the 
+user community. However, a key research problem that will be addressed in
+ this effort is developing the abstractions that can be used to consistently and 
+ unambiguously express these policies as well as the mechanisms that can be 
+ used to correctly enforce these policies. 
+
+%{\color{red}(only outline since I have to go)}
+%1. Purging is important from the perspective of preventing uncontrolled
+%growth of data on a system
+%2. Purging is hard because no one wants to lose data and we need to explore
+%the policies that govern it
+%3. If we have a good utility function and a good way to refactor the data we
+%could purge the ``less important'' pieces and maintain a high level of
+%knowledge without requiring very high amount of storage
+%3. Purging needs to happen in a decentralized way but global utility has to
+%be maximized - thats a pretty hard problem 
 
 
 
