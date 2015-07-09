@@ -105,11 +105,11 @@ but also re-organize the data. Previously we have examined:
 	system and from the storage system.  First, the data needs to be
 	re-arranged which involves memory operations and needs to be done
 	in-situ. This operation involves no communication.  Data needs to be
-	copied, so the memory requirements are increased. {\color{red}At most this requires
-	two copies an individual dataset in memory, and we will investigate
+	copied, so the memory requirements are increased. At most this requires
+	two copies of an individual dataset in memory, and we will investigate
 	techniques to allocate and deallocate this memory if the user will
 	specify that the data will be overwritten after it is written to the
-	storage system CHECK sentence-tsr}. This is often the case for many of the data quantities
+	storage system. This is often the case for many of the data quantities
 	written from the simulation, but there are many cases where, for
 	example, we want to write all of the particles from a Particle In Cell
 	(PIC) simulation.  Since the particles will be used later in the
@@ -129,13 +129,14 @@ but also re-organize the data. Previously we have examined:
 	mechanisms to support spatial random access or region of interest
 	access at varying degrees of granularity. It is possible to store
 	different parts of the same data using different quality.  This allows
-	us to place the lowest frequency pieces in the fastest storage, and the
-	highest frequency either on the slowest storage tiers, or if the data
-	sizes are prohibitively  costly, not even write out the highest
-	frequency. This binning of data in frequency space can take as an input
-	(storage  {\color{red}ending )? CHECK-tsr} bandwidth knowledge, storage size limitations, and user
-	intentions of how long the majority of the data will be frequently
-	accessed.  In order to fully take advantage of frequency based
+	us to place the lowest frequency chunks in the fastest storage, and the
+	highest frequency chunks  on either  the slowest storage tiers, or if the data
+	sizes are prohibitively  costly, not even write out  these pieces. 
+%	This binning of data in frequency space can take as an input
+%	(storage  {\color{red}ending )? CHECK-tsr} bandwidth knowledge, storage size limitations, and user
+%	intentions of how long the majority of the data will be frequently
+%	accessed. 
+	 In order to fully take advantage of frequency based
 	re-organization we have devised a scheme where the data pre-conditioner
 	first sorts the data in bins of 1024 words, then we maintain the
 	sort order, and then we used wavelets and spline fits to then
