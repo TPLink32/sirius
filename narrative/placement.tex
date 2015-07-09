@@ -214,24 +214,6 @@ system to minimize data movement and optimize the resources consumed by I/O.
 %This application level information will be added to the specification of the workflow and can provide advisory inputs to efficiently help the runtime make smarter decisions about the placement and/or movement of data objects and the scheduling and execution of tasks, as well as to effectively manage trade-offs between for example, power consumption and time-to-solution. 
 
 
-\paragraph{Defining data utility:} We will formulate the concept of utility (from an
-application perspective) that is assigned data objects to quantify the
-benefits of placement and/or movement actions to application. These
-utilities may be based on the importance of the data objects, the frequency
-with which they are accessed, etc., and can be used during runtime data
-management to evaluate and compare different placement/movement options. 
-For example, data objects with higher utility value may be
-placed closer (e.g., in faster memory) to the accessing application.
-Similarly, when it is time to evict data objects from a higher level storage
-layer, the decision about which object to evict may take the utility into
-account. Our initial work in defining such a utility is presented in~\cite{tongipdps15}.
- We will also explore autonomic approaches for balancing of the placement and 
- movement of data across the memory hierarchy autonomically, which will be driven 
- by the data utility and will leverage both user hints and information gathered at runtime (e.g., runtime data access
-history, network topology, etc.).
-Finally, we will explore a complementary notion of utility from a system-wide perspective 
-that will capture and quantify, for example, the impact of placement decisions on 
-the overall utilization of storage across multiple applications, and will enable system level runtime optimization. 
 
 
 \paragraph{ Runtime tracking and estimation:}

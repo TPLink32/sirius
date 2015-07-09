@@ -178,20 +178,41 @@ their knowledge discovery.
 \end{wrapfigure}
 
 
-The assumptions which we will make in choosing a utility function is that:
-1) There will only be a small number of priority levels that users will use
-to re-prioritize their data; 2) The number of tiers in the storage system will
-be small (e.g. NVRAM, PFS, Campaign Storage, HPSS), 3) The default
-lifetime of objects in each tier will be specified by the resource by
-a tuple (size, lifetime).  The user can then utilize this information to
-place information to the system such as: store the highest priority data
-as high up on the hierarchy for 6 months, and then migrate this data to tape.
-The user can also define the utility for CR files as that they have high
-priority but their lifetime is for a short period of time; i.e. when the
-next CR file appears on the system or the next two CR files. Research in
-describing this utility function will be in conjunction with users
-and we will evaluate how policies can be placed in the system and how well
-this utility function can be observed by the user.
+%The assumptions which we will make in choosing a utility function is that:
+%1) There will only be a small number of priority levels that users will use
+%to re-prioritize their data; 2) The number of tiers in the storage system will
+%be small (e.g. NVRAM, PFS, Campaign Storage, HPSS), 3) The default
+%lifetime of objects in each tier will be specified by the resource by
+%a tuple (size, lifetime).  The user can then utilize this information to
+%place information to the system such as: store the highest priority data
+%as high up on the hierarchy for 6 months, and then migrate this data to tape.
+%The user can also define the utility for CR files as that they have high
+%priority but their lifetime is for a short period of time; i.e. when the
+%next CR file appears on the system or the next two CR files. Research in
+%describing this utility function will be in conjunction with users
+%and we will evaluate how policies can be placed in the system and how well
+%this utility function can be observed by the user.
+
+ We will formulate the concept of utility (from an
+application perspective) that is assigned data objects to quantify the
+benefits of placement and/or movement actions to application. These
+utilities may be based on the importance of the data objects, the frequency
+with which they are accessed, etc., and can be used during runtime data
+management to evaluate and compare different placement/movement options. 
+For example, data objects with higher utility value may be
+placed closer (e.g., in faster memory) to the accessing application.
+Similarly, when it is time to evict data objects from a higher level storage
+layer, the decision about which object to evict may take the utility into
+account. Our initial work in defining such a utility is presented in~\cite{tongipdps15}.
+ We will also explore autonomic approaches for balancing of the placement and 
+ movement of data across the memory hierarchy autonomically, which will be driven 
+ by the data utility and will leverage both user hints and information gathered at runtime (e.g., runtime data access
+history, network topology, etc.).
+Finally, we will explore a complementary notion of utility from a system-wide perspective 
+that will capture and quantify, for example, the impact of placement decisions on 
+the overall utilization of storage across multiple applications, and will enable system level runtime optimization. 
+
+
 
 
 %
