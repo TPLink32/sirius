@@ -58,7 +58,7 @@ decision to purge may be made by the system based on operational metrics from
 system administrators or by the user. This phase optimizes the space available in the
 system. % to prevent out of space concerns for applications. 
 
-Our proposed research will address data management challenges across the entire 
+Our research will address data management challenges across the entire 
 data life cycle in an application driven and system aware manner. 
 %given our thesis that more knowledge, and more specific knowledge about the
 %data, can allow the management of data to be optimized with reduced cost.
@@ -67,11 +67,11 @@ Some of the high level research questions that we will explore are as follows:
 %What methods can be utilized in the initial placement of data that do not impose expensive
 %costs on discovery, consumption and migration? 
 (2) How can the placement and migration of data across a multi-tiered storage hierarchy be 
-optimized at runtime, both from the application and system perspective?, {\color{red} where is 3?} 
+optimized at runtime, both from the application and system perspective?,
 %(3) How can we migrate data throughout the layers of storage
 %without making the discovery process unbounded? 
-(4) How can knowledge about the application used to better prepare the data for consumption?, and 
-(5) When and how do we make the decision to purge data?  %using this additional knowledge? 
+(3) How can knowledge about the application used to better prepare the data for consumption?, and 
+(4) When and how do we make the decision to purge data?  %using this additional knowledge? 
 
 %Next we provide details on the challenges and proposed research through each
 % phase of the data life cycle.
@@ -158,8 +158,6 @@ optimized at runtime, both from the application and system perspective?, {\color
 
 \subsubsection{Data Placement and Movement}
 \label{sec:init-plac-data}
-
-\paragraph{Background:}
 When an application outputs or accesses data the storage and middleware layers needs to
 decide \textit{what} data is placed \textit{where} in the multi-level storage system. 
 This placement decision can have a significant impact on data management 
@@ -186,7 +184,7 @@ resources vertically (across deep memory hierarchies) and horizontally (across n
 within a memory level) while accommodating dynamic application requirements and transient 
 system states. 
 %
-Our approach in the proposal is to increase knowledge about the data and its use within the 
+Our approach is to increase knowledge about the data and its use within the 
 application, and leverage this knowledge to drive data placement and overall management. 
 
 %Our approach to data placement will leverage the increased set of knowledge about the data 
@@ -247,7 +245,7 @@ application knowledge, and use this information to prefetch data objects.
 For example, we will identify and catalog key phases and access patterns
 in the target workflows and then use it to characterize patterns at runtime
 and trigger appropriate placement and/or movement actions. Our initial 
-work explore these ideas is presented in~\cite{qiansc15}.
+work explore these ideas is presented in~\cite{qiansc15,choi2012mining}.
 
 % \paragraph{State of the art:} NAND flash-based devices are being
 % increasingly used in HPC storage systems at different levels and for a
@@ -268,8 +266,6 @@ work explore these ideas is presented in~\cite{qiansc15}.
 
 \subsubsection{Migration}
 \label{sec:migration}
-
-\paragraph{Background:} 
 A complementary aspects of the data lifecycle management is the management and 
 %Once the system has completed the initial data placement with minimal
 %overhead to the application, it is up to the storage system to manage the
@@ -288,7 +284,7 @@ and the rate-of-change of the media use.
 Grouping into pseudo-tiers is not a formal, nor rigid, concept within
 Sirocco, at present. In classic HSM the tiering is often a formally
 expressed concept, embodied both in the architecture and the implementation.
-In Sirocco, though, it is not directly expressed. Instead, a client or
+In Sirocco, though, it is not directly expressed; instead, a client or
 server that attempts to make a decision relative to migration and staging
 uses these attributes to constrain the choice of candidates. For instance, a
 server acting as an off-node writeback cache for a compute node might only
@@ -311,14 +307,14 @@ The policies that govern the migration of data across groups and across
 tiers have similar challenges as data placement. The migration
 policy must encapsulate, at a high level, the constraints defined by the
 application, but must also manage resources on each server for capacity and
-load reasons. We will explore policy formulations that allow \Sir to move
-data within a tier to continue to meet service objectives. Another component
+load reasons. We will explore policy formulations that allow \Sir~to move
+data within a tier and continue to meet service objectives. Another component
 of migration is the temporal function that determines the utility of data
-through its life time on storage. If they utility decays over time, for
+through its life time on storage. If the utility decays over time, for
 example, the initial constraints of data (such as resilience requirements)
-will be modified and allow more leeway in how the system handles migration.
-However, as data is widely distributed the scalability of this approach must
-be investigated. 
+will be modified and allow more leeway in how the system will handle migration.
+However, as data is widely distributed {\it the scalability of this approach must
+be investigated}. 
 We will explore how the utility function can be used to modify migration
 parameters in a scalable manner, without requiring a centralized authority
 to make decisions. 
@@ -330,12 +326,12 @@ how no central directory exists for where data is at anytime. There are
 solutions to this problem that utilize lookup tables which are updated
 whenever a server initiates a migration process. However, these solutions
 are not scalable. In order to have predictable performance the lookup
-process must complete in a bounded time. Another solution here is to use a
+process must complete in a bounded time. Our potential solution here is to use a
 distributed hashing function to determine exactly where data is placed,
 reducing lookup to an $O(1)$ operation. We explore the discovery of data in
 \S~\ref{sec:naming-discovery}. To support this discovery process, we will
 investigate how the migration of data can be performed in a way that enables
-bounded estimates about time to first byte for a potential read operation.
+bounded estimates  for a potential read operation.
 
 % We will explore the use of a  hashing function
 % that will leverage determinism to initiate the lookup process. If at most
@@ -381,17 +377,16 @@ bounded estimates about time to first byte for a potential read operation.
 
 \subsubsection*{Making data available on multiple tiers}
 \label{sec:manag-data-mult}
-
-\paragraph{Background:} Providing data to users for knowledge discovery is
+ Providing data to users for knowledge discovery is
 one of the primary purposes of our storage system design. There is a
 spectrum of approaches on how
 this can be accomplished: On one end the storage system can aim to maintain
-full resolution data in the highest tiers of the storage hierarchy. This
+fully accurate data in the highest tiers of the storage hierarchy. This
 approach is, obviously, limited due to the disparity between size of data
 and available space in the higher tiers. Another approach is to utilize the
 techniques described in \S\ref{sec:data-refactor} to create auxiliary views of
 the data that, with user defined error, represent the data, and place these
-smaller data sets on the higher tiers for faster access. 
+high priority  data sets on the higher tiers for faster access. 
 
 There are a
 number of drivers that push approaches to one or the other extreme:
@@ -439,12 +434,12 @@ space. In the proposed work we will develop an abstraction for
 describe locality properties of access patterns, and implement
 services that leverage locality properties to dynamically determine
 the value of thinning or enriching data at a particular tier.
-Consider the example of a road navigation system: the locality
-properties of each navigation client are based on physical constraints
-of speed, direction, likely resolution of map, and the fact that
-clients almost never go off-road.
+%Consider the example of a road navigation system: the locality
+%properties of each navigation client are based on physical constraints
+%of speed, direction, likely resolution of map, and the fact that
+%clients almost never go off-road.
 
-\subsubsection{Purging}
+\subsubsection*{Purging}
 \label{sec:purging-data}
 An important phase of the data lifecycle is the purging of data from the system, 
 which presents significant challenges, both from the systems and policy perspectives. 
@@ -454,7 +449,7 @@ explore in this efforts will be extending the notion of system and application u
 The former can be used to determine when data object need to purged while the 
 latter can help determine the relative importance of data objects to the 
 application and identify which data objects can be purged. Developing policies 
-for purging is a more challenging problem and will required engaging with the 
+for purging is a more challenging problem and will require engaging  the 
 user community. However, a key research problem that will be addressed in
  this effort is developing the abstractions that can be used to consistently and 
  unambiguously express these policies as well as the mechanisms that can be 
