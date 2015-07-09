@@ -2,53 +2,64 @@
 \label{sec:qos}
 
 \subsubsection{Resource Management}
-There is an important connection between finding the resources
-that can fulfill a particular request and the performance predictability of that request. As such, this demands
-careful resource management strategies that can deal with placement and retrieval of 
-a large number of data chunks spread across the entire storage hierarchy. 
-%This connection is particularly important for data retrieval 
-%- in large scale storage systems, finding a resource to read can be a significant, if not dominant, 
-%component of overall read latency. 
-Locating resources is a typical distributed systems problem. Centralized solutions are limited in their
-scalability, because they require a single entity that tracks updates in the system. 
-Traditional file systems are good examples for this ; most updates to files require updates 
-to their centrally maintained block allocation tables. 
-The opposite of file systems are ``pile'' systems, which, instead of keeping track of updates, searchs for 
-resources at request time. Pile systems allow very efficient writes because clients can write wherever
-there is free space and there is very low bookkeeping overhead. However, unbounded search in pile systems
-is possible, e.g., when it is unclear whether the resource actually exists. 
-Methods to make searches more efficient without reverting to centralized bookkeeping usually involves 
-partitioning of the search space and a method to limit the search to a small number of partitions. 
+Careful resource management strategies that can deal with placement and
+retrieval of a large number of data chunks spread across the entire storage
+hierarchy are key for predictable performance. 
+%This connection is particularly important for data retrieval - in large scale
+%storage systems, finding a resource to read can be a significant, if not
+%dominant, component of overall read latency. 
+Locating resources is typical a distributed systems problem. Centralized
+solutions suffer scalability challenges due to centralized, serialized system
+updates.  POSIX-compliant file systems are good examples of this
+strucutre--most updates to files require updates to their centrally maintained
+block allocation tables.
 
-Frequently this involves a hash function that is relatively stable against changes to its range, 
-such as failures or updates to the hardware of the system. Consistent hashing~\cite{karger:stoc97}
-is scalable since it can be well-known throughout a system of any size and only requires minimal 
-movement of data in the presence of failures or system changes. 
-%Consistent hash functions can also
-%have sets of ordered but infinite lists as their range (which works well with primary replication)
-%~\cite{honicky:ipdps04}, implement declustering (limiting overlap between partitions), and support
-%placement policy rules~\cite{weil:sc06}.
+An opposite example of this central management strategy are ``pile'' systems,
+which, instead of tracking updates, they search for resources upon request.
+Pile systems feature efficient writes because clients can write wherever there
+is free space with low bookkeeping overhead.  However, unbounded search is
+possible, e.g., when it is unclear whether the resource actually exists.
+Methods to make searches more efficient without reverting to centralized
+bookkeeping usually involves search space partitioning and a method to limit
+the search to a small number of partitions.  Frequently this involves a
+hash function that is relatively stable against changes to its range, such as
+failures or updates to the hardware of the system. Consistent
+hashing~\cite{karger:stoc97} is scalable since it can be well-known throughout
+a system of any size and only requires minimal movement of data in the presence
+of failures or system changes. 
+%Consistent hash functions can also have sets of ordered but infinite lists as
+%their range (which works well with primary replication)
+%~\cite{honicky:ipdps04}, implement declustering (limiting overlap between
+%partitions), and support placement policy rules~\cite{weil:sc06}.
+
+Sirocco offers more of a pile struture rather than a file structure. One of the
+challenges we face is offering performance predictability more similar to
+POSIX-compliant file systems while we take advantage of the distributed,
+flexible storage management offered by Sirocco.
 
 \paragraph{Approach:} 
-In this proposal we will investigate the trade-off in terms of predictable performance between 
-``filing'' data, making an upfront investment to ensure finding data quickly, and ``piling'' 
-data, pushing the cost of finding to the moment when the data is actually needed. This trade-off 
-has a parallel in data management where there are two alternative paths to achieve knowledge: 
-the analogue to filing is  to ``extract, transform, and load'' (ETL) data into a warehouse, paying 
-an upfront ingest cost to achieve fast querying; and the analogue to piling is to not pay any upfront 
-cost and later querying   the raw data directly by using a data processing platform such as Hadoop.  Recent work 
-has found that the combination of these two techniques can be optimized to perform better than 
-any one technique alone~\cite{lefevre:sigmod14a}. We believe that a similar opportunity exists 
-for combining filing and piling approaches to achieve performance predictability without sacrificing 
-too much flexibility.
+In this proposal, we will investigate the trade-off in terms of predictable
+performance between ``filing'' and ``piling'' data.  This trade-off has a
+parallel in data management where there are two alternative paths to achieve
+knowledge. The analogue to filing is  to ``extract, transform, and load'' (ETL)
+data into a warehouse paying an upfront ingest cost to achieve fast querying.
+The analogue to piling is to not pay any upfront cost and later querying the
+raw data directly by using a data processing platform such as Hadoop.  Recent
+work has found that the combination of these two techniques can be optimized to
+perform better than any one technique alone~\cite{lefevre:sigmod14a}. We
+believe that a similar opportunity exists for combining filing and piling
+approaches to achieve performance predictability without sacrificing too much
+flexibility. Our additional challenge is incorporating both the storage tiers
+and potential data quality metrics.
 
-More specifically, the coarseness of a search space partitioning limits the search time within 
-a partition, i.e. finely partitioned search spaces require little or no search within a partition 
-but offer little placement flexibility. Partitioning can also be fine in one dimension, and coarse 
-in another to allow flexibility where it is most needed while still ensuring fast finding. For 
-example, a hash function can finely partition a low storage tier but each partition can extend 
-across multiple tiers so that a search still has to occur in order to find a resource on a particular 
-tier.  
+More specifically, the coarseness of a search space partitioning limits the
+search time within a partition, i.e., finely partitioned search spaces require
+little or no search within a partition but offer little placement flexibility.
+Partitioning can also be fine in one dimension and coarse in another to allow
+flexibility where it is most needed while still ensuring fast finding. For
+example, a hash function can finely partition a low storage tier but each
+partition can extend across multiple tiers so that a search must occur in order
+to find a resource on a particular tier.  
 
 %Specifically, we will address the following research questions:
 %\begin{tightItemize}
@@ -63,9 +74,8 @@ tier.
 %\end{tightItemize}
 
 \subsubsection{Quality of Service (QoS)}
-QoS refers to the
-properties of the performance quality of a particular service, in
-this case the storage system.
+Our ultimate goal, rather than just performance predictability, is to offer
+predictable Quality of Service (QoS) for the storage system.
 %Performance quality can be expressed in either relative or absolute
 %terms. Examples of relative performance terms are ``fair'',
 %``proportional'', or ``priority/class-based'' (``the higher the
@@ -85,52 +95,51 @@ this case the storage system.
 %performance terms is that their implementation is non-trivial,
 %especially in large-scale systems.
 One of the key differentiating features this project offers is driving storage
-decisions through QoS \emph{reservations}, rather than continuing the current model
-of allowing applications to compete freely without restriction, for part or all of the storage
-resources. This traditional approach leads to interference effects
-\cite{lofstead:2010:io-variability,liu_hotstorage} that can greatly impact I/O performance predictability. 
+decisions through QoS~\emph{reservations} rather than continuing the current
+model of allowing applications to compete freely without restriction for part
+or all of the storage resources. The current approach leads to interference
+effects~\cite{lofstead:2010:io-variability,liu_hotstorage} that can greatly
+impact I/O performance predictability. 
 %Further, with the introduction of additional tiers in the
 %storage stack, the performance variability will increase with greater
 %competiion for limited high performance resources. 
-%% Temporaily commented out the above sentence, because it may not be true for the next DOE systems. 
-Unfettered, this competition can yield a lower system and application performance 
-than the case where applications attempt to reserve storage resources, thereby enabling the storage system
-to reason over its performance in terms of reservations and actual
+%% Temporaily commented out the above sentence, because it may not be true for
+%the next DOE systems. 
+Unfettered, this competition can yield lower system and application performance
+than if applications attempt to reserve storage resources thereby enabling the
+storage system to reason over its performance in terms of reservations and
+actual performance.  In the cases where an application arrives that needs to
+run more urgently than any of the other already running applications, the
+system can rapidly respond to it by reducing the amount of resources taken by
+less urgent applications, allowing the urgent application to finish, and later
+reverting back to the previous committed resource level for the rest.  This can
+be automatically enforced via user- or administrator- specified
+\textit{policies}\S\ref{sec:data-description}.
+
+There are two fundamental causes that can impede the I/O performance in an
+extreme-scale SSIO system. One is indirection, where layers of storage tiers
+are employed either for performance and/or for scalability reasons.  The direct
+consequence is that there could be multiple traversing paths from application
+end to the data resting place, and more often than not, the I/O paths are not
+under control under of any single authority. The other cause is shared
+resources use. The best effort I/O request/response nature and lack of QoS
+mechanisms imply that there is little expected performance guarantee.  Both
+indirection and shared resources use contribute to a high probability of
+imbalanced resources use and thus the occurrence of congestion and degraded
 performance.
-In the cases where an application arrives that needs to run more urgently
-than any of the other already running applications, the system
-can rapidly respond to it by reducing the amount of resources taken 
-by less urgent applications, allowing the urgent application to finish,
-and later reverting back to the previous committed resource level for the rest.
-This can be automatically enforced via user- (or administrator-) specified \textit{policies}\S\ref{sec:data-description}.
 
-There are two fundamental causes that can impede the I/O performance
-in an extreme-scale SSIO system. One is indirection, where layers
-of storage tiers are employed either for performance and/or for
-scalability reasons.  The direct consequence is that there could
-be multiple traversing paths from application end to the rest place
-of data, and more often than not, the I/O paths are not under control
-under any single authority. The other cause is the shared use of
-resources. The best effort I/O request/response nature and lack of
-QoS mechanisms imply that there is little guarantee in terms of
-expected performance. Both indirection and shared use of resource
-contribute to a high probability of imbalanced use of resources
-thus the occurrence of congestion and degraded performance.
-
-As an example to demonstrate that this disconnection will hurt
-system performance: We launch 4096 processes with each process doing
-a single file I/O operation against half of the Spider II file
-system. The traces of those files are analyzed to examine the
-utilization distribution of different components. Figure (a), (b)
-and (c) shows the resource usage distribution for OSTs, OSSes, and
-LNETs, respectively. We observe that there exists a significant
-variation in usage across components of any given type (e.g., OST,
-OSS or LNET). For example, some OSTs are used more than 10 times
-while some others are never used (corresponding to zero frequency
-count). Similarly, OSSes and LNETs show significant imbalance in
-usage under the default placement strategy. Consequently, imbalanced
-resource utilization increases the contention at certain components
-more than others.
+Consider this example demonstrating this disconnection will hurt system
+performance. We launch 4096 processes with each process doing a single file I/O
+operation against half of the Spider II file system at ORNL. The file traces
+are analyzed to examine the utilization distribution of different components.
+Figures (a), (b) and (c) show the resource usage distribution for OSTs, OSSes,
+and LNETs, respectively. We observe a significant usage variation
+across components of any given type (e.g., OST, OSS or LNET). For example, some
+OSTs are used more than 10 times while some others are never used
+(corresponding to zero frequency count). Similarly, OSSes and LNETs show
+significant usage imbalance under the default placement strategy.
+Consequently, imbalanced resource utilization increases the contention at
+certain components more than others.
 
 % Don't know how to integrate this. Gary
 %Given these insights, we advocate the idea that the infrastructure
@@ -156,8 +165,9 @@ more than others.
 \end{figure}
 \vskip-0.2in
 
-% This is about finding the relationshiop of workload-dependent to workload-independent metrics. -- Carlos
- %are driven from multiple different approaches. First, supporting
+% This is about finding the relationshiop of workload-dependent to
+% workload-independent metrics. -- Carlos
+%are driven from multiple different approaches. First, supporting
 %capability runs is a priority for capability machines. We propose to address
 %capability run performance by incorporating monitoring for prepartory runs at
 %smaller scale to profile the application output characteristics both from a
@@ -223,63 +233,56 @@ more than others.
 %performance terms is that their implementation is non-trivial,
 %especially in large-scale systems.
 
-\paragraph{Approach:} The goals of this proposal require applications
-to demand guarantees in terms of absolute performance qualities.
-The first key enabler for any service to make absolute guarantees
-is \emph{performance isolation}, i.e. the ability to shield the
-performance impact of one task from another. The most straight-forward
-but least flexible strategy is to simply cap the latency of each
-task, regardless of its completeness (see for
-example~\cite{decandia:sosp07}). This strategy is applicable when
-incomplete tasks still have value and missing results are either
-not important or can be easily retrieved in subsequent tasks. A
-more generally applicable strategy is to control the admission of
-tasks to the system: \emph{admission control} maintains a
+\paragraph{Approach:}
+The goals of this proposal require applications to demand guarantees in terms
+of absolute performance qualities.  The first key enabler for any service to
+make absolute guarantees is \emph{performance isolation}, i.e., the ability to
+shield the performance impact of one task from another. The most
+straight-forward but least flexible strategy is to simply cap the latency of
+each task, regardless of its completeness (see for
+example~\cite{decandia:sosp07}). This strategy is applicable when incomplete
+tasks still have value and missing results are either not important or can be
+easily retrieved in subsequent tasks. A more generally applicable strategy is
+to control task admission to the system. \emph{Admission control} maintains a
 \emph{utilization model} that can predict the utilization of system
-resources given a new task, estimates the current utilization of
-the system, and decides whether the task can be admitted without
-overloading the system. Thus, admission control avoids system
-overload conditions that lead to hard-to-model chaotic behaviors.
-Consequently, utilization models can frequently be approximated by
-automatically calibrated linear models (see for
+resources given a new task, estimates the current utilization of the system,
+and decides whether the task can be admitted without overloading the system.
+Thus, admission control avoids system overload conditions that lead to
+hard-to-model chaotic behaviors.  Consequently, utilization models can
+frequently be approximated by automatically calibrated linear models (see for
 example~\cite{skourtis:hpdc12}).
 
-Another essential component of performance isolation is the
-\emph{charging model} which determines which task(s) should be
-charged how much for a request. Performance isolation is implemented
-by the charging model by ensuring that performance of a task only
-depends on its reservation and its workload behavior (but not on
-other workloads in the system). Each task has a budget based on its
-reservation and spends it based on the cost of each request determined
-by the charging model. A charging model determines the cost based
-on the utilization model and the interactions a request can have
-with other requests (e.g. a random request to spinning media
-interrupting a stream of sequential requests).
+Another essential component of performance isolation is the \emph{charging
+model} that determines which task(s) should be charged how much for a request.
+Performance isolation is implemented by the charging model by ensuring that
+task performance only depends on its reservation and its workload behavior (but
+not on other workloads in the system). Each task has a budget based on its
+reservation and spends it based on the cost of each request determined by the
+charging model. A charging model determines the cost based on the utilization
+model and the interactions a request can have with other requests (e.g. a
+random request to spinning media interrupting a stream of sequential requests).
 
-Performance isolation (including its utilization and charging models)
-critically depends on \emph{workload-independent metrics}. Even
-though throughput and latency are frequently the most meaningful
-metrics for an application, they are not workload-independent and
-therefore are inadequate for measuring the utilization of a device
-across all workloads, unless one accepts worst-case estimates that
-can lead to gross underutilization of resources (e.g. the throughput
-of random and sequential workloads in spinning media differ by
-orders of magnitudes). A common workload-independent metric is
-\emph{time utilization}, i.e. the amount of time a resource is
-utilized in a given time interval. Time utilization has the advantage
-of having an always defined maximum and therefore makes resources
-fully reservable. Even though a workload-independent metric might
-at first not appear meaningful for an application, given a particular
-workload an application can discover the relationship between its
-workload-dependent metric and the workload-independent metric.
-Because of performance isolation, the application has to discover
-this relationship only once.
-To achieve effective performance isolation, we seek to expand the resource management
-capabilities in Sirocco to support additional utilization 
-metrics to guide resource management
-decisions. Currently, Sirocco offers automatic resource management capabilities,
-based on resource capacity and data resilience requirements, and it needs to be extended
-to offer data-centric metrics that help guide the forced QoS decisions.
+Performance isolation, including its utilization and charging models,
+critically depends on \emph{workload-independent metrics}. Even though
+throughput and latency are frequently the most meaningful metrics for an
+application, they are not workload-independent and therefore are inadequate for
+measuring device utilization across all workloads unless one accepts
+worst-case estimates that can lead to gross resource underutilization. For
+example, the throughput of random and sequential workloads in spinning media
+differ by orders of magnitudes. A common workload-independent metric is
+\emph{time utilization}, i.e., the amount of time a resource is utilized in a
+given time interval. Time utilization has the advantage of having an always
+defined maximum and therefore makes resources fully reservable. Even though a
+workload-independent metric might at first not appear meaningful for an
+application, given a particular workload an application can discover the
+relationship between its workload-dependent metric and the workload-independent
+metric.  Because of performance isolation, the application has to discover this
+relationship only once.  To achieve effective performance isolation, we seek to
+expand the resource management capabilities in Sirocco to support additional
+utilization metrics to guide resource management decisions. Currently, Sirocco
+offers automatic resource management capabilities, based on resource capacity
+and data resilience requirements, and it needs to be extended to offer
+data-centric metrics that help guide the forced QoS decisions.
 
 As stated in the introduction, we seek to make a storage stack that works with
 the user. Towards that end, we must incorporate data attributes into this
@@ -294,33 +297,35 @@ not just based on age, but also based on this priority. This will help ensure
 the shortest time to insight by making sure the most important machine runs
 have priority to use system resources.
 
-\paragraph{Related Work:} On current production HPC systems, absolute I/O performance
-guarantees are not possible. Previous work \cite{lofstead:2010:io-variability,liu_hotstorage} 
-from this project team uses a client-assisted approach to mitigate I/O variablity at scale (100,000-core).
-Recently server side QoS scheduling has also been studied for HPC applications \cite{Dai:2014}.
-However, the key hurdle of scalability has not been solved.
-Existing efforts on scheduing resources~\cite{thapaliya:2014:io-cop,dorier:2014:calciom} attempt to offer
+\paragraph{Related Work:}
+On current production HPC systems, absolute I/O performance guarantees are not
+possible. Previous work~\cite{lofstead:2010:io-variability,liu_hotstorage} from
+this project team uses a client-assisted approach to mitigate I/O variablity at
+scale (100,000-core).  Recently, server side QoS scheduling has also been
+studied for HPC applications~\cite{Dai:2014}.  However, the key hurdle of
+scalability has not been solved.  Existing efforts on scheduing
+resources~\cite{thapaliya:2014:io-cop,dorier:2014:calciom} attempt to offer
 admission control to maximize storage performance. Unfortunately, these efforts
 are limited to participating applications and only applications from a single
 platform. For this approach to be effective, the storage system must offer an
-approach that handles clients from all connected platforms and does not
-require modification to use new storage access APIs. By using a priority
-tagging system, we will offer defaults suitable for all applications that can
-be informed by simple extensions to the job scheduler or more advanced
-management through new APIs. On the other hand, storage QoS has been
-studied for enterprise applications and systems \cite {Gulati:2007,Gulati:2010,Gulati:2012}
+approach that handles clients from all connected platforms and does not require
+modification to use new storage access APIs. By using a priority tagging
+system, we will offer defaults suitable for all applications that can be
+informed by simple extensions to the job scheduler or more advanced management
+through new APIs. On the other hand, storage QoS has been studied for
+enterprise applications and systems~\cite{Gulati:2007,Gulati:2010,Gulati:2012}
 in virtualized environments. It is not straightforward to adapt these solutions
-to HPC storage systems because of the scalability and efficiency concerns, despite
-they achieved very good performance isolations.
+to HPC storage systems because of the scalability and efficiency concerns,
+despite they achieved very good performance isolations.
 
-\paragraph{Challenges:} The deep and heterogeneous memory and storage
-hierarchy we are assuming for this proposal complicates the
-relationship between workload-dependent and workload-independent
-metrics: the performance of a task can significantly differ depending
-on what levels of the hierarchy are involved. Furthermore, an
-important goal of the proposed project is to enable applications
-to reason about the trade-off between resolution and latency, adding
-yet another dimension to how tasks are mapped to resources.
+\paragraph{Challenges:}
+The deep and heterogeneous memory and storage hierarchy we are assuming for
+this proposal complicates the relationship between workload-dependent and
+workload-independent metrics: the performance of a task can significantly
+differ depending on what levels of the hierarchy are involved. Furthermore, an
+important goal of the proposed project is to enable applications to reason
+about the trade-off between resolution and latency, adding yet another
+dimension to how tasks are mapped to resources.
 
 \begin{tightItemize}
 
