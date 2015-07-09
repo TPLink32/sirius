@@ -206,11 +206,22 @@ docker container so that data can be re-generated with a {\em local}
 approximation of the full simulation. This is an entirely new approach to
 tackle the data overload by using preprocessors in which information is not
 simply stored in the form of raw data, but rather in the form of appropriate
-parameterized algorithms. A priori information on the nature of the data is
-used to choose the basic algorithm while the actual values of the data are used
-to tune the parameters used in the reconstruction procedures. We shall refer to
-this paradigm as an Auditor.  We will examine the use of several auditors for
-the simulations which we will work with. One approach is to use a fluid-code to
-audit a kinetic code, which can be a good approximation over short periods of
-time. 
+parameterized algorithms. An ``auditor'' is a code which mimics the exascale simulation, 
+but typically can run using less degrees of freedom. This means that the code is a good
+local (in space and time) approximation of the exascale simulation and will be much less
+expensive to execute (so that it can be run in situ), and follows the behavior of the simulation
+for short periods of time. This allows us to ``audit'' the simulation and when the differences 
+become large in a local region of space, we write out the results of the data in this local region.
+The hope is that this will be done only locally and that with a good ``auditor''  this will not happen
+too frequently. This then allows us to use the ``auditor'' to reproduce results during the analysis 
+process using an inexpensive computation and put less pressure on the SSIO layer.
+%
+% 
+%   A priori information on the nature of the data is
+%used to choose the basic algorithm while the actual values of the data are used
+%to tune the parameters used in the reconstruction procedures. We shall refer to
+%this paradigm as an Auditor.  We will examine the use of several auditors for
+%the simulations which we will work with. One approach is to use a fluid-code to
+%audit a kinetic code, which can be a good approximation over short periods of
+%time. 
 
