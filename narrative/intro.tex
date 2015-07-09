@@ -113,21 +113,20 @@ Our proposal will be responsive to Theme 2: {\em Scalable Storage Software Infra
 \small
 \vspace{2ex}
 \begin{center}
+\caption {Relevance to SSIO}
+\label{tab:call}
 \begin{tabular}{ | p {0.2cm} | p{5cm} | p{7.5cm} | p{2.2cm} |}\hline
 \multicolumn{2}{|c|}{\bf Call area} & \multicolumn{1}{|c|}{\bf Relevant S2E2 work} & \multicolumn{1}{|c|}{\bf See} \\\hline\hline
 1 & Data abstractions & Create new APIs  and annotations for users to guide the system for placement  & \S\ref{sec:data-description} \\\hline
 2 & Mapping science data models onto hierarchical storage &  Create the ability to re-organize, reduce and prioritize data chunks from an object& \S\ref{sec:data-refactor}, \S\ref{sec:data-description},  \S\ref{sec:managing-data-life}\\\hline
-3 & Mechanisms for data movement across the storage hierarchy & {\color{red}what are we doing. CHECK-tsr} & \S \ref{sec:managing-data-life},  \S\ref{sec:migration} \\\hline
+3 & Mechanisms for data movement across the storage hierarchy & Manage data migration based on policies& \S \ref{sec:managing-data-life},  \S\ref{sec:migration} \\\hline
 4 &  Extend the interaction of I/O middleware with the resource management system & We will manage data from the application  to the middleware to the storage system and allow them to have an autonomic interaction & \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery}  \\\hline
 5 & Design and implement of I/O middleware architectures  & We will create APIs to guide the placement of chunks of data across the SSIO and autonomically move data when necessary& \S\ref{sec:data-description}, \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery} \\ \hline
 6 & Approaches to improve the ability of SSIO software to support checkpoint/restart & We will have utility functions defined for the lifetime of data, and allow CR data to be automatically placed in the fastest storage and then purged when it is no longer needed & \S \ref{fig:ssio-bucket}  \\
 \hline
 \end{tabular}
 \end{center}
-%\caption {WRITE A CAPTION FOR THIS TABLE}
 \vskip -0.5cm
-\caption {}
-\label{tab:call}
 \end{table}
 
 %
