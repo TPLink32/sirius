@@ -2,7 +2,7 @@
 \label{sec:qos}
 
 \subsubsection{Resource Management}
-\paragraph{Background:} There is an important connection between finding the resources
+There is an important connection between finding the resources
 that can fulfill a particular request and the performance predictability of that request. As such, this demands
 careful resource management strategies that can deal with placement and retrieval of 
 a large number of data chunks spread across the entire storage hierarchy. 
@@ -11,7 +11,7 @@ a large number of data chunks spread across the entire storage hierarchy.
 %component of overall read latency. 
 Locating resources is a typical distributed systems problem. Centralized solutions are limited in their
 scalability, because they require a single entity that tracks updates in the system. 
-Traditional file systems are good examples for this - most updates to files require updates 
+Traditional file systems are good examples for this ; most updates to files require updates 
 to their centrally maintained block allocation tables. 
 The opposite of file systems are ``pile'' systems, which, instead of keeping track of updates, searchs for 
 resources at request time. Pile systems allow very efficient writes because clients can write wherever
@@ -63,7 +63,7 @@ tier.
 %\end{tightItemize}
 
 \subsubsection{Quality of Service (QoS)}
-\paragraph{Background:} QoS refers to the
+QoS refers to the
 properties of the performance quality of a particular service, in
 this case the storage system.
 %Performance quality can be expressed in either relative or absolute
@@ -151,10 +151,10 @@ more than others.
 
 \begin{figure}[tbh]
   \centering
-  \includegraphics[width=\columnwidth]{graphics/infrastructure.pdf}\vspace{-1.2in}
+  \includegraphics[width=\columnwidth]{graphics/infrastructure.pdf}
   \caption{Resource usage distribution for OST(a), OSS(b) and LNETs(c) }
 \end{figure}
-\vskip -1.5in
+\vskip-0.2in
 
 % This is about finding the relationshiop of workload-dependent to workload-independent metrics. -- Carlos
  %are driven from multiple different approaches. First, supporting
