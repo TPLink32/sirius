@@ -167,17 +167,6 @@ function must have defaults that users can inquire into, and change these
 when they see that these defaults can have a possible negative impact on
 their knowledge discovery. 
 
-\begin{wrapfigure}{r}{0.6\textwidth}
-        \begin{centering} 
-	\includegraphics[scale=0.8]{graphics/SSIO-bucket.pdf}
-        %\vspace{1ex}
-        \caption{The system manages the data across the various stages of the data lifecycle}
-        \label{fig:ssio-bucket}
-        \end{centering}
-      % \vspace{-1ex}
-\end{wrapfigure}
-
-
 %The assumptions which we will make in choosing a utility function is that:
 %1) There will only be a small number of priority levels that users will use
 %to re-prioritize their data; 2) The number of tiers in the storage system will
@@ -192,7 +181,7 @@ their knowledge discovery.
 %describing this utility function will be in conjunction with users
 %and we will evaluate how policies can be placed in the system and how well
 %this utility function can be observed by the user.
-
+ 
  We will formulate the concept of utility (from an
 application perspective) that is assigned data objects to quantify the
 benefits of placement and/or movement actions to application. These
@@ -211,7 +200,15 @@ history, network topology, etc.).
 Finally, we will explore a complementary notion of utility from a system-wide perspective 
 that will capture and quantify, for example, the impact of placement decisions on 
 the overall utilization of storage across multiple applications, and will enable system level runtime optimization. 
-
+\begin{wrapfigure}{R}{0.6\textwidth}
+        \begin{centering} 
+	\includegraphics[scale=0.8]{graphics/SSIO-bucket.pdf}
+        %\vspace{1ex}
+        \caption{The system manages the data across the various stages of the data lifecycle}
+        \label{fig:ssio-bucket}
+        \end{centering}
+      % \vspace{-1ex}
+\end{wrapfigure}
 
 
 
