@@ -13,7 +13,7 @@ Locating resources is a typical distributed systems problem. Centralized solutio
 scalability, because they require a single entity that tracks updates in the system. 
 Traditional file systems are good examples for this - most updates to files require updates 
 to their centrally maintained block allocation tables. 
-The opposite of file systems are ``pile'' systems, which, instead of keeping track of updates, search for 
+The opposite of file systems are ``pile'' systems, which, instead of keeping track of updates, searchs for 
 resources at request time. Pile systems allow very efficient writes because clients can write wherever
 there is free space and there is very low bookkeeping overhead. However, unbounded search in pile systems
 is possible, e.g., when it is unclear whether the resource actually exists. 
@@ -34,9 +34,9 @@ In this proposal we will investigate the trade-off in terms of predictable perfo
 ``filing'' data, making an upfront investment to ensure finding data quickly, and ``piling'' 
 data, pushing the cost of finding to the moment when the data is actually needed. This trade-off 
 has a parallel in data management where there are two alternative paths to achieve knowledge: 
-the analogue to filing is ``extract, transform, and load'' (ETL) data into a warehouse, paying 
-an upfront ingest cost to achieve fast querying; the analogue to piling is to not pay any upfront 
-cost and query the raw data directly by using data processing platforms such as Hadoop. Recent work 
+the analogue to filing is  to ``extract, transform, and load'' (ETL) data into a warehouse, paying 
+an upfront ingest cost to achieve fast querying; and the analogue to piling is to not pay any upfront 
+cost and later querying   the raw data directly by using a data processing platform such as Hadoop.  Recent work 
 has found that the combination of these two techniques can be optimized to perform better than 
 any one technique alone~\cite{lefevre:sigmod14a}. We believe that a similar opportunity exists 
 for combining filing and piling approaches to achieve performance predictability without sacrificing 
@@ -44,7 +44,7 @@ too much flexibility.
 
 More specifically, the coarseness of a search space partitioning limits the search time within 
 a partition, i.e. finely partitioned search spaces require little or no search within a partition 
-but offer little placement flexibility. Partitioning can also be fine in one dimension and coarse 
+but offer little placement flexibility. Partitioning can also be fine in one dimension, and coarse 
 in another to allow flexibility where it is most needed while still ensuring fast finding. For 
 example, a hash function can finely partition a low storage tier but each partition can extend 
 across multiple tiers so that a search still has to occur in order to find a resource on a particular 
@@ -62,8 +62,8 @@ tier.
 %  \item  How do we make the scheduler scalable with the size of the system?
 %\end{tightItemize}
 
-\subsubsection{QoS}
-\paragraph{Background:} Quality of Service (QoS) refers to the
+\subsubsection{Quality of Service (QoS)}
+\paragraph{Background:} QoS refers to the
 properties of the performance quality of a particular service, in
 this case the storage system.
 %Performance quality can be expressed in either relative or absolute
@@ -88,7 +88,7 @@ One of the key differentiating features this project offers is driving storage
 decisions through QoS \emph{reservations}, rather than continuing the current model
 of allowing applications to compete freely without restriction, for part or all of the storage
 resources. This traditional approach leads to interference effects
-\cite{lofstead:2010:io-variability,liu_hotstorage} that can greatly impact IO performance predictability. 
+\cite{lofstead:2010:io-variability,liu_hotstorage} that can greatly impact I/O performance predictability. 
 %Further, with the introduction of additional tiers in the
 %storage stack, the performance variability will increase with greater
 %competiion for limited high performance resources. 
@@ -152,9 +152,9 @@ more than others.
 \begin{figure}[tbh]
   \centering
   \includegraphics[width=\columnwidth]{graphics/infrastructure.pdf}\vspace{-1.2in}
-  \caption{Resource usage distribution for OST(a), OSS(b) and LNETs(c). }
+  \caption{Resource usage distribution for OST(a), OSS(b) and LNETs(c) }
 \end{figure}
-
+\vskip -1.5in
 
 % This is about finding the relationshiop of workload-dependent to workload-independent metrics. -- Carlos
  %are driven from multiple different approaches. First, supporting
@@ -294,9 +294,9 @@ not just based on age, but also based on this priority. This will help ensure
 the shortest time to insight by making sure the most important machine runs
 have priority to use system resources.
 
-\paragraph{Related Work:} On current production HPC systems, absolute IO performance
+\paragraph{Related Work:} On current production HPC systems, absolute I/O performance
 guarantees are not possible. Previous work \cite{lofstead:2010:io-variability,liu_hotstorage} 
-from this project team uses a client-assisted approach to mitigate IO variablity at scale (100,000-core).
+from this project team uses a client-assisted approach to mitigate I/O variablity at scale (100,000-core).
 Recently server side QoS scheduling has also been studied for HPC applications \cite{Dai:2014}.
 However, the key hurdle of scalability has not been solved.
 Existing efforts on scheduing resources~\cite{thapaliya:2014:io-cop,dorier:2014:calciom} attempt to offer

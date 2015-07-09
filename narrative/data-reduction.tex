@@ -25,7 +25,7 @@ A basic issue allied to refactoring is to understand how much information is
 actually present in a dataset and whether a refactoring based on a reduced
 order representation might prove effective. It is useful to classify scientific
 data into two basic categories: structured data (in the sense that it satisfies
-a known or relatively simple model) or unstructured data (in which information
+a known or relatively simple model), or unstructured data (in which information
 content follows no obvious or explicit model).  Although scientific data
 generally contains random components (due to finite precision, measurement and
 calibration effects etc.), useful scientific data is never purely random.
@@ -106,16 +106,16 @@ but also re-organize the data. Previously we have examined:
 	re-arranged which involves memory operations and needs to be done
 	in-situ. This operation involves no communication.  Data needs to be
 	copied, so the memory requirements are increased. At most this requires
-	two copies an individual dataset in memory, and we will investigate
+	two copies of an individual dataset in memory, and we will investigate
 	techniques to allocate and deallocate this memory if the user will
 	specify that the data will be overwritten after it is written to the
-	storage system. This is often the case for many of the data quantities
+	storage system. This is often the case for many of the  quantities
 	written from the simulation, but there are many cases where, for
 	example, we want to write all of the particles from a Particle In Cell
 	(PIC) simulation.  Since the particles will be used later in the
 	calculation, we need to duplicate the storage. Our observation with
-	working with the XGC1, GTC, Warp, and PiconGPU simulations (all
-	leadership class simulations) is that we can temporary increase the
+	working with the XGC1, GTC, and PiconGPU simulations 
+	 is that we can temporary increase the
 	storage of the particles, and then release them since the temporary
 	arrays used in the calculations are often freed when a PIC iteration is
 	finished. 
@@ -123,19 +123,20 @@ but also re-organize the data. Previously we have examined:
 \item Frequency-based re-organization.  Another common technique to classify
 	the importance of data is to first re-organize the data in frequency
 	space and then specify that as the frequency increases the importance
-	of data decreases.   Common technique which is used for streaming data,
+	of data decreases.   Common techniques  used for streaming data,
 	and data reduction techniques such as JPEG-2000~\cite{jpeg2000} is to
 	code streams which have regions of interest that offer several
 	mechanisms to support spatial random access or region of interest
 	access at varying degrees of granularity. It is possible to store
 	different parts of the same data using different quality.  This allows
-	us to place the lowest frequency pieces in the fastest storage, and the
-	highest frequency either on the slowest storage tiers, or if the data
-	sizes are prohibitively  costly, not even write out the highest
-	frequency. This binning of data in frequency space can take as an input
-	(storage bandwidth knowledge, storage size limitations, and user
-	intentions of how long the majority of the data will be frequently
-	accessed.  In order to fully take advantage of frequency based
+	us to place the lowest frequency chunks in the fastest storage, and the
+	highest frequency chunks  on either  the slowest storage tiers, or if the data
+	sizes are prohibitively  costly, not even write out  these pieces. 
+%	This binning of data in frequency space can take as an input
+%	(storage  {\color{red}ending )? CHECK-tsr} bandwidth knowledge, storage size limitations, and user
+%	intentions of how long the majority of the data will be frequently
+%	accessed. 
+	 In order to fully take advantage of frequency based
 	re-organization we have devised a scheme where the data pre-conditioner
 	first sorts the data in bins of 1024 words, then we maintain the
 	sort order, and then we used wavelets and spline fits to then
@@ -157,7 +158,7 @@ This approach takes advantage of the increasingly wide cost gap between CPU
 operations versus storage-based operations. 
 We will assemble a suite of general techniques for refactoring of data that
 will be embedded in the system and can be selected either by the user or by the
-application itself. The techniques will range from crude catch all methods such
+application itself. The techniques will range from crude catch-all methods such
 as those employed by general compression routines such as FPC, through to
 multi-resolution analysis using wavelets, including the methods on which we
 have worked (cited above).  These will then be mapped over into the different

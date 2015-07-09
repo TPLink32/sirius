@@ -74,7 +74,7 @@ Our research will address the following questions:
 
 \paragraph{State of the art:}
 Our current data annotation techniques demonstrated in
-ADIOS~\cite{lofstead:2009:adaptible} implement a binary-packed data format that
+ADIOS~\cite{lofstead:2009:adaptible} implement a binary-packed (BP) data format that
 allows data characteristics such as min, max and index to be wrapped around
 data chunks. A direct benefit is that each data chunk can be operated upon
 independently and I/O concurrency can be maximized. We will build upon this
@@ -84,7 +84,12 @@ DAMSEL~\cite{damsel} has provided a rich metadata representation and management
 layer that captures the relationship between data blocks for scientific
 applications.  This allows application data to be mapped to storage system
 efficiently, without overburdening users with the management of complex data models, such
-as AMR, from the user space. Despite these efforts, the aspect of data importance has yet to be 
+as adaptive mesh refinement (AMR), from the user space. 
+FFS~\cite{ffs} implements a type system that provides highly efficient binary
+data communication and XML-like data description, facilitating data sharing
+between collaborators. Additionally, NetCDF~\cite{netcdf} and HDF5~\cite{hdf5}
+uses a fixed data format to provide a hierarchical data descriptions for scientific data.
+Despite these efforts, the aspect of data importance has yet to be 
 explored, and we believe it will be vital for exascale storage solutions.
 
 \paragraph{Proposed research approach:} 
