@@ -61,11 +61,11 @@
 %% \smartincludeemptych{Face Page}{faces/\proposalinstitution}
 
 %%%%% Table of Contents %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\cleardoublepage
 \tableofcontents
 \phantomsection % Needed by hyperref because of the unnumbered section
-%%   \addcontentsline{toc}{chapter}{Table of Contents}
-\addstarredchapter{Table of Contents}
+\addcontentsline{toc}{chapter}{Table of Contents}
+%%\addstarredchapter{Table of Contents}
 
 %% Needed for lab, must skip for grants. Not sure why.  Figure out later
 %%\ifthenelse{\equal{\proposalcontent}{lab}}{
@@ -146,6 +146,7 @@ Other support of the investigators follow in alphabetical order.
 
 \clearpage
 \markboth{}{}
+\phantomsection
 %\addtocounter{chapter}{1}
 %\addcontentsline{toc}{chapter}{Literature Cited}
 \addcontentsline{toc}{chapter}{Appendix 3. Literature cited}
@@ -159,6 +160,7 @@ Other support of the investigators follow in alphabetical order.
 
 %%%%% 3.10 FACILITIES %%%%%
 \clearpage
+\phantomsection
 \addcontentsline{toc}{chapter}{Appendix 4. Description of facilities and resources}
 \section*{Appendix 4: Description of facilities and resources}
 \phantomsection
@@ -167,6 +169,7 @@ Other support of the investigators follow in alphabetical order.
 %%%%% DATA MANAGEMENT PLAN %%%%%
 \clearpage
 \markboth{}{}
+\phantomsection
 \addcontentsline{toc}{chapter}{Appendix 5. Equipment}
 \section*{Appendix 5: Equipment}
 
