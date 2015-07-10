@@ -118,23 +118,27 @@ takes into account user prioritization and utility to optimize the SSIO layer.
 The approach is based on two underlying principles:
 
 \underline{Principle 1:} {\bf A knowledge-centric system design} that allows user knowledge  to
-define data policies. Today Storage System and I/O layers are written in a
+define data policies. Today SSIO layers are written in a
 stove-pipe fashion, and quite often do not allow optimizations to take place.
-We propose to re-design the layer in a highly integrated fashion where users
+We propose to re-design the layers in a highly integrated fashion where users
 will place their intentions into the system and actions will statically and dynamically
 take place to optimize for both the system and for individual
 requests.
 
-\underline{Principle 2}: {\bf Predictable performance and quality of data in the SSIO layer} needs to be
-established so more science can be done on the exascale systems. Without
-predictable performance, the I/O layer performance must be guessed by the
-users, which quite often means that science is not performed well.
+\underline{Principle 2}: {\bf Predictable performance and quality of data in the SSIO layers} needs to be
+established so science can be done on the exascale systems in a more efficient manner. Without
+predictable performance, not only can the runs be slowed down because of contentions \cite{liu_hotstorage}, 
+but also it affects key science decisions, e.g., how much data reduction should be performed.
+It is clear that if a run is expected to be slow, an aggresive data reduction needs to be performed
+so that science can be done in a timely fashion, which has been reflected in the XGC run (\S~\ref{sec:introduction})
+that the PI recently participated.
 
 We aim to alleviate the need for the ``magic'' and ``tricks''
 that are currently required to optimize application I/O performance
 on today's file systems. To accomplish this, we will provide a systematic
 approach for describing intentions and other knowledge from {\it user}
-space, as well as hidden knowledge of the underlying storage layers.
+space, as well as allow performance estimations and guarantees 
+from the underlyingree storage.
 %For example, ADIOS contains most of the ``best practices'' for I/O optimizations for
 %   each file system, and as users place more knowledge into ADIOS, ADIOS
 %   can make optimizations.
@@ -144,20 +148,19 @@ optimizations which may provide better performance in the short term,
 but are detrimental to the long-term maintainability of applications, and
 are more sensitive to changes to system configuration. We have successfully
 employed this strategy of separation of concerns in ADIOS, and believe that
-it will become increasingly important as users want to describe more about
-the storage hierarchy and the priorities of different chunks of data. 
-Our research is aimed to allow users to simply describe these things and
-utilize the descriptions so that the best optimizations can be made.
+it will become increasingly important because saving all data may not be possible, and
+users want the ability to describe and prioritize different chunks of data. 
+Our research is aimed to allow users to provide simple descriptions of their data,
+which further allows the middleware and storage to optimize application I/O performance.
 
-One of the underlying principles of our approach is that we recognize that there are a small set
-of important I/O patterns to optimize for~\cite{lofstead2011six,polte2009and,tian2011edo,tian2012system},
-and our representative applications have worked with us on all of these I/O patterns. Throughout our project
-we will continuously focus on creating research artifacts which can optimize these patterns on current generation through
-exascale systems.  One important pattern is Checkpoint/Restarts (CR) and we will focus on optimizing these through our
-research, and also using many of the important research techniques for using NVRAM and neighbor's NVRAM for storing 
-the CR data. The migration and purging of this will be optimized by our SSIO layer, and we will have the user data intentions
-signify the utility of CR data so that this data can be high-value but stored for short periods of time. The value of a chunk of data
-from an object signifies its importance to the users relative to the other chunks of their data.
+Additionally we recognize that HPC applications exhibit a set
+of common I/O patterns \cite{lofstead2011six,polte2009and,tian2011edo,tian2012system},
+Throughout our project we will continuously focus on creating research artifacts 
+which can optimize these I/O patterns on current and
+exascale systems. One important pattern is Checkpoint/Restart (C/R) and we will focus on optimizing this pattern,
+ and also using many of the important research techniques for using NVRAM and neighbor's NVRAM for storing and retrieving
+the C/R data. The migration and purging of this will be optimized by our SSIO layer using the utility function of the C/R data so that this can be stored for short periods of time, and then purged. 
+
 
 
 %\underline{Principle 3:} {\bf Users goals define data policies} In a data-centric SSIO system. 

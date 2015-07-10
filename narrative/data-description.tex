@@ -39,19 +39,18 @@ separate metadata service or both to aid QoS requirements. It would contain
 conventional attributes such as data type, size, dimensionality, and the
 relationship to other data. In particular, the relationship to other chunks can
 be captured by including \textit{typed links}, each representing a different
-relationship type.  In this project, a key metric stored as a metadata
+relationship type.  In this project, a key set of metrics stored as a metadata
 attribute is \textit{data utility}.  It enables QoS scheduling, data placement
 decisions, data lifetime decisions, and captures the value of the chunk. It is
 our belief that exascale science will require users to prioritize a small set
 of chunks to be saved on higher-level capacity-limited storage to avoid the
 slow access to large-capacity lower-level storage, such as tape.  We propose a
 new technique, described by a utility function provided by a user, where chunks
-can be cast into multiple data buckets and each bucket can be given a different value
-differently according to its utility.  Once this is done, the middleware
+can be cast into multiple data buckets and each bucket can be given a different value according to its utility.  Based on this information, the middleware
 system will construct the data description and re-organize and place data to
 achieve the desired QoS goals and policies.
 
-A key insight in this proposed project has been the increased interaction of
+A key insight in this proposed project will be the increased interaction of
 the application with the storage system.
 The user would like to have the ability to obtain information about, and even
 negotiate with the system to determine what
@@ -62,7 +61,7 @@ they can then make decisions about what data to access when.
 %of rules which the system can make autonomic decisions to help decide what
 %should be done.
 Towards this end, we propose to
-address the QoS requirements by providing the application with mechanisms to
+address the QoS requirements by providing applications with mechanisms to
 specify the quality of I/O service, interrogate the storage system, and react
 to the responses. Guided by our past work we propose to explore the design of
 mechanisms for this purpose. 
@@ -78,7 +77,7 @@ ADIOS~\cite{lofstead:2009:adaptible} implement a binary-packed (BP) data format 
 allows data characteristics such as min, max and index to be wrapped around
 data chunks. A direct benefit is that each data chunk can be operated upon
 independently and I/O concurrency can be maximized. We will build upon this
-capability and further augment the format to express data utility.
+capability and further augment the BP format to include data utility metrics.
 Recently,
 DAMSEL~\cite{damsel} has provided a rich metadata representation and management
 layer that captures the relationship between data blocks for scientific
@@ -88,17 +87,17 @@ as adaptive mesh refinement (AMR), from the user space.
 FFS~\cite{ffs} implements a type system that provides highly efficient binary
 data communication and XML-like data description, facilitating data sharing
 between collaborators. Additionally, NetCDF~\cite{netcdf} and HDF5~\cite{hdf5}
-uses a fixed data format to provide a hierarchical data descriptions for scientific data.
+both use a fixed data format to provide hierarchical data descriptions for scientific data.
 Despite these efforts, the aspect of data importance has yet to be 
 explored, and we believe it will be vital for exascale storage solutions.
 
 \paragraph{Proposed research approach:} 
 We will design and develop new techniques for data management, description,
 and access that allows users to describe the data utility based on their
-expectations. This can be done by allowing users to apply plugins
+expectations. This can be done by allowing users to apply plugins that
 provide data-specific functionality to the middleware and storage system.
 These plugins may be executed by the system to
-calculate the utility value for each chunk, handle custom compression
+calculate the utility metrics for each chunk, handle custom compression
 and decompression, and perform other data-specific services, thus allowing
 the system to more effectively manage data placement and retrieval.
 %
@@ -110,9 +109,9 @@ to the storage system. These hints will enable the storage system to make the
 most appropriate optimization decisions for this user in the context of the
 multi-user environment rather than trying to rely on a one-size-fits-all
 approach. In particular, we expect the application to provide hints on the
-length of time before the output data is persistent and visible to users and
+length of time before the output data is visible to users and
 the expected data lifetime for output sets. For read calls we envision
-hints that provide latency and precision requirements. Additional hints will
+hints that provide latency and precision requirements to the system. Additional hints will
 also be investigated.
 
 We will also develop a new type of querying system that allows an application
@@ -163,8 +162,8 @@ describing the utility function, and the possibility that the users will
 accept this, and if the system can then use this information, and make 
 decisions based on this utility function. We realize that the system will
 try to optimize across all of the different user request, and the utility
-function must have defaults that users can inquire into, and change these
-when they see that these defaults can have a possible negative impact on
+function must have defaults that users can see and change
+when the defaults would have a possible negative impact on
 their knowledge discovery. 
 
 %The assumptions which we will make in choosing a utility function is that:

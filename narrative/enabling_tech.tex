@@ -32,13 +32,16 @@ version storage (via the fork mechanism).
 %project proposes.
 
 From the user perspective,
-{\bf ADIOS}~\cite{lofstead:2009:adaptible} offers an API nearly as simple as POSIX, but with the
+{\bf ADIOS}~\cite{liu_helloadios,lofstead:2009:adaptible} offers an API nearly as simple as POSIX, but with the
 ability to change the actual data transport mechanism without changing the
 source code. This flexibility allows users to shift from writing data to a file system
 to operating on data with in situ techniques without changing the source code.
 ADIOS has proven effective for writing to POSIX file
 systems, data staging systems~\cite{zheng:2010:predata,docan:2010:dataspaces,oldfield:2006:nessie}, workflow
-systems~\cite{Dayal:2014:flexpath}, and even through the WAN network. 
+systems~\cite{Dayal:2014:flexpath}, and even through the WAN network. Further,
+I/O rerouting and throttling techniques \cite{liu_hotstorage,liu_helloadios} have been developed 
+within ADIOS to reduce contentions on best-effort storage systems and this is our initial
+effort in tackling storage load imbalance and improving storage QoS on current DOE systems.
 Part of this project's goals are to understand where the dividing line
 between the storage layer shared by all users and middleware being used by a
 single or small number of users. We will utilize DataSpaces~\cite{docan:2010:dataspaces} to 
