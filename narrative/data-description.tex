@@ -114,17 +114,21 @@ length of time before the output data is visible to users and
 the expected data lifetime for output sets. For read calls we envision
 hints that provide latency and precision requirements to the system. 
 
-We will also develop a storage querying system that allows an application
-to get estimated timing information for operations on the storage system.
-We will explore
-how these query functions can be integrated into common applications with
+We will also develop a querying mechanism that allows an application
+to get estimated timing information of an I/O operation from the storage system, which
+manages all storage resources and understands data via data description, as well
+as capacity availability before the I/O operation will
+be issued to the storage system. This new query mechanism will allow users to
+adapt their applications to system dynamics, e.g., bandwidth/space fluctuations, and
+further reduce and expand data.
+We will explore how these query functions can be integrated into common applications with
 minimal code disruptions and a set of policies that applications can use to
-respond to this new information. We will also explore how applications can
-query the storage system on space availability across different tiers and how
-applications tailor their output data to make the most effective use of
-available space.
-Finally, we will study the use of an external data annotation system that can
-provide information to the storage system without requiring recompilation of the application.
+respond to these new information.
+
+
+% Removed the following because there are details on it.
+%Finally, we will study the use of an external data annotation system that can
+%provide information to the storage system without requiring recompilation of the application.
 
 
 From an application level, we will explore these techniques through our ADIOS
