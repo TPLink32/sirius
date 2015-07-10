@@ -25,7 +25,7 @@ and transformations to optimize performance, capacity and minimize bandwidth bot
 
 % 
 Our proposed research program is guided by the following overarching objectives:
-\begin{itemize}
+\begin{tightItemize}
 \item
 {\em Address emerging storage architecture and technology landscape:}
 We will address the associated I/O and storage challenges in the context of
@@ -80,7 +80,7 @@ workflows.
 Moreover, we aim to perform the optimization not only for a single
 application, but rather for multiple workloads running on a multi-user, multi-application
 system.
-\end{itemize}
+\end{tightItemize}
 
 This proposal can be summarized as research into using the varying importance of simulation data over time to
 ensure that the right portions of data, in the right quality  are available to scientists when they are needed.
@@ -123,7 +123,7 @@ Our proposal will be responsive to Theme 2: {\em Scalable Storage Software Infra
 4 &  Extend the interaction of middleware with the storage system & Manage data from the application  to middleware to the storage system using an autonomic interaction & \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery}  \\\hline
 5 & Design and implement of I/O middleware architectures  & Create APIs to guide the placement of chunks of data across the SSIO and autonomically move data& \S\ref{sec:data-description}, \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery} \\ \hline
 
-6 & Approaches to improve the ability of SSIO software to support checkpoint/restart & We will have utility functions defined for the lifetime of data, and allow CR data to be automatically placed in the fastest storage and then purged when it is no longer needed & \S \ref{fig:ssio-bucket}, \S\ref{sec:qos}, \S\ref{sec:managing-data-life}  \\
+6 & Approaches to improve the ability of SSIO software to support checkpoint/restart & We will have utility functions defined for the lifetime of data, and allow CR data to be automatically placed in the fastest storage and then purged when it is no longer needed & \S \ref{sec:data-description}, \S\ref{sec:qos}, \S\ref{sec:managing-data-life}  \\
 \hline
 \end{tabular}
 \end{center}
@@ -192,15 +192,18 @@ obtain an estimate of how much time will be required to write the data,
 and how much storage space is available during the simulations lifetime.
 Further, they would like Quality of Service (QoS) assurances so that reactions
 to varying bandwidth can be handled appropriately. Ideally, a set of
-user-specified rules would allow the system to make autonomic decisions dynamically.
+user-specified rules would allow the system to make autonomic decisions dynamically
+~\S~\ref{sec:qos}.
 %
 
-Central to our approach is giving users the ability to define the importance, or utility of their data.
+Central to our approach is giving users the ability to define the importance, or utility of their data    
+ \S\ref{sec:data-description}.
 This includes the ability to assign varying levels of importance to individual data objects in their entirety, or specific
 subsets and pieces.
 Research challenges include: 1) an expressive and easy to use interface, 2) a model for the system supporting
-autonomic decision for saving data using the user-defined importance and utility of data, and 3) the interface between
-the system and the back-end storage across both single, and multiple running applications.
+autonomic decision for saving data using the user-defined importance and utility of data~\S~\ref{sec:managing-data-life})
+, and 3) the interface between
+the system and the back-end storage across both single, and multiple running applications~\S~\ref{sec:qos}.
 
  %
   In our  scenario we would like the scientist would then specify a set of rules that governed the actual behavior while the simulation is running.
