@@ -287,15 +287,21 @@ data-centric metrics that help guide the forced QoS decisions.
 As stated in the introduction, we seek to make a storage stack that works with
 the user. Towards that end, we must incorporate data attributes into this
 process. For example, particularly for a capability run, the storage system
-should give priority to data subset tagged with high importance to stay in fast
-storage tiers. Enabling this priority will be driven by other job
-characteristics such as job size or a manually set priority inserted by system
-administrators. It should also store the highest quality data possible given
+should give (on a user by user basis), higher priority to data subset tagged with high importance to stay in fast
+storage tiers.
+% Enabling this priority will be driven by other job
+%characteristics such as job size or a manually set priority inserted by system
+administrators.
+ It should also store the highest value data possible given
 the performance requirement. Ideally, the storage system will store the raw
 data at full fidelity. When this tier approaches capacity, data should migrate
-not just based on age, but also based on this priority. This will help ensure
-the shortest time to insight by making sure the most important machine runs
-have priority to use system resources.
+not just based on age, but also based on this value. One area of research will be in
+trying to see if we can retain some guarantees of QoS while giving some high-profile users
+greater SSIO a higher {\bf priority} than other users on the system. We realize that this makes
+it very difficult to main overall system QoS, but we will investigate techniques when one
+user is running on the majority of the exascale resource and we can allow them to lock out other SSIO
+request during small periods of time during the lifetime of their exascale simulation.
+
 
 \paragraph{Related Work:}
 On current production HPC systems, absolute I/O performance guarantees are not
@@ -309,7 +315,7 @@ admission control to maximize storage performance. Unfortunately, these efforts
 are limited to participating applications and only applications from a single
 platform. For this approach to be effective, the storage system must offer an
 approach that handles clients from all connected platforms and does not require
-modification to use new storage access APIs. By using a priority tagging
+modification to use new storage access APIs. By using a {\it value} tagging
 system, we will offer defaults suitable for all applications that can be
 informed by simple extensions to the job scheduler or more advanced management
 through new APIs. On the other hand, storage QoS has been studied for

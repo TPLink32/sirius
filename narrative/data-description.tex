@@ -41,7 +41,7 @@ relationship to other data. In particular, the relationship to other chunks can
 be captured by including \textit{typed links}, each representing a different
 relationship type.  In this project, a key metric stored as a metadata
 attribute is \textit{data utility}.  It enables QoS scheduling, data placement
-decisions, data lifetime decisions, and captures the chunk priority. It is
+decisions, data lifetime decisions, and captures the value of the chunk. It is
 our belief that exascale science will require users to prioritize a small set
 of chunks to be saved on higher-level capacity-limited storage to avoid the
 slow access to large-capacity lower-level storage, such as tape.  We propose a
@@ -142,17 +142,17 @@ tier and lifetime, which can be specified by the user through the API.
 As an example, Figure~\ref{fig:ssio-bucket} illustrates a use case for the XGC1 code.
 The user can pick a data-refactoring scheme (see
 \S~\ref{sec:data-refactor}) which will classify the particle data into four different
-prioritization levels. The user can then pick a data utility, such as three months
-for the highest priority items and 12 months for the lowest priority data.
+value levels. The user can then pick a data utility, such as three months
+for the highest value items and 12 months for the lowest value data.
 The user will then call an API function that allows them
 to specify all of the chunks they want
 written (particles, two fields, and a mesh in this example) and the system
 will return a time estimate for this write operation.
 If this time estimate is too large, an API call can be made to 
-specify the lowest priority element to be written, skipping the rest in order to save time.
+specify the lowest value element to be written, skipping the rest in order to save time.
 The data will then be stored
-across the layers of the file system where the two highest priority buckets
-will be stored in the Parallel File System, but the next highest priority items
+across the layers of the file system where the two highest value buckets
+will be stored in the Parallel File System, but the next highest value items
 will be stored lower in the storage stack. Depending on the capabilities of the actual storage system, 
 SSIO will decide if the data has to go through the parallel file system 
 towards a lower stack or can be staged to that stack directly. 
@@ -222,7 +222,7 @@ that the user can transparently access any of these sub-chunks without
 the need to know where the data currently resides.
 At read time, the middleware will be required to 
 provide a time estimate, and then allow the users to decide if
-they will read less (e.g., only the highest priority sub-chunks)
+they will read less (e.g., only the highest value sub-chunks)
 if the time estimate
 for reading does not meet requirements. Existing Sirocco functionality may be
 sufficient for these purposes, but it must still be proven in practice.
