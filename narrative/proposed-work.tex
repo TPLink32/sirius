@@ -154,13 +154,12 @@ utilize the descriptions so that the best optimizations can be made.
 
 One of the underlying principles of our approach is that we recognize that there are a small set
 of important I/O patterns to optimize for~\cite{lofstead2011six,polte2009and,tian2011edo,tian2012system},
-and our representative applications have worked with us on all of these I/O patterns. Throughout our project
-we will continuously focus on creating research artifacts which can optimize these patterns on current generation through
-exascale systems.  One important pattern is Checkpoint/Restarts (CR) and we will focus on optimizing these through our
-research, and also using many of the important research techniques for using NVRAM and neighbor's NVRAM for storing 
-the CR data. The migration and purging of this will be optimized by our SSIO layer, and we will have the user data intentions
-signify the utility of CR data so that this data can be high-value but stored for short periods of time. The value of a chunk of data
-from an object signifies its importance to the users relative to the other chunks of their data.
+and our representative applications contain all of these I/O patterns. Throughout our project
+we will continuously focus on creating research artifacts which can optimize these patterns on current  and
+exascale systems.  One important pattern is Checkpoint/Restarts (CR) and we will focus on optimizing this pattern,
+ and also using many of the important research techniques for using NVRAM and neighbor's NVRAM for storing and retrieving
+the CR data. The migration and purging of this will be optimized by our SSIO layer using the utility function of the CR data so that this can  be stored for short periods of time, and then purged. 
+
 
 
 %\underline{Principle 3:} {\bf Users goals define data policies} In a data-centric SSIO system. 
