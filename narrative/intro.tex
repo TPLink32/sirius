@@ -249,6 +249,12 @@ QoS and therefore, be able to provide fuzzy estimates of the time it will take t
 the different layers to inform any migration/eviction decisions, and it
 is also critical that the storage system can manage (discover and retrieve) the data across all of the
 layers automatically, without user intervention. 
+Central to our approach is that the storage system needs to define bounds of time estimates
+(min time, max time), and as our system evolves, we want to allow plug-ins which can help
+reduce the range of the bounds, and furthermore, with optimizations we would like to minimize 
+the times for both reading and writing. Thus, we want predictable performance, and methods
+which can obtain better performance bounds in time.
+
 %We will use learning techniques to automatically migrate data
 %sub-objects across the hierarchy as well as to eventually evict data which is
 %large and has very low utility.
