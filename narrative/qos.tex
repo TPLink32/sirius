@@ -261,7 +261,9 @@ not on other workloads in the system). Each task has a budget based on its
 reservation and spends it based on the cost of each request determined by the
 charging model. A charging model determines the cost based on the utilization
 model and the interactions a request can have with other requests (e.g. a
-random request to spinning media interrupting a stream of sequential requests).
+random request to spinning media interrupting a stream of sequential
+requests). Thus users with a higher allocation can still meet their higher
+requirements for I/O, without violating the gurantees given to other users. 
 
 Performance isolation, including its utilization and charging models,
 critically depends on \emph{workload-independent metrics}. Even though
@@ -285,21 +287,24 @@ offers automatic resource management capabilities, based on resource capacity
 and data resilience requirements, and it needs to be extended to offer
 data-centric metrics that help guide the forced QoS decisions.
 
-As stated in the introduction, we seek to make a storage stack that works with
-the user. Towards that end, we must incorporate data attributes into this
-process. For example, particularly for a capability run, the storage system
-should give (on a user by user basis), higher priority to data subset tagged with high importance to stay in fast
-storage tier
-administrators.
- It should also store the highest value data possible given
-the performance requirement. Ideally, the storage system will store the raw
-data at full fidelity. When this tier approaches capacity, data should migrate
-not just based on age, but also based on this value. One area of research will be in
-trying to see if we can retain some guarantees of QoS while giving some high-profile users
-greater SSIO a higher {\bf priority} than other users on the system. We realize that this makes
-it very difficult to main overall system QoS, but we will investigate techniques when one
-user is running on the majority of the exascale resource and we can allow them to lock out other SSIO
-request during small periods of time during the lifetime of their exascale simulation.
+% As stated in the introduction, we seek to make a storage stack that works with
+% the user. Towards that end, we must incorporate data attributes into this
+% process. For example, particularly for a capability run, the storage system
+% should give (on a user by user basis), higher priority to data subset tagged with high importance to stay in fast
+% storage tier
+% administrators.
+%  It should also store the highest value data possible given
+% the performance requirement. Ideally, the storage system will store the raw
+% data at full fidelity. 
+% When this tier approaches capacity, data should migrate
+% not just based on age, but also based on this value. One area of research will be in
+% trying to see if we can retain some guarantees of QoS while providing
+% policies that can govern admissio
+% greater SSIO a higher {\bf priority} than other users on the system. 
+% We realize that this makes
+% it very difficult to main overall system QoS, but we will investigate techniques when one
+% user is running on the majority of the exascale resource and we can allow them to lock out other SSIO
+% request during small periods of time during the lifetime of their exascale simulation.
 
 
 \paragraph{Related Work:}
