@@ -174,8 +174,9 @@ This solution worked well for the first day of the run but after the second day 
 %codes. And finally, the march toward exascale has fueled the
 %need to consider additional features such as compression and
 %indexing to better cope with the expected tsunami of data.
-
-We  examine the research challenges from the perspective of:
+Overall this project deals with I/O and storage problems
+for both checkpoint/restart (C/R) and post-processing.
+We examine the research challenges from the perspective of:
 %
 (1) scientists who run exascale simulations,
 %
@@ -241,7 +242,7 @@ another, without affecting the QoS that was offered at request
 time. The storage system must be able to organize
 data amongst all of the tiers of storage in a known, consistent way.
 
-One of our  research objectives is to understand how the
+One of our research objectives is to understand how the
 storage system can interact with the middleware   so
 that the data with the highest utility is kept on the fastest layers of the
 storage system for as long as specified. We need to maintain 
@@ -262,11 +263,12 @@ which can obtain better performance bounds in time.
 
 \paragraph{Reading  Perspective}
 \label{subsec:reading-perspective}
-From the perspective of the users who want to read in the data from their
-simulations, and then operate on this data and possibly write data, we see
-that in general these users will be running on much less compute resources
-than the users who are running the simulation. One of the important aspects
-of this class of user is that they want a reduction of latency and they
+From the perspective of reading, this project will allow both
+simulation restart and post-processing. For the former case,
+we will allow both traditional file-based approach leveraging fast storage tier
+such as NVRAM (non-volatile RAM), and memory-based approach via retrieving
+data directly from NVRAM. For the latter case,
+an important aspect is that they want a reduction of latency and they
 require a certain amount of QoS as well. When someone is
 doing interactive analysis and expects that the data they read in is about
 10s, but it turns into 1,000s, the user typically tends to either wait
