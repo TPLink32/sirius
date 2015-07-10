@@ -131,13 +131,14 @@ predictable performance, not only can the runs be slowed down because of content
 but also it affects key science decisions, e.g., how much data reduction should be performed.
 It is clear that if a run is expected to be slow, an aggresive data reduction needs to be performed
 so that science can be done in a timely fashion, which has been reflected in the XGC run (\S~\ref{sec:introduction})
-the PI recently participated.
+that the PI recently participated.
 
 We aim to alleviate the need for the ``magic'' and ``tricks''
 that are currently required to optimize application I/O performance
 on today's file systems. To accomplish this, we will provide a systematic
 approach for describing intentions and other knowledge from {\it user}
-space, as well as hidden knowledge of the underlying storage layers.
+space, as well as allow performance estimations and guarantees 
+from the underlyingree storage.
 %For example, ADIOS contains most of the ``best practices'' for I/O optimizations for
 %   each file system, and as users place more knowledge into ADIOS, ADIOS
 %   can make optimizations.
@@ -147,10 +148,10 @@ optimizations which may provide better performance in the short term,
 but are detrimental to the long-term maintainability of applications, and
 are more sensitive to changes to system configuration. We have successfully
 employed this strategy of separation of concerns in ADIOS, and believe that
-it will become increasingly important as users want to describe more about
-the storage hierarchy and the priorities of different chunks of data. 
-Our research is aimed to allow users to simply describe these things and
-utilize the descriptions so that the best optimizations can be made.
+it will become increasingly important because saving all data may not be possible, and
+users want the ability to describe and prioritize different chunks of data. 
+Our research is aimed to allow users to provide simple descriptions of their data,
+which further allows the middleware and storage to optimize application I/O performance.
 
 One of the underlying principles of our approach is that we recognize that there are a small set
 of important I/O patterns to optimize for~\cite{lofstead2011six,polte2009and,tian2011edo,tian2012system},
