@@ -102,7 +102,7 @@ namespace on the side kept in sync using a transaction process like
 D2T~\cite{lofstead:2012:txn} showing that this alternative approach can support
 traditional POSIX API calls even though the underlying storage system uses a
 different model. Because we are not requiring the entire storage space be
-addressible from a single tree root, we can offer multiple independent roots
+addressable from a single tree root, we can offer multiple independent roots
 using the Sirocco object storage. We will investigate how to make the naming
 and discovery service scalable under the circumstances outlined above.
 
@@ -162,22 +162,26 @@ Our research in this area will address the following questions:
 (5) How do we provide appropriate security while maintaining scalability,
   particularly with the distributed metadata stores?
 
-\begin{tightEnumerate}
-
-\item {\bf Milestone 1}: Demonstrate a metadata service capable of serving both POSIX
+In this project we will first 
+%\begin{tightEnumerate}
+%
+%\item {\bf Milestone 1}: 
+demonstrate a metadata service capable of serving both POSIX
 clients and our clients, but without consideration for authentication,
 authorization, or data migration.
-
-\item {\bf Milestone 2}: Demonstrate a time bounded search approach for finding data
+Secondly we will 
+%\item {\bf Milestone 2}: D
+demonstrate a time bounded search approach for finding data
 within the storage system to identify data and the current location.  This will
 update the cached information in the metadata service to short-circuit future
 requests for the data presuming that it does not migrate again soon.
-
-\item {\bf Milestone 3:} Demonstrate incorporating {\color{red}A\&A (what does this stand for CHECK-tsr)} and show scalability under
+Finally, we will 
+%\item {\bf Milestone 3:} D
+demonstrate admission control and show scalability under
 both application load as well as storage system pressures, showing that we can
 tolerate both loads and maintain quality of service.
 
-\end{tightEnumerate}
+%\end{tightEnumerate}
 
 
 %%% Local Variables:
