@@ -177,23 +177,23 @@ This solution worked well for the first day of the run but after the second day 
 
 We  examine the research challenges from the perspective of:
 %
-(1) the scientist who runs the exascale simulation,
+(1) scientists who run exascale simulations,
 %
 (2) the Storage System and I/O layer which needs to negotiate between all of
 the users, and finally
 %
-(3) the user of the system who is attempting to understand the data
+(3) users of the system who attempt to understand the data
 produced by a set of simulations.
 
 \paragraph{Simulation Perspective}
 \label{subsec:sim-perspective}
-The simulation scientist ideally should be able to
+A simulation scientist ideally should be able to
 obtain an estimate of how much time will be required to write the data,
 and how much storage space is available during the simulations lifetime.
 Further, they would like Quality of Service (QoS) assurances so that reactions
 to varying bandwidth can be handled appropriately. Ideally, a set of
 user-specified rules would allow the system to make autonomic decisions dynamically
-~\S~\ref{sec:qos}.
+~\S~\ref{sec:managing-data-life}~\S~\ref{sec:qos}.
 %
 
 Central to our approach is giving users the ability to define the importance, or utility of their data    
@@ -235,7 +235,7 @@ a given user request amongst all of the requests from all users, and try to opti
 entire system accordingly. Today the problem is that when a user writes there is a
 tremendous amount of interference from other users on the system who may be
 writing or reading at the same time, leading to unpredictable performance.
-By requiring a certain QoS of service the system could potentially lock out other users. 
+By requiring a certain QoS, the system could potentially lock out and throttle other users. 
 The storage system must also automatically move data from one tier of the storage to
 another, without affecting the QoS that was offered at request
 time. The storage system must be able to organize
