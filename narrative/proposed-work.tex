@@ -153,13 +153,13 @@ users want the ability to describe and prioritize different chunks of data.
 Our research is aimed to allow users to provide simple descriptions of their data,
 which further allows the middleware and storage to optimize application I/O performance.
 
-One of the underlying principles of our approach is that we recognize that there are a small set
-of important I/O patterns to optimize for~\cite{lofstead2011six,polte2009and,tian2011edo,tian2012system},
-and our representative applications contain all of these I/O patterns. Throughout our project
-we will continuously focus on creating research artifacts which can optimize these patterns on current  and
-exascale systems.  One important pattern is Checkpoint/Restarts (CR) and we will focus on optimizing this pattern,
+Additionally we recognize that HPC applications exhibit a set
+of common I/O patterns \cite{lofstead2011six,polte2009and,tian2011edo,tian2012system},
+Throughout our project we will continuously focus on creating research artifacts 
+which can optimize these I/O patterns on current and
+exascale systems. One important pattern is Checkpoint/Restart (C/R) and we will focus on optimizing this pattern,
  and also using many of the important research techniques for using NVRAM and neighbor's NVRAM for storing and retrieving
-the CR data. The migration and purging of this will be optimized by our SSIO layer using the utility function of the CR data so that this can  be stored for short periods of time, and then purged. 
+the C/R data. The migration and purging of this will be optimized by our SSIO layer using the utility function of the C/R data so that this can be stored for short periods of time, and then purged. 
 
 
 
