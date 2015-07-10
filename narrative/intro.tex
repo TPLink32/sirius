@@ -120,11 +120,11 @@ Our proposal will be responsive to Theme 2: {\em Scalable Storage Software Infra
 \begin{tabular}{ | p {0.2cm} | p{5cm} | p{7.5cm} | p{2.2cm} |}\hline
 \multicolumn{2}{|c|}{\bf Call area} & \multicolumn{1}{|c|}{\bf Relevant S2E2 work} & \multicolumn{1}{|c|}{\bf Proposed research} \\\hline\hline
 1 & Data abstractions & Create new APIs  and annotations to guide data placement across the storage system & \S\ref{sec:data-description} \\\hline
-2 & Mapping science data models onto hierarchical storage &  Create the ability to re-organize, reduce and prioritize data chunks from an object& \S\ref{sec:data-refactor}, \S\ref{sec:data-description},  \S\ref{sec:managing-data-life}\\\hline
-3 & Mechanisms for data movement across the storage hierarchy & Manage data migration based on policies& \S \ref{sec:managing-data-life},  \S\ref{sec:migration} \\\hline
-4 &  Extend the interaction of middleware with the storage system & Manage data from the application  to middleware to the storage system using an autonomic interaction & \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery}  \\\hline
+%2 & Mapping science data models onto hierarchical storage &  Create the ability to map, re-organize, reduce and prioritize data chunks from an object& \S\ref{sec:data-refactor}, \S\ref{sec:data-description},  \S\ref{sec:managing-data-life}\\\hline
+2 & Mapping science data models onto hierarchical storage &  Enable science-driven mapping, re-organization, reduction and prioritization of data chunks derive from application objects & \S\ref{sec:data-refactor}, \S\ref{sec:data-description},  \S\ref{sec:managing-data-life}\\\hline
+3 & Mechanisms for data movement across the storage hierarchy & Enable science-driven data placement and migration based on policies& \S \ref{sec:managing-data-life},  \S\ref{sec:migration} \\\hline
+4 &  Extend the interaction of middleware with the storage system & Manage data placement and migration between the application, middleware and storage system using an autonomic cross-layer approach & \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery}  \\\hline
 5 & Design and implement of I/O middleware architectures  & Create APIs to guide the placement of chunks of data across the SSIO and autonomically move data& \S\ref{sec:data-description}, \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery} \\ \hline
-
 6 & Approaches to improve the ability of SSIO software to support checkpoint/restart & We will have utility functions defined for the lifetime of data, and allow CR data to be automatically placed in the fastest storage and then purged when it is no longer needed & \S \ref{sec:data-description}, \S\ref{sec:qos}, \S\ref{sec:managing-data-life}  \\
 \hline
 \end{tabular}
@@ -134,16 +134,19 @@ Our proposal will be responsive to Theme 2: {\em Scalable Storage Software Infra
 
 %
 \paragraph{An Illustrative Example}
-The challenges addressed by this proposal are illustrated by a problem our team has been working on in the past six months. We use this motivating example to formulate a series of research questions and challenges that must be addressed in order to support exascale science.
+We use an illustrative Fusion simulation use case that our team as been working on to highlight the challenges addressed in this proposal, and to 
+%The challenges addressed by this proposal are illustrated by a problem our team has been working on in the past six months. We use this motivating example to 
+formulate a series of SSIO research questions that must be addressed in order to support exascale science.
 
-The latest use case is from  the XGC1~\cite{chang2006integrated} simulation from C. S. Chang (PPPL), who is one of the largest users of Leadership Class Facilities (over 300M hours at DOE facilities). They launched a series of simulations, planning to produce 100~PB of data over 10 days of total runtime on the Titan system. An expert team was assembled from the user group, the  I/O, and storage  team to help with ensuring that the maximum amount of information would be
-saved. Due to physical resource limitations, the simulation was restricted to write about 10~PB initially. However, once the time to write and read, together with the financial cost to archive this much data were fully explored, this plan was significantly reduced. At each stage, the particular expert knowledge regarding the file system and the archival storage were not known to the user team. As these particulars were realized, significant modifications in the plans were made. Eventually, they were forced to make very hard decisions in reducing the desired 100~PB over a 10-day run to only 5~PB of data. 
+The use case describes a series of XGC1~\cite{chang2006integrated} simulations that C. S. Chang (PPPL), one of the largest users of Leadership Class Facilities (over 300M hours at DOE facilities), planned to launch. These simulations were expected to produce 100~PB of data over 10 days of total runtime on the Titan system, and assembled a team of experts including the user group and I/O and storage personnel  to help ensure that the maximum amount of information would be saved. 
+Due to physical resource limitations, the simulation was immediately restricted to write about 10~PB. However, when the time to write and read, together with the financial cost to archive this volume of data were fully explored, the goal was even further reduced and they would only be able to write 5~PB over the 10-day run.
+%At each stage, the particular expert knowledge regarding the file system and the archival storage were not known to the user team. As these particulars were realized, significant modifications in the plans were made. Eventually, they were forced to make very hard decisions in reducing the desired 100~PB over a 10-day run to only 5~PB of data. 
 
-This forced the team to carefully scrutinize the large amount of data to be generated and save only the very most important pieces. Further, they had to break this greatly reduced data into two categories: first, data they thought they would need to access while the simulation was running or shortly thereafter, and second, data they would need after the whole campaign was finished. The former category would be stored on disk, and the later would be archived. Additionally, they needed to figure out how to efficiently retrieve these different categories of data for post-processing, analysis and visualization.
+This forced the team to carefully scrutinize the large amount of data to be generated and save only the very most important pieces. Further, they had to divide this  reduced data into two categories: first, data they thought they would need to access while the simulation was running or shortly thereafter, and second, data they would need after the whole campaign was finished. The former category of data would be stored on disk, and the latter would be archived. Additionally, they needed to figure out how to efficiently retrieve these different categories of data for post-processing, analysis and visualization.
 
-Finally, the team had to develop new application specific data reduction techniques and encode them into the ADIOS middleware I/O layer. In order to do this, they had to implement a rudimentary discovery system to determine which data were located on disk, and which were on tape archive.  
+Finally, the team had to develop new application specific data reduction techniques and encode them into the ADIOS middleware I/O layer. In order to do this, they had to implement a rudimentary discovery system to determine which data were located on disk, and which were on tape archive.  This solution worked well for initially but after the second day significant problems occurred: I/O variability became prohibitively expensive. Although the team had reserved resources for the run, the file system was shared, and a 10X variability in I/O speeds was observed. 
 
-This solution worked well for the first day of the run but after the second day significant problems occurred: I/O variability became prohibitively expensive. Although the team had reserved resources for the run, the file system was shared, and a 10X variability in I/O speeds was observed. What is needed for this problem is a system to monitor, predict and manage resource usage in a dynamically adaptable way. Such a system could write more data when the resource is idle, and less data when it is very busy. However, the most significant problem occurs after the simulation run completes. Basic visualizations, just to get a high-level view of the simulation, can take significant time. While some timesteps might be on disk, others are archived on tape (where transfer could take weeks). Further, visualization and analysis of detailed views of the simulation are even more complicated.
+What is needed here is a system to monitor, predict and manage resource usage in a dynamically adaptable way. Such a system can write more data when the resource was idle, and less data when it is busy. However, the most significant problem occurs after the simulation run completes. Basic visualizations, to get a high-level view of the simulation, can take significant time due to data access latencies. While some timesteps might be on disk, others are archived on tape (where transfers could take weeks). Detailed visualization and analysis of the simulation data are even more complicated.
 
 
 \subsection{Overview of the proposed approach} 
@@ -176,13 +179,18 @@ This solution worked well for the first day of the run but after the second day 
 %codes. And finally, the march toward exascale has fueled the
 %need to consider additional features such as compression and
 %indexing to better cope with the expected tsunami of data.
-Overall this project deals with I/O and storage problems
-for both checkpoint/restart (C/R) and post-processing.
-We examine the research challenges from the perspective of:
+%
+%Overall this project deals with I/O and storage problems
+%for both checkpoint/restart (C/R) and post-processing.
+This proposal aims to address core I/O and storage challenges faced by 
+extreme scale simulation workflows for typical I/O patterns including 
+checkpoint/restart (C/R), in-situ analysis, and post-processing.
+%
+Furthermore, we examine these research challenges from the perspective of:
 %
 (1) scientists who run exascale simulations,
 %
-(2) the Storage System and I/O layer which needs to negotiate between all of
+(2) the Storage System and I/O layer, which needs to negotiate between all of
 the users, and finally
 %
 (3) users of the system who attempt to understand the data
@@ -190,23 +198,23 @@ produced by a set of simulations.
 
 \paragraph{Simulation Perspective}
 \label{subsec:sim-perspective}
-A simulation scientist ideally should be able to
-obtain an estimate of how much time will be required to write the data,
+A simulation scientist should ideally be able to
+obtain an estimate of how much time will be required to write data,
 and how much storage space is available during the simulations lifetime.
-Further, they would like Quality of Service (QoS) assurances so that reactions
-to varying bandwidth can be handled appropriately. Ideally, a set of
-user-specified rules would allow the system to make autonomic decisions dynamically
+Further, they would like Quality of Service (QoS) assurances, and that
+issues such as varying bandwidth can be handled appropriately and 
+automatically. For example, a set of user-specified rules would allow 
+the system to make autonomic decisions at runtime
 ~\S~\ref{sec:managing-data-life}~\S~\ref{sec:qos}.
 %
 
 Central to our approach is giving users the ability to define the importance, or utility of their data    
  \S\ref{sec:data-description}.
-This includes the ability to assign varying levels of importance to individual data objects in their entirety, or specific
+This includes the ability to assign varying levels of importance to individual data objects in their entirety, or to specific
 subsets and pieces.
-Research challenges include: 1) an expressive and easy to use interface, 2) a model for the system supporting
-autonomic decision for saving data using the user-defined importance and utility of data~\S~\ref{sec:managing-data-life})
-, and 3) the interface between
-the system and the back-end storage across both single, and multiple running applications~\S~\ref{sec:qos}.
+Key research challenges include: 1) developing an expressive and easy to use programinterface, 2) formulating a system model that can support 
+autonomic decision, for example, for saving data based on user-defined importance and utility of data~\S~\ref{sec:managing-data-life})
+, and 3) the interface between the system and the back-end storage across both single, and multiple running applications~\S~\ref{sec:qos}.
 
  %
   In our  scenario we would like the scientist would then specify a set of rules that governed the actual behavior while the simulation is running.
