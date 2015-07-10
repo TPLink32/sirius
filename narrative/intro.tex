@@ -212,17 +212,18 @@ Central to our approach is giving users the ability to define the utility of the
  \S\ref{sec:data-description}.
 This includes the ability to assign varying levels of importance to individual data objects in their entirety, or to specific
 subsets and pieces.
-Key research challenges include: 1) developing an expressive and easy to use program interface, 2) formulating a system model that can support 
+Key research challenges include: 1) developing an expressive and easy to use a program interface, 2) formulating a system model that can support 
 autonomic decision, for example, for saving data based on user-defined importance and utility of data~\S~\ref{sec:managing-data-life}),
- and 3) the interface between the system and the back-end storage across both single, and multiple running applications~\S~\ref{sec:qos}.
+, and 3) defining the interface between the system and the back-end storage for both single and multiple running applications~\S~\ref{sec:qos}.
 
- %
-  In our  scenario we would like the scientist would then specify a set of rules that governed the actual behavior while the simulation is running.
-If the system resources are available and the estimated write times are in order, the write can proceed.
-%Or, the write can be postponed to a later time-step, or data reduced via in situ techniques can be saved.
-Data  utility will be used to place the various data on the proper SSIO layer.
-The user specified lifetime for each data ensures that the data with the highest utility is preserved in fast storage
-for the longest period of time, and the least utility are migrated to lower storage  layers.
+In the scenario above, the scientist would then specify a set of rules that would guide I/O and data management 
+at runtime. For example, if system resources are available and the estimated write times acceptable, the write 
+can proceed, but if this is not the case, the write may be postponed to a later time-step, or the data reduced using
+an in-situ techniques before it is saved. Data ``importance or utility'' can be used to place various data at  
+proper SSIO layers -- data with the highest utility (e.g., based on user defined importance or the frequency of access) 
+is maintained in faster storage for long periods of time, while data with lower utility can be migrated to lower layers 
+in the storage hierarchy.
+
 %
 %Since the data will be a collection of objects placed on the storage system,
 %some of the objects will be broken up into multiple pieces by ``plug-ins''
