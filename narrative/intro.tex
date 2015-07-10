@@ -263,10 +263,9 @@ is also critical that the storage system can manage (discover and retrieve) the 
 layers automatically, without user intervention. 
 Central to our approach is that the storage system needs to define bounds of time estimates
 (min time, max time), and as our system evolves, we want to allow plug-ins which can help
-reduce the range of the bounds, and furthermore, with optimizations we would like to minimize 
-the times for both reading and writing. Thus, we want predictable performance, and methods
-which can obtain better performance bounds in time. Furthermore, since our system will place chunks
-in all of the tiers  we need to quickly discover where the data is in the hierarchy~\S\ref{sec:naming-discovery}
+reduce the range of the bounds.
+Overall, our goal is to enable predictable performance acorss the storage system, and we will develop mechanisms to enable this
+~\S\ref{sec:naming-discovery}.
 
 %We will use learning techniques to automatically migrate data
 %sub-objects across the hierarchy as well as to eventually evict data which is
