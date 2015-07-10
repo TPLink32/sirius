@@ -154,12 +154,13 @@ Our research is aimed to allow users to provide simple descriptions of their dat
 which further allows the middleware and storage to optimize application I/O performance.
 
 Additionally we recognize that HPC applications exhibit a set
-of common I/O patterns \cite{lofstead2011six,polte2009and,tian2011edo,tian2012system},
+of common I/O patterns \cite{lofstead2011six,polte2009and,tian2011edo,tian2012system}.
 Throughout our project we will continuously focus on creating research artifacts 
 which can optimize these I/O patterns on current and
-exascale systems. One important pattern is Checkpoint/Restart (C/R) and we will focus on optimizing this pattern,
- and also using many of the important research techniques for using NVRAM and neighbor's NVRAM for storing and retrieving
-the C/R data. The migration and purging of this will be optimized by our SSIO layer using the utility function of the C/R data so that this can be stored for short periods of time, and then purged. 
+exascale systems. One key focus is Checkpoint/Restart (C/R), leveraging NVRAM to accelerate
+checkpoint and data retrieval. 
+The migration and purging of this will be optimized by SIRUS using the utility function of 
+the C/R data so that this can be stored for short periods of time, and then purged. 
 
 
 

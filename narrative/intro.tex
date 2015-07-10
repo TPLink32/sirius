@@ -274,20 +274,17 @@ Overall, our goal is to enable predictable performance acorss the storage system
 
 \paragraph{Reading  Perspective}
 \label{subsec:reading-perspective}
-From the perspective of reading, this project will look at both
-CR  and post-processing I/O patterns. For the former case,
-we will allow both traditional file-based approach leveraging fast storage tier
-such as NVRAM (non-volatile RAM), and memory-based approach via retrieving
-data directly from NVRAM. For the latter case,
-an important aspect is that they want a reduction of latency and they
-require a certain amount of QoS as well. When someone is
-doing interactive analysis and expects that the data they read in is about
+From the perspective of reading, this project will look at key I/O patterns such as checkpoint-restart (CR), in-situ analytics and post-processing. 
+For example, in case of CR, we will support both, traditional file-based approaches leveraging fast storage tiers
+such as NVRAM (non-volatile RAM), as well as memory-based approach based on retrieving
+data directly from NVRAM. In case of in-situ and post-processing,  an important aspect is the latency -- here reducing latency and providing QoS 
+ becomes important. 
+ When someone is doing interactive analysis and expects that the data they read in is about
 10s, but it turns into 1,000s, the user typically tends to either wait
 another day for doing their analysis or gets frustrated and reads much less
 data than they really need to. Furthermore the user tends to read in just a
 small sample of the data without much knowledge if they are missing
 important pieces of the data~\S\ref{sec:migration}.
-
 
 %
 %Exascale scientific discovery will be severely bottlenecked without

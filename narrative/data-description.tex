@@ -45,18 +45,19 @@ decisions, data lifetime decisions, and captures the value of the chunk. It is
 our belief that exascale science will require users to prioritize a small set
 of chunks to be saved on higher-level capacity-limited storage to avoid the
 slow access to large-capacity lower-level storage, such as tape.  We propose a
-new technique, described by a utility function provided by a user, where chunks
-can be cast into multiple data buckets and each bucket can be given a different value according to its utility.  Based on this information, the middleware
+new technique, described by a \textit{utility function} provided by a user, where chunks
+can be cast into multiple data buckets and each bucket can be given a different utility value.  
+Based on this information, the middleware
 system will construct the data description and re-organize and place data to
 achieve the desired QoS goals and policies.
 
 A key insight in this proposed project will be the increased interaction of
 the application with the storage system.
-The user would like to have the ability to obtain information about, and even
-negotiate with the system to determine what
+The users would like to have the ability to obtain information about, and even
+negotiate with the system to determine the
 level of QoS is possible given
 a prospective set of I/O operations and current state of the system, so that
-they can then make decisions about what data to access when.
+they can then make decisions about when and what data to access.
 %for example is less than what they desire and will then place in a certain set
 %of rules which the system can make autonomic decisions to help decide what
 %should be done.
@@ -108,20 +109,19 @@ We will explore the space of application level hints that can be easily provided
 to the storage system. These hints will enable the storage system to make the
 most appropriate optimization decisions for this user in the context of the
 multi-user environment rather than trying to rely on a one-size-fits-all
-approach. In particular, we expect the application to provide hints on the
+approach. In particular, we expect an application to provide hints on the
 length of time before the output data is visible to users and
 the expected data lifetime for output sets. For read calls we envision
-hints that provide latency and precision requirements to the system. Additional hints will
-also be investigated.
+hints that provide latency and precision requirements to the system. 
 
-We will also develop a new type of querying system that allows an application
+We will also develop a storage querying system that allows an application
 to get estimated timing information for operations on the storage system.
 We will explore
 how these query functions can be integrated into common applications with
-minimal code disruptions and the set of policies that applications can use to
+minimal code disruptions and a set of policies that applications can use to
 respond to this new information. We will also explore how applications can
 query the storage system on space availability across different tiers and how
-applications their tailor their output data to make the most effective use of
+applications tailor their output data to make the most effective use of
 available space.
 Finally, we will study the use of an external data annotation system that can
 provide information to the storage system without requiring recompilation of the application.
