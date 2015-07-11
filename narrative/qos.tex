@@ -132,8 +132,9 @@ Consider this example demonstrating this disconnection will hurt system
 performance. We launch 4096 processes with each process doing a single file I/O
 operation against half of the Spider II file system at ORNL. The file traces
 are analyzed to examine the utilization distribution of different components.
-Figures (a), (b) and (c) show the resource usage distribution for OSTs, OSSes,
-and LNETs, respectively. We observe a significant usage variation
+Figures (a), (b) and (c) show the resource usage distribution for OSTs (object storage
+target), OSSes (object storage server),
+and LNETs (Lustre Networking), respectively. We observe a significant usage variation
 across components of any given type (e.g., OST, OSS or LNET). For example, some
 OSTs are used more than 10 times while some others are never used
 (corresponding to zero frequency count). Similarly, OSSes and LNETs show
