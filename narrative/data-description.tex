@@ -41,14 +41,13 @@ bridge the semantics gap between applications, middleware, and storage
 systems and allows the system to understand user-level data, execute QoS
 requirements and policies, and optimize application and system performance. 
 
-In our example, when the user writes Field 1, they will be able to use a new API which
-they can pass in a {\it plugin} function which can re-factor their data, which re-organizes
-the data  in the SSIO later and allows the placement of the different chunks, (e.g. F1, F2) 
- in different
-storage tiers, and for different lifetimes. 
-Here the user use additional semantics to express that 
-F will be contained in two chunks. For simplicity,  let's assume in our example for this
- that the data will use the system {\it precision} based re-organization. 
+Furthermore, when the user writes Field 1, they will be able to use a new API through which
+they can pass in a {\it plugin} function that re-factors their data (\S~\ref{sec:data-refactor}),
+which re-organizes data and facilitates the placement of the different chunks, e.g., F1 and F2, 
+onto different storage tiers, with a different lifetime specified for each chunk. 
+Here the user will uses additional semantics to express that 
+F will consist of two chunks. For simplicity, let's assume in this example
+ that system {\it precision} based re-organization will be used. 
   The 
 data is then broken into  two chunks where F1 is of higher value than F2 (e.g. F1 contains 
 the first 3 digits of each double precision value, and the exponent and sign, and F2 contains
