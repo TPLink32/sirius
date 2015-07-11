@@ -13,7 +13,6 @@ solutions suffer scalability challenges due to centralized, serialized system
 updates.  POSIX-compliant file systems are good examples of this
 strucutre--most updates to files require updates to their centrally maintained
 block allocation tables.
-
 An opposite example of this central management strategy are ``pile'' systems,
 which, instead of tracking updates, they search for resources upon request.
 Pile systems feature efficient writes because clients can write wherever there
@@ -50,7 +49,7 @@ perform better than any one technique alone~\cite{lefevre:sigmod14a}. We
 believe that a similar opportunity exists for combining filing and piling
 approaches to achieve performance predictability without sacrificing too much
 flexibility. Our additional challenge is incorporating both the storage tiers
-and potential data quality metrics.
+and data utility.
 
 More specifically, the coarseness of a search space partitioning limits the
 search time within a partition, i.e., finely partitioned search spaces require
