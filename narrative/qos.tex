@@ -1,24 +1,26 @@
 \subsection{Resource Management and QoS}
 \label{sec:qos}
 
+Resource management and QoS have to be carefully coordinated. We use the term ``resource'' both for hardware, including computational, communication, and storage devices, and for data items such as data structures, blocks, objects, and files. To satisfy a request, the system has to locate resources that can satisfy the request: both devices and data items (or allocate the space for data items in case of writes).
+
 \subsubsection{Resource Management}
 Careful resource management strategies that can deal with placement and
-retrieval of a large number of data chunks spread across the entire storage
+retrieval of a large number of data items spread across the entire storage
 hierarchy are key for predictable performance. 
 %This connection is particularly important for data retrieval - in large scale
 %storage systems, finding a resource to read can be a significant, if not
 %dominant, component of overall read latency. 
-Locating resources is typical a distributed systems problem. Centralized
+Locating resources in a distributed system is a well-known problem: centralized
 solutions suffer scalability challenges due to centralized, serialized system
-updates.  POSIX-compliant file systems are good examples of this
-strucutre--most updates to files require updates to their centrally maintained
-block allocation tables.
-An opposite example of this central management strategy are ``pile'' systems,
-which, instead of tracking updates, they search for resources upon request.
-Pile systems feature efficient writes because clients can write wherever there
-is free space with low bookkeeping overhead.  However, unbounded search is
-possible, e.g., when it is unclear whether the resource actually exists.
-Methods to make searches more efficient without reverting to centralized
+updates. Many POSIX-compliant distributed file systems are good examples as updates to files require updates to their centrally maintained
+metadata. %block allocation tables. 
+% Carlos says: Parallel, POSIX-compliant file systems like Panasas,
+% Lustre, and Ceph have never used central block allocation tables
+% but only in local file systems they stripe over.
+Distributed metadata management solutions on the other hand pose
+challenges in keeping metadata management consistent and load-balanced
+across different workloads~\cite{sevilla:sc15}. Methods to make
+searches more efficient without reverting to centralized
 bookkeeping usually involves search space partitioning and a method to limit
 the search to a small number of partitions.  Frequently this involves a
 hash function that is relatively stable against changes to its range, such as
@@ -31,21 +33,27 @@ of failures or system changes.
 %~\cite{honicky:ipdps04}, implement declustering (limiting overlap between
 %partitions), and support placement policy rules~\cite{weil:sc06}.
 
-Sirocco offers more of a pile struture rather than a file structure. One of the
-challenges we face is offering performance predictability more similar to
-POSIX-compliant file systems while we take advantage of the distributed,
-flexible storage management offered by Sirocco.
+\paragraph{Approach:} In this proposal we introduce the concept of ``pile systems'' as a contrast to file systems. The name
+is derived from personal information management user studies that divide users into ``pilers'' and ``filers''~\cite{malone:tois83}. More recent user studies showed that users generally use both piling and filing strategies, but to different degrees~\cite{whittaker:tochi01} (the lead author of this paper is now at UC Santa Cruz). Pile systems are systems that are capable of adding data with little ingest or metadata overhead or any placement restrictions and instead pay the cost of finding data at the time at which the data is retrieved. Pile systems are in contrast to file systems which maintain metadata and coordinate placement to minimize the cost of finding data. Pile systems enable efficient writes and flexible placement because clients can write wherever there
+is free space with little bookkeeping overhead. However, pile systems can have unbounded search times, especially when it is unclear whether the resource actually exists. A good example of a pile system design is Sirocco which offers exceptionally flexible storage management.
 
-\paragraph{Approach:} 
-In this proposal, we will investigate the trade-off in terms of predictable
-performance between ``filing'' and ``piling'' data.  This trade-off has a
+% Sirocco offers more of a pile struture rather than a file structure. One of the
+% challenges we face is offering performance predictability more similar to
+% POSIX-compliant file systems while we take advantage of the distributed,
+% flexible storage management offered by Sirocco.
+
+In the proposed project, we will investigate the trade-off in terms of predictable
+performance between ``filing'' and ``piling'' data, and we will
+prototype combinations of filing and piling strategies in Sirocco.
+The performance trade-off has a
 parallel in data management where there are two alternative paths to achieve
 knowledge. The analogue to filing is  to ``extract, transform, and load'' (ETL)
-data into a warehouse paying an upfront ingest cost to achieve fast querying.
-The analogue to piling is to not pay any upfront cost and later querying the
+data into a warehouse paying an upfront ingest cost to achieve fast 
+querying~\cite{vassiliadis:ijdwm09}.
+The analogue to piling is to not pay any upfront cost and instead query the
 raw data directly by using a data processing platform such as Hadoop.  Recent
 work has found that the combination of these two techniques can be optimized to
-perform better than any one technique alone~\cite{lefevre:sigmod14a}. We
+perform better than any one technique alone~\cite{lefevre:sigmod14a} (this is work supported in part by the DOE DAMASC project). We
 believe that a similar opportunity exists for combining filing and piling
 approaches to achieve performance predictability without sacrificing too much
 flexibility. Our additional challenge is incorporating both the storage tiers
@@ -58,7 +66,7 @@ Partitioning can also be fine in one dimension and coarse in another to allow
 flexibility where it is most needed while still ensuring fast finding. For
 example, a hash function can finely partition a low storage tier but each
 partition can extend across multiple tiers so that a search must occur in order
-to find a resource on a particular tier.  
+to find a resource on a particular tier. 
 
 %Specifically, we will address the following research questions:
 %\begin{tightItemize}
