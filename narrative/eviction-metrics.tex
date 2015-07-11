@@ -37,7 +37,7 @@ to manage space pressure on high tiers: instead of just evicting
 pieces of data (blocks, pages, objects, files), one can free space
 by ``thinning'' data so that accesses within more limited views or
 lower resolutions can still occur without misses while requests
-outside of views or higher resolutions can leverage the information
+accessing outside of views or higher resolutions can leverage the information
 stored in auxiliary data. Conversely, data on a high tier can be
 ``enriched'' (e.g. turned into a higher resolution) if there is
 value in doing so.
