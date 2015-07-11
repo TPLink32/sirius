@@ -59,14 +59,16 @@ the rest of the data).
 %can use a sorting pre-conditioner which allows the data to be sorted, for better compression.
 
 The utility of F1 might be defined as (1, (8 hours, 30 days, 100 days, 1000 days), 
-(2,(1 hour, 4 days, 100 days, 300 days). This allows the initial data chunks to be placed in 
-~Figure{fig:ssio-bucket} b, and then later in ~\ref{fig:ssio-bucket} c.  
+(2,(1 hour, 4 days, 100 days, 300 days). This allows the initial data chunks to be initially 
+placed one way in the 
+the storage layers and later migrated to different layers as shown in Figure~\ref{fig:ssio-bucket} .
+ 
 The data description may also be be stored within a
 separate metadata service or both to aid QoS requirements. It would contain
 conventional attributes such as data type, size, dimensionality, and the
 relationship to other data. In our example the relationship of the Mesh chunks and the
-field Chunks would also allow the system to understand that the user will only want to
-obtain chunks F2, with M2. 
+field chunks would also allow the system to understand that the user will only want to
+read in F with M, and want the same value of data from each piece.
 
 When a user is reading this data at a later time the user can express how much time
 they will be willing to allow the read operations to take place. For example, the user might
@@ -157,7 +159,7 @@ decisions, data lifetime decisions, and captures the value of the chunk.
 % We propose a
 %new technique, described by a \textit{utility function} provided by a user, where chunks
 %can be cast into multiple data chunks and each bucket can be given a different utility value.  
-Based on the utility  , the middleware
+Based on the utility, the middleware
 system will construct the data description and re-organize and place data to
 achieve the desired QoS goals and policies.
  We will formulate the concept of utility (from an
@@ -199,19 +201,21 @@ requirements.
 
 
 
-We will also develop a querying mechanism that allows an application
+We will also develop a querying mechanism that allows the SSIO layer
 to get estimated timing information of an I/O operation from the storage system, which
 manages all storage resources and understands data via data description, as well
 as capacity availability before the I/O operation will
-be issued to the storage system. This new query mechanism will allow users to
-adapt their applications to system dynamics, e.g., bandwidth/space fluctuations, and
-further reduce and expand data.
-We will explore how these query functions can be integrated into common applications with
-minimal code disruptions and a set of policies that applications can use to
-respond to these new information. For example, the user might  tell the system that
-the total time to write P, F1, F2, and the Mesh can never exceed 500 seconds. When the
-system sees that this can NOT be met, the system can drop P4 (for example), such that
-the time to write is met, and only the lowest value chunk is not written.
+be issued to the storage system. 
+%This new query mechanism will allow users to
+%adapt their applications to system dynamics, e.g., bandwidth/space fluctuations, and
+%further reduce and expand data.
+
+%We will explore how these query functions can be integrated into common applications with
+%minimal code disruptions and a set of policies that applications can use to
+%respond to these new information. For example, the user might  tell the system that
+%the total time to write P, F1, F2, and the Mesh can never exceed 500 seconds. When the
+%system sees that this can NOT be met, the system can drop P4 (for example), such that
+%the time to write is met, and only the lowest value chunk is not written.
 
 Users may also describe the data-refactoring routine by either requesting a system-provided
 routine, or their application-aware plugin which the user provides to the system. We will
@@ -346,11 +350,11 @@ the overall utilization of storage across multiple applications, and will enable
 %occurs and how the users can specify additional information to ensure they get
 %the best possible data from the SSIO layer.
 
-We seek to provide dynamic runtime information to the user and make the
-system more transparent. This would allow the end user to analyze or
-visualize data in a more
-predictable way since they would have more confidence of how much time
-the data retrieval process would take.
+%We seek to provide dynamic runtime information to the user and make the
+%system more transparent. This would allow the end user to analyze or
+%visualize data in a more
+%predictable way since they would have more confidence of how much time
+%the data retrieval process would take.
 
 %Firstly, we will explore the augmentation of I/O application programing
 %interfaces (I/O APIs) to allow applications to both specify timing and quality
