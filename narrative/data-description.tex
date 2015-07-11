@@ -1,4 +1,4 @@
-\subsection{Data Description}
+\subsection{Data Description and Application Interface}
 \label{sec:data-description}
 In order for the middleware and storage layer to make decisions
 that are appropriate given the user's intentions, data must be
@@ -131,13 +131,13 @@ respond to these new information.
 %provide information to the storage system without requiring recompilation of the application.
 
 
-From an application level, we will explore these techniques through our ADIOS
-framework using many of our existing application partners, including
-XGC1~\cite{chang2006integrated}, GTC~\cite{klasky2003grid} , and SPECFM3D~\cite{SPECFEM3D}. We will investigate: 1) what hints the users can give
+We will explore these techniques through the ADIOS
+framework using many of our existing applications, including
+XGC1~\cite{chang2006integrated}, GTC~\cite{klasky2003grid}, and SPECFM3D~\cite{SPECFEM3D}. We will investigate: 1) what hints the users can give
 the system, and 2) how the users can replace much of their
 application specific code with
 ``system level code'' through the use of these hints.  We will design an API
-that will be integrated with the storage layer to give time estimations so that
+that will be integrated with the storage system to provide I/O time estimations so that
 users can decide which data priorities will be written and read. The utility
 value for each chunk will be used to sort the chunks into prioritized bins.
 Chunks in a particular bin will be assigned an appropriate storage
@@ -146,19 +146,19 @@ As an example, Figure~\ref{fig:ssio-bucket} illustrates a use case for the XGC1 
 The user can pick a data-refactoring scheme (see
 \S~\ref{sec:data-refactor}) which will classify the particle data into four different
 value levels. The user can then pick a data utility, such as three months
-for the highest value items and 12 months for the lowest value data.
-The user will then call an API function that allows them
-to specify all of the chunks they want
-written (particles, two fields, and a mesh in this example) and the system
-will return a time estimate for this write operation.
-If this time estimate is too large, an API call can be made to 
-specify the lowest value element to be written, skipping the rest in order to save time.
-The data will then be stored
-across the layers of the file system where the two highest value buckets
-will be stored in the Parallel File System, but the next highest value items
-will be stored lower in the storage stack. Depending on the capabilities of the actual storage system, 
-SSIO will decide if the data has to go through the parallel file system 
-towards a lower stack or can be staged to that stack directly. 
+for the highest value level and twelve months for the lowest value level.
+The user will then specify all of the chunks one wants
+to write (particles, two fields, and a mesh in this example) and the system
+will return a time estimate for these write operations -
+in the case that this time estimate is too high, the user may
+compromise by specifying the highest value element to be written, skipping the rest in order to save time.
+Then the data will be placed
+onto the storage tiers, where for example the two highest value buckets
+will be stored in the Parallel File System, and the next highest value items
+will be placed to a lower tier within the storage hierarchy. 
+Depending on the capabilities of the actual storage system, 
+our proposed system will decide if the data will go through the parallel file system 
+towards a lower tier or can be staged to that tier directly. 
 % Description of the utility function research
 
 An important research question which me must address is the semantics of
