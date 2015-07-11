@@ -137,6 +137,18 @@ the system to more effectively manage data placement and retrieval.
 %We will design an updated I/O API that will expand on the current POSIX I/O
 %semantics by adding new information to the I/O request.
 
+\begin{wrapfigure}{R}{0.6\textwidth}
+        \begin{centering}
+        \vspace{-4ex}
+        \includegraphics[scale=0.7]{graphics/SSIO-bucket.pdf}
+        %\vspace{1ex}
+        \caption{The system manages the data across the various stages of the data lifecycle}
+        \label{fig:ssio-bucket}
+        \end{centering}
+      \vspace{-1ex}
+\end{wrapfigure}
+%\lipsum[1]
+
 We will explore the space of application level hints that can be easily provided
 to the storage system. These hints will enable the storage system to make the
 most appropriate optimization decisions for this user in the context of the
@@ -297,16 +309,16 @@ XGC1~\cite{chang2006integrated}, GTC~\cite{klasky2003grid}, and SPECFM3D~\cite{S
 Finally, we will explore a complementary notion of utility from a system-wide perspective 
 that will capture and quantify, for example, the impact of placement decisions on 
 the overall utilization of storage across multiple applications, and will enable system level runtime optimization. 
-\begin{wrapfigure}{R}{0.6\textwidth}
-        \begin{centering} 
-        \vspace{-4ex}
-	\includegraphics[scale=0.7]{graphics/SSIO-bucket.pdf}
-        %\vspace{1ex}
-        \caption{The system manages the data across the various stages of the data lifecycle}
-        \label{fig:ssio-bucket}
-        \end{centering}
-      \vspace{-1ex}
-\end{wrapfigure}
+%\begin{wrapfigure}{R}{0.6\textwidth}
+%        \begin{centering} 
+%        \vspace{-4ex}
+%	\includegraphics[scale=0.7]{graphics/SSIO-bucket.pdf}
+%        %\vspace{1ex}
+%        \caption{The system manages the data across the various stages of the data lifecycle}
+%        \label{fig:ssio-bucket}
+%        \end{centering}
+%      \vspace{-1ex}
+%\end{wrapfigure}
 %\lipsum[1]
 
 
