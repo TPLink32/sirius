@@ -10,8 +10,8 @@ sufficient metadata information, track or be able to find objects as they move
 across storage layers, and facilitates data discovery. Since we need to also
 support access through POSIX APIs for existing application and system
 integration, we must address how to bridge the drastic differences between the
-decomposed objects of potentially varying fidelity with potentially multiple
-versions with a POSIX API-compatible interface.
+decomposed objects of potentially varying fidelity
+with a POSIX API-compatible interface.
 
 Hierarchical Storage Management (HSM) systems~\cite{blaze:1992:hsm} offer a
 strict caching approach for managing different storage capacities trading off
@@ -25,9 +25,9 @@ The overriding theme for this proposal of providing a cooperative relationship
 between the user and the storage system extends into this area as well.
 Negotiating the data quality/retrieval time trade-off requires additional
 metadata.  Providing this functionality requires the naming service be able to
-both return a list of data versions and an indication of data quality. This
-will be combined with a retrieval time estimate for each version by the
-middleware to determine what data version should be retrieved.  This estimate
+both return a list of data chunks and an indication of data quality. This
+will be combined with a retrieval time estimate by the
+middleware/application to determine what data chunks should be retrieved.  This estimate
 will be discussed elsewhere in this proposal.
 
 In addition to the basic naming and data tracking operations, we will also need
@@ -35,8 +35,8 @@ to incorporate authorization capabilities. Sirocco currently integrates with a
 Kerberos service for authentication. Given a capability ticket, a user can
 access different objects as needed. This ticket structure offers protection
 services typically offered on POSIX directories and files, but can do it at the
-fork level instead. This allows a reduced quality data version to be available
-for the general users while the high-quality version would be limited to the
+fork level instead. This allows a reduced quality data chunk to be available
+for the general users while the high-quality data would be limited to the
 data creator. This and other considerations for security must be incorporated
 into the entire naming and metadata service.
 

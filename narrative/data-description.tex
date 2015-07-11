@@ -2,36 +2,34 @@
 \label{sec:data-description}
 In order for the middleware and storage layer to make decisions
 that are appropriate given the user's intentions, data must be
-described in a way that communicates these intentions,to
+described in a way that communicates these intentions to
 the system. In this project, we label the smallest unit of data
 saved in the storage system as a \textit{chunk}.  A chunk consists of not only
 raw data, but also metadata that expresses additional
 knowledge about that data.
 A user space variable, such as \textit{particles}, may
 consist of a collection of chunks, possibly with different accuracy or
-resolution, and each chunk representing
+resolution, and representing
 a different portion of the variable.
-A key advantage of having attributes at this lowest level is that it allows data
+A key advantage of having attributes at this low level is that it allows data
 semantics, user intentions, QoS requirements, and the relationships between user
-data to be readily captured and embedded with the raw data so that these
-smallest pieces can each be managed independently or collectively, depending on
+data to be readily captured and embedded with the raw data so that each chunk
+can be managed independently or collectively, depending on
 the need.
 
-  We illustrate our approach by looking at our example, shown in Figure~\ref{fig:ssio-bucket}.
-  Current storage systems will be given a set of bytes with the total size  =
-  to the size of the Particles (P) array
-  + size of Field 1 + size of Field 2 + size of the Mesh. The Mesh would be a group
-  of variables in the code,  typically  described by a data model.  In our example the storage
-  system has no idea about different variables, and whether or not one variable or even a
-  piece of a variable is more important to the user than the  others.  In  I/O systems
-  such as ADIOS, the I/O system understands the data relationship between all of the 
-  variables in the Mesh, and the meaning of each variable. Users can then request any
-  portion of the variable to read during analysis, and even has the ability to temporary place
-  variables in a DataSpace~\cite{docan2012dataspaces} for in situ analysis. 
-  
-  In this proposal we take a fresh approach to describing not only the information that
-  ADIOS knows about, but we also describe the utility of data for different chunks. This
-  allows the data chunks to be managed at a much lower level, and allows the SSIO layer
+  We illustrate our approach through a simple example in Figure~\ref{fig:ssio-bucket},
+  in which the user attempts to write \textit{Particles}, \textit{Field 1},
+  \textit{Field 2}, and \textit{Mesh} arrays. In particular, the \textit{Mesh} can be a group
+  of variables in the application code, with their relationship implicitly described
+  by the data model. Using the conventional POSIX-compliant block interface, file
+  systems and storage are oblivious to the user space variables and the relationship between
+  them. Recent advances in I/O middleware systems such as ADIOS \cite{liu_helloadios}
+  allow for understanding and capturing the data semantics and relationship between all 
+  user space variables. As such, users can request any portion of a variable to be retrieved
+  during post-processing, or in situ alongside simulations~\cite{docan2012dataspaces}. 
+  In this project we will leverage the ability of plugging rich metadata from ADIOS, and further
+  describe the utility of data for data chunks. This enables user data to be possibly managed at
+  the storage system level, and allows the SSIO layer
   to 
 %  
 %   
