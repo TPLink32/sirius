@@ -113,7 +113,7 @@ system can rapidly respond to it by reducing the amount of resources taken by
 less urgent applications, allowing the urgent application to finish, and later
 reverting back to the previous committed resource level for the rest.  This can
 be automatically enforced via user- or administrator- specified
-\textit{policies}\S\ref{sec:data-description}.
+policies.
 
 There are two fundamental causes that can impede the I/O performance in an
 extreme-scale SSIO system. One is indirection, where layers of storage tiers
@@ -334,7 +334,7 @@ this proposal complicates the relationship between workload-dependent and
 workload-independent metrics: the performance of a task can significantly
 differ depending on what levels of the hierarchy are involved. Furthermore, an
 important goal of the proposed project is to enable applications to reason
-about the trade-off between resolution and latency, adding yet another
+about the trade-off between accuracy and performance, adding yet another
 dimension to how tasks are mapped to resources.
 
 \begin{tightItemize}
@@ -348,11 +348,11 @@ set of resources which can quickly provide up-to-date utilization.
 One approach might involve pseudo-random mapping that also load-balances
 as a side-effect.
 
-\item To offer latency/latency trade-offs, the system must be able
+\item To offer performance and accuracy trade-offs, the system must be able
 to quickly generate a number of data production plans, involving
-different parts of the hierarchy and different data resolutions.
-It will then use the utilization model to estimate the latency for
-each production plan and the resolutions they can provide. Here
+different parts of the hierarchy and different data accuracy.
+It will then use the utilization model to estimate the performance for
+each production plan and the accuracy they can provide. Here
 again, pseudo-random selection could reduce the number of resources
 that would be involved, thereby increasing scalability.
 
