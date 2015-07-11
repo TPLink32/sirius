@@ -133,15 +133,13 @@ respond to these new information.
 
 We will explore these techniques through the ADIOS
 framework using many of our existing applications, including
-XGC1~\cite{chang2006integrated}, GTC~\cite{klasky2003grid}, and SPECFM3D~\cite{SPECFEM3D}. We will investigate: 1) what hints the users can give
-the system, and 2) how the users can replace much of their
-application specific code with
-``system level code'' through the use of these hints.  We will design an API
+XGC1~\cite{chang2006integrated}, GTC~\cite{klasky2003grid}, and SPECFM3D~\cite{SPECFEM3D}.
+We will design an API
 that will be integrated with the storage system to provide I/O time estimations so that
 users can decide which data priorities will be written and read. The utility
 value for each chunk will be used to sort the chunks into prioritized bins.
 Chunks in a particular bin will be assigned an appropriate storage
-tier and lifetime, which can be specified by the user through the API.
+tier and lifetime.
 As an example, Figure~\ref{fig:ssio-bucket} illustrates a use case for the XGC1 code.
 The user can pick a data-refactoring scheme (see
 \S~\ref{sec:data-refactor}) which will classify the particle data into four different
@@ -161,7 +159,7 @@ our proposed system will decide if the data will go through the parallel file sy
 towards a lower tier or can be staged to that tier directly. 
 % Description of the utility function research
 
-An important research question which me must address is the semantics of
+An important research question that we must address is the semantics of
 describing the utility function, and the possibility that the users will
 accept this, and if the system can then use this information, and make 
 decisions based on this utility function. We realize that the system will
@@ -186,17 +184,17 @@ their knowledge discovery.
 %this utility function can be observed by the user.
  
  We will formulate the concept of utility (from an
-application perspective) that is assigned data objects to quantify the
-benefits of placement and/or movement actions to application. These
-utilities may be based on the importance of the data objects, the frequency
+application perspective) that is assigned data chunks to quantify the
+benefits of placement and/or movement actions to applications. These
+utilities may be based on the importance of the data chunks, the frequency
 with which they are accessed, etc., and can be used during runtime data
 management to evaluate and compare different placement/movement options. 
-For example, data objects with higher utility value may be
-placed closer (e.g., in faster memory) to the accessing application.
-Similarly, when it is time to evict data objects from a higher level storage
-layer, the decision about which object to evict may take the utility into
+For example, data chunks with higher utility value may be
+placed closer (e.g., in faster memory) to the application.
+Similarly, when it is time to evict data chunks from a higher storage
+tier, the decision about which chunk to evict may take the utility into
 account. Our initial work in defining such a utility is presented in~\cite{tongipdps15}.
- We will also explore autonomic approaches for balancing of the placement and 
+ We will also explore autonomic approaches for balancing the placement and 
  movement of data across the memory hierarchy autonomically, which will be driven 
  by the data utility and will leverage both user hints and information gathered at runtime (e.g., runtime data access
 history, network topology, etc.).
