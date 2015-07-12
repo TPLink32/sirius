@@ -73,9 +73,6 @@
 
 %%%%% Change page number style %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Force new page, otherwise style change might affect previous page
-\newpage
-\pagenumbering{arabic}
 }
 
 %%%%% Face page %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,6 +86,9 @@
 \tableofcontents
 %%\addstarredchapter{Table of Contents}
 
+% Force new page, otherwise style change might affect previous page
+\newpage
+\pagenumbering{arabic}
 %% Needed for lab, must skip for grants. Not sure why.  Figure out later
 %%\ifthenelse{\equal{\proposalcontent}{lab}}{
 %%   \adjustmtc
