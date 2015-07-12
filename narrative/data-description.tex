@@ -106,7 +106,7 @@ capability and further augment the BP format to include data utility metrics.
 Recently,
 DAMSEL~\cite{damsel} has provided a rich metadata representation and management
 layer that captures the relationship between data blocks for scientific
-applications.  This allows application data to be mapped to storage system
+applications.  This allows application data to be mapped to the storage system
 efficiently, without overburdening users with the management of complex data models, such
 as adaptive mesh refinement (AMR), from the user space. 
 FFS~\cite{ffs} implements a type system that provides highly efficient binary
@@ -120,7 +120,7 @@ explored, and we believe it will be vital for exascale storage solutions.
 We will design and develop new techniques for data management, description,
 and access that allows users to describe the data utility based on their
 expectations. This can be done by allowing users to apply plugins that
-provide data-specific functionality to SIRUS.
+provide data-specific functionality to SIRIUS.
 These plugins may be executed by the system to
 calculate the utility metrics for each chunk, handle custom compression
 and decompression, and perform other data-specific services, thus allowing
@@ -134,7 +134,7 @@ the system to more effectively manage data placement and retrieval.
         \vspace{-4ex}
         \includegraphics[scale=0.7]{graphics/SSIO-bucket.pdf}
         %\vspace{1ex}
-        \caption{The system manages the data across the various stages of the data lifecycle}
+        \caption{An illustration of SIRIUS managing data across the various stages of the data lifecycle.}
         \label{fig:ssio-bucket}
         \end{centering}
       \vspace{-1ex}
@@ -142,8 +142,8 @@ the system to more effectively manage data placement and retrieval.
 %\lipsum[1]
 
 We will explore the space of application level hints that can be easily provided
-to SIRUS. These hints will enable SIRUS to make the
-most appropriate optimization decisions for this user in the context of the
+to SIRIUS. These hints will enable SIRIUS to make the
+most appropriate optimization decisions for specific users in the context of the
 multi-user environment rather than trying to rely on a one-size-fits-all
 approach. In particular, we expect an application to provide hints on the
 the time that an I/O operation will occur and
@@ -163,7 +163,7 @@ decisions, data lifetime decisions, and captures the value of the chunk.
 % We propose a
 %new technique, described by a \textit{utility function} provided by a user, where chunks
 %can be cast into multiple data chunks and each bucket can be given a different utility value.  
-Based on the utility, SIRUS will construct the data description and re-organize and place data to
+Based on the utility, SIRIUS will construct the data description and re-organize and place data to
 achieve the desired QoS goals and policies.
  We will formulate the concept of utility (from an
 application perspective) that is assigned data chunks to quantify the
