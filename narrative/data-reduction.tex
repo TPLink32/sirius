@@ -1,26 +1,30 @@
 \subsection{Data Refactoring} \label{sec:data-refactor} 
 
 The classical workflow where the entire dataset is written to storage for
-later analysis is no longer viable simply because the amount of generated data is too large.
-In the future, it will be vital to take advantage of a priori
+later analysis will no longer be viable in exascale, simply because the amount of generated data will 
+be too large due to capacity and performance reasons.
+In the future, it will be vital to take advantage of \textit{a priori}
 information when 1) writing and reading from the SSIO layer in order to gain
-performance and predictability, and to prioritize I/O so that the data that
-is most useful for end-user can be written in the time available, and 2)
+higher performance and predictability, and to prioritize the data that
+is most useful for end users so that I/O can be finished in the time available, and 2)
 performing {\em in situ} operations and analysis before storing the information.
+In the fusion use case described earlier which shares commonalities with many other
+DOE applications, \textit{a priori} information can indeed be provided by application
+scientists regarding which data should be sent over to the SSIO layer so that
+minimally, the most science relevant data can be available for subsequent analysis.
+This allows the science to be done even when the storage is in busy state - we believe
+in a shared multi-user environment, it occurs often \cite{liu_hotstorage}.
+In this project, this capability of prioritizing data is accomplished by data refactoring, 
+which includes re-organization and reductions of the data.
+There are many methodologies to refactor data and the best choice will generally
+be application dependent. However, our observation is that, once the choice is settled for an application, 
+it will not typically change from run to run. 
 
-In the case of C. S. Chang described earlier, and common with most other
-applications scientists with whom we collaborate, information is provided on
-which data should be sent over to the SSIO layer so that the best, and most
-important information is available for subsequent analysis.
-This is generally accomplished using refactoring, which includes re-organization and reductions of the data.
-
-There are many possibilities for refactoring and the best choice will generally
-vary from case to case but, once settled, will typically not change from run to run. It
-will be important to understand when the time and resources required to
-identify and perform the ``best methods'' outweighs any eventual gains. Another
+To refactor data effectively and efficiently, it is important to understand
+the critical point when the time and resources required to
+identify and perform the ``best methods'' outweighs the intended gains. Another
 critical research question concerns the quantification and control of the loss
 of information resulting from refactoring the data and using a reduced dataset. 
-
 A basic issue allied to refactoring is to understand how much information is
 actually present in a dataset and whether a refactoring based on a reduced
 order representation might prove effective. It is useful to classify scientific
@@ -33,7 +37,7 @@ Broadly speaking, the path from data to knowledge consists of extracting
 underlying models or patterns from the datasets, and interpreting the resulting
 models. 
 
-Ideally,  scientists would like to perform the entire analysis stage {\em in situ}
+Ideally, scientists would like to perform the entire analysis stage {\em in situ}
 to extract the relevant information and in so doing would effectively
 circumvent the large data issue completely.  The catch, of course, is that this
 is unlikely to be possible since, by their nature, large scale simulations aim
