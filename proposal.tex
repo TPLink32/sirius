@@ -57,6 +57,27 @@
 %\smartincludeemptych{Cover Page}{covers/\proposalinstitution}
 \input{coverpage.tex}
 \input{cover-collab}
+
+%%%%% Abstract %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\nottoggle{preproposal}{
+
+\input{abstract}
+
+%%%%% Title page %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% \begin{titlepage}
+%%   \phantomsection % Needed by hyperref because of the unnumbered section
+%%   \addcontentsline{toc}{chapter}{Project Narrative}
+%%   \input{titlepage}
+%% \end{titlepage}
+
+%%%%% Change page number style %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Force new page, otherwise style change might affect previous page
+\newpage
+\pagenumbering{arabic}
+}
+
 %%%%% Face page %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% \smartincludeemptych{Face Page}{faces/\proposalinstitution}
@@ -88,9 +109,9 @@
 %% \input{budgets}
 
 %%%%% Abstract %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\nottoggle{preproposal}{
+%\nottoggle{preproposal}{
 
-\input{abstract}
+%\input{abstract}
 
 %%%%% Title page %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -103,11 +124,13 @@
 %%%%% Change page number style %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Force new page, otherwise style change might affect previous page
-\newpage
-\pagenumbering{arabic}
-}
+%\newpage
+%\pagenumbering{arabic}
+%}
 %%%%% Narrative %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\newpage
+\pagenumbering{arabic}
 \input{narrative}
 
 \nottoggle{preproposal}{
