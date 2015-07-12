@@ -10,10 +10,12 @@ is most useful for end users so that I/O can be finished in the time available, 
 performing {\em in situ} operations and analysis before storing the information.
 In the fusion use case described earlier which shares commonalities with many other
 DOE applications, \textit{a priori} information can indeed be provided by application
-scientists regarding which data should be sent over to the SSIO layer so that
+scientists regarding which data should be sent over to the SSIO layer, which we refer
+to in our proposal as {\bf SIRUS}, so that
 minimally, the most science relevant data can be available for subsequent analysis.
 This allows the science to be done even when the storage is in busy state - we believe
-in a shared multi-user environment, it occurs often \cite{liu_hotstorage}.
+in a shared multi-user environment, it occurs often \cite{liu_hotstorage}, and gives users
+high performance variability.
 In this project, this capability of prioritizing data is accomplished by data refactoring, 
 which includes re-organization and reductions of the data.
 There are many methodologies to refactor data and the best choice will generally
@@ -58,17 +60,19 @@ through experience of dealing with differing runs of the same code.
 
 Deep application knowledge means one can sometimes achieve drastically superior
 reduction in the total data compared with what one might achieve otherwise.
-However, even in the absence of such high level knowledge, we must equip the
-SSIO layers with generic data reduction techniques and re-organization
+However, even in the absence of such high level knowledge, we must equip SIRUS with generic data reduction techniques and re-organization
 techniques. For instance, certain basic information on the semantics of the
 data is needed and must be supported by the overall infrastructure. Likewise,
 information regarding typical access patterns for data in a given application
-should be placed in the SSIO layers. Scientific applications often read and
+should be placed in SIRUS. Scientific applications often read and
 analyze data in a structured fashion and failure to respect this pattern, or to
 exploit it through prefetching, can significantly increase the overall
 execution time of the application. Accurate prefetching can only be achieved
-with access pattern analysis (\S\ref{sec:managing-data-life}). This requires an SSIO layer which is capable of
-prefetching data in an asynchronous fashion to take the bytes on the file.
+with access pattern analysis (\S\ref{sec:managing-data-life}). 
+
+%% I don't understand this sententce This requires SIRUS
+% to be capable of
+%prefetching data in an asynchronous fashion to take the bytes on the file.
 
 \paragraph{State of the art:} {\bf Data Reduction Techniques.} Data compression
 broadly consists of three basic steps: (1) Pre-processing to extract as much
@@ -182,7 +186,7 @@ will be researched and developed to meet our needs.
 %then later re-organize this data on different nodes?, or 3) do we use different
 %cores on a node to do data-refactoring.  
 Similarly we will examine the cost of reading the data. In the case where only high importance being retrieved,
-overall time to move the data from the SSIO layer to the
+overall time to move the data from SIRUS to the
 application is expected to fast. A key challenge is in the assessment of retrieving
 both high and low important data that reside across storage tiers and possibly migrate to
 new locations as a result of capacity pressure. There is a
@@ -202,7 +206,7 @@ OLCF CAAR~\cite{CAAR} project for early access, there is strong belief that thes
 simulations will be close to exascale simulations and we will be able to run
 these application on SIRIUS to examine the full impact of data-refactoring.
 
-\paragraph{Challenges:} Maximal data reduction on the SSIO layer
+\paragraph{Challenges:} Maximal data reduction in SIRUS
 would result from storing only the code and the input parameters, and simply
 recalculating all of the results. This extreme is not feasible in practice
 owing to the size of the computation involved, but sheds light on the path to
@@ -220,7 +224,7 @@ for short periods of time. This allows us to ``audit'' the simulation and when t
 become large in a local region of space, we write out the results of the data in this local region.
 The hope is that this will be done only locally and that with a good ``auditor''  this will not happen
 too frequently. This then allows us to use the ``auditor'' to reproduce results during the analysis 
-process using an inexpensive computation and put less pressure on the SSIO layer.
+process using an inexpensive computation and put less pressure on SIRUS
 %
 % 
 %   A priori information on the nature of the data is
