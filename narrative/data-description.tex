@@ -51,8 +51,9 @@ sign, and F2 contains the rest of the data).
 %The user might also indicate through additional semantics that F1
 %can use a sorting pre-conditioner which allows the data to be sorted, for better compression.
 %
-The utility of F1 might be defined as (1, (8 hours, 30 days, 100 days, 1000 days), 
-(2,(1 hour, 4 days, 100 days, 300 days). This allows the initial data chunks to be initially 
+The utility of F1 might be defined as (priority=1, (time-NVRAM=8 hours, time-PFS=30 days, time-CAMPAIGN=100 days, time-TAPE=1000 days), 
+(priority=2, (time-NVRAM=1 hours, time-PFS=4 days, time-CAMPAIGN=100 days, time-TAPE=300 days), 
+This allows the initial data chunks to be initially 
 placed one way in the storage layers and later migrated to different layers as shown in 
 Figure~\ref{fig:ssio-bucket} .
  
