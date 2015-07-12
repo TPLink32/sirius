@@ -1,9 +1,9 @@
 \subsection{Data Description and Application Interface}
 \label{sec:data-description}
-In order to enable the middleware and storage layer to make appropriate decisions based on user's intentions, data must be
-described in a way that communicates these intentions to
-the system. In this project, we label the smallest unit of data
-saved in the storage system as a \textit{chunk}.  A chunk not only consists of 
+In order to enable SIRUS to make appropriate decisions based on user's intentions, data must be
+described in a way that communicates these intentions.
+ In this project, we label the smallest unit of data
+saved in  SIRUS as a \textit{chunk}.  A chunk not only consists of 
 raw data, but also metadata that provides additional
 knowledge about that data.
 A user space (application) variable, such as for example \textit{particles}, may
@@ -27,15 +27,14 @@ can be managed independently or collectively, depending on the need.
   In this project we will leverage this ability of plugging rich metadata from ADIOS (and 
   DataSpaces) and related experiences, and will further describe the utility of data for data 
   chunks (presented in Section~\ref{sec:managing-data-life}). This will enable user data to 
-  be effectively managed at the storage system level, and will allow the SSIO layer to 
+  be effectively managed at the storage system level, and will allow SIRUS
 %  
 %   
 %     retrieving and visualizing 3D field data generated from a simulation
 %requires the mesh (consisting of coordinates and connectivity variables) be
 %accessed simultaneously and with low latency to achieve a good user experience.
 %Managing data at this low level
-bridge the semantic gap between applications, middleware, and storage layers, allowing the 
-system to understand user-level data, execute QoS requirements and policies, and optimize 
+bridge the semantic gap between applications, middleware, and storage layers, allowing SIRUS to understand user-level data, execute QoS requirements and policies, and optimize 
 application and system performance from the user (application) perspective.
 
 Furthermore, we will explore new APIs that will enable users to include a {\it plugin} function when 
@@ -52,8 +51,9 @@ sign, and F2 contains the rest of the data).
 %The user might also indicate through additional semantics that F1
 %can use a sorting pre-conditioner which allows the data to be sorted, for better compression.
 %
-The utility of F1 might be defined as (1, (8 hours, 30 days, 100 days, 1000 days), 
-(2,(1 hour, 4 days, 100 days, 300 days). This allows the initial data chunks to be initially 
+The utility of F1 might be defined as (priority=1, (time-NVRAM=8 hours, time-PFS=30 days, time-CAMPAIGN=100 days, time-TAPE=1000 days), 
+(priority=2, (time-NVRAM=1 hours, time-PFS=4 days, time-CAMPAIGN=100 days, time-TAPE=300 days), 
+This allows the initial data chunks to be initially 
 placed one way in the storage layers and later migrated to different layers as shown in 
 Figure~\ref{fig:ssio-bucket} .
  
@@ -61,18 +61,18 @@ In addition to be embedded with the data, the data description may also be store
 a separate metadata service to aid QoS requirements. Such a data description would contain
 conventional attributes such as data type, size, dimensionality, and the relationship to other 
 data. In our example, the relationship of the Mesh chunks (M) and the field chunks (F) can 
-be captured in this way and would allow the system to understand that the user will only 
-want to read in F with M, and want the same portion of data from each chunk.
-
+be captured in this way and would allow SIRUS to understand that the user will only 
+want to read in F with M, and want the same portion of data from each chunk. 
+%
 When a user is reading this data at a later time the user can define how much time they will 
 be willing to allow the read operations to take as part of the data description. For example, 
 the user might want to visualize F, which means they need to read in F along with the mesh 
-M. The user may also specify which time slices to read and tell the system how long they 
+M. The user may also specify which time slices to read and tell SIRUS how long they 
 are willing to wait. The system can then use this information and deliver the highest value 
 chunks it can while satisfying the time constraint.  Note that the user may also include 
 requirements/constraints about the accuracy of the data to read allowing the system to 
-appropriately place and read data chunks to meet these requirements.
-%We will also allow additional information  from the user so they can express rules about the possible
+%We will also allow additional information 
+%from the user so they can express rules about the possible
 
 %The new APIs will enable the bridge by specifying selectable
 %performance/quality/- cost trade-offs from both the application and system
@@ -93,8 +93,8 @@ appropriately place and read data chunks to meet these requirements.
 
 
 Our research will address the following questions:
-1) How can users interact with the storage system efficiently?,
-2) How can users express their intentions into actionable items which can take place in the middleware and/or storage layer?, and
+1) How can users interact with SIRUS  efficiently?;
+2) How can users express their intentions into actionable items which can take place in SIRUS?; and
 3) How can users annotate data with a utility metric?
 
 \paragraph{State of the art:}
@@ -121,7 +121,7 @@ explored, and we believe it will be vital for exascale storage solutions.
 We will design and develop new techniques for data management, description,
 and access that allows users to describe the data utility based on their
 expectations. This can be done by allowing users to apply plugins that
-provide data-specific functionality to the middleware and storage system.
+provide data-specific functionality to SIRUS.
 These plugins may be executed by the system to
 calculate the utility metrics for each chunk, handle custom compression
 and decompression, and perform other data-specific services, thus allowing
@@ -143,7 +143,7 @@ the system to more effectively manage data placement and retrieval.
 %\lipsum[1]
 
 We will explore the space of application level hints that can be easily provided
-to the storage system. These hints will enable the storage system to make the
+to SIRUS. These hints will enable SIRUS to make the
 most appropriate optimization decisions for this user in the context of the
 multi-user environment rather than trying to rely on a one-size-fits-all
 approach. In particular, we expect an application to provide hints on the
@@ -164,8 +164,7 @@ decisions, data lifetime decisions, and captures the value of the chunk.
 % We propose a
 %new technique, described by a \textit{utility function} provided by a user, where chunks
 %can be cast into multiple data chunks and each bucket can be given a different utility value.  
-Based on the utility, the middleware
-system will construct the data description and re-organize and place data to
+Based on the utility, SIRUS will construct the data description and re-organize and place data to
 achieve the desired QoS goals and policies.
  We will formulate the concept of utility (from an
 application perspective) that is assigned data chunks to quantify the
@@ -206,7 +205,7 @@ requirements.
 
 
 
-We will also develop a querying mechanism that allows the SSIO layer
+We will also develop a querying mechanism that allows SIRUS
 to get estimated timing information of an I/O operation from the storage system, which
 manages all storage resources and understands data via data description, as well
 as capacity availability before the I/O operation will
