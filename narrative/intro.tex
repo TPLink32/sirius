@@ -117,28 +117,6 @@ a data, workflow, and application aware storage and I/O system.
 %problematic without new insights and solutions.
 Our proposal will be responsive to Theme 2: {\em Scalable Storage Software Infrastructure} of the call, as summarized in Table~\ref{tab:call}.
 
-
-\begin{table}[htbp]
-\small
-\vspace{2ex}
-\begin{center}
-\caption {Relevance to SSIO}
-\label{tab:call}
-\begin{tabular}{ | p {0.2cm} | p{5cm} | p{7.5cm} | p{2.2cm} |}\hline
-\multicolumn{2}{|c|}{\bf Call area} & \multicolumn{1}{|c|}{\bf Relevant S2E2 work} & \multicolumn{1}{|c|}{\bf Proposed research} \\\hline\hline
-1 & Data abstractions & Create new APIs  and annotations to guide data placement across the storage system & \S\ref{sec:data-description} \\\hline
-2 & Mapping science data models onto hierarchical storage &  Enable science-driven mapping, re-organization, reduction and prioritization of data chunks derive from application objects & \S\ref{sec:data-refactor}, \S\ref{sec:data-description},  \S\ref{sec:managing-data-life}\\\hline
-3 & Mechanisms for data movement across the storage hierarchy & Enable science-driven data placement and migration based on policies& \S \ref{sec:managing-data-life},  \S\ref{sec:migration} \\\hline
-4 &  Extend the interaction of middleware with the storage system & Manage data placement and migration between the application, middleware and storage system using an autonomic cross-layer approach & \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery}  \\\hline
-5 & Design and implement of I/O middleware architectures  & Create APIs to guide the placement of chunks of data across the SSIO and autonomically move data& \S\ref{sec:data-description}, \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery} \\ \hline
-6 &Approaches to improve the ability of SSIO software to support checkpoint/restart &  We will have utility functions defined for the lifetime of data, and allow CR data to be automatically placed in the fastest storage and then later purged & \S\ref{sec:data-description}, \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:data-description} \\ \hline
-
-
-\end{tabular}
-\end{center}
-\vskip -0.5cm
-\end{table}
-
 %
 \paragraph{An Illustrative Example}
 We use an illustrative fusion simulation use case that our team as been working on to highlight the challenges addressed in this proposal, and to 
@@ -174,7 +152,7 @@ and the latter would be archived. Additionally, the entire team needed to
 figure out how to efficiently retrieve these different categories of data
 for post-processing, analysis and visualization.
 
-To accomplish this the application and storage teams developed new
+To accomplish this, the application and storage teams developed new
 application specific data reduction techniques and added them to the ADIOS
 I/O middleware layer. A rudimentary discovery system was also created to
 track what data was on disk and what was on the tape archive. Initially this
@@ -220,7 +198,27 @@ These insights drive our proposed research approach.
 % complicated.
 
 
+
 \subsection{Overview of the proposed approach} 
+
+\begin{table}[htbp]
+\small
+\vspace{2ex}
+\begin{center}
+\caption {Relevance to SSIO}
+\label{tab:call}
+\begin{tabular}{ | p {0.2cm} | p{5cm} | p{7.5cm} | p{2.2cm} |}\hline
+\multicolumn{2}{|c|}{\bf Call area} & \multicolumn{1}{|c|}{\bf Relevant S2E2 work} & \multicolumn{1}{|c|}{\bf Proposed research} \\\hline\hline
+1 & Data abstractions & Create new APIs  and annotations to guide data placement across the storage system & \S\ref{sec:data-description} \\\hline
+2 & Mapping science data models onto hierarchical storage &  Enable science-driven mapping, re-organization, reduction and prioritization of data chunks derive from application objects & \S\ref{sec:data-refactor}, \S\ref{sec:data-description},  \S\ref{sec:managing-data-life}\\\hline
+3 & Mechanisms for data movement across the storage hierarchy & Enable science-driven data placement and migration based on policies& \S \ref{sec:managing-data-life},  \S\ref{sec:migration} \\\hline
+4 &  Extend the interaction of middleware with the storage system & Manage data placement and migration between the application, middleware and storage system using an autonomic cross-layer approach & \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery}  \\\hline
+5 & Design and implement of I/O middleware architectures  & Create APIs to guide the placement of chunks of data across the SSIO and autonomically move data& \S\ref{sec:data-description}, \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery} \\ \hline
+6 &Approaches to improve the ability of SSIO software to support checkpoint/restart &  We will have utility functions defined for the lifetime of data, and allow CR data to be automatically placed in the fastest storage and then later purged & \S\ref{sec:data-description}, \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:data-description} \\ \hline
+\end{tabular}
+\end{center}
+\vskip -0.5cm
+\end{table}
 
 %ADIOS was developed with the understanding that we must
 %not only address the bottlenecks for current applications and
@@ -278,22 +276,27 @@ automatically. For example, a set of user-specified rules would allow
 the system to make autonomic decisions at runtime
 ~\S~\ref{sec:managing-data-life}~\S~\ref{sec:qos}.
 %
+Our approach is based on giving users the ability to define the utility of
+their data \S\ref{sec:data-description}. This includes the ability to assign
+varying levels of importance to individual data objects in their entirety,
+or to specific subsets and pieces. Key research challenges include: 1)
+developing an expressive and easy to use a program interface, 2) formulating
+a system model that can support autonomic decision, for example, for saving
+data based on user-defined importance and utility of
+data~\S~\ref{sec:managing-data-life}), and 3) defining the interface between
+the system and the back-end storage for both single and multiple running
+applications~\S~\ref{sec:qos}.
 
-Central to our approach is giving users the ability to define the utility of their data    
- \S\ref{sec:data-description}.
-This includes the ability to assign varying levels of importance to individual data objects in their entirety, or to specific
-subsets and pieces.
-Key research challenges include: 1) developing an expressive and easy to use a program interface, 2) formulating a system model that can support 
-autonomic decision, for example, for saving data based on user-defined importance and utility of data~\S~\ref{sec:managing-data-life}),
-, and 3) defining the interface between the system and the back-end storage for both single and multiple running applications~\S~\ref{sec:qos}.
-
-In the scenario above, the scientist would then specify a set of rules that would guide I/O and data management 
-at runtime. For example, if system resources are available and the estimated write times acceptable, the write 
-can proceed, but if this is not the case, the write may be postponed to a later time-step, or the data reduced using
-an in-situ techniques before it is saved. Data ``importance or utility'' can be used to place various data at  
-proper SSIO layers -- data with the highest utility (e.g., based on user defined importance or the frequency of access) 
-is maintained in faster storage for long periods of time, while data with lower utility can be migrated to lower layers 
-in the storage hierarchy.
+The scientist will be able to specify a set of rules that
+would guide I/O and data management at runtime. For example, if system
+resources are available and the estimated write times acceptable, the write
+can proceed, but if this is not the case, the write may be postponed to a
+later time-step, or the data reduced using an in-situ techniques before it
+is saved. Data ``importance or utility'' can be used to place various data
+at proper SSIO layers -- data with the highest utility (e.g., based on user
+defined importance or the frequency of access) is maintained in faster
+storage for long periods of time, while data with lower utility can be
+migrated to lower layers in the storage hierarchy.
 
 %
 %Since the data will be a collection of objects placed on the storage system,
@@ -313,16 +316,13 @@ in the storage hierarchy.
 
 \paragraph{Storage System Perspective}
 \label{subsec:storage-perspective}
-From the perspective of the storage system, it is necessary to manage the data from
-a given user request amongst all of the requests from all users, and try to optimize the
-entire system accordingly. Today the problem is that when a user writes there is a
-tremendous amount of interference from other users on the system who may be
-writing or reading at the same time, leading to unpredictable performance.
-By requiring a certain QoS~\S\ref{sec:qos}, the system could potentially lock out and throttle other users. 
-The storage system must also automatically move data from one tier of the storage to
-another, without affecting the QoS that was offered at request
-time. The storage system must be able to organize
-data amongst all of the tiers of storage in a known, consistent way.
+From the perspective of the storage system, it is necessary to manage a
+single I/O request from a user in the context of all requests from all
+users, and try to optimize the entire system accordingly. This entails
+providing quality of service (~\S\ref{sec:qos} to the user to minimize
+resource contention, distribute the data across all of the tiers of storage
+in a known consistent manner (\S~\ref{sec:init-plac-data}), and automatically move data from one part of
+the storage hierarchy to another (~\ref{sec:migration}). 
 
 One of our research objectives is to understand how the
 storage system can interact with the middleware   so
@@ -332,7 +332,7 @@ QoS and therefore, be able to provide fuzzy estimates of the time it will take t
 the different layers to inform any migration/eviction decisions, and it
 is also critical that the storage system can manage (discover and retrieve) the data across all of the
 layers automatically, without user intervention. 
-Central to our approach is that the storage system needs to define bounds of time estimates
+Our approach here is that the storage system needs to define bounds of time estimates
 (min time, max time), and as our system evolves, we want to allow plug-ins which can help
 reduce the range of the bounds.
 Overall, our goal is to enable predictable performance acorss the storage system, and we will develop mechanisms to enable this
@@ -345,17 +345,31 @@ Overall, our goal is to enable predictable performance acorss the storage system
 
 \paragraph{Reading  Perspective}
 \label{subsec:reading-perspective}
-From the perspective of reading, this project will look at key I/O patterns such as checkpoint-restart (CR), in-situ analytics and post-processing. 
-For example, in case of CR, we will support both, traditional file-based approaches leveraging fast storage tiers
-such as NVRAM (non-volatile RAM), as well as memory-based approach based on retrieving
-data directly from NVRAM. In case of in-situ and post-processing,  an important aspect is the latency -- here reducing latency and providing QoS 
- becomes important. 
- When someone is doing interactive analysis and expects that the data they read in is about
-10s, but it turns into 1,000s, the user typically tends to either wait
-another day for doing their analysis or gets frustrated and reads much less
-data than they really need to. Furthermore the user tends to read in just a
-small sample of the data without much knowledge if they are missing
-important pieces of the data~\S\ref{sec:migration}.
+
+From the reading perspective, the data must be accessible in a fast and
+predictable manner for all read access patterns, with different access
+patterns having their own requirements for latency, throughput and
+consistency. Here the user must be able to describe the read patterns and
+query for performance estimations (~\S~\ref{sec:data-description}), be able
+to quickly access the most important data (\S~\ref{sec:data-refactor}) and recieve
+performance gurantees (~\S\ref{sec:qos}) on the time required to complete
+the read request. The challenge here is to address the variety of read
+patterns that drive knowledge discover. 
+
+For example, consider the case of Checkpoint/Restart (C/R) which needs a lot
+of data at high throughput to complete the restart in case of application
+failure, with latency being less important due to the batch nature of the
+request, and the data must be of sufficient quality to support an
+application restart without significant errors. 
+This is in contrast to interactive analysis, where the most important metric
+is the latency to start the analysis process. The quality here is more
+variable and based greatly on the expectations of the user, but performance
+predictability is important due to the interactive nature of the process. 
+
+Our research objective here is to explore the interface that reading code
+can utilize to discover the important properites of data, the expectations
+about the time to access the data, and make decisions on the quality of data
+required to complete the task. 
 
 %
 %Exascale scientific discovery will be severely bottlenecked without
