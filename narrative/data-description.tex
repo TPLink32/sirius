@@ -1,82 +1,80 @@
 \subsection{Data Description and Application Interface}
 \label{sec:data-description}
-In order for the middleware and storage layer to make decisions
-that are appropriate given the user's intentions, data must be
+In order to enable the middleware and storage layer to make appropriate decisions based on user's intentions, data must be
 described in a way that communicates these intentions to
 the system. In this project, we label the smallest unit of data
-saved in the storage system as a \textit{chunk}.  A chunk consists of not only
-raw data, but also metadata that expresses additional
+saved in the storage system as a \textit{chunk}.  A chunk not only consists of 
+raw data, but also metadata that provides additional
 knowledge about that data.
-A user space variable, such as \textit{particles}, may
+A user space (application) variable, such as for example \textit{particles}, may
 consist of a collection of chunks, possibly with different accuracy or
-resolution, and representing
-a different portion of the variable.
+resolution, and representing a different portion of the variable.
 A key advantage of having attributes at this low level is that it allows data
 semantics, user intentions, QoS requirements, and the relationships between user
 data to be readily captured and embedded with the raw data so that each chunk
-can be managed independently or collectively, depending on
-the need.
+can be managed independently or collectively, depending on the need.
 
-  We illustrate our approach through a simple example in Figure~\ref{fig:ssio-bucket},
+  We illustrate our approach through a simple example shown in Figure~\ref{fig:ssio-bucket},
   in which the user attempts to write \textit{Particles}, \textit{Field 1},
-  \textit{Field 2}, and \textit{Mesh} arrays. In particular, the \textit{Mesh} can be a group
+  \textit{Field 2}, and \textit{Mesh} arrays. In particular, \textit{Mesh} can be a group
   of variables in the application code, with their relationship implicitly described
   by the data model. Using the conventional POSIX-compliant block interface, file
-  systems and storage are oblivious to the user space variables and the relationship between
+  systems and storage are oblivious to user space variables and the relationships between
   them. Recent advances in I/O middleware systems such as ADIOS \cite{liu_helloadios}
-  allow for understanding and capturing the data semantics and relationship between all 
+  support the capturing and understanding of data semantics and relationships between  
   user space variables. As such, users can request any portion of a variable to be retrieved
   during post-processing, or in situ alongside simulations~\cite{docan2012dataspaces}. 
-  In this project we will leverage the ability of plugging rich metadata from ADIOS, and further
-  describe the utility of data for data chunks. This enables user data to be possibly managed at
-  the storage system level, and allows the SSIO layer
-  to 
+  In this project we will leverage this ability of plugging rich metadata from ADIOS (and 
+  DataSpaces) and related experiences, and will further describe the utility of data for data 
+  chunks (presented in Section~\ref{sec:managing-data-life}). This will enable user data to 
+  be effectively managed at the storage system level, and will allow the SSIO layer to 
 %  
 %   
 %     retrieving and visualizing 3D field data generated from a simulation
 %requires the mesh (consisting of coordinates and connectivity variables) be
 %accessed simultaneously and with low latency to achieve a good user experience.
 %Managing data at this low level
-bridge the semantics gap between applications, middleware, and storage
-systems and allows the system to understand user-level data, execute QoS
-requirements and policies, and optimize application and system performance. 
+bridge the semantic gap between applications, middleware, and storage layers, allowing the 
+system to understand user-level data, execute QoS requirements and policies, and optimize 
+application and system performance from the user (application) perspective.
 
-Furthermore, when the user writes Field 1, they will be able to use a new API through which
-they can pass in a {\it plugin} function that re-factors their data (\S~\ref{sec:data-refactor}),
-which re-organizes data and facilitates the placement of the different chunks, e.g., F1 and F2, 
-onto different storage tiers, with a different lifetime specified for each chunk. 
-Here the user will uses additional semantics to express that 
-F will consist of two chunks. For simplicity, let's assume in this example
- that system {\it precision} based re-organization will be used. 
-  The 
-data is then broken into  two chunks where F1 is of higher value than F2 (e.g. F1 contains 
-the first 3 digits of each double precision value, and the exponent and sign, and F2 contains
-the rest of the data). 
+Furthermore, we will explore new APIs that will enable users to include a {\it plugin} function when 
+they write data. For example, when a user writes Field 1, they can pass in a {\it plugin} function 
+to re-factor their data (\S~\ref{sec:data-refactor}), which re-organizes data and facilitates the 
+placement of its different chunks, e.g., F1 and F2,  onto different storage tiers, possibly with 
+a different lifetime specified for each chunk, with the overall objective of maximizing its 
+utility to the user (application).
+
+To further illustrate the potential benefits of our approach, the two chunks of Field 1 (F1 and F2) 
+described above may be defined based on system {\it precision} so that F1 is of higher value 
+than F2 (e.g. F1 contains the first 3 digits of each double precision value, and the exponent and 
+sign, and F2 contains the rest of the data). 
 %The user might also indicate through additional semantics that F1
 %can use a sorting pre-conditioner which allows the data to be sorted, for better compression.
-
+%
 The utility of F1 might be defined as (1, (8 hours, 30 days, 100 days, 1000 days), 
 (2,(1 hour, 4 days, 100 days, 300 days). This allows the initial data chunks to be initially 
-placed one way in the 
-the storage layers and later migrated to different layers as shown in Figure~\ref{fig:ssio-bucket} .
+placed one way in the storage layers and later migrated to different layers as shown in 
+Figure~\ref{fig:ssio-bucket} .
  
-The data description may also be be stored within a
-separate metadata service or both to aid QoS requirements. It would contain
-conventional attributes such as data type, size, dimensionality, and the
-relationship to other data. In our example the relationship of the Mesh chunks and the
-field chunks would also allow the system to understand that the user will only want to
-read in F with M, and want the same value of data from each piece.
+In addition to be embedded with the data, the data description may also be stored within 
+a separate metadata service to aid QoS requirements. Such a data description would contain
+conventional attributes such as data type, size, dimensionality, and the relationship to other 
+data. In our example, the relationship of the Mesh chunks (M) and the field chunks (F) can 
+be captured in this way and would allow the system to understand that the user will only 
+want to read in F with M, and want the same portion of data from each chunk.
 
-When a user is reading this data at a later time the user can express how much time
-they will be willing to allow the read operations to take place. For example, the user might
-want to visualize F, which means they need to read in F along with the mesh.  The user
-will also specify which time slices to read (one for a simple visualization at a single 
-instance of time), and tell the system they are willing to wait 10 seconds. The system 
-will take this additional information and deliver the highest value chunks it can in order
-to meet this time constraint.  We will also allow additional information from the user so 
-they can express rules about the possible accuracy of the data to read to allow the system
-to meet these requirements.
+When a user is reading this data at a later time the user can define how much time they will 
+be willing to allow the read operations to take as part of the data description. For example, 
+the user might want to visualize F, which means they need to read in F along with the mesh 
+M. The user may also specify which time slices to read and tell the system how long they 
+are willing to wait. The system can then use this information and deliver the highest value 
+chunks it can while satisfying the time constraint.  Note that the user may also include 
+requirements/constraints about the accuracy of the data to read allowing the system to 
+appropriately place and read data chunks to meet these requirements.
 
+We will also allow additional information 
+from the user so they can express rules about the possible
 
 %The new APIs will enable the bridge by specifying selectable
 %performance/quality/- cost trade-offs from both the application and system
