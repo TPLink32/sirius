@@ -122,24 +122,24 @@ service is spread across multiple nodes. Instead, we will offer a short
 duration to consistency POSIX view to offer the performance and consistency
 requirements an exascale application demands.
 
-While pure object stores, such as those popular in the big data
-domain~\cite{Fitzpatrick:2004:memcached}, others avoid this bottleneck by
+In pure object stores, such as those popular in the big data
+domain~\cite{Fitzpatrick:2004:memcached}, one avoids this bottleneck by
 strictly offering an object ID with the application required to manage how this
 ID maps to something of interest. This approach of removing the metadata
-service from the system level completely can work well for scale out
+service from the system level completely can work well for scaling out
 applications where data is created or consumed by a single process at a time or
-just in a work queue rather than potentially O(1 million) processes all
-actively collectively for a single ``object''. To address this case, having
+just in a work queue, rather than potentially O(1 million) processes all
+actively requesting for a single ``object''. To address this case, having
 some system integrated metadata services to associate names with these object
-is a preferable solution. While it will not have the same synchronous
-consistency semantics as POSIX, we will offer something as close as possible to
+is a preferable solution. We will offer solutions to
 address legacy application and command-line style data access and migration to
-other storage types using these POSIX semantics.
+other storage types using these POSIX semantics, without providing the same synchronous
+consistency semantics as POSIX.
 
 \paragraph{Challenge:}
 The main challenge of incorporating the additional, rich metadata will be
 joined by the additional challenge of coordinating with the other storage and
-application-layer services to offer the best access times possible for data
+application layer services to offer the best access times possible for data
 stored in the system. The developed metadata services that drive data
 compression and subsetting operations must have easy, consistent, and ideally
 non-blocking or locking access to this metadata service. We must investigate
@@ -147,8 +147,8 @@ how to build such a metadata and naming service that also incorporates and
 maintains the additional metadata required to support our advanced
 functionality.
 
-Our research in this area will address the following questions:
-(1) Since our metadata is distributed and partitioned, how do we respond to user
+Our research in this area will address the following specific questions:
+(1) Since the metadata will be distributed and partitioned, how do we respond to user
   requests within a specified time bound with accuracy? How do we estimate the
   completeness of the response?, 
 (2) For POSIX API requests, how do we respond if only varying data fidelity
