@@ -171,34 +171,38 @@ features. The plug-ins could be used to override the general embedded
 techniques and would provide a mechanism for the transfer of a priori knowledge
 from the user to the hierarchy without imposing a burden on either. 
 
-We will also research the time it takes to re-organize the data and use the
-multi-layer approach to staging to understand where the data gets reduced and
-where it gets re-organized. Open questions are: 1) do we move the data over to
-other nodes to then reduce and re-organize, 2) do we first reduce the data and
-then later re-organize this data on different nodes?, or 3) do we use different
-cores on a node to do data-refactoring.  Similarly we will examine the cost of
-reading the data. It is clear that if we only read in the high-importance data
-it should improve the overall time to move the data from the SSIO layer to the
-application, but what happens when users want all of the data? There is an
-obvious penalty of having to take data in a hierarchical layout and then place
-this back to a single-layer view.  Additional research questions which must be
-addressed: Will some types of data (e.g. PIC data) be more
-conducive  for data-refactoring than others? How much semantic-domain knowledge
-will we need to get a dramatic improvement of the storage system over not doing
-anything special? 
+To implement these plugin capabilities, we will build upon our existing data staging 
+capability and further allow data to be
+efficiently staged, re-organized and mapped to a multi-tiered storage. Various
+processing scenarios such as in-situ, in-transit or a combination of the two
+will be researched and developed to meet our needs.
+%The open questions that will be addressed include: 
+%1) do we move the data over to
+%other nodes to then reduce and re-organize, 2) do we first reduce the data and
+%then later re-organize this data on different nodes?, or 3) do we use different
+%cores on a node to do data-refactoring.  
+Similarly we will examine the cost of reading the data. In the case where only high importance being retrieved,
+overall time to move the data from the SSIO layer to the
+application is expected to fast. A key challenge is in the assessment of retrieving
+both high and low important data that reside across storage tiers and possibly migrate to
+new locations as a result of capacity pressure. There is a
+clear penalty of having to discovery data (\S\ref{sec:naming-discovery}), take data in a hierarchical layout and then re-compose
+this back to a single-layer view.  
+%Additional research questions which must be
+%addressed: Will some types of data (e.g. PIC data) be more
+%conducive  for data-refactoring than others? How much semantic-domain knowledge
+%will we need to get a dramatic improvement of the storage system over not doing
+%anything special? 
 
-We will measure these methods using the fusion XGC simulation and the
+We will measure these methods using the fusion XGC, SPECFM3D~\cite{SPECFEM3D}, and the
+fusion GTC~\cite{klasky2003grid}, and the
 corresponding analysis routines which they use for their largest simulations.
-We will also work with the SPECFM3D~\cite{SPECFEM3D} code, and the
-fusion GTC~\cite{klasky2003grid} code.  In all cases we will measure their
-impact from their current simulations, and their projected simulations and
-analytics on exascale machines. Since all three of these codes are part of the
-OLCF CAAR~\cite{CAAR} project for early access, there is strong belief that the
+Since all three of these codes are part of the
+OLCF CAAR~\cite{CAAR} project for early access, there is strong belief that these
 simulations will be close to exascale simulations and we will be able to run
-these on prototypes of our SSIO layer to examine the full impact of
-data-refactoring.
+these application on SIRIUS to examine the full impact of data-refactoring.
 
-\paragraph{High Impact Challenges:} Maximal data reduction on the SSIO layer
+\paragraph{Challenges:} Maximal data reduction on the SSIO layer
 would result from storing only the code and the input parameters, and simply
 recalculating all of the results. This extreme is not feasible in practice
 owing to the size of the computation involved, but sheds light on the path to
