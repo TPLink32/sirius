@@ -62,9 +62,9 @@
 
 %%%%% Table of Contents %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \cleardoublepage
-\tableofcontents
 \phantomsection % Needed by hyperref because of the unnumbered section
 \addcontentsline{toc}{chapter}{Table of Contents}
+\tableofcontents
 %%\addstarredchapter{Table of Contents}
 
 %% Needed for lab, must skip for grants. Not sure why.  Figure out later
@@ -134,12 +134,10 @@
 
 %%%%% 3.9 CURRENT AND PENDING SUPPORT
 \clearpage
+\phantomsection
+\markboth{}{}
 \addcontentsline{toc}{chapter}{Appendix 2. Current and pending support of the investigators}
 \section*{Appendix 2: Current and pending support}
- \phantomsection
-\vspace{2ex}
-\noindent
-Other support of the investigators follow in alphabetical order.
 \input{other-support}
 
 
@@ -184,9 +182,9 @@ storage, and the SSD for testing our algorithms. See (https://www.olcf.ornl.gov/
 %%%%% DATA MANAGEMENT PLAN %%%%%
 \clearpage
 \markboth{}{}
-\addcontentsline{toc}{chapter}{Appendix 6. Data management plan}
-
 \phantomsection
+\addcontentsline{toc}{chapter}{Appendix 6. Data management plan}
+\section*{Appendix 6: Data Management plan}
 \input{appendix-data-management-plan.tex}
 
 

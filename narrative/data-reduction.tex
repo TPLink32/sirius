@@ -67,7 +67,7 @@ should be placed in the SSIO layers. Scientific applications often read and
 analyze data in a structured fashion and failure to respect this pattern, or to
 exploit it through prefetching, can significantly increase the overall
 execution time of the application. Accurate prefetching can only be achieved
-with access pattern analysis. This requires an SSIO layer which is capable of
+with access pattern analysis (\S\ref{sec:managing-data-life}). This requires an SSIO layer which is capable of
 prefetching data in an asynchronous fashion to take the bytes on the file.
 
 \paragraph{State of the art:} {\bf Data Reduction Techniques.} Data compression
@@ -103,50 +103,48 @@ but also re-organize the data. Previously we have examined:
 	
 \item Precision based re-organization. This is where the most significant bytes
 	of the data are all grouped together from each object. This data
-	generally will have a higher utility then the data with the least
-	significant bytes.  This process has the following three steps which
-	need to be efficiently implemented when data gets placed to the storage
-	system and from the storage system.  First, the data needs to be
-	re-arranged which involves memory operations and needs to be done
-	in situ. This operation involves no communication.  Data needs to be
-	copied, so the memory requirements are increased. At most this requires
-	two copies of an individual dataset in memory, and we will investigate
-	techniques to allocate and deallocate this memory if the user will
-	specify that the data will be overwritten after it is written to the
-	storage system. This is often the case for many of the  quantities
-	written from the simulation, but there are many cases where, for
-	example, we want to write all of the particles from a Particle In Cell
-	(PIC) simulation.  Since the particles will be used later in the
-	calculation, we need to duplicate the storage. Our observation with
-	working with the XGC1, GTC, and PiconGPU simulations 
-	 is that we can temporary increase the
-	storage of the particles, and then release them since the temporary
-	arrays used in the calculations are often freed when a PIC iteration is
-	finished. 
+	generally will have a higher utility than the data with the least
+	significant bytes. 
+        %This process has the following three steps which
+	%need to be efficiently implemented when data gets placed to or retrieved from the storage.
+	The data needs to be re-arranged which involves potentially intensive 
+        memory operations and needs to be done as much in situ as possible without
+        involving the slow storage systems, and inter-processor communications.
+	%At most this requires
+	%two copies of an individual dataset in memory, and we will investigate
+	%techniques to allocate and deallocate this memory if the user will
+	%specify that the data will be overwritten after it is written to the
+	%storage system. This is often the case for many of the  quantities
+	%written from the simulation, but there are many cases where, for
+	%example, we want to write all of the particles from a Particle In Cell
+	%(PIC) simulation.  Since the particles will be used later in the
+	%calculation, we need to duplicate the storage. Our observation with
+	%working with the XGC1, GTC, and PiconGPU simulations 
+	% is that we can temporary increase the
+	%storage of the particles, and then release them since the temporary
+	%arrays used in the calculations are often freed when a PIC iteration is
+	%finished. 
 %
-\item Frequency-based re-organization.  Another common technique to classify
-	the importance of data is to first re-organize the data in frequency
-	space and then specify that as the frequency increases the importance
-	of data decreases.   Common techniques  used for streaming data,
-	and data reduction techniques such as JPEG-2000~\cite{jpeg2000} is to
-	code streams which have regions of interest that offer several
-	mechanisms to support spatial random access or region of interest
-	access at varying degrees of granularity. It is possible to store
-	different parts of the same data using different quality.  This allows
-	us to place the lowest frequency chunks in the fastest storage, and the
-	highest frequency chunks  on either  the slowest storage tiers, or if the data
-	sizes are prohibitively  costly, not even write out  these pieces. 
+\item Frequency-based re-organization.  Another common approach to classifying
+	the importance of data is to re-organize data according to it frequency.
+	This is commonly used in streaming data, and data reduction techniques
+        such as those used JPEG-2000~\cite{jpeg2000}, which allow mechanisms
+	to support spatial random access or region of interest
+	access at varying degrees of granularity. It demonstrates the possibility of storing
+	the same data using different quality. In relation to this project, this
+        capability allows us to place the lowest frequency chunks in the fastest storage, and the
+	highest frequency chunks on either the slowest storage tiers, or if the data
+	sizes are prohibitively  costly, not even write out these pieces. 
 %	This binning of data in frequency space can take as an input
 %	(storage  {\color{red}ending )? CHECK-tsr} bandwidth knowledge, storage size limitations, and user
 %	intentions of how long the majority of the data will be frequently
 %	accessed. 
 	 In order to fully take advantage of frequency based
-	re-organization we have devised a scheme where the data pre-conditioner
-	first sorts the data in bins of 1024 words, then we maintain the
-	sort order, and then we used wavelets and spline fits to then
-	re-organize the values.  This re-organization allows us to understand
-	that the resultant data is smoother now, and can be reduced in each one
-	of the bins.  \end{itemize}
+	re-organization, the team has devised a scheme where the data pre-conditioner
+	first sorts the data in bins with fixed length, and then wavelets and spline fits are used to
+	re-organize the values.  This re-organization effectively produces
+	a smoother data, allowing for much better reduction later.
+\end{itemize}
 
 \paragraph{Proposed research approach:} It is now widely recognized that any
 opportunities for {\em in situ} analysis should be exploited as far as
