@@ -5,7 +5,7 @@
 Richard Hamming's remark, made over 50 years ago at the dawning of the age of
 large scale scientific computation, is even more relevant today as we prepare
 for scientific simulation at exascale. 
-The central objective of this proposal, ``minimizing the time to knowledge''  
+The central objective of this proposal, ``minimizing the time to insight''  
 with respect to scientific computing, aligns perfectly with this sentiment. 
 %Hamming was a pioneer in the fields of coding theory, scientific computing and 
 %information theory who would instantly sympathize with the central objective of 
@@ -57,7 +57,7 @@ supported data lifetime, our approach will enable researchers to
 place more knowledge into the Storage Systems and Input/Output (SSIO) system 
 so that data can be recast from a sequence of bytes to information rich data. This 
 information rich data can then be used by the system to guide the  placement within 
-the tiered storage and will optimize the time to gain knowledge and insight from 
+the tiered storage and will optimize the time to gain insight from 
 exascale simulations.
 
 %The traditional approach to transforming results of scientific computation into
@@ -74,7 +74,7 @@ exascale simulations.
 %system, and I/O middleware approaches that optimize the performance of a single
 %application. Both approaches have been successful to date, but are unlikely to
 %overcome the remaining obstacles in reaching exascale. 
-Instead of trying to optimize throughput, we will seek to reduce the time to knowledge.
+Instead of trying to optimize throughput, we will seek to reduce the time to insight.
 As extracting knowledge is the only metric that matters for scientific applications, we will
 focus not only on data storage, but also on efficient retrieval of knowledge from their 
 workflows.
@@ -83,17 +83,24 @@ application, but rather for multiple workloads running on a multi-user, multi-ap
 system.
 \end{tightItemize}
 
-%%% Manish: I am not sure I fully understand the first part of the paragraph below.
-This proposal can be summarized as research into using the varying importance of simulation data over time to
-ensure that the right portions of data, with the right quality  are available to scientists when they are needed.
-Application-specific information about the importance of data will be used in conjunction with system and resource-specific information
-to optimize the scientists' experience in interacting with, and extracting knowledge and insight from their data.
-
+%%% Manish: I am not sure I fully understand the first part of the paragraph
+%%% below.
+The proposed work explores how application-specific information about the
+importance of data will be used in conjunction with system and
+resource-specific information to optimize the scientists' experience in
+interacting with, and extracting knowledge and insight from their data.
+%
 %The overarching idea of this proposal is that data from applications can be characterized by different
 %%levels of importance and different 
-%levels of importance over time, which then can be used to guide the analysis and visualization later to access the most important data and deliver some level of knowledge without waiting for access to the whole original dataset. Information about the importance of the data at the application level, information about resource status and performance of the multi-level storage system, and flexible data reorganization and reduction operations at all levels can be utilized to provide a quality of service and allow users to gain insight in a timely manner.
-
-This proposal combines knowledge and expertise 
+%levels of importance over time, which then can be used to guide the
+% analysis and visualization later to access the most important data and
+% deliver some level of knowledge without waiting for access to the whole
+% original dataset. Information about the importance of the data at the
+% application level, information about resource status and performance of
+% the multi-level storage system, and flexible data reorganization and
+% reduction operations at all levels can be utilized to provide a quality of
+% service and allow users to gain insight in a timely manner.
+The project combines knowledge and expertise 
 from a wide range of sources including many leadership class applications using the Adaptable Input/Output System (ADIOS) framework,
 the Sandia National Laboratory (SNL) Lightweight File Systems (LWFS) project and storage system knowledge, the metadata
 management and storage systems knowledge at UCSC, and the middleware expertise
@@ -134,19 +141,83 @@ Our proposal will be responsive to Theme 2: {\em Scalable Storage Software Infra
 
 %
 \paragraph{An Illustrative Example}
-We use an illustrative Fusion simulation use case that our team as been working on to highlight the challenges addressed in this proposal, and to 
+We use an illustrative fusion simulation use case that our team as been working on to highlight the challenges addressed in this proposal, and to 
 %The challenges addressed by this proposal are illustrated by a problem our team has been working on in the past six months. We use this motivating example to 
 formulate a series of SSIO research questions that must be addressed in order to support exascale science.
 
-The use case describes a series of XGC1~\cite{chang2006integrated} simulations that C. S. Chang (PPPL), one of the largest users of Leadership Class Facilities (over 300M hours at DOE facilities), planned to launch. These simulations were expected to produce 100~PB of data over 10 days of total runtime on the Titan system, and assembled a team of experts including the user group and I/O and storage personnel  to help ensure that the maximum amount of information would be saved. 
-Due to physical resource limitations, the simulation was immediately restricted to write about 10~PB. However, when the time to write and read, together with the financial cost to archive this volume of data were fully explored, the goal was even further reduced and they would only be able to write 5~PB over the 10-day run.
-%At each stage, the particular expert knowledge regarding the file system and the archival storage were not known to the user team. As these particulars were realized, significant modifications in the plans were made. Eventually, they were forced to make very hard decisions in reducing the desired 100~PB over a 10-day run to only 5~PB of data. 
+The motivating use case is a series of simulations of the
+ITER~\cite{dietz1996iter} fusion experiments using the
+XGC1~\cite{chang2006integrated} application. XGC1 is one of the largest
+applications used at the Department of Energy's (DOE's) Leadership Class
+Facilities, with an allocation of over 300M hours. 
+% % simulations
+% % simulations planne
+% %that C. S. Chang (PPPL), 
+% one of the largest users of Leadership Class Facilities (LCFs) (over 300M hours at DOE facilities), planned to launch.
+These simulations were expected to produce 100~PB of data over 10 days of
+total runtime on the Titan system at the Oak Ridge Leadership Computing
+Facility (OLCF), and required a team of experts including
+the user group and I/O and storage personnel to help ensure that the maximum
+amount of information would be saved. Due to physical resource limitations,
+the simulation was immediately restricted to write about 10~PB. However,
+when the time to write and read, together with the financial cost to archive
+this volume of data was fully explored, the data size goal was further
+reduced to only 5~PB over the 10 day run. 
 
-This forced the team to carefully scrutinize the large amount of data to be generated and save only the very most important pieces. Further, they had to divide this  reduced data into two categories: first, data they thought they would need to access while the simulation was running or shortly thereafter, and second, data they would need after the whole campaign was finished. The former category of data would be stored on disk, and the latter would be archived. Additionally, they needed to figure out how to efficiently retrieve these different categories of data for post-processing, analysis and visualization.
+This forced a careful scrutiny of the large amount of data to be generated
+and restriction of the output to only the most important pieces. Further,
+this reduced data set had to be divided into two categories: first, the data
+that would be accessed while the simulation was running or shortly
+thereafter, and second, the data that would be needed after the whole
+campaign was finished. The former category of data would be stored on disk,
+and the latter would be archived. Additionally, the entire team needed to
+figure out how to efficiently retrieve these different categories of data
+for post-processing, analysis and visualization.
 
-Finally, the team had to develop new application specific data reduction techniques and encode them into the ADIOS middleware I/O layer. In order to do this, they had to implement a rudimentary discovery system to determine which data were located on disk, and which were on tape archive.  This solution worked well for initially but after the second day significant problems occurred: I/O variability became prohibitively expensive. Although the team had reserved resources for the run, the file system was shared, and a 10X variability in I/O speeds was observed. 
+To accomplish this the application and storage teams developed new
+application specific data reduction techniques and added them to the ADIOS
+I/O middleware layer. A rudimentary discovery system was also created to
+track what data was on disk and what was on the tape archive. Initially this
+solution was sufficient, but eventually a new problem was introduced:
+Although the team had reserved resources for the run, the entire file system
+was shared \cite{shipman2012next} resulting in very high I/O variability
+\cite{lofstead:2010:io-variability}. Addressing this variability, caused by
+contention on shared resources, is an ongoing concern. 
 
-What is needed here is a system to monitor, predict and manage resource usage in a dynamically adaptable way. Such a system can write more data when the resource was idle, and less data when it is busy. However, the most significant problem occurs after the simulation run completes. Basic visualizations, to get a high-level view of the simulation, can take significant time due to data access latencies. While some timesteps might be on disk, others are archived on tape (where transfers could take weeks). Detailed visualization and analysis of the simulation data are even more complicated.
+The problems faced by this user workflow motivate our research here. The use
+case demonstrated the three tiers of solutions that are required -
+application level knowledge of data and how it will be used, middleware
+management of data and resources, and storage system level scheduling of
+resources. It also provided us with new insights: First, the users and developers
+of the application data can, without a great loss of encoded knowledge,
+reduce the size of data that needs to be stored. Second, data storage must
+be managed with input from the users to correctly decide the target of
+storage operations. Third, shared resources must be managed in a way that
+provides sufficient performance to all applications without encumbering the
+applications with high variability in performance. 
+
+These insights drive our proposed research approach. 
+
+% Finally, the team had to develop new application specific data reduction
+% techniques and encode them into the ADIOS middleware I/O layer. In order to
+% do this, they  implemented a rudimentary discovery system to determine
+% which data was located on disk, and which was on the tape archive. This
+% solution worked well  initially but after the second day significant
+% problems occurred: I/O variability became prohibitive. Although
+% the team had reserved resources for the run, the file system was shared, and
+% a 10X variability in I/O speeds was observed.
+
+
+
+% What is needed here is a system to monitor, predict and manage resource
+% usage in a dynamically adaptable way. Such a system can write more data when
+% the resource was idle, and less data when it is busy. However, the most
+% significant problem occurs after the simulation run completes. Basic
+% visualizations, to get a high-level view of the simulation, can take
+% significant time due to data access latencies. While some timesteps might be
+% on disk, others are archived on tape (where transfers could take weeks).
+% Detailed visualization and analysis of the simulation data are even more
+% complicated.
 
 
 \subsection{Overview of the proposed approach} 
