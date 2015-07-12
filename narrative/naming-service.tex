@@ -136,27 +136,27 @@ scope to a single directory or subtree or by allowing a single process in a
 collective file operation talk with the metadata service and distribute a
 handle to other participants. While these approaches help, they do not address
 this key scalability limitation of serialized access - even if the metadata
-service is spread across multiple nodes. Instead, we will offer a short
-duration to consistency POSIX view to offer the performance and consistency
-requirements an exascale application demands.
+service is spread across multiple nodes. The problem is the centralized listing
+of where file stripes are stored or other, similar information. Instead, we
+will offer a short duration to consistency POSIX view to offer the performance
+and consistency requirements an exascale application demands.
 
-In pure object stores, such as those popular in the big data
-domain~\cite{Fitzpatrick:2004:memcached}, one avoids this bottleneck by
-strictly offering an object ID with the application required to manage how this
-ID maps to something of interest. This approach of removing the metadata
-service from the system level completely can work well for scaling out
-applications where data is created or consumed by a single process at a time or
-just in a work queue, rather than potentially O(1 million) processes all
-actively requesting for a single ``object''. To address this case, having some
-system integrated metadata services to associate names with these object is a
-preferable solution. We will offer solutions to address legacy application and
-command-line style data access and migration to other storage types using these
-POSIX semantics, without providing the same synchronous consistency semantics
-as POSIX.
+Pure object stores, such as those popular in the big data
+domain~\cite{Fitzpatrick:2004:memcached}, avoid this bottleneck by only
+offering an object ID and offloading the ID to name mapping to the application.
+Removing the metadata service completely from the system level can work well
+for scale-out applications where data is created or consumed by a single
+process at a time or just in a work queue rather than potentially O(1 million)
+processes all actively requesting a single ``object''. To address this case,
+having some system integrated metadata services to associate names with object
+and chunk IDs is a preferable solution. We will offer solutions to address
+legacy application and command-line style data access and migration to other
+storage types using these POSIX semantics, without providing the same
+synchronous consistency semantics as POSIX.
 
 \paragraph{Challenge:}
 The main challenge of incorporating the additional, rich metadata will be
-joined by the additional challenge of coordinating with the other storage and
+joined by coordinating with the other storage and
 application layer services to offer the best access times possible for data
 stored in the system at available data quality levels. The developed metadata
 services that drive data compression and subsetting operations must have easy,
