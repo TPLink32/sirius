@@ -6,12 +6,12 @@ described in a way that communicates these intentions.
 saved in  SIRIUS as a \textit{chunk}.  A chunk not only consists of 
 raw data, but also metadata that provides additional
 knowledge about that data.
-A user defined application variable, for example \textit{Particles}, may
+An application variable, for example \textit{Particles}, may
 consist of a collection of chunks, possibly with different accuracy or
 resolution, each chunk representing a different portion of the variable.
 A key advantage to having attributes at this low level is that it allows data
 semantics, user intentions, QoS requirements, and the relationships between user
-data to be readily captured and embedded within the raw data so that each chunk
+data to be captured and embedded within the raw data so that each chunk
 can be managed independently or collectively, depending on the need.
 
   We illustrate our approach through a simple example shown in Figure~\ref{fig:ssio-bucket},
@@ -38,7 +38,7 @@ to bridge the semantic gap between applications, middleware, and storage
 layers. SIRIUS will be able to understand user-level data, execute QoS requirements and policies, and optimize 
 application and system performance from the user's (application's) perspective.
 
-Furthermore, we will explore new APIs that will enable users to include a {\it plug-in} function when 
+Furthermore, we will explore new APIs that will allow a {\it plug-in} function when 
 they write data. The goal is to allow the user to define a function 
 to re-factor their data (\S\ref{sec:data-refactor}) alongside the data
 itself. This plug-in function will be able to organize the data, manage
