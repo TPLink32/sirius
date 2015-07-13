@@ -62,7 +62,14 @@ The utility of F1 might be defined as (priority=1, (time-NVRAM=8 hours, time-PFS
 (priority=2, (time-NVRAM=1 hours, time-PFS=4 days, time-CAMPAIGN=100 days, time-TAPE=300 days), 
 This allows the initial data chunks to be initially 
 placed one way in the storage layers and later migrated to different layers as shown in 
-Figure~\ref{fig:ssio-bucket} .
+Figure~\ref{fig:ssio-bucket} . We also polled our large ADIOS user-base, and they indicated that 
+they could tell us the time for in situ analysis (time steps written on NVRAM) before we could purge,
+the time they want their most important data on the parallel file system (PFS),  and the time
+they want the data to complete their physics study (CAMPAIGN). They usually want data on tape
+forever, but indicated that this could be removed after a few years. Not ever user can give us these
+time so SIRIUS must have good defaults for users. We also need additional APIs to allow users
+to modify the utility function and users could use some system services to modify these based on
+their data access to the files.
  
 In addition to being embedded with the data, the data description may also be stored within 
 a separate metadata service to aid QoS requirements. Such a data description would contain
