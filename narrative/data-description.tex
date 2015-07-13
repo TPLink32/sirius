@@ -26,8 +26,8 @@ can be managed independently or collectively, depending on the need.
   during post-processing, or in situ alongside simulations~\cite{docan2012dataspaces}. 
   In this project we will leverage this ability of plugging rich metadata from ADIOS (and 
   DataSpaces) and related experiences, and will further describe the utility of data for data 
-  chunks (presented in Section~\ref{sec:managing-data-life}). This will enable user data to 
-  be effectively managed at the storage system level, and will enable SIRIUS
+  chunks (\S\ref{sec:managing-data-life}). This will enable user data to 
+  be effectively managed at the storage system level and will enable SIRIUS
 %  
 %   
 %     retrieving and visualizing 3D field data generated from a simulation
@@ -40,7 +40,7 @@ application and system performance from the user's (application's) perspective.
 
 Furthermore, we will explore new APIs that will enable users to include a {\it plug-in} function when 
 they write data. The goal is to allow the user to define a function 
-to re-factor their data (\S~\ref{sec:data-refactor}) alongside the data
+to re-factor their data (\S\ref{sec:data-refactor}) alongside the data
 itself. This plug-in function will be able to organize the data, manage
 reduction steps, and improve the overall utility to the user. 
 For example, when a user writes Field 1, they can pass in a {\it plug-in} function 
@@ -53,16 +53,16 @@ tiers.
 
 To further illustrate the potential benefits of our approach, the two chunks of Field 1 (F1 and F2) 
 described above may be defined based on system {\it precision} so that F1 is of higher value 
-than F2 (e.g. F1 contains the first 3 digits of each double precision value, and the exponent and 
-sign, and F2 contains the rest of the data). 
+than F2 (e.g., F1 contains the first 3 digits of each double precision value, the exponent, and 
+sign and F2 contains the rest of the data). 
 %The user might also indicate through additional semantics that F1
 %can use a sorting pre-conditioner which allows the data to be sorted, for better compression.
 %
 The utility of F1 may be defined more explicitly as, for example, 
 (priority=1, (time-NVRAM=8 hours, time-PFS=30 days, time-CAMPAIGN=100 days, time-TAPE=1000 days), 
 (priority=2, (time-NVRAM=1 hours, time-PFS=4 days, time-CAMPAIGN=100 days, time-TAPE=300 days).
-Such as definition will allows the data chunks to be appropriately placed  initially across the storage layers, 
-and then later migrated to different layers as shown in Figure~\ref{fig:ssio-bucket} . 
+Such a definition will allows the data chunks to be appropriately placed  initially across the storage layers 
+and then later migrated to different layers as shown in Figure~\ref{fig:ssio-bucket}. 
 %I have made this readable but I don't see why this text should exist at
 %all. It doesn't seem to be adding any valuable information to the text. The
 %preceding text is clear to me.
@@ -97,14 +97,14 @@ a separate metadata service to aid QoS requirements. Such a data description wou
 conventional attributes such as data type, size, dimensionality, and the relationship to other 
 data. In our example, the relationship of the Mesh chunks (M) and the field chunks (F) can 
 be captured in this way and would allow SIRIUS to understand that the user will only 
-want to read in F with M, and want the same portion of data from each chunk. 
+want to read in F with M and want the same portion of data from each chunk. 
 %
 When a user is reading this data at a later time the user can define how much time they would 
 be willing to allow read operations to take as part of the data description. For example, 
 the user might want to visualize F, which means they need to read in F along with the mesh 
 M. The user may also specify which time slices to read and tell SIRIUS how long they 
 are willing to wait. The system can then use this information and deliver the highest value 
-chunks it can while satisfying the time constraint.  Note that the user may also include 
+chunks possible while satisfying the time constraint.  Note that the user may also include 
 requirements/constraints about the accuracy of the data to the read call
 allowing the system to comply with the specific constraints of the user's demands.
 %We will also allow additional information 
@@ -135,7 +135,7 @@ Our research will address the following questions:
 \paragraph{State of the art:}
 Our current data annotation techniques demonstrated in
 ADIOS~\cite{lofstead:2009:adaptible} implement a binary-packed (BP) data format that
-allows data characteristics such as min, max and index to be wrapped around
+allows data characteristics such as min, max, and index to be wrapped around
 data chunks. A direct benefit is that each data chunk can be operated upon
 independently and I/O concurrency can be maximized. We will build upon this
 capability and further augment the BP format to include data utility metrics.
@@ -143,14 +143,14 @@ Recently,
 DAMSEL~\cite{damsel} has provided a rich metadata representation and management
 layer that captures the relationship between data blocks for scientific
 applications.  This allows application data to be mapped to the storage system
-efficiently, without overburdening users with the management of complex data models, such
+efficiently without overburdening users with the management of complex data models such
 as adaptive mesh refinement (AMR), from the user space. 
 FFS~\cite{ffs} implements a type system that provides highly efficient binary
-data communication and XML-like data description, facilitating data sharing
+data communication and XML-like data description facilitating data sharing
 between collaborators. Additionally, NetCDF~\cite{netcdf} and HDF5~\cite{hdf5}
 both use a fixed data format to provide hierarchical data descriptions for scientific data.
 Despite these efforts, the aspect of data importance has yet to be 
-explored, and we believe it will be vital for exascale storage solutions.
+explored and we believe it will be vital for exascale storage solutions.
 
 \paragraph{Proposed research approach:} 
 We will design and develop new techniques for data management, description,
@@ -159,7 +159,7 @@ expectations. This can be done by allowing users to apply plug-ins that
 provide data-specific functionality to SIRIUS.
 These plug-ins may be executed by the system to
 calculate the utility metrics for each chunk, handle custom compression
-and decompression, and perform other data-specific services, thus allowing
+and decompression, and perform other data-specific services thus allowing
 the system to more effectively manage data placement and retrieval.
 %
 %We will design an updated I/O API that will expand on the current POSIX I/O
@@ -206,18 +206,18 @@ achieve the desired QoS goals and policies.
  We will formulate the concept of utility (from an
 application perspective) that is assigned to data chunks to quantify the
 benefits of placement and/or movement actions to applications. These
-utilities may be based on the importance of the data chunks, the frequency
-with which they are accessed, etc., and can be used during runtime data
+utilities may be based on the importance of the data chunks or the frequency
+with which they are accessed and can be used during runtime data
 management to evaluate and compare different placement/movement options. 
 For example, data chunks with higher utility value may be
 placed closer (e.g., in faster memory) to the application.
 Similarly, when it is time to evict data chunks from a higher storage
 tier, the decision about which chunk to evict may take the utility into
-account. Our initial work in defining such a utility is presented in~\cite{tongipdps15}.
+account. We have performed initial work in defining such a utility~\cite{tongipdps15}.
  We will also explore autonomic approaches for balancing the placement and 
  movement of data across the memory hierarchy autonomically, which will be driven 
  by the data utility and will leverage both user hints and information gathered at runtime (e.g., runtime data access
-history, network topology, etc.).
+history and network topology).
 
 %
 %A key insight in this proposed project will be the increased interaction of
@@ -231,7 +231,7 @@ history, network topology, etc.).
 Towards this end, we propose to
 address the QoS requirements by providing applications with mechanisms to
 specify the quality of I/O service, interrogate the storage system, and react
-to the responses. Guided by our past work we propose to explore the design of
+to the responses. Guided by our past work, we propose to explore the design of
 the mechanisms for this purpose.  % In our example, the user will also request that
 % the data in (P1, F1, G1, and M1) are given a higher bandwidth requirement than
 % the other chunks of data. 
@@ -262,7 +262,7 @@ to provide a time estimate before the I/O operation is executed.
 %the time to write is met, and only the lowest value chunk is not written.
 
 Users may also describe the data-refactoring routine by either requesting a system-provided
-routine, or their application-aware plug-in which the user provides to the system. We will
+routine or their application-aware plug-in which the user provides to the system. We will
 create APIs for the plug-ins to use so that they will be unified in the way to create them
 amongst all of the users. Plug-ins which are given back to the community may be 
 eventually incorporated into a system-level plug-in if the community sees the benefit for
@@ -296,7 +296,7 @@ XGC1~\cite{chang2006integrated}, GTC~\cite{klasky2003grid}, and SPECFM3D~\cite{S
 %tier and lifetime.
 %As an example, Figure~\ref{fig:ssio-bucket} illustrates a use case for the XGC1 code.
 %The user can pick a data-refactoring scheme (see
-%\S~\ref{sec:data-refactor}) which will classify the particle data into four different
+%\S\ref{sec:data-refactor}) which will classify the particle data into four different
 %value levels. The user can then pick a data utility, such as three months
 %for the highest value level and twelve months for the lowest value level.
 %The user will then specify all of the chunks one wants
