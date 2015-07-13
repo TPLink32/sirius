@@ -39,7 +39,7 @@ to operating on data with in situ techniques without changing the source code.
 ADIOS has proven effective for writing to POSIX file
 systems~\cite{lofstead:2009:adaptible}, data staging systems~\cite{zheng:2010:predata,docan:2010:dataspaces,oldfield:2006:nessie}, workflow
 systems~\cite{Dayal:2014:flexpath}, and even through the WAN network~\cite{zhang2014active}. Further,
-I/O rerouting and throttling techniques \cite{liu_hotstorage,liu_helloadios} have been developed 
+I/O re-routing and throttling techniques \cite{liu_hotstorage,liu_helloadios} have been developed 
 within ADIOS to reduce contentions on best-effort storage systems. This is our initial
 effort in tackling storage load imbalance and improving storage QoS on current DOE systems.
 Part of this project's goals are to understand where the dividing line
@@ -49,7 +49,7 @@ further integrate the I/O (ADIOS) layer with the storage layer (Sirocco).
 %
 % 
 %They offer a way to request data set portions
-%from a one component by the next componet in a data flow. In DataSpaces case,
+%from a one component by the next component in a data flow. In DataSpaces case,
 %the data transfer does not have to correspond to the data from a single
 %process.  Instead, DataSpaces will determine where the data is and issue
 %requests to pull the data from the source to the sink in an on demand process.
