@@ -130,7 +130,7 @@ XGC1~\cite{chang2006integrated} application. XGC1 is one of the largest
 applications used at the Department of Energy's (DOE's) Leadership Class
 Facilities, with an allocation of over 300M hours. 
 % % simulations
-% % simulations planne
+% % simulations plane
 % %that C. S. Chang (PPPL), 
 % one of the largest users of Leadership Class Facilities (LCFs) (over 300M hours at DOE facilities), planned to launch.
 These simulations were expected to produce 100~PB of data over 10 days of
@@ -214,7 +214,7 @@ These insights drive our proposed research approach.
 3 & Mechanisms for data movement across the storage hierarchy & Enable science-driven data placement and migration based on policies& \S\ref{sec:managing-data-life}, \S\ref{sec:migration} \\\hline
 4 &  Extend the interaction of middleware with the storage system & Manage data placement and migration between the application, middleware and storage system using an autonomic cross-layer approach & \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery}  \\\hline
 5 & Design and implement of I/O middleware architectures  & Create APIs to guide the placement of chunks of data across the SSIO and autonomically move data& \S\ref{sec:data-description}, \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:naming-discovery} \\ \hline
-6 &Approaches to improve the ability of SSIO software to support checkpoint/restart &  We will have utility functions defined for the lifetime of data, and allow CR data to be automatically placed in the fastest storage and then later purged & \S\ref{sec:data-description}, \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:data-description} \\ \hline
+6 &Approaches to improve the ability of SSIO software to support checkpoint/restart &  We will have utility functions defined for the lifetime of data, and allow C/R data to be automatically placed in the fastest storage and then later purged & \S\ref{sec:data-description}, \S\ref{sec:managing-data-life}, \S\ref{sec:qos}, \S\ref{sec:data-description} \\ \hline
 \end{tabular}
 \end{center}
 \vskip -0.5cm
@@ -335,7 +335,7 @@ layers automatically, without user intervention.
 Our approach here is that the storage system needs to define bounds of time estimates
 (min time, max time), and as our system evolves, we want to allow plug-ins which can help
 reduce the range of the bounds.
-Overall, our goal is to enable predictable performance acorss the storage system, and we will develop mechanisms to enable this
+Overall, our goal is to enable predictable performance across the storage system, and we will develop mechanisms to enable this
 (\S\ref{sec:naming-discovery}).
 
 %We will use learning techniques to automatically migrate data
@@ -351,8 +351,8 @@ predictable manner for all read access patterns, with different access
 patterns having their own requirements for latency, throughput and
 consistency. Here the user must be able to describe the read patterns and
 query for performance estimations (\S\ref{sec:data-description}), be able
-to quickly access the most important data (\S\ref{sec:data-refactor}) and recieve
-performance gurantees (\S\ref{sec:qos}) on the time required to complete
+to quickly access the most important data (\S\ref{sec:data-refactor}) and receive
+performance guarantees (\S\ref{sec:qos}) on the time required to complete
 the read request. The challenge here is to address the variety of read
 patterns that drive knowledge discover. 
 
@@ -367,7 +367,7 @@ variable and based greatly on the expectations of the user, but performance
 predictability is important due to the interactive nature of the process. 
 
 Our research objective here is to explore the interface that reading code
-can utilize to discover the important properites of data, the expectations
+can utilize to discover the important properties of data, the expectations
 about the time to access the data, and make decisions on the quality of data
 required to complete the task. 
 
@@ -389,7 +389,7 @@ required to complete the task.
 %domains. Our techniques will be to research novel techniques into a Scalable
 %Storage Software Infrastructure by integrating services from the middle-ware
 %layer which will talk to the applications, with the Storage system. The
-%negotation between these layers will be a fundamental service which we will
+%negotiation between these layers will be a fundamental service which we will
 %create in this project to ensure that users will be able to save `'the
 %best'' amount of data in the different storage tiers.
 %
@@ -407,7 +407,7 @@ required to complete the task.
 %multi-user multi-application system environment.
 %
 %Our approach leverages the expected characteristics of exascale storage
-%hardware. The storage layer will be partitioned into multiple heterogenous
+%hardware. The storage layer will be partitioned into multiple heterogeneous
 %tiers with vastly different performance characteristics. This difference
 %between layers will be further exacerbated by the constraints on capacity
 %and data lifetime within a layer. Tape archival storage will still maintain
