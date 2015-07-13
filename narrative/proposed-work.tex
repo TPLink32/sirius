@@ -112,10 +112,10 @@
 %
 %{\bf \color{red}we need to condense these challenges into a few basic principles - 4 at most - SAK}
 
-We propose to overcome these challenges by pioneering a new {\bf
+We propose to overcome the challenges described earlier by pioneering a new {\bf
 knowledge-centric approach} to a dynamic storage system and I/O layer which
-takes into account user prioritization and utility to optimize the SSIO layer.
-The approach is based on two underlying principles:
+optimize the SSIO layer on the following two principles:
+% The approach is based on two underlying principles:
 
 \underline{Principle 1:} {\bf A knowledge-centric system design} that allows user knowledge  to
 define data policies. Today SSIO layers are written in a
@@ -127,18 +127,19 @@ requests.
 
 \underline{Principle 2}: {\bf Predictable performance and quality of data in the SSIO layers} needs to be
 established so science can be done on the exascale systems in a more efficient manner. Without
-predictable performance, not only can the runs be slowed down because of contentions \cite{liu_hotstorage}, 
+predictable performance, not only can the runs be slowed down because of
+shared resource contention \cite{liu_hotstorage,lofstead2010managing}, 
 but also it affects key science decisions, e.g., how much data reduction should be performed.
-It is clear that if a run is expected to be slow, an aggresive data reduction needs to be performed
-so that science can be done in a timely fashion, which has been reflected in the XGC run (\S~\ref{sec:introduction})
-that the PI recently participated.
+% It is clear that if a run is expected to be slow, an aggresive data reduction needs to be performed
+% so that science can be done in a timely fashion, which has been reflected in the XGC run (\S~\ref{sec:introduction})
+% that the PI recently participated.
 
 We aim to alleviate the need for the ``magic'' and ``tricks''
 that are currently required to optimize application I/O performance
 on today's file systems. To accomplish this, we will provide a systematic
-approach for describing intentions and other knowledge from {\it user}
-space, as well as allow performance estimations and guarantees 
-from the underlyingree storage.
+approach for describing intentions and other knowledge from the {\it user}, 
+as well as allow performance estimations and guarantees 
+from the underlying storage.
 %For example, ADIOS contains most of the ``best practices'' for I/O optimizations for
 %   each file system, and as users place more knowledge into ADIOS, ADIOS
 %   can make optimizations.
@@ -146,7 +147,7 @@ By capturing user intentions and acting upon them in the middleware, we
 free the user from polluting application code with system specific
 optimizations which may provide better performance in the short term,
 but are detrimental to the long-term maintainability of applications, and
-are more sensitive to changes to system configuration. We have successfully
+are more sensitive to changes in the system configuration. We have successfully
 employed this strategy of separation of concerns in ADIOS, and believe that
 it will become increasingly important because saving all data may not be possible, and
 users want the ability to describe and prioritize different chunks of data. 
@@ -157,7 +158,7 @@ Additionally we recognize that HPC applications exhibit a set
 of common I/O patterns \cite{lofstead2011six,polte2009and,tian2011edo,tian2012system}.
 Throughout our project we will continuously focus on creating research artifacts 
 which can optimize these I/O patterns on current and
-exascale systems. One key focus is Checkpoint/Restart (C/R), leveraging NVRAM to accelerate
+exascale systems. One area of focus is Checkpoint/Restart (C/R), leveraging NVRAM to accelerate
 checkpoint and data retrieval. 
 The migration and purging of this will be optimized by SIRUS using the utility function of 
 the C/R data so that this can be stored for short periods of time, and then purged. 
