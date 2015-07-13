@@ -4,9 +4,9 @@ The classical workflow where the entire dataset is written to storage for
 later analysis will no longer be viable in exascale, simply because the amount of generated data will 
 be too large due to capacity and performance reasons.
 In the future, it will be vital to take advantage of \textit{a priori}
-information when 1) writing and reading from the SSIO layer in order to gain
+information when (1) writing and reading from the SSIO layer in order to gain
 higher performance and predictability, and to prioritize the data that
-is most useful for end users so that I/O can be finished in the time available, and 2)
+is most useful for end users so that I/O can be finished in the time available, and (2)
 performing {\em in situ} operations and analysis before storing the information.
 In the fusion use case described earlier which shares commonalities with many other
 DOE applications, \textit{a priori} information can indeed be provided by application
@@ -181,9 +181,9 @@ efficiently staged, re-organized and mapped to a multi-tiered storage. Various
 processing scenarios such as in-situ, in-transit or a combination of the two
 will be researched and developed to meet our needs.
 %The open questions that will be addressed include: 
-%1) do we move the data over to
-%other nodes to then reduce and re-organize, 2) do we first reduce the data and
-%then later re-organize this data on different nodes?, or 3) do we use different
+%(1) do we move the data over to
+%other nodes to then reduce and re-organize, (2) do we first reduce the data and
+%then later re-organize this data on different nodes?, or (3) do we use different
 %cores on a node to do data-refactoring.  
 Similarly we will examine the cost of reading the data. In the case where only high importance being retrieved,
 overall time to move the data from SIRIUS to the
