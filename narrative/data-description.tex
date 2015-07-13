@@ -189,8 +189,8 @@ hints that provide latency and precision requirements to the system.
 %In particular, the relationship to other chunks can
 %be captured by including \textit{typed links}, each representing a different
 %relationship type.  
-In this project, a key set of metrics which will be stored as a metadata
-attribute is \textit{data utility}.  It enables QoS scheduling, data placement
+As noted above, in this project, a key set of \textit{data utility} metrics 
+will be stored as a metadata, and will drive QoS scheduling, data placement 
 decisions, data lifetime decisions, and captures the value of the chunk to
 the user. 
 % It is
@@ -200,10 +200,9 @@ the user.
 % We propose a
 %new technique, described by a \textit{utility function} provided by a user, where chunks
 %can be cast into multiple data chunks and each bucket can be given a different utility value.  
-Based on the utility, SIRIUS will construct the data description,
-re-organize, and place the data to
-achieve the desired QoS goals and policies.
- We will formulate the concept of utility (from an
+%SIRIUS will construct the data description based on this utility and will use it
+%re-organize and place the data to achieve the desired QoS goals and policies.
+We will formulate the concept of utility (from an
 application perspective) that is assigned to data chunks to quantify the
 benefits of placement and/or movement actions to applications. These
 utilities may be based on the importance of the data chunks, the frequency
@@ -213,7 +212,7 @@ For example, data chunks with higher utility value may be
 placed closer (e.g., in faster memory) to the application.
 Similarly, when it is time to evict data chunks from a higher storage
 tier, the decision about which chunk to evict may take the utility into
-account. Our initial work in defining such a utility is presented in~\cite{tongipdps15}.
+account. Our initial work in defining such a utility is presented in~\cite{tongipdps15,qiansc15}.
  We will also explore autonomic approaches for balancing the placement and 
  movement of data across the memory hierarchy autonomically, which will be driven 
  by the data utility and will leverage both user hints and information gathered at runtime (e.g., runtime data access
