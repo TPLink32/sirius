@@ -53,31 +53,65 @@
 % Even with the space manipulation above, we need to cheat a little
 \enlargethispage{2\baselineskip}
 
-Scientific discovery at the exascale will not be possible without significant
-new research into the management, storage and retrieval over the full lifespan
-of the extreme amounts of data that will be produced. Our thesis is that by
-adding application level knowledge about data to guide the actions of the
-storage system we obtain substantial benefits in the organization, storage, and
-access to extreme scale data, resulting in improved productivity for
-computational science. We will demonstrate novel techniques to facilitate
-efficient mapping of data objects from the user space onto multiple storage
-tiers, and enable application-guided data reductions and transformations to
-address capacity and bandwidth bottlenecks.  Our goal is to address the
-associated Input/Output (I/O) and storage challenges in the context of current
-and emerging storage landscapes, and expedite insights into mission critical
-scientific processes.  We aim to reduce the time to insight, not just for a
-single application, but for the entire workload in a multi-user environment,
-where storage is shared across users. We shall achieve this by allowing
-selectable data quality, through trading in accuracy and error in order to meet
-the time or resource constraint. We will explore beyond checkpoint/restart I/O,
-and will address the challenges posed by key data access patterns in the
-knowledge gathering process. Ultimately, we will take the knowledge from the
-storage system to provide vital feedback to the middleware so that the best
-possible decisions can be autonomically made between the user intentions and
-the available system resources.  We will test our prototypes on current and
-future Department of Energy (DOE) system with many of today's cutting edge
-applications to ensure our techniques can be used within our framework on
-current and next generation systems.
+% Scientific discovery at the exascale will not be possible without significant
+% new research into the management, storage and retrieval over the full lifespan
+% of the extreme amounts of data that will be produced. Our thesis is that by
+% adding application level knowledge about data to guide the actions of the
+% storage system we obtain substantial benefits in the organization, storage, and
+% access to extreme scale data, resulting in improved productivity for
+% computational science. We will demonstrate novel techniques to facilitate
+% efficient mapping of data objects from the user space onto multiple storage
+% tiers, and enable application-guided data reductions and transformations to
+% address capacity and bandwidth bottlenecks.  Our goal is to address the
+% associated Input/Output (I/O) and storage challenges in the context of current
+% and emerging storage landscapes, and expedite insights into mission critical
+% scientific processes.  We aim to reduce the time to insight, not just for a
+% single application, but for the entire workload in a multi-user environment,
+% where storage is shared across users. We shall achieve this by allowing
+% selectable data quality, through trading in accuracy and error in order to meet
+% the time or resource constraint. We will explore beyond checkpoint/restart I/O,
+% and will address the challenges posed by key data access patterns in the
+% knowledge gathering process. Ultimately, we will take the knowledge from the
+% storage system to provide vital feedback to the middleware so that the best
+% possible decisions can be autonomically made between the user intentions and
+% the available system resources.  We will test our prototypes on current and
+% future Department of Energy (DOE) system with many of today's cutting edge
+% applications to ensure our techniques can be used within our framework on
+% current and next generation systems.
+
+
+This project explores the use of application level knowledge to reduce the
+time to insight for a workload (not just a single application) in a
+multi-user environment where storage and other resources are shared among
+users. Our approach is based on the notion of selectable data quality to
+enable a tradeoff between result accuracy and near-real-time data movement
+requirements for oversubscribed computational and storage resources. For the
+past several decades, extreme scale computational science has been conducted
+on dedicated computational and storage resources. Shared resources were
+overprovisioned resulting in little or no impact from resource contention.
+This changed recently. Execution times for scientific applications vary
+dramatically depending on external contention for shared resources. This
+execution time variance is particularly challenging in light of new usage
+models that have near-real-time requirements, e.g., providing information
+needed to control an experimental instrument like the Spallation Neutron
+Source. 
+
+More specifically, we will explore the resource contention issues
+with spreading a single data set horizontally across a single tier in the
+storage hierarchy, such as spinning media, as well as vertically across
+different kinds of storage media, including non-volatile memory. To manage
+the varying storage media capacities and bandwidths, we provide mechanisms
+to express the required data quality and the near real-time requirements of
+the application. Our thesis is that by adding application level knowledge
+about data to guide storage system behaviors, we obtain substantial benefits
+in the organization, storage, and access to extreme scale data resulting in
+improved productivity for computational science. We will demonstrate novel
+techniques to facilitate efficient and effective data placement onto
+multiple storage tiers and enable application-guided data reductions and
+transformations to address capacity and bandwidth bottlenecks. Our goal is
+to address the associated data management challenges in the context of
+current and emerging storage landscapes and expedite insights into mission
+critical scientific processes
 
 \noindent
 
