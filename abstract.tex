@@ -80,30 +80,20 @@
 % current and next generation systems.
 
 
-This project explores the use of application level knowledge to reduce the
-time to insight for a workload (not just a single application) in a
-multi-user environment where storage and other resources are shared among
-users. Our approach is based on the notion of selectable data quality to
-enable a tradeoff between result accuracy and near-real-time data movement
-requirements for oversubscribed computational and storage resources. For the
-past several decades, extreme scale computational science has been conducted
-on dedicated computational and storage resources. Shared resources were
-overprovisioned resulting in little or no impact from resource contention.
-This changed recently. Execution times for scientific applications vary
-dramatically depending on external contention for shared resources. This
-execution time variance is particularly challenging in light of new usage
-models that have near-real-time requirements, e.g., providing information
-needed to control an experimental instrument like the Spallation Neutron
-Source. 
+This project explores the use of application level knowledge to optimize the
+times to insight across a workload of multiple applications in a multi-user
+environment with shared storage and network resources. The basis for this
+work is the notion of selectable data quality to explore the tradeoffs
+between accuracy of results, resource requirements, and time to insight on
+systems with shared, oversubscribed computational and storage resources. 
+In the last several years extreme scale computational science was conducted
+using dedicated computational resources, with shared resources, such as
+network and storage, being overprovisioned. This resulted in little to no
+impact from resource contention. The increased scale of recent, and incoming
+future systems, has placed a greater emphasis on mitigating contention. 
 
-More specifically, we will explore the resource contention issues
-with spreading a single data set horizontally across a single tier in the
-storage hierarchy, such as spinning media, as well as vertically across
-different kinds of storage media, including non-volatile memory. To manage
-the varying storage media capacities and bandwidths, we provide mechanisms
-to express the required data quality and the near real-time requirements of
-the application. Our thesis is that by adding application level knowledge
-about data to guide storage system behaviors, we obtain substantial benefits
+Our thesis is that by adding application level knowledge
+about data to guide storage system behaviors, we will obtain substantial benefits
 in the organization, storage, and access to extreme scale data resulting in
 improved productivity for computational science. We will demonstrate novel
 techniques to facilitate efficient and effective data placement onto
@@ -111,7 +101,7 @@ multiple storage tiers and enable application-guided data reductions and
 transformations to address capacity and bandwidth bottlenecks. Our goal is
 to address the associated data management challenges in the context of
 current and emerging storage landscapes and expedite insights into mission
-critical scientific processes
+critical scientific processes.
 
 \noindent
 
