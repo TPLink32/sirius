@@ -1,7 +1,55 @@
 Who:
 
-S. Klasky,
+S. Klasky, J. Lofstead, Q. Liu, H. Abbasi 
 
 
 Discussion:
-1. Demo
+
+1. Kickoff meeting agenda
+
+demo to see sirrroc is hard
+Jay can get access to the repo...
+socket connections... sirrorco is written asio...
+NSSI switch over to this.
+
+can run with mpi apps, runs in user space... set up
+launch mpi job - sirroco.  doesn't talk to tape now...
+
+think of it like a reverse bit torrent...
+
+we can get access to a sandia   collaboration machines...
+
+
+
+Gary: work with Mark for refactoring
+Hasan: Utility function and APIS.
+Jay: metadata .. service .. lofstead... bothposix clients and our clients...
+metadata side of
+
+performance and overhead tradeoff for manging all of the metadata and searching for it
+later... do we go through overhead for consitiency....
+
+Utility function... ipdps
+
+2. Demo
+
+
+3. Papers
+
+
+
+Year 1 Deliverables:
+
+A. Develop techniques for data description to describe the data utility
+based on user expectations. (ORNL)
+
+B. Evaluate general techniques for refactoring of data that will be embedded in the system . (ORNL)
+
+C. Explore the use of application hints and utility of data to guide the
+initial placement of data. (Rutgers)
+
+D. Investigate the trade-off between “filing” and “piling” data. Demonstrate a time bounded
+search approach for finding data within the storage system to identify data and the
+current location. (UCSC)
+
+E. Demonstrate a metadata service capable of serving both POSIX clients and our clients. (Sandia)
