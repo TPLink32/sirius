@@ -23,7 +23,7 @@ Agenda
   3:15 -   5:00        Demos and Discussions
 
 --------------------
-
+Scott
 Exascale computing initiatie
 $90M/yr to software.
 Paul Messina (ANL) is overall lead
@@ -34,30 +34,56 @@ biweekly call for executive team
 provide opportunity to reduce data in the storage system if the calculation either did not or could not use a method like AMR to reduce data volumes. For cases where data is already reduced, we will just optimize placement to keep important data close.
 
 --------------
-
+Hasan
 investigate data utility and how to incorporate utility functions to annotate and decompose data
 How does data utility change over time and how do we incorporate this into the features?
 BlinkDB.org
 
 -----------------
-
+Mark
 By doing some curve fitting, you can store every nth item and then the errors on each other element and yield a much higher losses compression rate. Compression Interpolation Auditor.
 instead of 15-20% lossless compression, can achieve 70%+ with a large data set to offer enough overhead to hide the extra data annotations.
+-----------------
+Matthew
+- Sirocco overview
+- Focus on storage layer + user layer on top to provide semantics
 
 -----------------
-
+Gary
 What is the right IO interface?
 How do we do guarantees?
 How to annotate data?
 add data description to XML listing relationships among vars (with what that relationship means, e.g., “access together”) and the utility (value?) of data.
 Specify policies while reading including deadlines and errors
 
--------------
+SOSP’11  “differentiated storage services”, SOSP’13 IOflow
+ paper
+User policy, no support
+Complex storage stack
+Data descriptions:
+how do we describe/annotate data generated from applications?
 
+Preliminary QoS work - through OS virtualization
+
+Soft deadline or hard deadline? Carolos doesn’t like the soft
+ part
+
+---------------------
+Jay - Metadata challenges for SIRIUS
+
+The challenges:
+“Storage device come and go”
+“performance variance”
+Enhance placement decision based on predicted future use
+
+-------------
+Carlos
 Casual metadata Rodrigo Fonseca at Brown (HPTS 2015 presentation); also SOSP 2015 and NSDI 2015
+90 percentile meet  90% deadline, interesting
+BlinkDB - multi-resolution data placement based on workload profiles.
 
 -------------
-
+Manish
 - maximize relative data utility to the application and system while reducing access cost
 - leverage knowledge about the data and its use within the application to drive data placement and management
 - prepare object for reading and take advantage of that knowledge to enhance writing, when possible.
@@ -68,7 +94,7 @@ Casual metadata Rodrigo Fonseca at Brown (HPTS 2015 presentation); also SOSP 201
 - adaptive application-aware data management
 
 -------------------
-
+Feiyi
 - Usability and Manageability
 - looking at the performance from the device level
 - consider all kinds of operations (read, write, metadata)
