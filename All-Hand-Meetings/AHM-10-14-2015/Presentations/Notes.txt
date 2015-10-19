@@ -1,0 +1,78 @@
+SIRIUS Project All Hands Meeting
+
+Oak Ridge National Laboratory
+
+Monday, October 19, 2015
+
+Agenda
+  9:00 -   9:30             Introduction, Scott Klasky
+  9:30 -   9:50        Hasan Abbasi
+  9:50 - 10:10              Mark Ainsworth
+10:10 - 10:30               Matt Curry
+10:30 - 10:50               Break
+10:50 - 11:10               Gary Liu
+11:10 - 11:30               Jay Lofstead
+11:30 - 11:50               Carlos Maltzahn
+12:00 -   1:00              Lunch
+  1:00 -   1:20             Manish Parashar
+  1:20 -   1:40             Feiyi Wang
+  1:40 -   2:00             Discussions
+  2:00 -   2:30             Break
+  2:30 -   3:15        Barney Maccabe
+
+  3:15 -   5:00        Demos and Discussions
+
+--------------------
+
+Exascale computing initiatie
+$90M/yr to software.
+Paul Messina (ANL) is overall lead
+
+1 call per month for project (all hands)
+biweekly call for executive team
+
+provide opportunity to reduce data in the storage system if the calculation either did not or could not use a method like AMR to reduce data volumes. For cases where data is already reduced, we will just optimize placement to keep important data close.
+
+--------------
+
+investigate data utility and how to incorporate utility functions to annotate and decompose data
+How does data utility change over time and how do we incorporate this into the features?
+BlinkDB.org
+
+-----------------
+
+By doing some curve fitting, you can store every nth item and then the errors on each other element and yield a much higher losses compression rate. Compression Interpolation Auditor.
+instead of 15-20% lossless compression, can achieve 70%+ with a large data set to offer enough overhead to hide the extra data annotations.
+
+-----------------
+
+What is the right IO interface?
+How do we do guarantees?
+How to annotate data?
+add data description to XML listing relationships among vars (with what that relationship means, e.g., “access together”) and the utility (value?) of data.
+Specify policies while reading including deadlines and errors
+
+-------------
+
+Casual metadata Rodrigo Fonseca at Brown (HPTS 2015 presentation); also SOSP 2015 and NSDI 2015
+
+-------------
+
+- maximize relative data utility to the application and system while reducing access cost
+- leverage knowledge about the data and its use within the application to drive data placement and management
+- prepare object for reading and take advantage of that knowledge to enhance writing, when possible.
+- DataSpaces paper from HPDC 10. Indexing + DHT for data finding
+- Service Level Objective vs. Constraint
+— goals that will hopefully be met vs. requirements
+- look at placement in staging/in compute area storage/SCM to enhance usage
+- adaptive application-aware data management
+
+-------------------
+
+- Usability and Manageability
+- looking at the performance from the device level
+- consider all kinds of operations (read, write, metadata)
+- 75% of files are 512 KiB or smaller (~250 M files, 15 PB, half of Atlas
+- “disks are like snowflakes"
+- pay attention to the whole hardware and software path from compute to storage to get end-to-end performance
+- write/read ratio on Atlas file system is 60/40.
