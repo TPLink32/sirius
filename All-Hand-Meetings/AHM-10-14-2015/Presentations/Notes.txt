@@ -102,3 +102,48 @@ Feiyi
 - “disks are like snowflakes"
 - pay attention to the whole hardware and software path from compute to storage to get end-to-end performance
 - write/read ratio on Atlas file system is 60/40.
+
+----------------------
+Barney visit
+Notes from Afternoon Session (Barney McCabe present)
+----------------------------------------------------
+
+SK gave an overview of the objectives of the project to BM. He mentioned that
+next generation machines will have different layers in the storage hierarchy
+that will require more sophisticated representations of data. 
+
+SK also talked about the need to 
+
+- quantify expected performance of the storage systems so that the user can
+  make informed decisions on what quantities can be reasonably computed. 
+
+- introduce accuracy and error control as a consideration in the analysis
+  particularly given that much of the scientific data is specified to a much
+  higher precision than the accuracy of the actual data  
+
+- identify appropriate demos that can be used to illustrate and focus the
+  research effort. One demo will be the Particle-in-Cell code (PiC) such as the
+  one of CS Chang. He stressed the importance of producing demos that can be
+  presented to the programme manager early next year e.g. May 2016 as a target. 
+
+BM felt that it was important to get demos working, but that it was also
+important to be clear about what we are aiming to demonstrate and to produce
+publications.  
+
+CM gave an overview to BM of what he had presented earlier in the day. He
+emphasised the importance of providing guaranteed estimates on the quality of
+service to enable the user to make informed decisions on possible courses of
+action. He also mentioned the possibility of creating a hierarchy of
+resolutions for the data that provide alternative approaches for generating
+user-defined quantities. 
+
+BM pointed out the difficulty of providing accurate estimates in environments
+where the resources are dynamically changing. 
+
+SK mentioned that we would be getting feedback from Feiying on existing state
+of the art hardware. 
+
+BM thanked everyone for coming to ORNL and underlined the importance of the
+project for ORNL. 
+
+- 
