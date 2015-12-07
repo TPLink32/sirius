@@ -1,0 +1,2 @@
+aprun: file ./test_write2 not found
+aprun: Exiting due to errors. Application aborted

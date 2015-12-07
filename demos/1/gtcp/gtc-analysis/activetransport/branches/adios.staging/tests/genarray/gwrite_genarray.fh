@@ -1,0 +1,45 @@
+adios_groupsize = 4 &
+                + 4 &
+                + 4 &
+                + 4 &
+                + 4 &
+                + 4 &
+                + 4 &
+                + 4 &
+                + 4 &
+                + 4 &
+                + 4 &
+                + 4 &
+                + 4 &
+                + 8 * (ndx) * (ndy) * (ndz) &
+                + 8 * (ndx) * (ndy) * (ndz) &
+                + 8 * (ndx) * (ndy) * (ndz) &
+                + 8 * (ndx) * (ndy) * (ndz) &
+                + 8 * (ndx) * (ndy) * (ndz) &
+                + 8 * (ndx) * (ndy) * (ndz) &
+                + 8 * (ndx) * (ndy) * (ndz) &
+                + 8 * (ndx) * (ndy) * (ndz) &
+                + 8 * (ndx) * (ndy) * (ndz)
+call adios_group_size (adios_handle, adios_groupsize, adios_totalsize, adios_err)
+call adios_write (adios_handle, "gndx", gndx, adios_err)
+call adios_write (adios_handle, "gndy", gndy, adios_err)
+call adios_write (adios_handle, "gndz", gndz, adios_err)
+call adios_write (adios_handle, "nproc", nproc, adios_err)
+call adios_write (adios_handle, "npx", npx, adios_err)
+call adios_write (adios_handle, "npy", npy, adios_err)
+call adios_write (adios_handle, "npz", npz, adios_err)
+call adios_write (adios_handle, "offx", offx, adios_err)
+call adios_write (adios_handle, "offy", offy, adios_err)
+call adios_write (adios_handle, "offz", offz, adios_err)
+call adios_write (adios_handle, "ndx", ndx, adios_err)
+call adios_write (adios_handle, "ndy", ndy, adios_err)
+call adios_write (adios_handle, "ndz", ndz, adios_err)
+call adios_write (adios_handle, "var1", double_xyz, adios_err)
+call adios_write (adios_handle, "var2", double_xyz, adios_err)
+call adios_write (adios_handle, "var3", double_xyz, adios_err)
+call adios_write (adios_handle, "var4", double_xyz, adios_err)
+call adios_write (adios_handle, "var5", double_xyz, adios_err)
+call adios_write (adios_handle, "var6", double_xyz, adios_err)
+call adios_write (adios_handle, "var7", double_xyz, adios_err)
+call adios_write (adios_handle, "var8", double_xyz, adios_err)
+call adios_write (adios_handle, "var9", double_xyz, adios_err)

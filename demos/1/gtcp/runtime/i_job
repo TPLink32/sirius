@@ -1,0 +1,2 @@
+salloc --account=FY140262 --job-name=gtc-p --nodes=1 --time=7:00:00
+mpirun -np 2 ./bench_gtc_sith_gcc_debug ./input/A.txt 1 2

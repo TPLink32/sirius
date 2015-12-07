@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<adios-config host-language="C">
+
+<!--<adios-group name="restart" coordination-communicator="adios_world_comm" time-index="istep">-->
+<adios-group name="rangequery" coordination-communicator="comm">
+  <var name="mype" type="integer"/>
+  <var name="numberpe" type="integer"/>
+  <var name="istep" type="integer"/>
+  <var name="mi" type="integer"/>
+  <var name="mi_total" type="integer*8"/>
+  <var name="mi_offset" type="integer*8"/>
+  <var name="ntracer" type="double"/>
+  <var name="etracer_i0" type="double"/>
+  <var name="misum" type="double"/>
+
+  <global-bounds dimensions="7, mi_total" offsets="0, mi_offset">
+      <var name="zion" type="double" dimensions="7, mi"/>
+  </global-bounds>
+
+  <var name="ntracer_e" type="double"/>
+  <var name="etracer_e0" type="double"/>
+  <var name="mesum" type="double"/>
+
+  <var name="me" type="integer"/>
+  <var name="me_total" type="integer*8"/>
+  <var name="me_offset" type="integer*8"/>
+  <global-bounds dimensions="7, me_total" offsets="0, me_offset">
+      <var name="zeon" type="double" dimensions="7, me"/>
+  </global-bounds>
+
+</adios-group>
+
+<transport method="NULL" group="rangequery"  ></transport>
+
+<buffer size-MB="10" allocate-time="now"/>
+<!-- or free-memory-percentage="90" allocate-time="oncall" -->
+</adios-config>

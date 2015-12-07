@@ -1,0 +1,512 @@
+#include "mpi.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include "Analyp.h"
+#include "histogram.h"
+
+double *qu_mi = NULL;
+double *qu_me = NULL;
+
+#define NUM_BINS 1000
+
+// TODO: init it somewhere
+typedef struct _histogram_data
+{
+    histogram local_histograms[6];
+    histogram global_histograms[6];
+} histogram_data;
+
+histogram_data histograms;
+histogram_data histograms_e;
+int first_time = 1;
+int first_time_e = 1;
+
+double *transpose_buf;
+int first_time_transpose = 1;
+
+void particle_analysis(int *istep,
+                  int *mype,
+                  int *numberpe,
+                  int *mi,
+                  long int *mi_total,
+                  long int *mi_offset,
+                  double *ntracer,
+                  double *etracer_i0,
+                  double *misum,
+                  double *zion,
+                  double **qu,
+                  histogram_data *h,
+                  int is_zion
+                  )
+{
+
+#if PRINT_RESULT
+fprintf(stderr, "\ndistribution istep\t%d\trank\t%d\tmi\t%d\tmitotal\t%ld %s:%d\n", *istep, *mype, *mi,*mi_total,__FILE__, __LINE__);
+#endif
+        int numtasks, rank, rc, num_mi, rt;
+	int i;
+
+        if(!*qu) {
+            *qu = (double *) malloc(sizeof(double)*PG_NUM*7);
+            if(!*qu) {
+                fprintf(stderr, "cannot allocate memory. %s:%d\n", __FILE__,__LINE__);
+                return;
+            }
+        }
+        
+        gts_local gl_features;
+        gts_global gg_features;
+        gts_local  *gts_local_features;
+        gts_global *gts_global_features;
+
+        MPI_Comm comm = MPI_COMM_WORLD;
+        MPI_Comm_size(MPI_COMM_WORLD,&numtasks);
+        MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+
+        double *rbuf;
+        int *counts, *displs;
+        int sum = 0;
+
+//	gts_local_features = (gts_local *)malloc(sizeof(gts_local));
+//	gts_global_features = (gts_global *)malloc(sizeof(gts_global));
+        gts_local_features = &gl_features;
+        gts_global_features = &gg_features;
+
+	rt = Analyp(zion, *mi, gts_local_features);
+
+	/* reduce the features of X and distribute to all nodes */
+	MPI_Allreduce(&(gts_local_features->mi_cnt), &(gts_global_features->mi_gcnt), 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+	MPI_Allreduce(&(gts_local_features->mi_min_x), &(gts_global_features->mi_gmin_x), 1, MPI_DOUBLE, MPI_MIN, MPI_COMM_WORLD);
+	MPI_Allreduce(&(gts_local_features->mi_max_x), &(gts_global_features->mi_gmax_x), 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+	MPI_Allreduce(&(gts_local_features->mi_sqr_sum_x), &(gts_global_features->mi_sqr_sum_x), 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+	MPI_Allreduce(&(gts_local_features->mi_sum_x), &(gts_global_features->mi_sum_sqr_x), 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+
+
+#if PRINT_RESULT
+	printf("\nHong Fang X : %d , %d , %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf  \n",
+		gts_local_features->mi_cnt, gts_global_features->mi_gcnt,
+		gts_local_features->mi_min_x, gts_global_features->mi_gmin_x,
+		gts_local_features->mi_max_x, gts_global_features->mi_gmax_x,
+		gts_local_features->mi_sqr_sum_x, gts_global_features->mi_sqr_sum_x,
+		gts_local_features->mi_sum_x, gts_global_features->mi_sum_sqr_x
+		);
+#endif
+
+	/* reduce the features of Y and distribute to all nodes */
+	MPI_Allreduce(&(gts_local_features->mi_min_y), &(gts_global_features->mi_gmin_y), 1, MPI_DOUBLE, MPI_MIN, MPI_COMM_WORLD);
+	MPI_Allreduce(&(gts_local_features->mi_max_y), &(gts_global_features->mi_gmax_y), 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+	MPI_Allreduce(&(gts_local_features->mi_sqr_sum_y), &(gts_global_features->mi_sqr_sum_y), 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+	MPI_Allreduce(&(gts_local_features->mi_sum_y), &(gts_global_features->mi_sum_sqr_y), 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+
+#if PRINT_RESULT
+
+	printf("\nHong Fang Y : %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf  \n",
+		gts_local_features->mi_min_y, gts_global_features->mi_gmin_y,
+		gts_local_features->mi_max_y, gts_global_features->mi_gmax_y,
+		gts_local_features->mi_sqr_sum_y, gts_global_features->mi_sqr_sum_y,
+		gts_local_features->mi_sum_y, gts_global_features->mi_sum_sqr_y
+		);
+#endif
+
+	/* reduce the features of Z and distribute to all nodes */
+	MPI_Allreduce(&(gts_local_features->mi_min_z), &(gts_global_features->mi_gmin_z), 1, MPI_DOUBLE, MPI_MIN, MPI_COMM_WORLD);
+	MPI_Allreduce(&(gts_local_features->mi_max_z), &(gts_global_features->mi_gmax_z), 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+	MPI_Allreduce(&(gts_local_features->mi_sqr_sum_z), &(gts_global_features->mi_sqr_sum_z), 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+	MPI_Allreduce(&(gts_local_features->mi_sum_z), &(gts_global_features->mi_sum_sqr_z), 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+
+#if PRINT_RESULT
+
+	printf("\nHong Fang Z : %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf  \n",
+		gts_local_features->mi_min_z, gts_global_features->mi_gmin_z,
+		gts_local_features->mi_max_z, gts_global_features->mi_gmax_z,
+		gts_local_features->mi_sqr_sum_z, gts_global_features->mi_sqr_sum_z,
+		gts_local_features->mi_sum_z, gts_global_features->mi_sum_sqr_z
+		);
+#endif
+
+        /* reduce the features of V1 and distribute to all nodes */
+        MPI_Allreduce(&(gts_local_features->mi_min_v1), &(gts_global_features->mi_gmin_v1), 1, MPI_DOUBLE, MPI_MIN, MPI_COMM_WORLD);
+        MPI_Allreduce(&(gts_local_features->mi_max_v1), &(gts_global_features->mi_gmax_v1), 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+        MPI_Allreduce(&(gts_local_features->mi_sqr_sum_v1), &(gts_global_features->mi_sqr_sum_v1), 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&(gts_local_features->mi_sum_v1), &(gts_global_features->mi_sum_sqr_v1), 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+
+        /* reduce the features of W and distribute to all nodes */
+        MPI_Allreduce(&(gts_local_features->mi_min_w), &(gts_global_features->mi_gmin_w), 1, MPI_DOUBLE, MPI_MIN, MPI_COMM_WORLD);
+        MPI_Allreduce(&(gts_local_features->mi_max_w), &(gts_global_features->mi_gmax_w), 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+        MPI_Allreduce(&(gts_local_features->mi_sqr_sum_w), &(gts_global_features->mi_sqr_sum_w), 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&(gts_local_features->mi_sum_w), &(gts_global_features->mi_sum_sqr_w), 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+
+        /* reduce the features of V2 and distribute to all nodes */
+        MPI_Allreduce(&(gts_local_features->mi_min_v2), &(gts_global_features->mi_gmin_v2), 1, MPI_DOUBLE, MPI_MIN, MPI_COMM_WORLD);
+        MPI_Allreduce(&(gts_local_features->mi_max_v2), &(gts_global_features->mi_gmax_v2), 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+        MPI_Allreduce(&(gts_local_features->mi_sqr_sum_v2), &(gts_global_features->mi_sqr_sum_v2), 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&(gts_local_features->mi_sum_v2), &(gts_global_features->mi_sum_sqr_v2), 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+
+
+/////////////////////////////////////////////////////////////
+//                   Range Qurery                          //
+/////////////////////////////////////////////////////////////        
+
+	/* Averages for X, Y, Z*/
+	double G_avg_x, G_avg_y, G_avg_z;
+	G_avg_x = gts_global_features->mi_sum_sqr_x / gts_global_features->mi_gcnt;
+	G_avg_y = gts_global_features->mi_sum_sqr_y / gts_global_features->mi_gcnt;
+	G_avg_z = gts_global_features->mi_sum_sqr_z / gts_global_features->mi_gcnt;
+
+#if PRINT_RESULT
+
+	printf("\n avg value  %lf , %lf , %lf | %lf , %lf , %lf \n", gts_global_features->mi_sum_sqr_x, gts_global_features->mi_sum_sqr_y, gts_global_features->mi_sum_sqr_z, G_avg_x, G_avg_y, G_avg_z);
+#endif
+
+	/* Standard deviation for X, Y, Z */	
+	double G_stdev_x, G_stdev_y, G_stdev_z;
+	G_stdev_x = sqrt((gts_global_features->mi_sqr_sum_x/gts_global_features->mi_gcnt)-(G_avg_x*G_avg_x));	
+	G_stdev_y = sqrt((gts_global_features->mi_sqr_sum_y/gts_global_features->mi_gcnt)-(G_avg_y*G_avg_y));	
+	G_stdev_z = sqrt((gts_global_features->mi_sqr_sum_z/gts_global_features->mi_gcnt)-(G_avg_z*G_avg_z));	
+	
+	/* Upper and lower limit for X, Y, Z */
+	double Uplimit[3], Lolimit[3];
+	Lolimit[0] = G_avg_x - G_stdev_x;
+	Uplimit[0] = G_avg_x + G_stdev_x; 
+	Lolimit[1] = G_avg_y - G_stdev_y;
+	Uplimit[1] = G_avg_y + G_stdev_y;
+	Lolimit[2] = G_avg_z - G_stdev_z;	
+	Uplimit[2] = G_avg_z + G_stdev_z;
+
+#if PRINT_RESULT
+
+	printf("\nstdev value  %lf , %lf, %lf \n", G_stdev_x, G_stdev_y, G_stdev_z);
+#endif
+
+        // filter local array and pack filtered particles to qu_mi
+	Scanfilter(zion, *mi, *qu, &num_mi, Lolimit, Uplimit);
+
+#if PRINT_RESULT
+
+	for(i = 0; i < num_mi*7; i++){
+		if((i % 7) == 0) printf("\n");
+		printf("%lf ", (*qu)[i]);
+	}
+	printf("\n");
+	printf ("Number of tasks= %d My rank= %d\n", numtasks,rank);
+	printf("--------------------------------------\n");
+#endif
+
+        // gather results to rank 0
+	if (rank == 0){
+//		system("hostname");
+		counts = (int *)malloc(numtasks*sizeof(int));
+		displs = (int *)malloc(numtasks*sizeof(int));
+        	if ((counts == NULL)||(displs == NULL)) {
+                	printf("Allocate counts or displs array failed\n");
+	        }
+	}
+	MPI_Gather(&num_mi, 1, MPI_INT, counts, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+	if(rank == 0){
+#if PRINT_RESULT
+		printf("\n");
+#endif
+		for(i = 0; i < numtasks; i++){
+			counts[i] = counts[i]*7;
+#if PRINT_RESULT
+			printf("%d ", counts[i]);
+#endif
+		}
+#if PRINT_RESULT
+		printf("\n");
+#endif
+	}
+
+	if(rank == 0){
+
+                displs[0]=0;
+                for( i=1; i < numtasks; i++){
+                        displs[i]=counts[i-1]+displs[i-1];
+                }
+
+		for(i = 0 ; i < numtasks; i++) sum = sum + counts[i];
+		//printf("sum %d", sum);
+		rbuf = (double *)malloc(sum*sizeof(double));
+        	if (rbuf == NULL) {
+                	printf("Allocate particle collecting array failed\n");
+	        }
+	}
+
+	MPI_Gatherv(*qu, num_mi*7, MPI_DOUBLE,
+		    rbuf, counts, displs, MPI_DOUBLE, 
+		    0, MPI_COMM_WORLD);
+
+#if PRINT_RESULT
+	if(rank == 0){
+		for(i = 0; i < sum; i++){
+			if((i % 7) == 0) printf("\n");
+			printf("%lf ", rbuf[i]);
+		}
+		printf("\n");
+	}
+#endif
+
+        if(rank == 0) {
+
+/////////////////////////////////////////////////////////////
+//             Transpose                                   //
+/////////////////////////////////////////////////////////////
+            initialize_transpose(*mi, 7, &transpose_buf);
+            do_transpose(zion, transpose_buf, *mi, 7);  
+            finalize_transpose(transpose_buf);
+/////////////////////////////////////////////////////////////
+//             End of transpose                            //
+/////////////////////////////////////////////////////////////
+
+            // finalize
+            free(counts);
+            free(displs);
+            free(rbuf); 
+        }
+
+/////////////////////////////////////////////////////////////
+//             End of Range Qurery                         //
+/////////////////////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////////////////////
+//             Histogram                                   //
+/////////////////////////////////////////////////////////////
+    
+    int *first = &first_time;
+    if(!is_zion) first = &first_time_e;
+
+    if(*first) {
+        *first = 0;
+        for(i = 0; i < 6; i ++) {
+            h->local_histograms[i].count = NULL;
+            h->local_histograms[i].bins.lower_bounds = NULL;
+            h->global_histograms[i].count = NULL;
+            h->global_histograms[i].bins.lower_bounds = NULL;
+        }
+    }
+
+    // set up bin boundaries
+    // X
+    rc = initialize_hostogram(&h->local_histograms[0], 
+                              0, 
+                              gts_global_features->mi_gmin_x,
+                              gts_global_features->mi_gmax_x,
+                              NUM_BINS 
+                             ); 
+    if(rc) {
+        return;
+    }
+    if(rank == 0) {
+        rc = initialize_hostogram(&h->global_histograms[0],
+                                  0,
+                                  gts_global_features->mi_gmin_x,
+                                  gts_global_features->mi_gmax_x,
+                                  NUM_BINS 
+                                 );
+        if(rc) {
+            return;
+        }
+    }
+
+    // Y
+    rc = initialize_hostogram(&h->local_histograms[1],
+                              1,
+                              gts_global_features->mi_gmin_y,
+                              gts_global_features->mi_gmax_y,
+                              NUM_BINS
+                             );
+    if(rc) {
+        return;
+    }
+    if(rank == 0) {
+        rc = initialize_hostogram(&h->global_histograms[1],
+                                  1,
+                                  gts_global_features->mi_gmin_y,
+                                  gts_global_features->mi_gmax_y,
+                                  NUM_BINS
+                                 );
+        if(rc) {
+            return;
+        }
+    }
+
+
+    // Z
+    rc = initialize_hostogram(&h->local_histograms[2],
+                              2,
+                              gts_global_features->mi_gmin_z,
+                              gts_global_features->mi_gmax_z,
+                              NUM_BINS
+                             );
+    if(rc) {
+        return;
+    }
+    if(rank == 0) {
+        rc = initialize_hostogram(&h->global_histograms[2],
+                                  2,
+                                  gts_global_features->mi_gmin_z,
+                                  gts_global_features->mi_gmax_z,
+                                  NUM_BINS
+                                 );
+        if(rc) {
+            return;
+        }
+    }
+
+    // V1
+    rc = initialize_hostogram(&h->local_histograms[3],
+                              3,
+                              gts_global_features->mi_gmin_v1,
+                              gts_global_features->mi_gmax_v1,
+                              NUM_BINS
+                             );
+    if(rc) {
+        return;
+    }
+    if(rank == 0) {
+        rc = initialize_hostogram(&h->global_histograms[3],
+                                  3,
+                                  gts_global_features->mi_gmin_v1,
+                                  gts_global_features->mi_gmax_v1,
+                                  NUM_BINS
+                                 );
+        if(rc) {
+            return;
+        }
+    }
+
+
+    // W
+    rc = initialize_hostogram(&h->local_histograms[4],
+                              4,
+                              gts_global_features->mi_gmin_w,
+                              gts_global_features->mi_gmax_w,
+                              NUM_BINS
+                             );
+    if(rc) {
+        return;
+    }
+    if(rank == 0) {
+        rc = initialize_hostogram(&h->global_histograms[4],
+                                  4,
+                                  gts_global_features->mi_gmin_w,
+                                  gts_global_features->mi_gmax_w,
+                                  NUM_BINS
+                                 );
+        if(rc) {
+            return;
+        }
+    }
+
+
+    // V2
+    rc = initialize_hostogram(&h->local_histograms[5],
+                              5,
+                              gts_global_features->mi_gmin_v2,
+                              gts_global_features->mi_gmax_v2,
+                              NUM_BINS
+                             );
+    if(rc) {
+        return;
+    }
+    if(rank == 0) {
+        rc = initialize_hostogram(&h->global_histograms[5],
+                                  5,
+                                  gts_global_features->mi_gmin_v2,
+                                  gts_global_features->mi_gmax_v2,
+                                  NUM_BINS
+                                 );
+        if(rc) {
+            return;
+        }
+    }
+
+
+    // calculate local histogram
+    uint64_t idx;
+    for(i = 0; i < *mi; i +=7) {
+        update_count(zion[i], &h->local_histograms[0]);
+        update_count(zion[i+1], &h->local_histograms[1]);
+        update_count(zion[i+2], &h->local_histograms[2]);
+        update_count(zion[i+3], &h->local_histograms[3]);
+        update_count(zion[i+4], &h->local_histograms[4]);
+        update_count(zion[i+5], &h->local_histograms[5]);
+    }
+
+    // aggregate to rank 0 for global histogram
+    for(i = 0; i < 6; i ++) {
+//fprintf(stderr, "rank=%d count300=%d g=%d %s:%d\n", rank, histograms[i].count[300], global_histograms[i].count[300], __FILE__, __LINE__);
+        rc = MPI_Reduce(h->local_histograms[i].count, 
+                h->global_histograms[i].count, 
+                h->local_histograms[i].num_bins,
+                MPI_LONG, 
+                MPI_SUM, 
+                0, 
+                comm);
+//fprintf(stderr, "rank=%d count300=%d g=%d %s:%d\n", rank, histograms[i].count[300], global_histograms[i].count[300], __FILE__, __LINE__);
+    }
+
+    if(rank == 0) {
+        char file_name[100];
+        if(is_zion) {
+             sprintf(file_name, "zion_");
+        }
+        else {
+             sprintf(file_name, "zeon_");
+        }
+        FILE *f;
+        histogram *hist; 
+        for(i = 0; i < 6; i ++) {
+            sprintf(file_name+5, "histogram_%d.%d\0", i, *istep);
+            f = fopen(file_name, "w");
+            if(!f) {
+                fprintf(stderr, "cannot open file (%s)\n", file_name);
+                return;
+            }
+
+            hist = &h->global_histograms[i]; 
+            int j;
+            for(j =0; j < hist->num_bins; j ++) {
+                fprintf(f, "%d\t%10f\t%lu\n", j, hist->bins.lower_bounds[j], hist->count[j]);
+                //fprintf(histogram_file, "%d\t%lu\n", j, histograms[i].count[j]);
+            }
+            fclose(f);
+        }
+    }
+
+/////////////////////////////////////////////////////////////
+//             End of Histogram                            //
+/////////////////////////////////////////////////////////////
+}
+
+void global_analysis_(int *istep,
+                  int *mype,
+                  int *numberpe,
+                  int *mi,
+                  long int *mi_total,
+                  long int *mi_offset,
+                  double *ntracer,
+                  double *etracer_i0,
+                  double *misum,
+                  double *zion,
+                  double *ntracer_e,
+                  double *etracer_e0,
+                  double *mesum,
+                  int *me,
+                  long int *me_total,
+                  long int *me_offset,
+                  double *zeon
+                 )
+{
+
+    particle_analysis(istep, mype, numberpe, mi, mi_total, mi_offset, ntracer, etracer_i0, misum, zion, &qu_mi, &histograms, 1);
+
+    particle_analysis(istep, mype, numberpe, me, me_total, me_offset, ntracer_e, etracer_e0, mesum, zeon, &qu_me, &histograms_e, 0);
+
+}
+
+

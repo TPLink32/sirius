@@ -1,0 +1,35 @@
+All gtcp + analytics code is in gtcp
+
+GTCP (GTC Proxy) has two versions, unmodified, in the repository (in the
+orginal directory):
+GTC_CPU_Sep13 version of GTC-P has ADIOS integrated.
+GTCP_GPU_Mar14 does not.
+Both of these are the original versions that have not been modified for use in
+this project
+
+GTCP_CPU_Sep13 has the modified version of the GTC proxy including writing
+both the moments and particles out using ADIOS. The particles are used in the
+analysis routimes. The relevant source file is restart_ion.c. The gtcp.xml is
+correct for both moments and particles. There are no electrons in the proxy
+so the ions are copied into the electrons for output just to provide adequte
+data volumes.
+
+in gtc-analysis/activetransport/trunk are several relevant directories:
+adios_timing is the performance timing measurement routines.
+ib_read are the unused, old routines for reading data via InfiniBand
+analysis are the analytics routines.
+Of the source files in analysis, staging.c is the modified version that reads
+using ADIOS.
+
+For the GTCP, the particle data is a 7xN array. The 6 of 7 elements are:
+zion0,1,2 are the coordinates of the particle's position, zion3 is the parallel
+velocity (parallel to the magnetic field), zion4 is the statistical weight, and
+zion5 is the magnetic moment, which is related to the perpendicular velocity of
+the particle.
+
+The mpi_stubs is a modified version of the MPI stubs from LAMMPS with
+commentary about how it needs to interact with the ADIOS mpi stubs to properly
+avoid the MPI calls in the GTCP and staging.c analysis routines.
+
+For questions, please contact Jay Lofstead (gflofst@sandia.gov)
+

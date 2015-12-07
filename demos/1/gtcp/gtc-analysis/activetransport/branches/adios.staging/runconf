@@ -1,0 +1,306 @@
+#!/bin/bash
+#
+# This script is for configuring adios on the authors' machines
+# You can study it to figure out how to configure adios on your system
+#
+
+if [ `hostname | cut -c 1-4` == "smok" ]; then
+
+    ##########
+    # smokey #
+    ##########
+    echo "Configure on SMOKY"
+    source /etc/profile.d/modules.sh
+    module unload hdf5
+    module unload netcdf
+    module unload PE-gnu
+    module unload PE-pgi
+    module unload PE-pathscale
+    module unload pgi
+    TARGET=pgi
+    module load PE-$TARGET
+    # Use both seq hdf5 (for utils) and 
+    #   parallel hdf5 (for PHDF5 method)
+    module load hdf5/1.8.5
+    SEQ_HDF5_DIR=$HDF5_DIR
+    SEQ_HDF5_CLIB=$HDF5_CLIB
+    module unload hdf5
+    module load hdf5/1.8.5_ompi1.4.2
+    PAR_HDF5_DIR=$HDF5_DIR
+    PAR_HDF5_CLIB=$HDF5_CLIB
+    module unload hdf5
+    # Seq NetCDF 3 for bp2ncd
+    module load netcdf
+    export MPICC=mpicc
+    export MPICXX=mpiCC
+    export MPIFC=mpif90
+    if [ "$TARGET" == "pgi" ]; then
+        export CC=pgcc
+        export CXX=pgCC
+        export FC=pgf90
+        module swap pgi pgi/10.5
+    elif [ "$TARGET" == "gnu" ]; then
+        export CC=gcc
+        export CXX=g++
+        export FC=gfortran
+    else
+        echo "TARGET must be pgi or gnu"
+        exit 1
+    fi
+        
+    export CFLAGS="-g -fPIC" 
+    ./configure --prefix=/ccs/home/zf2/work/smoky \
+        --enable-dependency-tracking \
+        --with-mxml=/ccs/proj/e2e/pnorbert/mxml \
+        --enable-research-transports  \
+        --with-hdf5 \
+        --with-ibpbio=/ccs/home/zf2/work/smoky \
+        --with-ffs=/ccs/home/zf2/work/smoky \
+        --with-gen_thread=/ccs/home/zf2/work/smoky \
+        --with-datatap=/ccs/home/zf2/work/smoky 
+
+
+elif [ `hostname | cut -c 1-6` == "jaguar" -o `hostname | cut -c 1-7` == "chester" ]; then
+
+    BUILD_STAGING=true
+    if [ $BUILD_STAGING == "false" ]; then
+    
+        ##########
+        # Jaguar #
+        ##########
+        echo "Configure on JAGUAR"
+        export CC=cc
+        #export CFLAGS="-Wall -g" 
+        export FC=ftn
+        export CXX=CC
+        source /opt/modules/default/etc/modules.sh
+        module unload szip
+        module unload hdf5
+        module unload netcdf
+        module unload netcdf-hdf5parallel
+        module unload hdf5-parallel
+        module unload PrgEnv-gnu
+        module unload PrgEnv-pgi
+        module unload PrgEnv-intel
+        module unload PrgEnv-cray
+        module unload xt-papi
+        TARGET=pgi
+        module load PrgEnv-$TARGET
+        #module load szip
+        #module load xt-papi
+        module load mxml
+        # use the two lines below for openmpi
+        #export CC=mpicc
+        #export FC=mpif90
+        CFLAGS="-g -fPIC" ./configure --prefix=/ccs/home/zf2/work/pe.pgi \
+            --enable-dependency-tracking \
+            --with-mxml=/ccs/proj/e2e/pnorbert/mxml.xt5.$TARGET \
+            --without-portals 
+#            --enable-research-transports \
+#            --with-netcdf=/opt/cray/netcdf/3.6.2/netcdf-${TARGET} \
+#            --with-nc4par=/opt/cray/netcdf-hdf5parallel/4.0.1.3/netcdf-hdf5parallel-$TARGET \
+#            --with-phdf5=/opt/cray/hdf5-parallel/1.8.4.1/hdf5-parallel-$TARGET \
+#            --with-hdf5=/sw/xt5/hdf5/1.8.2/cnl2.1_gnu7.2.3 \
+#            --with-hdf5=/sw/xt5/hdf5/1.8.2/cnl2.1_gnu4.2.0 \
+            
+    else 
+    
+        ##########
+        # Jaguar #
+        ##########
+        echo "Configure on JAGUAR including staging methods"
+        export CC=cc
+        export FC=ftn
+        export CXX=CC
+        source /opt/modules/default/etc/modules.sh
+        module unload szip
+        module unload hdf5
+        module unload netcdf
+        module unload hdf5-parallel
+        module unload netcdf-hdf5parallel
+        module unload PrgEnv-gnu
+        module unload PrgEnv-pgi
+        module unload PrgEnv-intel
+        module unload PrgEnv-cray
+        module unload xt-papi
+        #module unload xtpe-quadcore
+        TARGET=pgi
+        module load PrgEnv-$TARGET
+        if [ "$TARGET" == "pgi" ]; then
+            module swap pgi pgi/10.4.0
+            # NSSI needs -pgcpplibs flag 
+            export LDFLAGS="-pgcpplibs" 
+        elif [ "$TARGET" == "gnu" ]; then
+            module load gcc/4.4.4
+            # NSSI needs libstdc++
+            export EXTRA_LIBS="/opt/gcc/4.4.4/snos/lib64/libstdc++.a"
+        fi
+     
+        # NOTE hdf5-parallel module does not work with C++ compiler
+        #module load hdf5-parallel
+        #module load netcdf-hdf5parallel
+        module load szip
+        module load xt-papi
+        module load mxml
+        # use the two lines below for openmpi
+        #module load ompi
+        #export CC=pgcc
+        #export FC=pgf90
+        #export MPICC=mpicc
+        #export MPICXX=mpiCC
+        #export MPIFC=mpif90
+
+        export CPPFLAGS="-DMPICH_IGNORE_CXX_SEEK" 
+        export CFLAGS="-fPIC -D__CRAYXT_COMPUTE_LINUX_TARGET" 
+        ./configure --prefix=/ccs/home/zf2/work/pe.pgi \
+        --enable-dependency-tracking \
+        --enable-research-transports  \
+        --with-portals=/opt/xt-pe/2.2.41A \
+        --with-mxml=/ccs/proj/e2e/pnorbert/mxml.xt5.$TARGET \
+        --with-ffs=/ccs/home/zf2/work/pe.pgi \
+        --with-gen_thread=/ccs/home/zf2/work/pe.pgi \
+        --with-datatap=/ccs/home/zf2/work/pe.pgi 
+        #--with-dmalloc=/ccs/proj/e2e/pnorbert/dmalloc.pgi
+        #--with-hdf5=/sw/xt5/hdf5/1.8.2/cnl2.1_gnu4.2.0 \
+        #--with-phdf5=/opt/cray/hdf5-parallel/1.8.4.1/hdf5-parallel-$TARGET \
+        #--with-dimes=/sw/xt5/adios/1.2.1/cnl2.2_pgi10.4/spaces
+        #--with-datatap=/ccs/proj/e2e/pnorbert/datatap/xt5/$TARGET \
+        #--with-dimes=/ccs/proj/e2e/pnorbert/spaces/$TARGET
+    
+    fi
+    
+elif [ `hostname | cut -c 1-4` == "euge" ]; then
+    ###################
+    # Eugene BlueGene #
+    ###################
+    echo "Configure on Eugene (BlueGene)"
+    export MPICC=mpixlc_r
+    export MPIFC=mpixlf90
+    export CFLAGS="-g -O0"
+    export FC=xlf90
+    export CC=xlc_r
+
+    source /etc/profile.d/modules.sh
+    # NetCDF 3 for bp2ncd
+    module load netcdf/3.6.2-linux
+    # Seq HDF5 for bp2h5 
+    module load hdf5/1.8.1-linux
+    # HDF5_DIR is not defined by this hdf5 module so we do it here
+    HDF5_DIR=/sw/bgp/hdf5/1.8.1/sles10.1_xlc9.0xlf11.1
+
+    ./configure --prefix=/ccs/proj/e2e/pnorbert/ADIOS/eugene \
+            --enable-dependency-tracking \
+            --with-mxml=/ccs/proj/e2e/adios/bgp \
+            --with-hdf5=$HDF5_DIR \
+            --with-hdf5-libs="$HDF5_CLIB" \
+            --without-phdf5
+
+
+elif [ `hostname | cut -c 1-4` == "lens" ]; then
+
+    ########
+    # Lens #
+    ########
+    echo "Configure on LENS"
+    export CC=mpicc
+    export CXX=mpiCC
+    source /etc/profile.d/modules.sh
+    module load hdf5
+    #module load netcdf
+    CFLAGS="-fPIC" ./configure --prefix=/ccs/proj/e2e/pnorbert/adios/lens \
+        --enable-dependency-tracking \
+        --with-mxml=/ccs/proj/e2e/pnorbert/mxml \
+        --without-netcdf
+        #--with-hdf5=/sw/analysis-x64/hdf5/1.6.7/sl5.0_pgi7.1.5_ompi1.2.6 \
+        #--with-netcdf=/sw/analysis-x64/netcdf/3.6.2/sl5.0_pgi7.1.5
+    
+    
+elif [ `hostname | cut -c 1-4` == "nid0" ]; then
+    ############
+    # Franklin #
+    ############
+    echo "Configure on FRANKLIN"
+    export CC=cc
+    export CXX=CC
+    export FC=ftn
+    module unload hdf5
+    module unload netcdf
+    module unload hdf5-parallel
+    module unload netcdf-hdf5parallel
+    module unload PrgEnv-gnu
+    module unload PrgEnv-pgi
+    module unload PrgEnv-pathscale
+    module unload PrgEnv-cray
+    TARGET=pgi
+    module load PrgEnv-$TARGET
+    if [ "${TARGET}" == "pgi" ]; then
+        module swap pgi pgi/10.5.0
+    fi
+    export LDFLAGS="-pgcpplibs"
+    export CPPFLAGS="-DMPICH_IGNORE_CXX_SEEK"
+    export CFLAGS="-fPIC"
+    #./configure --prefix=/project/projectdirs/m499/adios \
+    ./configure --prefix=/global/homes/p/pnorbert/adios \
+        --enable-dependency-tracking \
+        --with-mxml=$HOME/mxml \
+        --with-hdf5=/opt/cray/hdf5/1.8.4.1/hdf5-${TARGET} \
+        --with-netcdf=/opt/cray/netcdf/3.6.2/netcdf-${TARGET} \
+        --with-phdf5=/opt/cray/hdf5-parallel/1.8.4.1/hdf5-parallel-${TARGET} \
+        --with-nc4par=/opt/cray/netcdf-hdf5parallel/4.0.1.3/netcdf-hdf5parallel-${TARGET} \
+        --with-dart=/global/homes/p/pnorbert/dataspaces
+    
+elif [ `hostname | cut -c 1-4` == "dyn9" -o `hostname | cut -c 1-3` == "pnb" ]; then
+
+    #######
+    # Mac #
+    #######
+    echo "Configure on Mac"
+    # Installed MacPorts and GCC4.4 and OpenMPI 1.4.2 ports 
+    # But should work with default openmpi and gcc, using --disable-fortran
+    export CC=/opt/local/bin/gcc-mp-4.4
+    export FC=/opt/local/bin/gfortran-mp-4.4
+    export CXX=/opt/local/bin/g++-mp-4.4
+    export MPICC=/opt/local/bin/openmpicc
+    export MPIFC=/opt/local/bin/openmpif90
+    export MPICXX=/opt/local/bin/openmpicxx
+    CFLAGS="-DO_LARGEFILE=0 -fno-common" ./configure --prefix=/opt/adios \
+        --with-mxml=/opt/mxml \
+        --with-netcdf=/opt/netcdf \
+        --with-phdf5=/opt/hdf5
+
+elif [ `hostname | cut -c 1-7` == "ubuntu" ]; then
+
+    #########################
+    # Scott's ubuntu laptop #
+    #########################
+    echo "Configure on UBUNTU"
+    export CC=mpicc
+    ./configure --prefix=/usr/local/adios \
+        --enable-dependency-tracking \
+        --with-mxml=/usr/local/adios 
+        #--with-hdf5=/usr/local/hdf5-serial\
+        #--with-phdf5=/usr/local \
+        #--with-netcdf=/usr 
+
+elif [ `hostname | cut -c 1-6` == "tomato" ]; then
+
+    #########################
+    # Todd's ubuntu laptop #
+    #########################
+    echo "Configure on UBUNTU"
+    export CC=mpicc
+    ./configure --prefix=/home/thkorde/local \
+        --enable-dependency-tracking \
+        --with-mxml=/home/thkorde/local \
+        --with-phdf5=/home/thkorde/local \
+        --with-hdf5=/home/thkorde/local \
+        --with-netcdf=/home/thkorde/local
+
+else
+    echo "Could not determine what machine is this"
+    echo "This script is for configuring adios on the authors' machines"
+    echo "You can study it to figure out how to configure adios on your system"
+fi
+    
+    
+    

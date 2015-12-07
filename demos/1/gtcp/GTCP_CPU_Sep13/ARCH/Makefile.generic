@@ -1,0 +1,19 @@
+# Define the following to 1 to enable build
+BENCH_GTC_MPI = 1
+BENCH_CHARGEI_PTHREADS = 0
+BENCH_PUSHI_PTHREADS = 0
+BENCH_SERIAL = 0
+
+CC = mpicc
+MPICC = mpicc
+#-fopenmp
+CFLAGS = -g -Wall -Wextra -pedantic -std=gnu99 -DUSE_MPI=1 -DUSE_ADIOS=1 -I$(HOME)/work/chama/include
+COPTFLAGS = -O0
+CDEPFLAGS = -MD 
+CLDFLAGS = -L$(HOME)/work/chama/lib -ladios -lmxml -lm
+
+EXEEXT = _sith_gcc_debug
+
+AR = ar
+ARCRFLAGS = cr
+RANLIB = ranlib

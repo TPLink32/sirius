@@ -1,0 +1,832 @@
+/*
+ * ADIOS chunk read interface with ibpbio as underlying transport
+ *
+ */
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <pthread.h>
+#ifdef _NOMPI
+/* Sequential processes can use the library compiled with -D_NOMPI */
+#include "mpidummy.h"
+#define MPI_SUM 0
+#else
+/* Parallel applications should use MPI to communicate file info and slices of data */
+#include "mpi.h"
+#endif
+#include "get_clock.h"
+#include "adios_types.h"
+#include "thin_ib.h"
+#include "read_ib.h"
+
+// for thread pinning
+#include <sched.h>
+
+// NOTE: hack
+#include "gts_particle.h"
+FMFormat gts_particle_format = NULL;
+
+// for Timing
+FILE *server_timing_file = NULL;
+FILE *file_timing_file = NULL;
+
+// global bookkeeping data for IBPBIO transport at reader side
+ib_read_method_data_t ib_mdata = NULL;
+
+// number of nodes this reader program is running on
+int num_nodes;
+
+// application id
+int app_id = -1;
+
+int get_application_id()
+{
+    return app_id;
+}
+
+void set_application_id(int id)
+{
+    app_id = id;
+}
+
+/*
+ * GTS filters
+ */
+int unit_conversion(void *data, int length)
+{
+    gts_particles_t gts_data = (gts_particles_t) data;
+    double *zion = gts_data->zion;
+    int mi = gts_data->mi;
+
+fprintf(stderr, "new timestep1111 %s:%d\n", __FILE__,__LINE__);
+    int i;
+    for(i = 0; i < mi; i += 7) {
+        zion[i] *= 1000; 
+        zion[i+1] *= 1000;
+        zion[i+2] *= 1000;
+    }
+
+fprintf(stderr, "new timestep1111 %s:%d\n", __FILE__,__LINE__);
+    return 0;
+}
+
+int sampling(void *data, int length, double **result)
+{
+    gts_particles_t gts_data = (gts_particles_t) data;
+    double *zion = gts_data->zion;
+    int mi = gts_data->mi;
+    
+    int num_samples = mi / 100;
+    double *samples = (double *) malloc(num_samples * sizeof(double));
+    if(!samples) {
+        *result = NULL;
+        return -1;
+    }
+    
+    int i;
+    for(i = 0; i < mi; i += 100) {
+        samples[i/100] = zion[i];
+    }
+    *result = samples;
+    return num_samples;
+}
+
+int range_query(void *data, int length, double upper, double lower, double **result)
+{
+    gts_particles_t gts_data = (gts_particles_t) data;
+    double *zion = gts_data->zion;
+    int mi = gts_data->mi;
+
+    double *r = (double *) malloc(mi * sizeof(double));
+    if(!r) {
+        *result = NULL;
+        return -1;
+    }
+
+    int i, j;
+    for(i = 0, j = 0; i < mi; i ++) {
+        if(zion[i] >= lower && zion[i] <= upper) {
+            r[j] = zion[i];
+            j ++;
+        }
+    }
+    *result = r;
+    return j;
+}
+
+
+/*
+ * call back function invoked by IBPBIO every time it receives a pg from
+ * a client
+ */
+void data_handler(void *data, int length, void *user_data, 
+                  void *attr, void *timing, void *r)
+{
+    request *req = (request *)r;
+    recvtime *rt = (recvtime *)timing;
+    IOhandle *h = (IOhandle *)user_data;
+    elapsedtime *e = updateTimes(h, rt, length);
+
+//fprintf(stderr, "new message %d rank %d\n", req->timestep, req->rank);
+    if(req->timestep == -1) {  // End of File message
+        // TODO: find all those files written by this writer and mark them as EOF
+        file_index_ib_t fidx = ib_mdata->file_index;
+        pthread_mutex_lock(&(fidx->lock));
+        file_info_ib_t f = fidx->files;
+        int i;
+        for(i = 0; i < fidx->next; i ++, f ++) {
+            file_timestep_ib_t tstep = &(f->timesteps[(f->timestep+1) % f->max_num_timesteps]);
+            // TODO: check if reader is reading   
+
+            // wait for reader to release the slot
+            while(tstep->state == timestep_state_reading) { }
+            if(tstep->num_pgs_incoming == 0) { // first eof message
+//fprintf(stderr, "first eof message\n");
+                tstep->state = timestep_state_incoming; // mark as being written
+                tstep->tidx = -1;
+                tstep->num_pgs = f->num_pgs;
+                tstep->num_pgs_incoming = 1;
+            }
+            else {
+                tstep->num_pgs_incoming ++;
+//fprintf(stderr, "eof message %d \n", tstep->num_pgs_incoming );
+            }
+
+            if(tstep->num_pgs_incoming == tstep->num_pgs) {
+                tstep->state = timestep_state_eof;
+                f->state = file_state_eof;
+            }
+        }
+        pthread_cond_signal(&(fidx->cond));                  
+        pthread_mutex_unlock(&(fidx->lock));
+        return;
+    }
+
+    // insert the data into the queue
+    rt->startDecode = get_cycles();
+
+    int decoded_length = FFS_est_decode_length(h->iocontext, data, length);
+
+    // TODO: make sure we free this later 
+    char *decoded_data = (char *)malloc(decoded_length);
+
+    if(!decoded_data) {
+        fprintf(stderr, "Cannot allocate memory. %s:%d\n", __FILE__, __LINE__);
+        exit(-1);
+    }
+
+    // TODO: this should be done only once?
+    FFSTypeHandle ffshandle = FFSTypeHandle_from_encode(h->iocontext, data);
+    FMFormat form = FMFormat_of_original(ffshandle);
+
+// TODO: hack it
+//    FMStructDescList var_list = get_localized_formats(form);
+    FMStructDescList var_list = hack_gts_particles_format_list;
+
+    establish_conversion(h->iocontext, ffshandle, var_list);
+    FFSdecode_to_buffer(h->iocontext, data, decoded_data);
+
+    // The encoded data buffer can be recycled now
+    EVthin_ib_returnbuffer(h, data);
+
+    rt->endDecode = get_cycles();
+//fprintf(stderr, "new timestep1111 %d %s:%d\n", req->timestep,__FILE__,__LINE__);
+
+
+    // call filters
+    unit_conversion(decoded_data, decoded_length);
+
+
+
+    // file meta-data
+    file_info_ib_t f = ib_mdata->file_index->files;
+    int i;
+    int is_newfile = 1;
+    for(i = 0; i < ib_mdata->file_index->next; i ++, f ++) {
+//fprintf(stderr, "new timestep1111 %d %s:%d\n", req->timestep,__FILE__,__LINE__);
+        if(f->state == file_state_ready) {
+//fprintf(stderr, "new timestep1111 %d %s:%d\n", req->timestep,__FILE__,__LINE__);
+            if(!strcmp(f->fname, req->fname)) { 
+//fprintf(stderr, "new timestep1111 %d %s:%d\n", req->timestep,__FILE__,__LINE__);
+                // we have seen this file before, go to timestep level
+                is_newfile = 0;
+                break;
+            } 
+        }
+        else if(f->state == file_state_eof) {
+//fprintf(stderr, "new timestep1111 %d %s:%d\n", req->timestep,__FILE__,__LINE__);
+
+        }
+    }
+
+//fprintf(stderr, "new timestep1111 %d %s:%d\n", req->timestep,__FILE__,__LINE__);
+    if(is_newfile) { // first pg of a new file
+//fprintf(stderr, "new timestep1111 %d %s:%d\n", req->timestep,__FILE__,__LINE__);
+        file_index_ib_t fidx = ib_mdata->file_index;      
+        pthread_mutex_lock(&(fidx->lock));
+        if(fidx->next < fidx->max_num_files) {    
+//fprintf(stderr, "new timestep1111 %d %s:%d\n", req->timestep,__FILE__,__LINE__);
+            f = &(fidx->files[fidx->next]);
+            strcpy(f->fname, req->fname);            
+            strcpy(f->gname, req->gname);            
+            f->state = file_state_ready;  
+            f->host_language_fortran = req->host_language_fortran;
+            f->num_writers = req->groupsize;
+
+            // TODO: writer to reader mapping
+            f->num_pgs = f->num_writers / ib_mdata->dt_comm_size;   
+            f->tidx_start = req->timestep;
+            f->timestep = req->timestep;
+            f->ntimesteps = 1;
+            f->lasttimestep = req->timestep; 
+
+            fidx->next ++;
+            pthread_cond_signal(&(fidx->cond));
+            pthread_mutex_unlock(&(fidx->lock));
+        }
+        else { // reach the limit
+            fprintf(stderr, "reach the maximum number of files. %s:%d\n", __FILE__, __LINE__);
+            pthread_mutex_unlock(&(fidx->lock));
+            exit(-1); 
+        }  
+    }
+
+//fprintf(stderr, "new timestep1111 %d %s:%d\n", req->timestep,__FILE__,__LINE__);
+    // go to timestep level
+    file_timestep_ib_t tstep;
+    tstep = &(f->timesteps[f->timestep % f->max_num_timesteps]);
+
+    // wait for reader to release the slot
+    while(tstep->state == timestep_state_reading) { }
+
+    if(tstep->num_pgs_incoming > 0) { // existing timestep
+//fprintf(stderr, "new timestep1111 %d %s:%d\n", req->timestep,__FILE__,__LINE__);
+        tstep->num_pgs_incoming ++;
+    }
+    else { // first pg of a new timestep
+//fprintf(stderr, "new timestep %d \n", req->timestep);
+        // advance timestep index at dt server thread side
+        tstep->state = timestep_state_incoming; // mark as being written
+        f->timestep = req->timestep;
+        tstep->tidx = req->timestep;
+        tstep->num_pgs = f->num_pgs;
+        tstep->num_pgs_incoming = 1;
+        
+        // TODO: pre-allocate ?
+        if(!tstep->pgs) {
+            tstep->pgs = (pg_info_ib_t) malloc(tstep->num_pgs * sizeof(pg_info_ib));
+            if(!tstep->pgs) {
+                fprintf(stderr, "cannot allocate memory. %s:%d\n", __FILE__, __LINE__);
+                exit(-1); 
+            }
+        }       
+
+        tstep->create_time = getlocaltime();
+    }
+//fprintf(stderr, "new timestep1111 %d %s:%d\n", req->timestep,__FILE__,__LINE__);
+
+    pg_info_ib_t pg = &(tstep->pgs[tstep->num_pgs_incoming - 1]);
+    pg->rank = req->rank;
+    pg->length = decoded_length;
+    pg->data = decoded_data;
+    pg->var_list = var_list;
+    pg->num_vars = 0; // TODO
+    pg->vars = NULL;  // TODO
+
+    if(tstep->num_pgs_incoming == tstep->num_pgs) {
+//fprintf(stderr, "new timestep ready %d \n", req->timestep);
+        tstep->ready_time = getlocaltime();
+        tstep->state = timestep_state_ready;
+    }
+//fprintf(stderr, "new timestep1111 %d %s:%d\n", req->timestep,__FILE__,__LINE__);
+
+    rt->completeCallBack = get_cycles();
+
+    fprintf(server_timing_file, "%llu\t%llu\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n",
+                        e->recvcount, 
+                        length, 
+                        req->rank,
+                        e->MHZ,
+                        rt->recvRequest/(e->MHZ*1024*1024),
+                        (rt->sendDataRead - rt->recvRequest)/(e->MHZ*1024*1024),
+                        (rt->completeDataRead - rt->sendDataRead)/(e->MHZ*1024*1024),
+                        (rt->sendReply - rt->completeDataRead)/(e->MHZ*1024*1024),
+                        (rt->endDecode - rt->startDecode)/(e->MHZ*1024*1024),
+                        (rt->completeCallBack - rt->endDecode)/(e->MHZ*1024*1024)
+           );
+    fflush(server_timing_file);
+}
+
+file_index_ib_t create_file_index(int max_num_files, int max_num_timesteps)
+{
+    file_index_ib_t fidx = (file_index_ib_t) malloc(sizeof(file_index_ib));
+    if(!fidx) {
+        fprintf(stderr, "cannot allocate memory. %s:%d\n", __FILE__, __LINE__);
+        return NULL;
+    }
+
+    // TODO: parameters
+    fidx->max_num_files = max_num_files;
+    fidx->next = 0;
+    pthread_mutex_init(&(fidx->lock), NULL);
+    pthread_cond_init(&(fidx->cond), NULL);
+    fidx->files = (file_info_ib_t)
+        malloc(fidx->max_num_files * sizeof(file_info_ib));
+    if(!fidx->files) {
+        fprintf(stderr, "cannot allocate memory. %s:%d\n", __FILE__, __LINE__);
+        return NULL;
+    }
+    int i;
+    file_info_ib_t f = fidx->files;
+    for(i = 0; i < fidx->max_num_files; i ++) {
+        f[i].fname[0] = '\0';
+        f[i].gname[0] = '\0';
+        f[i].state = file_state_unavail;
+        f[i].max_num_timesteps = MAX_NUM_TIMESTEPS;
+
+        f[i].timesteps = (file_timestep_ib_t)
+            malloc(f[i].max_num_timesteps * sizeof(file_timestep_ib));
+        if(!f[i].timesteps) {
+            fprintf(stderr, "cannot allocate memory. %s:%d\n", __FILE__, __LINE__);
+            return NULL;
+        }
+        file_timestep_ib_t ti = f[i].timesteps;
+        int j;
+        for(j = 0; j < f[i].max_num_timesteps; j ++) {
+            ti[j].state = timestep_state_unavail;
+            ti[j].pgs = NULL;
+            ti[j].num_pgs_incoming = 0;
+        }
+    }
+    return fidx;
+}
+
+void destroy_file_index(file_index_ib_t fidx)
+{
+    int i;
+    file_info_ib_t f = fidx->files;
+    for(i = 0; i < fidx->max_num_files; i ++) {
+        free(f[i].timesteps);
+    }
+    free(fidx->files);
+    pthread_cond_destroy(&(fidx->cond));
+    pthread_mutex_destroy(&(fidx->lock));
+    free(fidx);
+}
+
+/*
+ * network polling thread function
+ */
+void * dt_server_thread_func(void *arg)
+{
+    MPI_Comm orig_comm = (MPI_Comm) arg;
+
+    // TODO: pin thread
+
+#if 0 // open-mpi
+    // duplicate a MPI communicator for synchronization between dt servers
+    int rc = MPI_Comm_dup(orig_comm, &(ib_mdata->dt_comm));
+    if(rc != MPI_SUCCESS) {
+        error(err_unspecified, "Cannot duplicate communicator for Datatap.");
+        pthread_exit(NULL);
+    }
+#else
+    ib_mdata->dt_comm = orig_comm;
+#endif
+
+#ifdef _NOMPI
+    ib_mdata->dt_comm_size = 1;
+    ib_mdata->dt_comm_rank = 0;
+#else
+    MPI_Comm_dup(orig_comm, &(ib_mdata->dt_comm));
+    MPI_Comm_size(ib_mdata->dt_comm, &(ib_mdata->dt_comm_size));
+    MPI_Comm_rank(ib_mdata->dt_comm, &(ib_mdata->dt_comm_rank));
+#endif
+
+    // pin thread
+    int num_nodes;
+    char *temp_string = getenv("NUM_STAGING_NODES");
+    if(temp_string) {
+        num_nodes = atoi(temp_string);
+    }
+    else {
+        fprintf(stderr, "environment variable NUM_NODES is not set.\n");
+        num_nodes = 64;
+    }
+    int byslot = 1;
+
+    // TODO: have some rule to determine the core id according to
+    // node topology, mpi rank, number of reader processes per node, etc.
+    // here we use a simple rule: sequentially assign to each numa domain
+    int num_readers_per_node = ib_mdata->dt_comm_size / num_nodes;
+    int id_on_node;
+    if(byslot) {
+        id_on_node = ib_mdata->dt_comm_rank % num_readers_per_node;
+    }
+    else {
+        id_on_node = ib_mdata->dt_comm_rank / num_readers_per_node;
+    }
+    int core_id = id_on_node * 2;
+
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+    CPU_SET(core_id, &cpuset);
+    int rc = sched_setaffinity(0, sizeof(cpu_set_t), &cpuset);
+    if(rc) {
+        fprintf(stderr, "cannot set application thread affinity\n");
+        perror("sched_setaffinity");
+    }
+fprintf(stderr, "set dt server thread %d on core %d\n", ib_mdata->dt_comm_rank, core_id);
+    int appid;
+    appid = get_application_id();
+
+    // TODO: pass parameters through env vars
+    ib_mdata->file_index = create_file_index(MAX_NUM_FILES, MAX_NUM_TIMESTEPS);
+
+    // for dt server timing
+    char name_buffer[30];
+    sprintf(name_buffer, "dt_server_timing.%d.%d\0", appid, ib_mdata->dt_comm_rank);
+    server_timing_file = fopen(name_buffer, "w");
+    if(!server_timing_file) {
+        fprintf(stderr, "cannot open file %s.\n", name_buffer);
+        exit(-1);
+    }
+    sprintf(name_buffer, "dt_file_timing.%d.%d\0", appid, ib_mdata->dt_comm_rank);
+    file_timing_file = fopen(name_buffer, "w");
+    if(!file_timing_file) {
+        fprintf(stderr, "cannot open file %s.\n", name_buffer);
+        exit(-1);
+    }
+
+    // initialize ibpbio interface
+    ib_mdata->dt_cm = CManager_create();
+    CMlisten_specific(ib_mdata->dt_cm, NULL);
+
+    lrand48();
+    ib_mdata->dt_handle = EVthin_ib_listen(ib_mdata->dt_cm, NULL, 1, data_handler, ib_mdata->dt_comm);
+
+    // dt server(rank 0) gather contact info from other servers and write to
+    // a file so upstream writers can connect to this application
+//    EVthin_ib_writeParam(param_file, ib_mdata->dt_handle);
+
+    ib_mdata->dt_server_ready = 1;
+
+// NOTE: ffs server is down, so we hack the format here
+    gts_particle_format = 
+        register_data_format(FMContext_from_FFS(ib_mdata->dt_handle->iocontext), 
+                             hack_gts_particles_format_list);
+
+
+    // serve the network
+    CMrun_network(ib_mdata->dt_cm);
+
+    // TODO: cleanup and exit
+    CManager_close(ib_mdata->dt_cm);
+    MPI_Comm_free(&(ib_mdata->dt_comm));
+    return NULL;
+}
+
+/*
+ * initialize IB transport
+ */
+int ib_initialize(MPI_Comm comm, int is_threaded)
+{
+    ib_read_method_data_t m = (ib_read_method_data_t) 
+        malloc(sizeof(ib_read_method_data));
+    if(!m) {
+        fprintf(stderr, "cannot allocate memory. %s:%d\n", __FILE__, __LINE__);
+        return -1;
+    }
+    memset(m, 0, sizeof(ib_read_method_data));
+    ib_mdata = m;
+ 
+    // for FFS encoding   
+//    setenv("CMSelfFormats", "1", 1);
+
+    gen_pthread_init();
+
+    ib_mdata->is_threaded = is_threaded;
+    if(is_threaded) { // fork a seperate thread to poll network
+        // fork a separate thread to poll network
+        int rc = pthread_create(&(ib_mdata->dt_server_thread), NULL,
+                                dt_server_thread_func, (void *)comm);
+        if(rc) {
+            free(ib_mdata);
+            ib_mdata = NULL;
+            fprintf(stderr, "Failed to create Datatap server thread.\n");
+            return -1;
+        }
+
+        // wait until the dt server thread is ready
+        while(!ib_mdata->dt_server_ready) { }
+
+        char param_file[30];
+        int appid;
+        appid = get_application_id();
+        if(appid == -1) {
+            fprintf(stderr, "Application ID was not set.\n");
+            sprintf(param_file, "datatap_param\0");
+        }
+        else {
+            sprintf(param_file, "datatap_param%d\0", appid);
+        }
+
+        EVthin_ib_writeParam(param_file, ib_mdata->dt_handle);
+
+    }
+    else { // the calling thread itself will poll network
+#if 0 // open-mpi
+        // duplicate a MPI communicator for synchronization between dt servers
+        int rc = MPI_Comm_dup(orig_comm, &(ib_mdata->dt_comm));
+        if(rc != MPI_SUCCESS) {
+            error(err_unspecified, "Cannot duplicate communicator for Datatap.");
+            pthread_exit(NULL);
+        }
+#else
+        ib_mdata->dt_comm = comm;
+#endif
+
+#ifdef _NOMPI
+        ib_mdata->dt_comm_size = 1;
+        ib_mdata->dt_comm_rank = 0;
+#else
+        MPI_Comm_size(ib_mdata->dt_comm, &(ib_mdata->dt_comm_size));
+        MPI_Comm_rank(ib_mdata->dt_comm, &(ib_mdata->dt_comm_rank));
+#endif
+
+        char param_file[30];
+        int appid;
+        appid = get_application_id();
+        if(appid == -1) {
+            fprintf(stderr, "Application ID was not set.\n");
+            sprintf(param_file, "datatap_param\0");
+        }
+        else {
+            sprintf(param_file, "datatap_param%d\0", appid);
+        }
+
+        // TODO: pass parameters through env vars
+        ib_mdata->file_index = create_file_index(MAX_NUM_FILES, MAX_NUM_TIMESTEPS);
+
+        // for dt server timing
+        char name_buffer[30];
+        sprintf(name_buffer, "dt_server_timing.%d.%d\0", appid, ib_mdata->dt_comm_rank);
+        server_timing_file = fopen(name_buffer, "w");
+        if(!server_timing_file) {
+            fprintf(stderr, "cannot open file %s.\n", name_buffer);
+            exit(-1);
+        }
+        sprintf(name_buffer, "dt_file_timing.%d.%d\0", appid, ib_mdata->dt_comm_rank);
+        file_timing_file = fopen(name_buffer, "w");
+        if(!file_timing_file) {
+            fprintf(stderr, "cannot open file %s.\n", name_buffer);
+            exit(-1);
+        }
+
+        ib_mdata->dt_cm = CManager_create();
+        CMlisten_specific(ib_mdata->dt_cm, NULL);
+        ib_mdata->dt_server_thread = pthread_self();
+
+        lrand48();
+        ib_mdata->dt_handle = EVthin_ib_listen(ib_mdata->dt_cm, NULL, 1, 
+            data_handler, ib_mdata->dt_comm);
+        EVthin_ib_writeParam(param_file, ib_mdata->dt_handle);
+
+        ib_mdata->dt_server_ready = 1;
+        // TODO: we need to call check_new_connection() in fopen or get_new_timestep()
+    }
+
+    ib_mdata->initialized = 1;
+    return 0;
+}
+
+int adios_read_ib_init(MPI_Comm comm)
+{
+    if(ib_mdata && ib_mdata->initialized) {
+        return 0;
+    }
+
+    // NOTE: get threading through environment variables
+    int is_threaded;
+    char *temp = getenv("READ_IB_THREADED");
+    if(temp) {
+        is_threaded = atoi(temp);
+    }
+    else {
+        is_threaded = IS_THREADED;  
+    }
+    return ib_initialize(comm, is_threaded);
+}
+
+/*
+ * finalize IB transport
+ */
+int adios_read_ib_finalize()
+{
+    // make sure all files are closed
+    if(ib_mdata->is_threaded) {
+        // notify and wait for dt server thread to exit
+        ib_stop_server(ib_mdata->dt_handle);
+        pthread_join(ib_mdata->dt_server_thread, NULL);
+        fclose(server_timing_file);
+        fclose(file_timing_file);
+    }
+    else {
+        // TODO: cleanup ibpbio
+        CManager_close(ib_mdata->dt_cm);
+    }
+    destroy_file_index(ib_mdata->file_index);
+    free(ib_mdata);
+    ib_mdata = NULL;
+    return 0;
+}
+
+/*
+ * open file for read
+ * this will be called only once for the first timestep
+ */
+ib_read_file_data *adios_read_ib_fopen(char *fname, MPI_Comm comm, int blocking)
+{
+    ib_read_file_data *f = (ib_read_file_data *) 
+        malloc(sizeof(ib_read_file_data));
+    if(!f) {
+        fprintf(stderr, "cannot allocate memory. %s:%d\n", __FILE__, __LINE__);
+        return NULL;
+    }
+    f->comm = comm;
+    MPI_Comm_rank(comm, &f->my_rank);
+    MPI_Comm_size(comm, &f->comm_size);
+
+    file_info_ib_t f_info;
+    file_timestep_ib_t timestep;
+    int max_num_timesteps;
+
+    // look up file
+    file_index_ib_t fidx = ib_mdata->file_index;
+    int found = 0;
+    pthread_mutex_lock(&(fidx->lock));
+    while(1) {
+        int i;
+        f_info = fidx->files;
+        for(i = 0; i < fidx->next; i ++, f ++) {
+            if(f_info[i].state == file_state_ready && !strcmp(f_info[i].fname, fname)) { // found
+                pthread_mutex_unlock(&(fidx->lock));
+                f->f_info = f_info;
+                f->current_tidx = f_info->tidx_start;
+                f->max_num_timesteps = f_info->max_num_timesteps;
+                f->timestep = &(f_info->timesteps[f->current_tidx % f->max_num_timesteps]);
+                found = 1;
+                break;
+            }
+        } 
+        if(found) {
+            break;
+        }
+        else {
+            if(blocking) { 
+                pthread_cond_wait(&(fidx->cond), &(fidx->lock));
+            }
+            else {
+                pthread_mutex_unlock(&(fidx->lock));
+                free(f); // TODO: allocate only when file has been found
+                return NULL;
+            }
+        }
+    }
+    
+    return f;
+}	
+ 
+/*
+ * close file
+ * this will be called only once when reader finishes reading the file
+ */
+int adios_read_ib_fclose(ib_read_file_data *f)
+{
+    // TODO: cleanup; timesteps should be freed in adios_read_ib_finalize()
+    f->f_info->state = file_state_done;
+    free(f);
+    return 0;
+}
+ 
+/*
+ * open new timestep
+ * NOTE: this function blocks until new timestep is available or EOF is reached
+ * return: 0: got new timestep successfully
+ *         1: reach EOF
+ *        -1: error
+ */
+int adios_read_ib_get_timestep(ib_read_file_data *f, int tidx)
+{
+    // TODO: ignore tidx and read timestep sequentially
+    // wait for current timestep to be ready
+    while(1) {
+        // TODO: atmotic operation
+        enum TIMESTEP_STATE_IB s = f->timestep->state;
+        if(s == timestep_state_ready) {
+            f->timestep->state = timestep_state_reading;
+            f->timestep->open_time = getlocaltime();
+//fprintf(stderr, "im here tidx %d get new timestep\n", tidx);
+            return 0;
+        }
+        else if(s == timestep_state_eof) { // End of File
+//fprintf(stderr, "im here tidx %d eof\n", tidx);
+            return 1;    
+        }
+    }
+}
+
+/*
+ * test if new timestep is available
+ * NOTE: obsolete
+ */
+int adios_read_ib_is_timestep_ready(ib_read_file_data *f, int tidx)
+{
+    return (f->timestep->state == timestep_state_ready);
+}
+
+/*
+ * mark current timestep of pg as been read
+ */
+void adios_read_ib_release_pg(pg_info_ib_t pg)
+{
+    // free decoded data
+    // TODO: better memory management
+    free(pg->data);
+    pg->data = NULL;
+    pg->length = 0;
+//    free(pg->var_list); // TODO: keep it for reuse?
+//    pg->var_list = NULL;
+    // TODO
+    if(pg->vars) {
+        free(pg->vars);
+    }
+    pg->vars = NULL;
+    pg->num_vars = 0;
+}
+
+/*
+ * mark current timestep of whole file as been read
+ */
+int adios_read_ib_advance_timestep(ib_read_file_data *f)
+{
+    // record timing of the file
+    f->timestep->release_time = getlocaltime();
+    fprintf(file_timing_file, "%d\t%f\t%f\t%f\t%f\n",
+            f->current_tidx,
+            f->timestep->create_time,
+            f->timestep->ready_time,
+            f->timestep->open_time,
+            f->timestep->release_time
+            );
+    fflush(file_timing_file);
+
+    int i;
+    for(i = 0; i < f->timestep->num_pgs; i ++) {
+        // TODO: dynamic memory management
+        f->timestep->num_pgs_incoming = 0;
+        if(f->timestep->pgs[i].data) {
+            free(f->timestep->pgs[i].data);
+        }
+        f->timestep->pgs[i].data = NULL;
+        f->timestep->pgs[i].length = 0;
+//        free(f->timestep->pgs[i].var_list); 
+//        f->timestep->pgs[i].var_list = NULL;
+        if(f->timestep->pgs[i].vars) {
+            free(f->timestep->pgs[i].vars);
+        }
+        f->timestep->pgs[i].vars = NULL;
+        f->timestep->pgs[i].num_vars = 0;
+    }
+
+    // mark timestep as been read
+//fprintf(stderr, "advance timestep %d\n",f->current_tidx);
+    f->timestep->state = timestep_state_unavail;
+    f->current_tidx = (f->current_tidx+1) % f->max_num_timesteps;
+    f->timestep = &(f->f_info->timesteps[f->current_tidx]);
+    return 0;
+}
+
+/*
+ * return handle of a variable inside a pg
+ *
+ */
+void *adios_read_ib_get_var_byname(pg_info_ib_t pg, char *varname)
+{
+    FMField *f = pg->var_list->field_list;
+//fprintf(stderr, "var list addr %p %p variable %s\n",pg->var_list, f, varname);
+    while (f->field_name != NULL) {
+        if(!strcmp(varname, f->field_name)) {
+            // TODO: distinguish scalar and array
+            void *addr = (void *)(pg->data + f->field_offset);
+            return addr;
+        }
+        else {
+            f++;
+        }
+    }
+    fprintf(stderr, "cannot find variable %s\n", varname);
+    return NULL;
+}
+

@@ -1,0 +1,24 @@
+CC= mpicc
+CXX= mpiCC
+
+all: analyp mpi histogram
+
+analyp: Compsnd.c Comprcv.c Analyp.c gts_particle.h Analyp.h
+	gcc -g -L ${HOME}/work/smokylib/ -I ${HOME}/work/smoky/include/ -levpath -lpthread -o ./Compsnd ./Analyp.c ./Compsnd.c
+	gcc -g -L ${HOME}/work/smoky/lib/ -I ${HOME}/work/smoky/include/ -levpath -lpthread -o ./Comprcv ./Comprcv.c
+
+mpi:
+#	mpicc -g -L ${HOME}/work/smoky/lib/ -I ${HOME}/work/smoky/include/ -levpath -o Mpiquery ./Analyp.c ./Scanfilter.c Mpiquery.c
+	mpicc -g -L ${HOME}/work/smoky/lib/ -I ${HOME}/work/smoky/include/ -levpath -c ./Analyp.c ./Scanfilter.c Mpiquery.c
+	ar crvs librangequery.a ./Analyp.o ./Scanfilter.o Mpiquery.o
+	ranlib librangequery.a      
+	cp librangequery.a ${HOME}/work/smoky/lib
+
+histogram: Analyp.c gts_particle.h ./Scanfilter.c histogram.c inline.c
+	mpicc -g -I ${HOME}/work/smoky/include/  -c ./Analyp.c ./Scanfilter.c histogram.c inline.c 
+	ar crvs libhistogram.a ./Analyp.o ./Scanfilter.o histogram.o inline.o
+	ranlib libhistogram.a
+	cp libhistogram.a ${HOME}/work/smoky/lib
+
+clean:
+	rm Compsnd Comprcv *.o 

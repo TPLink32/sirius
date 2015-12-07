@@ -1,0 +1,47 @@
+adios_groupsize = 0
+adios_totalsize = 0
+call adios_group_size (adios_handle, adios_groupsize, adios_totalsize, adios_err)
+adios_buf_size = 4
+call adios_read (adios_handle, "gndx", gndx, adios_buf_size, adios_err)
+adios_buf_size = 4
+call adios_read (adios_handle, "gndy", gndy, adios_buf_size, adios_err)
+adios_buf_size = 4
+call adios_read (adios_handle, "gndz", gndz, adios_buf_size, adios_err)
+adios_buf_size = 4
+call adios_read (adios_handle, "nproc", nproc, adios_buf_size, adios_err)
+adios_buf_size = 4
+call adios_read (adios_handle, "npx", npx, adios_buf_size, adios_err)
+adios_buf_size = 4
+call adios_read (adios_handle, "npy", npy, adios_buf_size, adios_err)
+adios_buf_size = 4
+call adios_read (adios_handle, "npz", npz, adios_buf_size, adios_err)
+adios_buf_size = 4
+call adios_read (adios_handle, "offx", offx, adios_buf_size, adios_err)
+adios_buf_size = 4
+call adios_read (adios_handle, "offy", offy, adios_buf_size, adios_err)
+adios_buf_size = 4
+call adios_read (adios_handle, "offz", offz, adios_buf_size, adios_err)
+adios_buf_size = 4
+call adios_read (adios_handle, "ndx", ndx, adios_buf_size, adios_err)
+adios_buf_size = 4
+call adios_read (adios_handle, "ndy", ndy, adios_buf_size, adios_err)
+adios_buf_size = 4
+call adios_read (adios_handle, "ndz", ndz, adios_buf_size, adios_err)
+adios_buf_size = 8 * (ndx) * (ndy) * (ndz)
+call adios_read (adios_handle, "var1", double_xyz, adios_buf_size, adios_err)
+adios_buf_size = 8 * (ndx) * (ndy) * (ndz)
+call adios_read (adios_handle, "var2", double_xyz, adios_buf_size, adios_err)
+adios_buf_size = 8 * (ndx) * (ndy) * (ndz)
+call adios_read (adios_handle, "var3", double_xyz, adios_buf_size, adios_err)
+adios_buf_size = 8 * (ndx) * (ndy) * (ndz)
+call adios_read (adios_handle, "var4", double_xyz, adios_buf_size, adios_err)
+adios_buf_size = 8 * (ndx) * (ndy) * (ndz)
+call adios_read (adios_handle, "var5", double_xyz, adios_buf_size, adios_err)
+adios_buf_size = 8 * (ndx) * (ndy) * (ndz)
+call adios_read (adios_handle, "var6", double_xyz, adios_buf_size, adios_err)
+adios_buf_size = 8 * (ndx) * (ndy) * (ndz)
+call adios_read (adios_handle, "var7", double_xyz, adios_buf_size, adios_err)
+adios_buf_size = 8 * (ndx) * (ndy) * (ndz)
+call adios_read (adios_handle, "var8", double_xyz, adios_buf_size, adios_err)
+adios_buf_size = 8 * (ndx) * (ndy) * (ndz)
+call adios_read (adios_handle, "var9", double_xyz, adios_buf_size, adios_err)
