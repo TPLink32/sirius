@@ -1,0 +1,5 @@
+<relationship name=“r1” type=“access together”/>
+<var name=“primary var” gwrite=“p” type="double" dimensions="1,NX” Priority=“2”, relationship=“r1”/>
+<var name=“mesh” gwrite=“m” type="double" dimensions="1,NX” Priority=“2”, relationship=“r1”/>
+<var name=“derived var” gwrite=“d" type="double" dimensions="1,NX” Priority=“1”/>
+
