@@ -1,0 +1,13 @@
+New features beyond ADIOS:
+
+For Writing:
+1. Ability to annotate data utility
+2. Ability to write multiple blocks for a single var during a single output
+3. Specify output time deadlines
+4. relate variables to be treated as units for storage locality
+
+For Reading:
+1. Specify hard deadline and desired deadlines
+2. Specify quality acceptability and reporting delivered quality
+3. Identify which data read is of what quality level
+4. Specify desired ultimate data set to be read and request performance caching
