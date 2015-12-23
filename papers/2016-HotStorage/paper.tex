@@ -1,0 +1,194 @@
+\documentclass{sig-alt-gov2}
+\pdfpagewidth=8.5in
+\pdfpageheight=11in
+%\usepackage{subfig}
+\usepackage{subfigure}
+\usepackage[pdftex]{}
+\usepackage{graphicx}
+%\usepackage{todonotes}
+\usepackage{listings}
+\lstset {% general command to set parameter(s)
+         language=C,
+     basicstyle=\footnotesize,               % print whole listing small
+%     keywordstyle=\color{black}\bfseries, % underlined bold black keywords
+%     identifierstyle =\color{black},  % nothing happens
+%     commentstyle=\color{black}\emph, % white comments
+     %stringstyle=\ttfamily,          % typewriter type for strings
+%     stringstyle=\color{black},       % typewriter type for strings
+         tabsize=4,
+         showtabs=false,
+     showstringspaces=false}
+%can't figure this one out for particles bandwidth
+%\usepackage[caption,label]{subfig}
+
+%\newcommand{\TITLE}{D\textsuperscript{\huge{2}}T: Doubly Distributed Transactions for High Performance and Distributed Computing}
+
+\newcommand{\DDT}{D\textsuperscript{2}T~}
+\newcommand{\DDTns}{D\textsuperscript{2}T}
+
+\hyphenation{sub-trans-ac-tion}
+
+\addtolength{\parskip}{-0.08in}
+
+% in order for balance columns to work, it has to be before begin document...
+%\balancecolumns
+
+\begin{document}
+
+%\conferenceinfo{PDSW'15,} {November 17, 2015, Austin, Texas}
+%\CopyrightYear{2015}
+%\crdata{978-1-4503-1103-8/11/11}
+%\clubpenalty=10000
+%\widowpenalty = 10000
+
+\title{A Revolutionary Approach to I/O and Storage for Exascale Scientific Computing}
+
+\numberofauthors{1}
+\author{
+%\alignauthor {Jay Lofstead\footnotemark[1], Ivo Jimenez\footnotemark[2],Carlos Maltzahn\footnotemark[2], Quincey Koziol\footnotemark[3], John Bent\footnotemark[4], Eric Barton\footnotemark[5]}\\
+\alignauthor {Jay Lofstead\footnotemark[1], Carlos Maltzahn\footnotemark[2], Scott Klasky\footnotemark[3], Hasan Abbasi\footnotemark[3], Qing Liu\footnotemark[3]\\
+Matthew Curry\footnotemark[1], Mark Ainsworth\footnotemark[5], Manish Parashar\footnotemark[4]}\\
+\footnotemark[1]~~Sandia National Laboratories gflofst@sandia.gov\\
+\footnotemark[2]~~University of California, Santa Cruz carlosm@soe.ucsc.edu\\
+\footnotemark[3]~~Oak Ridge National Laboratory\\
+\footnotemark[4]~~Rutgers University\\
+\footnotemark[5]~~Brown University\\
+}
+\maketitle
+
+\begin{abstract}
+
+The longest existing parallel I/O APIs, HDF5, PnetCDF, and NetCDF, are focused
+on treating the entire output from a paralell application as a single unit.
+These libraries work to gather the data from all processes and arrange it such
+that it is organized much like as if it were written from a single process.
+This approach, in particular the two-phase collective I/O with data sieving
+portion, has proven difficult to scale for 3-D domain decompositions at scale.
+ADIOS shifted the focus from treating the entire application output as a single
+entity to treating the output from each writer as a self-contained entity. This
+eliminated the need for the problematic two-phase collective I/O and has
+demonstrated good scalability well into the petascale era. Another shift is
+required to address the needs of exascale systems. New system I/O bandwidth is
+not keeping pace with the compute acceleration leading to accute bottlenecks.
+While ``burst buffer'' technology will help address the performance gap, it
+does not address the problem completely. This paper describes a new approach
+to not just an I/O library, but also the underlying storage infrastructure to
+address the needs of exascacle applications cognizant of projected exascale
+platform characteristics and in the context of current industry trends.
+
+\end{abstract}
+
+%\category{D.4}{Software}{Operating Systems}
+%\category{D.4.7}{Operating Systems}{Organization and Design}[hierarchical design]
+
+%\terms{Design, Performance}
+
+\section{Introduction}
+
+%\begin{figure}[htbp]
+%\vspace{-0.10in}
+%\centering
+%\includegraphics[width=\columnwidth]{images/arch-mapping}
+%\vspace{-0.20in}
+%\caption{Architecture and Component Mapping}
+%\label{fig:arch-mapping}
+%\vspace{-0.15in}
+%\end{figure}
+
+The rest of the paper is organized as follows. A brief overview of related work
+is presented first in Section~\ref{sec:related}. Section~\ref{sec:end-user}
+discusses the programmatic interface end users will see when interacting with
+the storage array.
+Section~\ref{sec:storage}
+discusses the challenges and opportunities for deploying scalable storage
+infrastructure.
+Section~\ref{sec:qos} 
+discusses the quality of service features proposed for this project.
+Next is an exploration of the metadata challenges required to support such a
+system in Section~\ref{sec:metadata}.
+An initial prototype demonstration of the functionality is presented in
+Section~\ref{sec:evaluation}.
+The paper is concluded in
+Section~\ref{sec:conclusion} with a summary of the broad issues covered in the
+paper.
+
+\section{Related Work}
+\label{sec:related}
+
+Ceph~\cite{weil:ceph} is a distributed object store and file system. It offers
+both a POSIX and object interface including features typically found in parallel
+file systems.
+Ceph's unique striping approach uses pseudo-random numbers with a
+known seed eliminating the need for the metadata service to track where each
+stripe in a parallel file is placed.
+PVFS~\cite{carns:pvfs} offers optimizations to reduce metadata server load,
+such as a single process opening a file and sharing the handle.
+It has been
+commercialized in recent years as OrangeFS.
+Lustre~\cite{braam:lustre-arch} has become the de facto standard on most major
+clusters offering scalable performance and fine-grained end-user and
+programmatic control over how data is placed in the storage system.
+GPFS~\cite{schmuck:gpfs} offers a hands-off approach for providing good
+performance for scaling parallel IO tasks and is used extensively by its owner,
+IBM.
+Panasas~\cite{panasas:architecture} seeks to offer a dynamically adaptive
+striping system that detects the need for additional stripes for performance
+and adjusts the file layout as necessary.
+
+Other file systems, like GoogleFS~\cite{ghemawat:googlefs} and
+HDFS~\cite{Shvachko:2010:hdfs}, address distributed rather than parallel
+computing and cannot be compared directly.
+The primary difference between
+distributed and parallel file systems is the ability of the file system to
+store and retrieve data simultaneously from multiple clients, in parallel, and
+treat the resulting collection of pieces as a single object.  Distributed file
+systems rely on a single client creating a file, but distributing the set of
+files across a wide array of storage devices.
+The other, popular distributed
+file system of note is NFS~\cite{powlowski:1994:nfs3} that has been used for
+decades for enterprise file systems.
+These other file systems are mainly of
+interest in the context of the ACG features of FFSIO and will be discussed more
+in Section~\ref{sec:acg}.
+
+\section{End-User API Layer}
+\label{sec:end-user}
+
+\section{Storage Challenges and Opportunities}
+\label{sec:storage}
+
+\section{Quality of Service Features}
+\label{sec:qos}
+
+\section{Metadata Challenges}
+\label{sec:metadata}
+
+\section{Demonstration}
+\label{sec:evaluation}
+
+This stack has an early prototype implementation intended to test concepts
+rather than performance and scalability. It has focused on examining the
+interaction of the different APIs for each layer to flesh out any detailed
+requirements or concerns that may have been missed in the conceptualization of
+this IO stack. To demonstrate the viability of the IO stack described in this
+paper, we show some very early performance results from the untuned prototype.
+
+\section{Conclusions}
+\label{sec:conclusion}
+
+\section{Acknowledgements}
+
+\includegraphics[scale=0.07]{logos/doe_logo}
+\includegraphics[scale=0.30]{logos/snl_logo}
+\includegraphics[scale=0.35]{logos/nnsa_logo}
+Sandia National Laboratories is a multi-program laboratory managed and operated
+by Sandia Corporation, a wholly owned subsidiary of Lockheed Martin
+Corporation, for the U.S. Department of Energy's National Nuclear Security
+Administration under contract DE-AC04-94AL85000.
+
+\bibliographystyle{abbrv}
+\bibliography{paper}
+
+\vfill\eject
+
+\end{document}
