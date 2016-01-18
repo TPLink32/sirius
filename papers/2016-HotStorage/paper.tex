@@ -41,17 +41,17 @@
 %\clubpenalty=10000
 %\widowpenalty = 10000
 
-\title{A Revolutionary Approach to I/O and Storage for Exascale Scientific Computing}
+\title{SIRIUS: A Revolutionary Approach to I/O and Storage for Exascale Scientific Computing}
 
 \numberofauthors{1}
 \author{
 %\alignauthor {Jay Lofstead\footnotemark[1], Ivo Jimenez\footnotemark[2],Carlos Maltzahn\footnotemark[2], Quincey Koziol\footnotemark[3], John Bent\footnotemark[4], Eric Barton\footnotemark[5]}\\
 \alignauthor {Jay Lofstead\footnotemark[1], Carlos Maltzahn\footnotemark[2], Scott Klasky\footnotemark[3], Hasan Abbasi\footnotemark[3], Qing Liu\footnotemark[3]\\
 Matthew Curry\footnotemark[1], Mark Ainsworth\footnotemark[5], Manish Parashar\footnotemark[4]}\\
-\footnotemark[1]~~Sandia National Laboratories gflofst@sandia.gov\\
-\footnotemark[2]~~University of California, Santa Cruz carlosm@soe.ucsc.edu\\
-\footnotemark[3]~~Oak Ridge National Laboratory\\
-\footnotemark[4]~~Rutgers University\\
+\footnotemark[1]~~Sandia National Laboratories
+\footnotemark[2]~~University of California\\
+\footnotemark[3]~~Oak Ridge National Laboratory
+\footnotemark[4]~~Rutgers University
 \footnotemark[5]~~Brown University\\
 }
 \maketitle
@@ -84,6 +84,58 @@ platform characteristics and in the context of current industry trends.
 %\terms{Design, Performance}
 
 \section{Introduction}
+
+The first generation of standardized APIs for scientific computing IO focused
+on serial output from a single process to a distributed or local file system.
+These systems still exist in the form of serial HDF5~\cite{hdf5} and the
+end-of-life NetCDF 3.x~\cite{netcdf}. The key feature of these APIs was the
+logical data model that eliminated any parallel data decomoposition artifacts
+from the actual data storage. This offered consistent performance and regular
+data access patterns.
+
+The second generation is really an evolution of the first with HDF-5 adding
+parallel capabilities and NetCDF bifurcating into NetCDF4~\cite{netcdf4} and
+PnetCDF~\cite{pnetcdf} with PnetCDF almost completely maintaining the data
+model and NetCDF4 shifting to use HDF5 underneath. The other improvement is
+incorporating knowledge of an underlying parallel file system to support large
+files written in unision from many processes.
+
+The third generation is a reaction to the second based on recognizing that
+maintaining the logical data model in physical form became inordinately
+expensive and offered a performance penalty in most cases when running at
+scale. Libraries like ADIOS~\cite{adios} shifted from writing complete
+variables from distributed processes as a single entity to treating all data
+from a single source to be treated as a unit. This eliminated the data
+reorganization at the cost of more complicated reading patterns. In spite of
+this extra complication, the performance is generally
+better~\cite{six-degrees}.
+
+SIRIUS represents the next generation. New platforms are introducting
+additional storage layers to accelerate IO operations and to compensate for
+plateauing storage array performance. At the same time, data sizes continue
+to grow. The fourth generation IO API will have to both address the IO API
+and middleware layer as well as the deeper, more complex storage hierarchy.
+
+Systems like ADIOS showed the performance advantage for decomposed data
+layouts, but still rely on a uniform storage layer. SIRIUS represents a shift
+to consider the local portion of each globally distributed variable as a
+management entity with data placement decisions across the entire storage
+hierarhy rather than on a single tier.  Decisions on what data to place where
+is driven by the data contents itself according to end-user specified
+priorities and system characteristics. For example, if temperature and pressure
+are nearly always retrieved together, organizing the data to keep just these
+two arrays together without any interleaving from other variables or scalars
+will accelerate later reading. If these variables could also be ``processed''
+such that the important data features are maintained in high resolution while
+less interesting regions are stored in highly compressed--even using lossy
+compression--forms, the amount of data written can be greatly increased. While
+accelerating writing is important. This approach also supports accelerating
+reading.
+
+This paper presents an overview of the efforts to build such a fourth
+generation storage and IO system. A discussion of the end-user API, storage
+challenges, quality of service features, and metadata challenges are all
+discussed briefly.
 
 %\begin{figure}[htbp]
 %\vspace{-0.10in}
@@ -147,21 +199,126 @@ files across a wide array of storage devices.
 The other, popular distributed
 file system of note is NFS~\cite{powlowski:1994:nfs3} that has been used for
 decades for enterprise file systems.
-These other file systems are mainly of
-interest in the context of the ACG features of FFSIO and will be discussed more
-in Section~\ref{sec:acg}.
 
 \section{End-User API Layer}
 \label{sec:end-user}
 
+The initial thoughts about an end-use API is to try to work within established
+APIs to ease user migration. However, some of the key features, such as the
+data ``refactor'' functionality and the quality of service requirements for
+both writing and reading are new. To manage these new requirements, an extended
+API is proposed. At a high level, the common API broad categories are
+discussed.
+
+\noindent\textbf{Open and Close} need to add additional information to include
+intent information. The intent hints to the system that....
+
+\noindent\textbf{Refactoring} may be a uniform operation across an
+entire variable. For example, splitting a double into three parts--two byes,
+four bytes, and two bytes, yields a two-byte value that is the majority of the
+data precision. The next four bytes would be most of the rest of the data
+precision. The last two bytes are the remainder of the precision. For quick
+overviews, just reading the two-byte portion is sufficient to get a rough idea
+of data contents. If particular data looks interesting, more and more data can
+be read to improve the precision. This can easily be applied uniformly by each
+process without coordinating. A more dynamic approach would be to apply a
+wavelet compression~\cite{wavelet} approach that generates different compressed
+data sizes at a fixed error rate depending on the data entropy. This is still a
+uniform operator, but the resulting data can be of radically different sizes.
+
+A more complex, but interesting approach is to offer an {\em Auditor} that
+performs the same computation, but with some simplification that greatly
+reduces computation intensity with only a minor loss of precision over the
+short term. Longer term, this auditor would need to be reset to bring it back
+into alignment with the full precision simulation. The much smaller reduced
+precision data could be used instead of the full precision in many
+circumstances.
+
+A middle ground approach between these two refactoring approaches is to use a
+non-uniform operator across a variable. Instead of, for example, splitting on
+byte boundaries to make multiple values, a function that identifies data
+features through a local analytics function could identify ``interesting'' data
+that should be maintained in full precision while other areas can be more
+highly compressed. Such an operator would decompose the data from a process
+further than a single process or node depending on the data features. This
+approach may balance precision better than wavelet compression, but at a higher
+analytics cost.
+
+We plan to investigate all three approaches as different applications will have
+different techniques that work best. Any performant storage system should
+offer the flexibility to incorporate application specific data refactoring
+techniques and sufficient metadata support for an arbitrary client to access
+the data successfully.
+
+\noindent\textbf{Quality of Service} deadlines are important for driving how
+much time is spent performing IO. At the same time, data quality must be
+maintained at a sufficient level for the resulting science to be possible.
+The system must offer a way for an end-user to negotiate with the system for
+trading off between time spent in IO and the amount of data written or read.
+Part of that tradeoff will be increased or reduced data quality, depending on
+the system.
+
 \section{Storage Challenges and Opportunities}
 \label{sec:storage}
+
+The supercomputing platforms being deployed today are all incorporating a
+Non-volatile memory (NVM) layer as a fast cache between compute and the storage
+array. The assumption is that nearly all IO will be performed against this
+layer to hide the much greater latency to the storage array. The challenge is
+the NVM capacity is expensive limiting the amount deployed. The unspoken
+limitation is that this fast layer still must drain to the relatively slow
+storage array. This performance mismatch will limit capacity and performance
+just due to the drain and data stage-in operations.
+
+A more effective way to use these resources is to only store the most
+important data in the fast tier and store lower precision representations of
+the rest of the data in the slower tiers. This lowers pressures on the NVM
+layer increasing performance overall by greatly reducing the drain/stage-in
+operations and reducing the data volumes stored on a per application basis.
 
 \section{Quality of Service Features}
 \label{sec:qos}
 
+SIRIUS offers a novel feature related to managing IO time as a first class
+characteristic. Rather than being at the mercy of the storage array
+performance, an end-user can describe the local data to the storage system and
+receive an estimate on how long that data will take to write. If that is
+acceptable within a margin of error, the API can write. If it is unacceptable,
+the end-user can make decisions about skipping the output or maybe spending a
+little time with a strong data refactoring to reduce the data size.
+
+On reading, a user may specify that they are willing to wait for an approximate
+time for an operation. This will negotiate with the storage system to determine
+the data quality returned. If the requested data quality cannot be retrieved
+within a given time, the storage array may be able to apply an additional
+data reduction operator to decrease the amount of time spent in IO.
+Alternatively, if multiple different refactored data versions are stored,
+alternative versions can be requested instead.
+
 \section{Metadata Challenges}
 \label{sec:metadata}
+
+The metadata system has a daunting challenge. Traditional metadata systems for
+both distributed and parallel file systems only have to deal with a single name
+space and storage hierarchy. While hierarichal storage management~\cite{hsm}
+systems offer a way to show a single name space, the reality is that the tier
+closest to the user is a cache for the other tiers with data migrating as
+necessary to support user interaction. SIRIUS is working in a fundamentally
+different way. Each tier is treated as a first class citizen with direct
+client access possible. Where data is actually retrieved from is where it is
+actually stored rather than forcing data migration and caching. Systems like
+Sirocco~\cite{sirocco} offer a way to support this model directly and are a
+fundamental part of our system.
+
+The additional challege SIRIUS metadata services face is incorporating
+user-specified attributes including data refactoring functions. Since an
+arbitrary user must be able to access any data written for which they have
+permissions. Having data locked behind data compression that has changed over
+time may result in effectively encrypting data and losing the decryption key.
+
+We also seek to offer the ability to also store multiple versions of the same
+data using different refactoring techniques. This will offer additional options
+for higher precision OR higher performance reading.
 
 \section{Demonstration}
 \label{sec:evaluation}
@@ -175,6 +332,12 @@ paper, we show some very early performance results from the untuned prototype.
 
 \section{Conclusions}
 \label{sec:conclusion}
+
+Overall, the SIRIUS storage system is ushering in a new generation of both IO
+APIs and storage system managed together. It incorporates additional metadata
+to help accelerate data access and ultimately time to insight. Our initial
+efforts show promise that such a system is both possible and can offer
+attractive performance to better use the supercomputing platform.
 
 \section{Acknowledgements}
 
