@@ -12,7 +12,9 @@
 9-16 [METADATA] metadata support for basic refactoring information
 9-16 [REFACTOR] simple refactoring functionality (e.g., precision-based refactoring) with the SIRIUS API.
 9-16 [STORAGE] multiple simultaneous direct tier access from a single API.
-9-16 [QoS] Extension to data format and metadata service to evaluate, store and query utility of data blocks based on frequency of access.
+9-16 [QoS - optimization] Extension to data format and metadata service to evaluate, store and query utility of data blocks based on frequency of access.
+9-16 [QoS - isolation] Storage infrastructure to account for resource
+utilization based on API-level requests
 
 3-17 [METADATA] metadata support for custom metadata
 3-17 [STORAGE] data migration for performance based on request
