@@ -1,39 +1,32 @@
 
-3-16 [API] draft SIRIUS API that is capable of communicating user
-intentions to SIRIUS
-3-16 [METADATA] hackathon output with basic metadata service capable of
-storing information about object pieces and locations. No thoughts to
-scalability, custom metadata, or recording anything about the refactoring
-operations/code.
-3-16 [STORAGE] example storage mechanism capable of storing and retrieving
-"objects".
+[API]: lead by Gary
+[METADATA]: "naming and discovery" lead by Jay
+[QoS]: "predictability, perf isolation, perf optimization" lead by Carlos, Feiyi
+[REFACTOR]: lead by Mark
+[STORAGE]: "management of persistent resources" lead by Jay, Carlos
+
+3-16 [API] draft SIRIUS API that is capable of communicating user intentions to SIRIUS
+3-16 [METADATA] hackathon output with basic metadata service capable of storing information about object pieces and locations. No thoughts to scalability, custom metadata, or recording anything about the refactoring operations/code.
+3-16 [STORAGE] example storage mechanism capable of storing and retrieving "objects".
 
 9-16 [METADATA] metadata support for basic refactoring information
-9-16 [REFACTOR] simple refactoring functionality (e.g., precision-based
-refactoring) with the SIRIUS API.
+9-16 [REFACTOR] simple refactoring functionality (e.g., precision-based refactoring) with the SIRIUS API.
 9-16 [STORAGE] multiple simultaneous direct tier access from a single API.
-9-16 [QoS] Extension to data format and metadata service to evaluate,
-store and query utility of data blocks based on frequency of access.
+9-16 [QoS] Extension to data format and metadata service to evaluate, store and query utility of data blocks based on frequency of access.
 
 3-17 [METADATA] metadata support for custom metadata
 3-17 [STORAGE] data migration for performance based on request
 3-17 [METADATA/STORAGE] evaluate the file/pile (index/search) tradeoff
-3-17 [QoS] Expanded description of data utility to guide trade offs
-between performance and accuracy.
-3-17 [STORAGE/API] query for IO performance estimates based on data
-locality
+3-17 [QoS] Expanded description of data utility to guide trade offs between performance and accuracy.
+3-17 [STORAGE/API] query for IO performance estimates based on data locality
 
 9-17 [METADATA] metadata support for resilience copies
 9-17 [STORAGE] data placement based on training
 9-17 [API/METADATA/STORAGE] bounded search time prototype
 
-3-18 [METADATA] metadata support for differently refactored versions of
-the same data
-3-18 [STORAGE] resilience-based metadata/storage consistency
-reconciliation.
-3-18 [QoS] data utility used as a metric in selection of
-refactoring/compression method.
+3-18 [METADATA] metadata support for differently refactored versions of the same data
+3-18 [STORAGE] resilience-based metadata/storage consistency reconciliation.
+3-18 [QoS] data utility used as a metric in selection of refactoring/compression method.
 3-18 [STORAGE/API] Admission control for QoS improvements
 
-9-18 [METADATA] metadata support for fully integrated refactoring code for
-arbitrary client data access and scalability support
+9-18 [METADATA] metadata support for fully integrated refactoring code for arbitrary client data access and scalability support
