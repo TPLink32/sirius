@@ -1,0 +1,29 @@
+The Serious SC paper
+
+abstract
+As the exascale computing age emerges, data related issues are becoming
+critical factors that determine how and where we do computing. Popular
+approaches used by traditional I/O solution and storage libraries become
+increasingly bottlenecked due to their assumptions about data movement,
+re-organization, and storage. While, new technologies, such as “burst buffers”,
+can help address some of the short-term performance issues, it is essential
+that we reexamine the underlying storage and I/O infrastructure to effectively
+support requirements and challenges at exascale and beyond.
+
+In this paper we present
+- different data needs different techniques
+- write overhead for the different refactoring/auditing approaches
+- derived quantities in viz after precision based refactoring and differences
+  from full fidelity data sets.
+- linear auditing approaches for data refactoring and the effects on data
+  sizes, io performance, and viz quality. Do every point and a second test with
+every fourth point.
+(2 chunks [24 bits + 40 bits] and      level 1 and 2 respectively
+4 chunks [24 bits every 4th point      level 1
+         ,40 bits every 4th point      level 3
+         ,24 bits the other 3 points   level 2
+         ,40 bits the other 3 points]  level 4
+).
+- a full storage hierarchy data distribution scheme to optimize data placement
+  and performance. (Carlos paper does this already?)
+
