@@ -1,0 +1,806 @@
+% BibTeX bibliography file
+
+@InProceedings{lofstead:2011:nessie-staging,
+  author = {Jay Lofstead and Ron Oldfiend and Todd Kordenbrock and Charles
+  Reiss},
+  title = {Extending Scalability of Collective IO Through Nessie and Staging},
+  booktitle = {The Petascale Data Storage Workshop at Supercomputing},
+  year = {2011},
+  month = {November},
+  address = {Seattle, WA},
+  abstract = {The increasing fidelity of scientific simulations as they scale
+  towards exascale sizes is straining the proven IO techniques championed
+  throughout terascale computing. Chief among the successful IO techniques is
+  the idea of collective IO where processes coordinate and exchange data prior
+  to writing to storage in an effort to reduce the number of small, independent
+  IO operations. As well as collective IO works for efficiently creating a data
+  set in the canonical order, 3-D domain decompositions prove troublesome due
+  to the amount of data exchanged prior to writing to storage. When each
+  process has a tiny piece of a 3-D simulation space rather than a complete
+  `pencil' or `plane', 2-D or 1-D domain decompositions respectively, the
+  communication overhead to rearrange the data can dwarf the time spent
+  actually writing to storage~\cite{MPIcollectiveFix}. Our approach seeks to
+  transparently increase scalability and performance while maintaining both the
+  IO routines in the application and the final data format in the storage
+  system. Accomplishing this leverages both the Nessie~\cite{nessie} RPC
+  framework and a staging area with staging services. Through these tools, we
+  employ a variety of data processing operations prior to invoking the native
+  API to write data to storage yielding as much as a 3$\times$ performance
+  improvement over the native calls.}
+}
+
+@InProceedings{abbasi:2007:datatap,
+  author = {Abbasi, Hasan and Wolf, Matthew and Schwan, Karsten},
+  title = {{LIVE} Data Workspace: A Flexible, Dynamic and Extensible Platform
+  for Petascale Applications},
+  booktitle = {CLUSTER '07: Proceedings of the 2007 IEEE International
+  Conference on Cluster Computing},
+  year = {2007},
+  pages = {341--348},
+  publisher = {IEEE Computer Society},
+  address = {Washington, DC, USA}
+}
+
+@Conference{Abbasi:2009:datatap,
+  author = {Hasan Abbasi and Jay Lofstead and Fang Zheng and Scott Klasky and
+  Karsten Schwan and Matthew Wolf},
+  title = {Extending I/O Through High Performance Data Services},
+  booktitle = {Cluster Computing},
+  year = {2009},
+  month = {September},
+  publisher = {IEEE International},
+  address = {Luoisiana, LA},
+  abstract = {The complexity of HPC systems has increased the burden on the
+  developer as applications scale to hundreds of thousands of processing cores.
+  I/O processing is one area where extensive efforts are required to achieve
+  acceptable performance and scalability. A successful approach to high
+  performance I/O demonstrated by our group and others is to use select nodes
+  for data staging, where data is evacuated from compute to staging nodes
+  before being moved to the disk via the file system. This paper shows that I/O
+  performance can be improved substantially by carefully managing how data
+  staging is performed, and by enriching such I/O actions through additional
+  "data services", lightweight abstractions for carrying out data processing
+  such as transformation, reduction and scheduled storage. We evaluate data
+  services on actual application codes within our data staging framework for
+  asynchronous data movement, and we also describe the impact of resource
+  management in synchronous environments.}
+}
+
+@InProceedings{nisar:2008:staging,
+  author = {Nisar,, Arifa and Liao,, Wei-keng and Choudhary,, Alok},
+  title = {Scaling Parallel {I/O} Performance Through {I/O} Delegate and
+  Caching System},
+  booktitle = {SC '08: Proceedings of the 2008 ACM/IEEE Conference on
+  Supercomputing},
+  year = {2008},
+  pages = {1--12},
+  publisher = {IEEE Press},
+  address = {Piscataway, NJ, USA}
+}
+
+@InProceedings{zheng:2010:predata,
+  author = {Fang Zheng and Hasan Abbasi and Ciprian Docan and Jay Lofstead and
+  Scott Klasky and Qing Liu and Manish Parashar and Norbert Podhorszki and
+  Karsten Schwan and Matthew Wolf},
+  title = {{PreDatA }- Preparatory Data Analytics on {Peta-Scale} Machines},
+  booktitle = {In Proceedings of 24th IEEE International Parallel and
+  Distributed Processing Symposium, April, Atlanta, Georgia},
+  year = {2010},
+  abstract = {Peta-scale scientific applications running on High End Computing
+  (HEC) platforms can generate large volumes of data. For high performance
+  storage and in order to be useful to science end users, such data must be
+  organized in its layout, indexed, sorted, and otherwise manipulated for
+  subsequent data presentation, visualization, and detailed analysis. In
+  addition, scientists desire to gain insights into selected data
+  characteristics `hidden' or `latent' in these massive datasets while data is
+  being produced by simulations. PreDatA, short for Preparatory Data Analytics,
+  is an approach to preparing and characterizing data while it is being
+  produced by the large scale simulations running on peta-scale machines. By
+  dedicating additional compute nodes on the machine as `staging' nodes and by
+  staging simulations' output data through these nodes, PreDatA can exploit
+  their computational power to perform select data manipulations with lower
+  latency than attainable by first moving data into file systems and storage.
+  Such intransit manipulations are supported by the PreDatA middleware through
+  asynchronous data movement to reduce write latency, application-specific
+  operations on streaming data that are able to discover latent data
+  characteristics, and appropriate data reorganization and metadata annotation
+  to speed up subsequent data access. PreDatA enhances the scalability and
+  exibility of the current I/O stack on HEC platforms and is useful for data
+  pre-processing, runtime data analysis and inspection, as well as for data
+  exchange between concurrently running simulations.}
+}
+
+@InProceedings{bent:2012:challenges,
+  author = {Bent, J. and Grider, G. and Kettering, B. and Manzanares, A. and
+  McClelland, M. and Torres, A. and Torrez, A.},
+  title = {Storage challenges at Los Alamos National Lab},
+  booktitle = {Mass Storage Systems and Technologies (MSST), 2012 IEEE 28th
+  Symposium on},
+  year = {2012},
+  month = {April},
+  pages = {1-5},
+  keywords = {parallel databases;HPC;IO patterns;Los Alamos national
+  lab;concurrent write performance;parallel IO;parallel file systems;storage
+  challenges;usability headaches;Bandwidth;Frequency
+  measurement;Hardware;Libraries;Servers;Tuning;Usability},
+  abstract = {There yet exist no truly parallel file systems. Those that make
+  the claim fall short when it comes to providing adequate concurrent write
+  performance at large scale. This limitation causes large usability headaches
+  in HPC. Users need two major capabilities missing from current parallel file
+  systems. One, they need low latency interactivity. Two, they need high
+  bandwidth for large parallel IO; this capability must be resistant to IO
+  patterns and should not require tuning. There are no existing parallel file
+  systems which provide these features. Frighteningly, exascale renders these
+  features even less attainable from currently available parallel file systems.
+  Fortunately, there is a path forward.}
+}
+
+@InProceedings{bent:2012:burst-buffer,
+  author = {Bent, J. and Faibish, S. and Ahrens, J. and Grider, G. and
+  Patchett, J. and Tzelnic, P. and Woodring, J.},
+  title = {Jitter-free co-processing on a prototype exascale storage stack},
+  booktitle = {Mass Storage Systems and Technologies (MSST), 2012 IEEE 28th
+  Symposium on},
+  year = {2012},
+  month = {April},
+  pages = {1-5},
+  keywords = {parallel processing;storage management;storage media;IO
+  forwarding;exascale storage stack;extreme scale high performance
+  computing;interconnect network;jitter-free coprocessing;parallel file
+  systems;solid state devices;spindle-based parallel file system;storage
+  media;Bandwidth;Computational modeling;Conferences;Data analysis;Data
+  visualization;Radio access networks;USA Councils},
+  abstract = {In the petascale era, the storage stack used by the extreme scale
+  high performance computing community is fairly homogeneous across sites. On
+  the compute edge of the stack, file system clients or IO forwarding services
+  direct IO over an interconnect network to a relatively small set of IO nodes.
+  These nodes forward the requests over a secondary storage network to a
+  spindle-based parallel file system. Unfortunately, this architecture will
+  become unviable in the exascale era. As the density growth of disks continues
+  to outpace increases in their rotational speeds, disks are becoming
+  increasingly cost-effective for capacity but decreasingly so for bandwidth.
+  Fortunately, new storage media such as solid state devices are filling this
+  gap; although not cost-effective for capacity, they are so for performance.
+  This suggests that the storage stack at exascale will incorporate solid state
+  storage between the compute nodes and the parallel file systems. There are
+  three natural places into which to position this new storage layer: within
+  the compute nodes, the IO nodes, or the parallel file system. In this paper,
+  we argue that the IO nodes are the appropriate location for HPC workloads and
+  show results from a prototype system that we have built accordingly. Running
+  a pipeline of computational simulation and visualization, we show that our
+  prototype system reduces total time to completion by up to 30%.}
+}
+
+@InProceedings{lofstead:2012:txn-metadata,
+  author = {Jay Lofstead and Jai Dayal},
+  title = {Transactional Parallel Metadata Services for Application
+  Workdflows},
+  booktitle = {In Proceedings of High Performance Computing Meets Databases at
+  Supercomputing},
+  year = {2012},
+  abstract = {Scientific simulations have a different relationship with all of
+  the data generated than many data analysis systems that support applications
+  like the Large Hadron Collider and the SLOAN Sky Survey. In many cases,
+  simulations need to generate large number of intermediate data sets that
+  ultimately are thrown away once some analysis routines are applied to the
+  data. This generates some summarized, derived result that inspires some
+  scientific insight. Traditionally, these routines use the storage array to
+  persist the intermediate results between each step of the data analysis
+  process. The volume and frequency of this data can be overwhelming compared
+  with the available IO bandwidth on the machine. To handle this volume and
+  frequency, current research efforts are determining how to move the storage
+  of intermediate data from the storage array into the memory of the compute
+  area. Then, the analysis routines are incorporated to create Integrated
+  Application Workflows (IAWs). Data staging techniques require some mechanism
+  to replace the semantics offered by the file system to control data movement
+  and access. As part of an HPC-focused transaction services project, a first
+  pass at a transactional metadata service for in compute area data storage is
+  being developed.}
+}
+
+@InProceedings{lofstead:2012:txn,
+  author = {Jay Lofstead and Jai Dayal and Karsten Schwan and Ron Oldfield},
+  title = {D2T: Doubly Distributed Transactions for High Performance and
+  Distributed Computing},
+  booktitle = {IEEE Cluster Conference},
+  year = {2012},
+  month = {September},
+  address = {Beijing, China},
+  abstract = {Current exascale computing projections suggest rather than a
+  monolithic simulation running for the majority of the machine, a collection
+  of components comprising the scientific discovery process will be employed in
+  an online workflow. This move to an online workflow scenario requires
+  knowledge that inter-step operations are completed and correct before the
+  next phase begins. Further, dynamic load balancing or fault tolerance
+  techniques may dynamically deploy or redeploy resources for optimal use of
+  computing resources. These newly configured resources should only be used if
+  they are successfully deployed. Our D2T system offers a mechanism to support
+  these kinds of operations by providing database-like transactions with
+  distributed servers and clients. Ultimately, with adequate hardware support,
+  full ACID compliance is possible for the transactions. To prove the viability
+  of this approach, we show that the D2T protocol has less than 1.2 seconds of
+  overhead using 4096 clients and 32 servers with good scaling characteristics
+  using this initial prototype implementation.}
+}
+
+@InProceedings{dayal:2013:io-containers,
+  author = {Jai Dayal and Jianting Cao and Greg Eisenhauer and Karsten Schwan
+  and Matthew Wolf and Fang Zheng and Hasan Abbasi and Scott Klasky and Norbert
+  Podhorszki and Jay Lofstead},
+  title = {I/O Containers: Managing the Data Analytics and Visualization
+  Pipelines of High End Codes},
+  booktitle = {In Proceedings of International Workshop on High Performance
+  Data Intensive Computing (HPDIC 2013) held in conjunction with IPDPS 2013},
+  year = {2013},
+  address = {Boston, MA},
+  note = {Best Paper Award},
+  abstract = {Lack of I/O scalability is known to cause measurable slowdowns
+  for large-scale scientific applications running on high end machines. This is
+  prompting researchers to devise 'I/O staging' methods in which outputs are
+  processed via online analysis and visualization methods to support desired
+  science outcomes. Organized as online workflows and carried out in I/O
+  pipelines, these analysis components run concurrently with science
+  simulations, often using a smaller set of nodes on the high end machine
+  termed 'staging areas'. This paper presents a new approach to dealing with
+  several challenges arising for such online analytics, including: how to
+  efficiently run multiple analytics components on staging area resources
+  providing them with the levels of end-to-end performance they need and how to
+  manage staging resources when analytics actions change due to user or
+  data-dependent behavior. Our approach designs and implements middleware
+  constructs that delineate and manage I/O pipeline resources called 'I/O
+  Containers'. Experimental evaluations of containers with realistic scientific
+  applications demonstrate the feasibility and utility of the approach.}
+}
+
+@InProceedings{lofstead:2013:pdsw-txn,
+  author = {Jay Lofstead and Jai Dayal and Ivo Jimenez and Carlos Maltzahn},
+  title = {Efficient Transactions for Parallel Data Movement},
+  booktitle = {The Petascale Data Storage Workshop at Supercomputing},
+  year = {2013},
+  month = {November},
+  address = {Denver, CO},
+  abstract = {The rise of Integrated Application Workflows (IAWs) for
+  processing data prior to storage on persistent media prompts the need to
+  incorporate features that reproduce many of the semantics of persistent
+  storage devices. One such feature is the ability to manage data sets as
+  chunks with natural barriers between different data sets. Towards that end,
+  we need a mechanism to ensure that data moved to an intermediate storage area
+  is both complete and correct before allowing access by other processing
+  components. The D2T protocol offers such a mechanism. The initial development
+  suffered from scalability limitations and undue requirements on server
+  processes. The current version has addressed these limitations and has
+  demonstrated scalability with low overhead.}
+}
+
+@Article{Lamport:1998:paxos,
+  author = {Leslie Lamport and Keith Marzullo},
+  title = {The part-time parliament},
+  journal = {ACM Transactions on Computer Systems},
+  year = {1998},
+  volume = {16},
+  pages = {133--169}
+}
+
+@InProceedings{Hunt:2010:zookeeper,
+  author = {Patrick Hunt and Mahadev Konar and Flavio P. Junqueira and Benjamin
+  Reed},
+  title = {ZooKeeper: Wait-free Coordination for Internet-scale Systems},
+  booktitle = {In USENIX Annual Technical Conference},
+  year = {2010}
+}
+
+@Misc{barton:2013:fastforward,
+  key = {Barton},
+  author = {E. Barton},
+  title = {Lustre* - Fast Forward to Exascale},
+  year = {2013},
+  month = {March},
+  howpublished = {Lustre User Group Summit 2013},
+  URL = {www.youtube.com/watch?v=pn_EEbmohDU}
+}
+
+@Misc{lombardi:2013:epochs,
+  key = {epochs},
+  author = {Johann Lombardi},
+  title = {High Level Design - Epoch Recovery, June 25th, 2013},
+  year = {2013},
+  month = {June},
+  howpublished = {Intel FastForward Wiki},
+  URL =
+  {https://wiki.hpdd.intel.com/download/attachments/12127153/M4.1%20Epoch\_Recovery%20v2.pdf?version=1&modificationDate=1382110631000&api=v2}
+}
+
+@InProceedings{burrows:2006:chubby,
+  author = {Michael Burrows},
+  title = {The Chubby Lock Service for Loosely-Coupled Distributed Systems},
+  booktitle = {OSDI},
+  editor = {Brian N. Bershad and Jeffrey C. Mogul},
+  year = {2006},
+  pages = {335-350},
+  publisher = {USENIX Association}
+}
+
+@Article{ganesh:2003:gossip-protocols,
+  author = {Ganesh, A.J. and Kermarrec, A.-M. and Massoulie, L.},
+  title = {Peer-to-peer membership management for gossip-based protocols},
+  journal = {Computers, IEEE Transactions on},
+  year = {2003},
+  volume = {52},
+  number = {2},
+  pages = {139-149},
+  keywords = {Internet;multicast protocols;probability;Internet-wide
+  distributed applications;SCAMP;Scalable Membership
+  protocol;convergence;decentralized protocol;gossip-based protocols;group
+  communication;large-scale groups;peer-to-peer membership
+  management;reliability properties;scalability properties;self-organizing
+  protocol;Computer crashes;Helium;Internet;Knowledge management;Large-scale
+  systems;Multicast protocols;Peer to peer
+  computing;Scalability;Subscriptions;Telecommunication network reliability},
+  abstract = {Gossip-based protocols for group communication have attractive
+  scalability and reliability properties. The probabilistic gossip schemes
+  studied so far typically assume that each group member has full knowledge of
+  the global membership and chooses gossip targets uniformly at random. The
+  requirement of global knowledge impairs their applicability to very
+  large-scale groups. In this paper, we present SCAMP (Scalable Membership
+  protocol), a novel peer-to-peer membership protocol which operates in a fully
+  decentralized manner and provides each member with a partial view of the
+  group membership. Our protocol is self-organizing in the sense that the size
+  of partial views naturally converges to the value required to support a
+  gossip algorithm reliably. This value is a function of the group size, but is
+  achieved without any node knowing the group size. We propose additional
+  mechanisms to achieve balanced view sizes even with highly unbalanced
+  subscription patterns. We present the design, theoretical analysis, and a
+  detailed evaluation of the basic protocol and its refinements. Simulation
+  results show that the reliability guarantees provided by SCAMP are comparable
+  to previous schemes based on global knowledge. The scale of the experiments
+  attests to the scalability of the protocol.}
+}
+
+@InProceedings{zhang:2010:zfs,
+  author = {Yupu Zhang and Abhishek Rajimwale and Andrea C. Arpaci-Dusseau and
+  Remzi H. Arpaci-Dusseau},
+  title = {End-to-end Data Integrity for File Systems: A ZFS Case Study},
+  booktitle = {FAST},
+  editor = {Randal C. Burns and Kimberly Keeton},
+  year = {2010},
+  pages = {29-42},
+  publisher = {USENIX}
+}
+
+@misc{fastforward:2014:docs,
+    title={FastForward Storage and I/O Stack Design Documents},
+    HowPublished={Intel FastForward Wiki},
+    year={2014},
+    month={February},
+    note={https://wiki.hpdd.intel.com/display/PUB/Fast+Forward+\\Storage+and+IO+Program+Documents},
+    key={FastForward},
+}
+
+@string{procof = {Proceedings of}}
+
+@string{procofthe = procof # { the }}
+
+@string{cluster = {IEEE International Conference on Cluster Computing}}
+
+@string{cluster2006 = procofthe # cluster}
+
+@inproceedings{oldfield:lwfs,
+        Abstract = {Today?s high-end massively parallel processing (MPP) machines have
+        thousands to tens of thousands of processors, with next-generation
+        systems planned to have in excess of one hundred thousand processors.
+        For systems of such scale, efficient I/O is a significant challenge
+        that cannot be solved using traditional approaches. In particular,
+        general purpose parallel file systems that limit applications to
+        standard interfaces and access policies do not scale and will likely
+        be a performance bottleneck for many scientific applications.
+
+        In this paper, we investigate the use of a ?lightweight? approach
+        to I/O that requires the application or I/O-library developer to
+        extend a core set of critical I/O functionality with the minimum
+        set of features and services required by its target applications.
+        We argue that this approach allows the development of I/O libraries
+        that are both scalable and secure. We support our claims with preliminary
+        results for a lightweight checkpoint operation on a development cluster
+        at Sandia.},
+        Address = {Barcelona, Spain},
+        Author = {Ron A. Oldfield and Arthur B. Maccabe and Sarala Arunagiri and Todd Kordenbrock and Rolf Riesen and Lee Ward and Patrick Widener},
+        Booktitle = cluster2006,
+        Comment = {Also see extended version raoldfi:lwfs-tr.},
+        Date-Modified = {2011-03-31 11:35:20 -0600},
+        Doi = {10.1109/CLUSTR.2006.311853},
+        File = {SAND2006-3057.pdf:http\://gaston.sandia.gov/cfupload/ccim_pubs_prod/SAND2006-3057.pdf:PDF},
+        Institution = {Sandia National Laboratories},
+        Keywords = {lightweight storage, checkpoint, scalable-io, LWFS, pario-bib},
+        Month = sep,
+        Owner = {raoldfi},
+        Timestamp = {2006.05.15},
+        Title = {Lightweight {I/O} for Scientific Applications},
+        Url = {http://doi.ieeecomputersociety.org/10.1109/CLUSTR.2006.311853},
+        Vitatype = {refConference},
+        Year = {2006},
+        Bdsk-Url-1 = {http://gaston.sandia.gov/cfupload/ccim_pubs_prod/SAND2006-3057.pdf}}
+
+@inproceedings{weil:2006:ceph,
+	Address = {Seattle, WA},
+	Author = {Sage A. Weil and Scott A. Brandt and Ethan L. Miller and Darrell D. E. Long and Carlos Maltzahn},
+	Booktitle = {OSDI'06},
+	Month = nov,
+	Title = {{Ceph}: A Scalable, High-Performance Distributed File System},
+	Year = 2006}
+
+@ONLINE{hdf5,
+author = {{The HDF Group}},
+title = "{Hierarchical data format version 5}",
+year = {2000-2014},
+note = {http://www.hdfgroup.org/HDF5}
+}
+
+@INPROCEEDINGS{nowoczynski:2008:zest,
+author={Nowoczynski, P. and Stone, N. and Yanovich, J. and Sommerfield, J.},
+booktitle={Petascale Data Storage Workshop, 2008. PDSW '08. 3rd}, title={Zest Checkpoint storage system for large supercomputers},
+year={2008},
+month={nov.},
+volume={},
+number={},
+pages={1 -5},
+abstract={The PSC has developed a prototype distributed file system infrastructure that vastly accelerates aggregated write bandwidth on large compute platforms. Write bandwidth, more than read bandwidth, is the dominant bottleneck in HPC I/O scenarios due to writing checkpoint data, visualization data and post-processing (multi-stage) data. We have prototyped a scalable solution that will be directly applicable to future petascale compute platforms having of order 10^6 cores. Our design emphasizes high-efficiency scalability, low-cost commodity components, lightweight software layers, end-to-end parallelism, client-side caching and software parity, and a unique model of load-balancing outgoing I/O onto high-speed intermediate storage followed by asynchronous reconstruction to a 3rd-party parallel file system.},
+keywords={HPC I-O scenarios;asynchronous reconstruction;checkpoint storage system;client-side caching;data checkpoint;data visualization;end-to-end parallelism;high-speed intermediate storage;load-balancing;parallel file system;petascale compute platforms;post-processing data;prototype distributed file system infrastructure;software layers;software parity;checkpointing;data visualisation;input-output programs;mainframes;parallel processing;program verification;resource allocation;},
+doi={10.1109/PDSW.2008.4811883},
+ISSN={},}
+
+@misc{JohnBent,
+ author = "John Bent",
+ title = "2014-03-21",
+ howpublished = "personal communication"
+}
+
+@misc{QuinceyKoziol,
+ author = "Quincey Koziol",
+ title = "2014-03-21",
+ howpublished = "personal communication"
+}
+
+@misc{EricBarton,
+ author = "Eric Barton",
+ title = "2014-03-21",
+ howpublished = "personal communication"
+}
+
+@inproceedings{skourtis:2013:ssd-performance,
+address = {New York, {NY}, {USA}},
+series = {{INFLOW} '13},
+title = {High Performance \& Low Latency in Solid-state Drives Through Redundancy},
+isbn = {978-1-4503-2462-5},
+url = {http://doi.acm.org/10.1145/2527792.2527798},
+doi = {10.1145/2527792.2527798},
+booktitle = {Proceedings of the 1st Workshop on Interactions of {NVM/FLASH} with Operating Systems and Workloads},
+publisher = {{ACM}},
+author = {Skourtis, Dimitris and Achlioptas, Dimitris and Maltzahn, Carlos and Brandt, Scott},
+year = {2013},
+keywords = {performance, {QoS}, solid-state drives, storage virtualization},
+pages = {6:1–6:9}
+}
+
+@string{fast = {Conference on File and Storage Technologies}}
+
+@string{fast2002 = procofthe # {USENIX FAST '02} # fast}
+
+@string{usenix = {USENIX Association}}
+
+@inproceedings{schmuck:gpfs,
+        Abstract = {GPFS is IBM's parallel, shared-disk file system for cluster computers,
+        available on the RS/6000 SP parallel supercomputer and on Linux clusters.
+        GPFS is used on many of the largest supercomputers in the world.
+        GPFS was built on many of the ideas that were developed in the academic
+        community over the last several years, particularly distributed locking
+        and recovery technology. To date it has been a matter of conjecture
+        how well these ideas scale. We have had the opportunity to test those
+        limits in the context of a product that runs on the largest systems
+        in existence. While in many cases existing ideas scaled well, new
+        approaches were necessary in many key areas. This paper describes
+        GPFS, and discusses how distributed locking and recovery techniques
+        were extended to scale to large clusters. },
+        Address = {Monterey, CA},
+        Author = {Frank Schmuck and Roger Haskin},
+        Booktitle = fast2002,
+        Keywords = {file systems},
+        Month = jan,
+        Pages = {231--244},
+        Private = {Not read; not in files; on shelf.},
+        Publisher = usenix,
+        Title = {{GPFS}: A Shared-Disk File System for Large Computing Clusters},
+        Url = {http://www.usenix.org/publications/library/proceedings/fast02/schmuck.html},
+        Year = {2002},
+        Bdsk-Url-1 = {http://www.usenix.org/publications/library/proceedings/fast02/schmuck.html}}
+
+@string{osdi = {Symposium on Operating Systems Design and Implementation}}
+
+@string{osdi2006 = procofthe # {2006} # osdi}
+
+@inproceedings{weil:ceph,
+        Abstract = {We have developed Ceph, a distributed file system that provides excellent
+        performance, reliability, and scalability. Ceph maximizes the separation
+        between data and metadata management by replacing allocation tables
+        with a pseudo-random data distribution function (CRUSH) designed
+        for heterogeneous and dynamic clusters of unreliable object storage
+        devices (OSDs). We leverage device intelligence by distributing data
+        replication, failure detection and recovery to semi-autonomous OSDs
+        running a specialized local object file system. A dynamic distributed
+        metadata cluster provides extremely efficient metadata management
+        and seamlessly adapts to a wide range of general purpose and scientific
+        computing file system workloads. Performance measurements under a
+        variety of workloads show that Ceph has excellent I/O performance
+        and scalable metadata management, supporting more than 250,000 metadata
+        operations per second.},
+        Author = {Sage A. Weil and Scott A. Brandt and Ethan L. Miller and Darrell D. E. Long and Carlos Maltzahn},
+        Booktitle = osdi2006,
+        Date-Modified = {2009-01-06 17:33:31 -0700},
+        Keywords = {distributed file systems, metadata scaling, object storage, distributed metadata, pario-bib},
+        Organization = {University of California, Santa Cruz},
+        Owner = {raoldfi},
+        Pages = {307--320},
+        Timestamp = {2007.03.27},
+        Title = {Ceph: A Scalable, High-Performance Distributed File System},
+        Url = {http://www.usenix.org/events/osdi06/tech/weil.html},
+        Year = {2006},
+        Bdsk-Url-1 = {http://www.usenix.org/events/osdi06/tech/weil.html}}
+
+@inproceedings{carns:pvfs,
+        Abstract = {As Linux clusters have matured as platforms for low-cost, high-performance
+        parallel computing, software packages to provide many key services
+        have emerged, especially in areas such as message passing and networking.
+        One area devoid of support, however, has been parallel file systems,
+        which are critical for high-performance I/O on such clusters. We
+        have developed a parallel file system for Linux clusters, called
+        the Parallel Virtual File System (PVFS). PVFS is intended both as
+        a high-performance parallel file system that anyone can download
+        and use and as a tool for pursuing further research in parallel I/O
+        and parallel file systems for Linux clusters. \par In this paper,
+        we describe the design and implementation of PVFS and present performance
+        results on the Chiba City cluster at Argonne. We provide performance
+        results for a workload of concurrent reads and writes for various
+        numbers of compute nodes, I/O nodes, and I/O request sizes. We also
+        present performance results for MPI-IO on PVFS, both for a concurrent
+        read/write workload and for the BTIO benchmark. We compare the I/O
+        performance when using a Myrinet network versus a fast-ethernet network
+        for I/O-related communication in PVFS. We obtained read and write
+        bandwidths as high as 700~Mbytes/sec with Myrinet and 225~Mbytes/sec
+        with fast ethernet.},
+        Address = {Atlanta, GA},
+        Author = {Philip H. Carns and Walter B. {Ligon III} and Robert B. Ross and Rajeev Thakur},
+        Booktitle = {Proceedings of the 4th Annual Linux Showcase and Conference},
+        Comment = {won the Best Paper Award.},
+        Keywords = {parallel I/O, parallel file system, cluster file system, Linux, pario-bib},
+        Month = oct,
+        Pages = {317--327},
+        Publisher = {USENIX Association},
+        Title = {{PVFS}: A Parallel File System for Linux Clusters},
+        Toread = {5},
+        Url = {http://www.mcs.anl.gov/~thakur/papers/pvfs.ps},
+        Year = {2000},
+        Bdsk-Url-1 = {http://www.mcs.anl.gov/~thakur/papers/pvfs.ps}}
+
+@misc{braam:lustre-arch,
+        Author = {Peter J. Braam},
+        Comment = {Describes an open-source project to develop an object-based file system for clusters. Related to the NASD project at CMU (http://www.pdl.cs.cmu.edu/NASD/).},
+        Date-Modified = {2009-01-06 17:33:31 -0700},
+        Howpublished = {Cluster File Systems Inc. Architecture, design, and manual for Lustre},
+        Keywords = {object-based storage, distributed file systems, parallel file system, pario-bib},
+        Month = nov,
+        Note = {http://www.lustre.org/docs/lustre.pdf},
+        Title = {The Lustre Storage Architecture},
+        Url = {http://www.lustre.org/docs/lustre.pdf},
+        Year = {2002},
+        Bdsk-Url-1 = {http://www.lustre.org/docs/lustre.pdf}}
+
+@misc{panasas:architecture,
+        Comment = {The paper describes the architecture of proprietary object-based storage system for clusters--an extension of Garth Gibson's NASD work at CMU (see gibson:nasd-tr). Similar to Lustre (cfs:lustre, braam:lustre-arch).},
+        Date-Modified = {2009-01-06 17:33:31 -0700},
+        Howpublished = {Panasas Inc. white paper, version 1.0},
+        Key = {PA},
+        Keywords = {object-based storage, distributed file systems, parallel file system, pario-bib},
+        Month = oct,
+        Note = {http://www.panasas.com/docs/},
+        Title = {Object-based Storage Architecture: Defining a new generation of storage systems built on distributed, intelligent storage devices},
+        Url = {http://www.panasas.com/docs/Object_Storage_Architecture_WP.pdf},
+        Year = {2003},
+        Bdsk-Url-1 = {http://www.panasas.com/docs/Object_Storage_Architecture_WP.pdf}}
+
+@string{sosp = {ACM Symposium on Operating Systems Principles}}
+
+@string{sosp19 = procofthe # {Nineteenth} # sosp}
+
+@string{acmpress = {ACM Press}}
+
+@inproceedings{ghemawat:googlefs,
+        Abstract = {We have designed and implemented the Google File System, a scalable
+        distributed file system for large distributed data-intensive applications.
+        It provides fault tolerance while running on inexpensive commodity
+        hardware, and it delivers high aggregate performance to a large number
+        of clients. While sharing many of the same goals as previous distributed
+        file systems, our design has been driven by observations of our application
+        workloads and technological environment, both current and anticipated,
+        that reflect a marked departure from some earlier file system assumptions.
+        This has led us to re-examine traditional choices and explore radically
+        different design points. \par The file system has successfully met
+        our storage needs. It is widely deployed within Google as the storage
+        platform for the generation and processing of data used by our service
+        as well as research and development efforts that require large data
+        sets. The largest cluster to date provides hundreds of terabytes
+        of storage across thousands of disks on over a thousand machines,
+        and it is concurrently accessed by hundreds of clients. \par In this
+        paper, we present file system interface extensions designed to support
+        distributed applications, discuss many aspects of our design, and
+        report measurements from both micro-benchmarks and real world use.},
+        Address = {Bolton Landing, NY},
+        Author = {Sanjay Ghemawat and Howard Gobioff and Shun-Tak Leung},
+        Booktitle = sosp19,
+        Date-Modified = {2009-01-06 17:33:31 -0700},
+        Keywords = {distributed file systems, pario-bib},
+        Month = oct,
+        Pages = {96--108},
+        Publisher = acmpress,
+        Title = {The {Google} File System},
+        Url = {http://www.cs.rochester.edu/sosp2003/papers/p125-ghemawat.pdf},
+        Year = {2003},
+        Bdsk-Url-1 = {http://www.cs.rochester.edu/sosp2003/papers/p125-ghemawat.pdf}}
+
+@inproceedings{Shvachko:2010:hdfs,
+ author = {Shvachko, Konstantin and Kuang, Hairong and Radia, Sanjay and Chansler, Robert},
+ title = {The Hadoop Distributed File System},
+ booktitle = {Proceedings of the 2010 IEEE 26th Symposium on Mass Storage Systems and Technologies (MSST)},
+ series = {MSST '10},
+ year = {2010},
+ isbn = {978-1-4244-7152-2},
+ pages = {1--10},
+ numpages = {10},
+ url = {http://dx.doi.org/10.1109/MSST.2010.5496972},
+ doi = {10.1109/MSST.2010.5496972},
+ acmid = {1914427},
+ publisher = {IEEE Computer Society},
+ address = {Washington, DC, USA},
+} 
+
+@inproceedings{lofstead:adaptable,
+  crossref="lofstead:adaptible",
+}
+
+@inproceedings{lofstead:2009:adaptable,
+  crossref="lofstead:adaptible",
+}
+
+@string{ipdps = {International Parallel and Distributed Processing Symposium}}
+
+@string{ipdps2009 = procofthe # ipdps}
+
+@inproceedings{lofstead:adaptible,
+        Address = {Rome, Italy},
+        Author = {Jay Lofstead and Fang Zheng and Scott Klasky and Karsten Schwan},
+        Booktitle = ipdps2009,
+        Date-Added = {2009-10-14 13:52:24 -0600},
+        Date-Modified = {2009-10-14 13:55:04 -0600},
+        Keywords = {application programmer interface, pario-bib},
+        Title = {Adaptable, metadata rich {IO} methods for portable high performance {IO}},
+        Year = {2009}}
+
+@inproceedings{lofstead:2010:io-variability,
+ crossref={lofstead:io-variability},
+}
+
+@inproceedings{lofstead:2010:sc,
+ crossref={lofstead:io-variability},
+}
+
+@string{sc2010 = procof # {SC2010: High Performance Networking and Computing}}
+
+@inproceedings{lofstead:io-variability,
+        Author = {Jay Lofstead and Fang Zheng and Qing Liu and Scott Klasky and Ron Oldfield and Todd Kordenbrock and Karsten Schwan and Matthew Wolf},
+        Booktitle = sc2010,
+        Date-Added = {2010-06-21 17:16:42 -0600},
+        Date-Modified = {2010-06-21 17:21:14 -0600},
+        Keywords = {variability studies, pario-bib},
+        Month = nov,
+        Title = {Managing Variability in the {IO} Performance of Petascale Storage Systems},
+        Year = {2010}}
+
+@article{rodeh:2013:btrfs,
+  title={Btrfs: The linux b-tree filesystem},
+  author={Rodeh, Ohad and Bacik, Josef and Mason, Chris},
+  abstract={BTRFS is a Linux Filesystem, headed towards mainline default status. It is based on copy-on-write, allowing for encodingcient snapshots and
+clones. It uses b-trees as its main on-disk data-structure. The design goal is to work well for many use cases and workloads. To this
+end, much effort has been directed to maintaining even performance as
+the filesystem ages, rather than trying to support a particular narrow
+benchmark use case.
+A Linux filesystem is installed on smartphones as well as enterprise
+servers. This entails challenges on many different fronts.
+Scalability: The filesystem must scale in many dimensions: disk
+space, memory, and CPUs.
+Data integrity: Losing data is not an option, and much effort
+is expended to safeguard the content. This includes checksums,
+metadata duplication, and RAID support built into the filesystem.
+Disk diversity: the system should work well with SSDs and hard disks. It is also expected to be able to use an array of different
+sized disks; posing challenges to the RAID and striping mechanisms.
+This paper describes the core ideas, data-structures, and algorithms
+of this filesystem. It sheds light on the challenges posed by defragmentation in the presence of snapshots, and the tradeoffs required to
+maintain even performance in the face of a wide spectrum of workloads.},
+  journal={ACM Transactions on Storage (TOS)},
+  volume={9},
+  number={3},
+  pages={9},
+  year={2013},
+  publisher={ACM}
+}
+
+@inproceedings{Soumagne:2013:mercury,
+  added-at = {2014-01-13T00:00:00.000+0100},
+  author = {Soumagne, Jerome and Kimpe, Dries and Zounmevo, Judicael A. and Chaarawi, Mohamad and Koziol, Quincey and Afsahi, Ahmad and Ross, Robert B.},
+  biburl = {http://www.bibsonomy.org/bibtex/28d70ae16d7724e75ad9cd7a801b5d45d/dblp},
+  booktitle = {CLUSTER},
+  ee = {http://dx.doi.org/10.1109/CLUSTER.2013.6702617},
+  abstract={Remote procedure call (RPC) is a technique that has been largely adopted by distributed services. This technique, now more and more used in the context of high-performance computing (HPC), allows the execution of routines to be delegated to remote nodes, which can be set aside and dedicated to specific tasks. However, existing RPC frameworks assume a socket-based network interface (usually on top of TCP/IP), which is not appropriate for HPC systems, because this API does not typically map well to the native network transport used on those systems, resulting in lower network performance. In addition, existing RPC frameworks often do not support handling large data arguments, such as those found in read or write calls. We present in this paper an asynchronous RPC interface, called Mercury, specifically designed for use in HPC systems. The interface allows asynchronous transfer of parameters and execution requests and provides direct support of large data arguments. Mercury is generic in order to allow any function call to be shipped. Additionally, the network implementation is abstracted, allowing easy porting to future systems and efficient use of existing native transport mechanisms.},
+  interhash = {fe5e6fdd94f78c26c2713b543b8b73c3},
+  intrahash = {8d70ae16d7724e75ad9cd7a801b5d45d},
+  keywords = {dblp},
+  pages = {1-8},
+  publisher = {IEEE},
+  timestamp = {2014-01-13T00:00:00.000+0100},
+  title = {Mercury: Enabling remote procedure call for high-performance computing.},
+  url = {http://dblp.uni-trier.de/db/conf/cluster/cluster2013.html#SoumagneKZCKAR13},
+  year = 2013
+}
+
+@inproceedings{abbasi:2011:c-on-demand,
+  title={Just in time: adding value to the IO pipelines of high performance applications with JITStaging},
+  author={Abbasi, Hasan and Eisenhauer, Greg and Wolf, Matthew and Schwan, Karsten and Klasky, Scott},
+  booktitle={Proceedings of the 20th international symposium on High performance distributed computing},
+  pages={27--36},
+  year={2011},
+  organization={ACM}
+}
+
+@inproceedings{Jain:2013:GraphBuilder,
+ author = {Jain, Nilesh and Liao, Guangdeng and Willke, Theodore L.},
+ title = {GraphBuilder: Scalable Graph ETL Framework},
+ booktitle = {First International Workshop on Graph Data Management Experiences and Systems},
+ series = {GRADES '13},
+ year = {2013},
+ isbn = {978-1-4503-2188-4},
+ location = {New York, New York},
+ pages = {4:1--4:6},
+ articleno = {4},
+ numpages = {6},
+ url = {http://doi.acm.org/10.1145/2484425.2484429},
+ doi = {10.1145/2484425.2484429},
+ acmid = {2484429},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {GraphBuilder, Hadoop, MapReduce, distributed system, graph ETL, graph analytics, graph construction, graph partitioning},
+}
+
+@article{Low:2012:GraphLab,
+ author = {Low, Yucheng and Bickson, Danny and Gonzalez, Joseph and Guestrin, Carlos and Kyrola, Aapo and Hellerstein, Joseph M.},
+ title = {Distributed GraphLab: A Framework for Machine Learning and Data Mining in the Cloud},
+ journal = {Proc. VLDB Endow.},
+ issue_date = {April 2012},
+ volume = {5},
+ number = {8},
+ month = apr,
+ year = {2012},
+ issn = {2150-8097},
+ pages = {716--727},
+ numpages = {12},
+ url = {http://dl.acm.org/citation.cfm?id=2212351.2212354},
+ acmid = {2212354},
+ publisher = {VLDB Endowment},
+} 
+
+@inproceedings{powlowski:1994:nfs3,
+        Author = {Brian Powlowski and Chet Juszczak and Peter Staubach and Carl Smith and Diane Lebel and David Hitz},
+        Booktitle = usenix94x,
+        Comment = {Describing the new version of the NFS protocol.},
+        Date-Modified = {2009-01-06 17:33:31 -0700},
+        Keywords = {distributed file systems},
+        Pages = {137--152},
+        Private = {Not read. Not in files; on shelf.},
+        Title = {{NFS} Version 3: Design and Implementations},
+        Year = {1994}}

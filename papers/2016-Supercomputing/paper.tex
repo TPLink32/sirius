@@ -1,0 +1,224 @@
+\documentclass{sig-alt-gov2}
+\pdfpagewidth=8.5in
+\pdfpageheight=11in
+%\usepackage{subfig}
+\usepackage{subfigure}
+\usepackage[pdftex]{}
+\usepackage{graphicx}
+%\usepackage{todonotes}
+\usepackage{listings}
+\lstset {% general command to set parameter(s)
+         language=C,
+     basicstyle=\footnotesize,               % print whole listing small
+%     keywordstyle=\color{black}\bfseries, % underlined bold black keywords
+%     identifierstyle =\color{black},  % nothing happens
+%     commentstyle=\color{black}\emph, % white comments
+     %stringstyle=\ttfamily,          % typewriter type for strings
+%     stringstyle=\color{black},       % typewriter type for strings
+         tabsize=4,
+         showtabs=false,
+     showstringspaces=false}
+%can't figure this one out for particles bandwidth
+%\usepackage[caption,label]{subfig}
+
+%\newcommand{\TITLE}{D\textsuperscript{\huge{2}}T: Doubly Distributed Transactions for High Performance and Distributed Computing}
+
+\hyphenation{sub-trans-ac-tion}
+
+\addtolength{\parskip}{-0.08in}
+
+% in order for balance columns to work, it has to be before begin document...
+%\balancecolumns
+
+\begin{document}
+
+%\conferenceinfo{PDSW'15,} {November 17, 2015, Austin, Texas}
+%\CopyrightYear{2015}
+%\crdata{978-1-4503-1103-8/11/11}
+%\clubpenalty=10000
+%\widowpenalty = 10000
+
+\title{Restructuring Data for Exascale Scientific Productivity}
+
+\numberofauthors{1}
+\author{
+\alignauthor {
+Jay Lofstead\footnotemark[1]~~,
+Hasan Abbasi\footnotemark[3]~~,
+Mark Ainsworth\footnotemark[6]~\footnotemark[3]~~,
+Jong Choi\footnotemark[3]~~,
+Matthew Curry\footnotemark[1]~~,\\
+Scott Klasky\footnotemark[3]~\footnotemark[4]~\footnotemark[7]~~,
+Tashin Kurc\footnotemark[9]~~,
+Qing Liu\footnotemark[3]~~,
+Carlos Maltzahn\footnotemark[2]~~,
+Manish Parashar\footnotemark[5]~~,\\
+Norbert Podhorzski\footnotemark[3]~~,
+Feiyi Wang\footnotemark[3]~~,
+Matthew Wolf\footnotemark[7]~~,
+C. S. Chang\footnotemark[8]~~,
+Michael Churchill\footnotemark[8]~~,
+Stephane Ethier\footnotemark[8]~~
+}\\
+\footnotemark[1]~~Sandia National Laboratories,
+\footnotemark[2]~~University of California Santa Cruz,\\
+\footnotemark[3]~~Oak Ridge National Laboratory,
+\footnotemark[4]~~U. Tenn. Knoxville,
+\footnotemark[5]~~Rutgers University,\\
+\footnotemark[6]~~Brown University,
+\footnotemark[7]~~Georgia Tech,
+\footnotemark[8]~~PPPL,
+\footnotemark[9]~~Stony Brook
+}
+\maketitle
+
+\begin{abstract}
+
+As the exascale computing age emerges, data related issues are becoming
+critical factors that determine how and where we do computing. Popular
+approaches used by traditional I/O solution and storage libraries become
+increasingly bottlenecked due to their assumptions about data movement,
+re-organization, and storage. While, new technologies, such as ``burst
+buffers'', can help address some of the short-term performance issues, it is
+essential that we reexamine the underlying storage and I/O infrastructure to
+effectively support requirements and challenges at exascale and beyond.
+
+In this paper we present
+- different data needs different techniques
+- write overhead for the different refactoring/auditing approaches
+- derived quantities in viz after precision based refactoring and differences
+  from full fidelity data sets.
+- linear auditing approaches for data refactoring and the effects on data
+  sizes, io performance, and viz quality. Do every point, but split at 24 bits
+and 40 bits.
+
+\end{abstract}
+
+%\category{D.4}{Software}{Operating Systems}
+%\category{D.4.7}{Operating Systems}{Organization and Design}[hierarchical design]
+
+%\terms{Design, Performance}
+
+\section{Introduction}
+
+Be sure to address the following:\\
+1. Why should Chang or Chen care from the apps side.\\
+2.why should ken or hank care from the viz side\\
+3.why would Garth care from the storage side\\
+
+%\begin{figure}[htbp]
+%\vspace{-0.10in}
+%\centering
+%\includegraphics[width=\columnwidth]{images/arch-mapping}
+%\vspace{-0.20in}
+%\caption{Architecture and Component Mapping}
+%\label{fig:arch-mapping}
+%\vspace{-0.15in}
+%\end{figure}
+
+The rest of the paper is organized as follows. A brief overview of related work
+is presented first in Section~\ref{sec:related}. Section~\ref{sec:end-user}
+discusses the programmatic interface end users will see when interacting with
+the storage array.
+Section~\ref{sec:iof}
+briefly discusses the motivation and proposal for the IO forwarding layer.
+Section~\ref{sec:iod} describes the IO Dispatcher layer and the broad
+functionality it offers.
+Section~\ref{sec:daos} discusses how the DAOS
+layer functions.
+The VOSD layer is discussed in Section~\ref{sec:vosd}.
+Next is an exploration of cross-cutting features like transactions and
+metadata management in Section~\ref{sec:broader}.
+A demonstration of the functionality is presented in
+Section~\ref{sec:evaluation}.
+The paper is concluded in
+Section~\ref{sec:conclusion} with a summary of the broad issues covered in the
+paper.
+
+\section{Related Work}
+\label{sec:related}
+
+Many projects over the last couple of decades have sought to address some
+challenging aspect of parallel file system design. The recent rise of ``Big
+Data'' applications with different characteristic IO patterns have somewhat
+complicated the picture. Extreme scale machines will be expected to handle both
+the traditional simulation-related workloads as well as applications more
+squarely in the Big Data arena. This will require some adjustments to the
+underlying system for good performance for both scenarios.
+
+The major previous work is really limited to full file systems rather than the
+mountain of file system refinements made over the years. A selection of these
+other file systems and some features that make it relatively unique are
+described below.
+
+Ceph~\cite{weil:ceph} is a distributed object store and file system. It offers
+both a POSIX and object interface including features typically found in parallel
+file systems.
+Ceph's unique striping approach uses pseudo-random numbers with a
+known seed eliminating the need for the metadata service to track where each
+stripe in a parallel file is placed.
+PVFS~\cite{carns:pvfs} offers optimizations to reduce metadata server load,
+such as a single process opening a file and sharing the handle.
+It has been
+commercialized in recent years as OrangeFS.
+Lustre~\cite{braam:lustre-arch} has become the de facto standard on most major
+clusters offering scalable performance and fine-grained end-user and
+programmatic control over how data is placed in the storage system.
+GPFS~\cite{schmuck:gpfs} offers a hands-off approach for providing good
+performance for scaling parallel IO tasks and is used extensively by its owner,
+IBM.
+Panasas~\cite{panasas:architecture} seeks to offer a dynamically adaptive
+striping system that detects the need for additional stripes for performance
+and adjusts the file layout as necessary.
+
+Other file systems, like GoogleFS~\cite{ghemawat:googlefs} and
+HDFS~\cite{Shvachko:2010:hdfs}, address distributed rather than parallel
+computing and cannot be compared directly.
+The primary difference between
+distributed and parallel file systems is the ability of the file system to
+store and retrieve data simultaneously from multiple clients, in parallel, and
+treat the resulting collection of pieces as a single object.  Distributed file
+systems rely on a single client creating a file, but distributing the set of
+files across a wide array of storage devices.
+The other, popular distributed
+file system of note is NFS~\cite{powlowski:1994:nfs3} that has been used for
+decades for enterprise file systems.
+These other file systems are mainly of
+interest in the context of the ACG features of FFSIO and will be discussed more
+in Section~\ref{sec:acg}.
+
+\section{Demonstration}
+\label{sec:evaluation}
+
+
+\section{Conclusions}
+\label{sec:conclusion}
+
+The Fast Forward Storage and IO Stack project has designed a good first pass at
+addressing the requirements for an extreme scale data storage mechanism.  By
+preferring a high level user API like HDF5 rather than using the POSIX
+interface, more advanced functionality can be incorporated with less end-user
+impact. The introduction of the IOD layer with buffering will absorb the
+difference between the compute node IO demands and the available bandwidth in
+the storage array. With DAOS supporting translating the container and object
+model to the underlying storage options, different storage technologies can be
+deployed over time.
+
+With the overall stack design a prototype implementation complete, refinements,
+such as fault detection and recovery, can be designed and tested.  These and
+other activities for phase 2 will ultimately generate what is likely to be the
+next generation storage stack for extreme scale platforms.
+
+\section{Acknowledgements}
+
+Sandia National Laboratories is a multi-program laboratory managed and operated
+by Sandia Corporation, a wholly owned subsidiary of Lockheed Martin
+Corporation, for the U.S. Department of Energy's National Nuclear Security
+Administration under contract DE-AC04-94AL85000.
+
+\bibliographystyle{abbrv}
+\bibliography{paper}
+
+\vfill\eject
+
+\end{document}
