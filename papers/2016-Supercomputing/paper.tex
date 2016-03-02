@@ -180,6 +180,16 @@ Responsibilities:
 \item Hasan/Ben - ADIOS interpolation pieces
 \end{itemize}
 
+COMPLETED WORK:\\
+1. XGC1 ADIOS write to VisIt read, 3/5, 4/4, 2/6 split (4/4 converts the 4 double bytes to a proper float). Output is written to disk and read is directly. DataSpaces to do still. all scalars are written to both files.\\
+2. Can we do this to Integers too?\\
+3. XGC1 interpolation uses every 4th element only and did 3/5 split\\
+4. Hasan to talk with Jeremy about how to make the interpolation work properly.
+5. Doing off the particles for the first pass. Checking to see if they can use the fields instead.\\
+6. Also measure the diff with the viz and the numerical eval for the 3/5 split\\
+7. Make it neutral in terms of tech used to make double blind possible. Add in
+the rest of the details once accepted\\
+
 
 The rest of the paper is organized as follows. A brief overview of related work
 is presented first in Section~\ref{sec:related}. Section~\ref{sec:end-user}
