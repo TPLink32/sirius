@@ -103,8 +103,8 @@ and 40 bits.
 
 Be sure to address the following:\\
 1. Why should Chang or Chen care from the apps side.\\
-2.why should ken or hank care from the viz side\\
-3.why would Garth care from the storage side\\
+2. why should ken or hank care from the viz side\\
+3. why would Garth care from the storage side\\
 
 %\begin{figure}[htbp]
 %\vspace{-0.10in}
@@ -115,6 +115,71 @@ Be sure to address the following:\\
 %\label{fig:arch-mapping}
 %\vspace{-0.15in}
 %\end{figure}
+
+Contributions:\\
+\begin{enumerate}
+\item XGC1 Byte-split data (3/5)
+\begin{enumerate}
+\item decomposition/compression
+\item auditor
+\item data challenges preventing arbitrary use
+\end{enumerate}
+\item XGC1/S3D Data Interpolation (timestep to timestep)
+\end{enumerate}
+
+Engineering:\\
+\begin{enumerate}
+\item ADIOS write transports
+\item VisIt auditor reader
+\item interfaces
+\end{enumerate}
+
+validation/experiments (XGC1 only for now, 1 & 2 buckets, all other factors):\\
+\begin{enumerate}
+\item Performance writing (A orig, B 2 buckets)
+\item Performance reading (A orig, B 2 buckets, C bucket 1, D, bucket 2)
+\item Visualization diff (3-d)
+\item numeric evaluation diff (to get past criticism of 3-d hiding errors)
+\item derived quantity
+\item interpolation validation
+\end{enumerate}
+
+target: Lustre, DataSpaces\\
+nodes: 10, 100, 1000 (Sith 35 compute + 5 storage)\\
+data/node: 10M, 1G\\
+vars: 10, 100\\
+per var: 1, 2 buckets (4 if we have time)\\
+timesteps: 2, 4, 8, 16\\
+time between timesteps: 10s, 100s\\
+
+XGC1:\\
+1d array format\\
+nparticles (N x 8)\\
+fields (nv) (3-5 vars)\\
+
+Pixie3D/S3D:\\
+3d array: (1k x 1k x 1k)\\
+
+Use ITER mesh input for XGC1
+
+Viz diff
+
+\{reduced, full, diff\} images, numerical eval of diff\\
+
+Responsibilities:
+\begin{itemize}
+\item Jay - write draft/drive paper
+\item everyone - experiment runs
+\item Ivan - DataSpaces help
+\item Tahsin/Jong - Use real XGC1 data in test harness
+\item Tahsin/Jong - Big run for byte split example
+\item Tahsin/Jong - small run for interpolation example
+\item Hadan - Real S3D run
+\item Hasan/Norbert - ADIOS writer
+\item James/Dave - ADIOS reader/viz
+\item Hasan/Ben - ADIOS interpolation pieces
+\end{itemize}
+
 
 The rest of the paper is organized as follows. A brief overview of related work
 is presented first in Section~\ref{sec:related}. Section~\ref{sec:end-user}
