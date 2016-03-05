@@ -796,7 +796,7 @@ maintain even performance in the face of a wide spectrum of workloads.},
 
 @inproceedings{powlowski:1994:nfs3,
         Author = {Brian Powlowski and Chet Juszczak and Peter Staubach and Carl Smith and Diane Lebel and David Hitz},
-        Booktitle = usenix94x,
+        Booktitle = {Proceedings of the 1994 Summer USENIX Technical Conference},
         Comment = {Describing the new version of the NFS protocol.},
         Date-Modified = {2009-01-06 17:33:31 -0700},
         Keywords = {distributed file systems},
@@ -804,3 +804,126 @@ maintain even performance in the face of a wide spectrum of workloads.},
         Private = {Not read. Not in files; on shelf.},
         Title = {{NFS} Version 3: Design and Implementations},
         Year = {1994}}
+
+@ARTICLE{netcdf3,
+author={Rew, R. and Davis, G.},
+journal={Computer Graphics and Applications, IEEE}, title={NetCDF: an interface for scientific data access},
+year={1990},
+volume={10},
+number={4},
+pages={76-82},
+abstract={The network common data form (NetCDF), a data abstraction for storing and retrieving multidimensional data, is described. NetCDF is distributed as a software library that provides a concrete implementation of that abstraction. The implementation provides a machine-independent format for representing scientific data. Together, the abstraction, library, and data format support the creation, access, and sharing of scientific information. NetCDF is useful for supporting objects that contain dissimilar kinds of data in a heterogeneous network environment and for writing application software that does not depend on application-specific formats. Independence from particular machine representations is achieved by using a nonproprietary standard for external data representation. The discussion covers NetCDF data abstraction and interface; dimensions, variables, and attributes; direct access and hyperslab access, the NetCDF library; the data format; ncdump and ncgen utilities; experience, usability, and performance; limitations of NetCDF; and future plans.<>},
+keywords={computer graphics;data structures;network operating systems;NetCDF;application software;attributes;data abstraction;dimensions;direct access;external data representation;heterogeneous network environment;hyperslab access;multidimensional data;scientific data access;software library;standard;variables;Application software;Computer architecture;Computer displays;Data visualization;Educational institutions;Information retrieval;Meteorology;Multidimensional systems;Software libraries;Workstations},
+doi={10.1109/38.56302},
+ISSN={0272-1716},
+}
+
+@techreport{rew:2011:netcdf-guide,
+        author = {R. Rew and G. Savis and S. Emerson and H. Davies and E. Hartnett and D. Heimbinger},
+        keywords = {netcdf},
+        month = {June},
+        title = {The NetCDF User's Guide, Data Model, Programming Interfaces, and Format for Self-Describing, Portal Data. NetCDF Version 4.1.3},
+        institution = {Unidata Program Center},
+        year = {2011},
+}
+
+@inproceedings{torrellas:2003:pnetcdf,
+        Abstract = {Dataset storage, exchange, and access play a critical role in scientific
+        applications. For such purposes netCDF serves as a portable, efficient
+        file format and programming interface, which is popular in numerous
+        scientific application domains. However, the original interface does
+        not provide an efficient mechanism for parallel data storage and
+        access. \par In this work, we present a new parallel interface for
+        writing and reading netCDF datasets. This interface is derived with
+        minimal changes from the serial netCDF interface but defines semantics
+        for parallel access and is tailored for high performance. The underlying
+        parallel I/O is achieved through MPI-IO, allowing for substantial
+        performance gains through the use of collective I/O optimizations.
+        We compare the implementation strategies and performance with HDF5.
+        Our tests indicate programming convenience and significant I/O performance
+        improvement with this parallel netCDF (PnetCDF) interface.},
+        Address = {Phoenix, AZ},
+        Author = {Jianwei Li and Wei-keng Liao and Alok Choudhary and Robert Ross and Rajeev Thakur and William Gropp and Rob Latham and Andrew Siegel and Brad Gallagher and Michael Zingale},
+        Booktitle = {Proceedings of the SC2003: High Performance Networking and Computing},
+        Comment = {published on the web only},
+        File = {pap258.pdf:http\://www.sc-conference.org/sc2003/paperpdfs/pap258.pdf:PDF},
+        Keywords = {parallel I/O interface, netCDF, MPI-IO, pario-bib},
+        Month = {nov},
+        Publisher = {IEEE Computer Society Press},
+        Title = {Parallel {netCDF}: A High-Performance Scientific {I/O} Interface},
+        Url = {http://www.sc-conference.org/sc2003/paperpdfs/pap258.pdf},
+        Year = {2003},
+        Bdsk-Url-1 = {http://www.sc-conference.org/sc2003/paperpdfs/pap258.pdf}}
+
+@inproceedings{lofstead:2011:six-degrees,
+  crossref="lofstead:six-degrees",
+}
+
+@inproceedings{lofstead:six-degrees,
+        Address = {San Jose, CA},
+        Author = {Jay Lofstead and Milo Polte and Garth Gibson and Scott A. Klasky and Karsten Schwan and Ron Oldfield and Matthew Wolf},
+        Booktitle = {Proceedings of the International Symposium on High Performance and Distributed Computing},
+        Date-Added = {2011-01-24 10:19:46 -0700},
+        Date-Modified = {2011-03-25 10:19:20 -0600},
+        Keywords = {read patterns, parallel computing, ADIOS, pario-bib},
+        Month = {June},
+        Publisher = {ACM},
+        Title = {Six Degrees of Scientific Data: Reading Patters for Extreme Scale {IO}},
+        Year = {2011}}
+
+@inproceedings{chilan:2006:hdf5-performance,
+        Author = {Christian M. Chilan and MuQun Yang and Albert Cheng and Leon Arber},
+        Booktitle = {14th IBM System Scientific User Group (ScicomP)},
+        Date-Added = {2010-03-10 19:15:30 -0700},
+        Date-Modified = {2010-03-10 19:20:33 -0700},
+        Keywords = {HDF5, pario-bib, parallel I/O, perforamance analysis},
+        Month = {July},
+        Title = {Parallel {I/O} Performance Study with {HDF5}, a Scientific Data Package},
+        Url = {http://www.hdfgroup.uiuc.edu/papers/papers/ParallelIO/ParallelPerformance.pdf},
+        Year = {2006},
+        Bdsk-Url-1 = {http://www.hdfgroup.uiuc.edu/papers/papers/ParallelIO/ParallelPerformance.pdf}}
+
+@INPROCEEDINGS{klappenecker:1995:wavelet,
+    author = {Andreas Klappenecker and Frank U. May},
+    title = {Evolving Better Wavelet Compression Schemes},
+    booktitle = {in Proc. of Wavelet Applications in Signal and Image Processing III, 12{14}},
+    year = {1995},
+    pages = {614--622}
+}
+
+@techreport{curry:2015:sirocco,
+author = {Matthew L. Curry and Lee Ward and Geoff Danielson},
+title = {Motivation and Design of the Sirocco Storage System, version 1.0},
+year = {2015},
+institution = {Sandia National Laboratories},
+address = {Albuquerque, New Mexico},
+note = {\url{http://www.cs.sandia.gov/Scalable_IO/sirocco}},
+}
+
+@inproceedings{blaze:1992:hsm,
+  author    = {Matt Blaze and
+               Rafael Alonso},
+  title     = {Dynamic Hierarchical Caching for Large-Scale Distributed File Systems},
+  booktitle = {Proceedings of the 12th International Conference on Distributed Computing
+               Systems, Yokohama, Japan, June 9-12, 1992},
+  pages     = {521--528},
+  year      = {1992},
+  crossref  = {DBLP:conf/icdcs/1992},
+  url       = {http://dx.doi.org/10.1109/ICDCS.1992.235001},
+  doi       = {10.1109/ICDCS.1992.235001},
+  timestamp = {Wed, 27 Nov 2013 16:54:39 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/icdcs/BlazeA92},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+
+@proceedings{DBLP:conf/icdcs/1992,
+  title     = {Proceedings of the 12th International Conference on Distributed Computing
+               Systems, Yokohama, Japan, June 9-12, 1992},
+  publisher = {{IEEE} Computer Society},
+  year      = {1992},
+  url       = {http://ieeexplore.ieee.org/xpl/mostRecentIssue.jsp?punumber=419},
+  isbn      = {0-8186-2865-0},
+  timestamp = {Wed, 27 Nov 2013 16:54:39 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/icdcs/1992},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}

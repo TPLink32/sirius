@@ -1,63 +1,45 @@
-\documentclass{sig-alt-gov2}
-\pdfpagewidth=8.5in
-\pdfpageheight=11in
-%\usepackage{subfig}
-\usepackage{subfigure}
-\usepackage[pdftex]{}
-\usepackage{graphicx}
-%\usepackage{todonotes}
-\usepackage{listings}
-\lstset {% general command to set parameter(s)
-         language=C,
-     basicstyle=\footnotesize,               % print whole listing small
-%     keywordstyle=\color{black}\bfseries, % underlined bold black keywords
-%     identifierstyle =\color{black},  % nothing happens
-%     commentstyle=\color{black}\emph, % white comments
-     %stringstyle=\ttfamily,          % typewriter type for strings
-%     stringstyle=\color{black},       % typewriter type for strings
-         tabsize=4,
-         showtabs=false,
-     showstringspaces=false}
-%can't figure this one out for particles bandwidth
-%\usepackage[caption,label]{subfig}
-
-%\newcommand{\TITLE}{D\textsuperscript{\huge{2}}T: Doubly Distributed Transactions for High Performance and Distributed Computing}
-
-\newcommand{\DDT}{D\textsuperscript{2}T~}
-\newcommand{\DDTns}{D\textsuperscript{2}T}
-
-\hyphenation{sub-trans-ac-tion}
-
-\addtolength{\parskip}{-0.08in}
-
-% in order for balance columns to work, it has to be before begin document...
-%\balancecolumns
-
+% This version uses the latex2e styles, not the very ancient 2.09 stuff.
+\documentclass[letterpaper,twocolumn,10pt]{article}
+\usepackage{usenix,epsfig,endnotes,url}
 \begin{document}
 
-%\conferenceinfo{PDSW'15,} {November 17, 2015, Austin, Texas}
-%\CopyrightYear{2015}
-%\crdata{978-1-4503-1103-8/11/11}
-%\clubpenalty=10000
-%\widowpenalty = 10000
+%don't want date printed
+\date{}
 
-\title{SIRIUS: A Revolutionary Approach to I/O and Storage for Exascale Scientific Computing}
+%make title bold and 14 pt font (Latex default is non-bold, 16 pt)
+\title{\Large \bf SIRIUS: A Revolutionary Approach to I/O and Storage for Exascale Scientific Computing}
 
-\numberofauthors{1}
+%for single author (just remove % characters)
 \author{
-%\alignauthor {Jay Lofstead\footnotemark[1], Ivo Jimenez\footnotemark[2],Carlos Maltzahn\footnotemark[2], Quincey Koziol\footnotemark[3], John Bent\footnotemark[4], Eric Barton\footnotemark[5]}\\
-\alignauthor {Jay Lofstead\footnotemark[1], Carlos Maltzahn\footnotemark[2], Scott Klasky\footnotemark[3], Hasan Abbasi\footnotemark[3], Qing Liu\footnotemark[3]\\
-Matthew Curry\footnotemark[1], Mark Ainsworth\footnotemark[5], Manish Parashar\footnotemark[4]}\\
-\footnotemark[1]~~Sandia National Laboratories
-\footnotemark[2]~~University of California\\
-\footnotemark[3]~~Oak Ridge National Laboratory
-\footnotemark[4]~~Rutgers University
-\footnotemark[5]~~Brown University\\
-}
+{\rm Your N.\ Here}\\
+Your Institution
+\and
+{\rm Second Name}\\
+Second Institution
+% copy the following lines to add more authors
+% \and
+% {\rm Name}\\
+%Name Institution
+} % end author
+
+%\author{
+%\alignauthor {Jay Lofstead\footnotemark[1], Carlos Maltzahn\footnotemark[2], Scott Klasky\footnotemark[3], Hasan Abbasi\footnotemark[3], Qing Liu\footnotemark[3]\\
+%Matthew Curry\footnotemark[1], Mark Ainsworth\footnotemark[5], Manish Parashar\footnotemark[4]}\\
+%\footnotemark[1]~~Sandia National Laboratories
+%\footnotemark[2]~~University of California\\
+%\footnotemark[3]~~Oak Ridge National Laboratory
+%\footnotemark[4]~~Rutgers University
+%\footnotemark[5]~~Brown University\\
+%}
+
 \maketitle
 
-\begin{abstract}
+% Use the following at camera-ready time to suppress page numbers.
+% Comment it out when you first submit the paper for review.
+\thispagestyle{empty}
 
+
+\subsection*{Abstract}
 The longest existing parallel I/O APIs, HDF5, PnetCDF, and NetCDF, are focused
 on treating the entire output from a paralell application as a single unit.
 These libraries work to gather the data from all processes and arrange it such
@@ -76,26 +58,19 @@ to not just an I/O library, but also the underlying storage infrastructure to
 address the needs of exascacle applications cognizant of projected exascale
 platform characteristics and in the context of current industry trends.
 
-\end{abstract}
-
-%\category{D.4}{Software}{Operating Systems}
-%\category{D.4.7}{Operating Systems}{Organization and Design}[hierarchical design]
-
-%\terms{Design, Performance}
-
 \section{Introduction}
 
 The first generation of standardized APIs for scientific computing IO focused
 on serial output from a single process to a distributed or local file system.
-These systems still exist in the form of serial HDF5~\cite{hdf5} and the
-end-of-life NetCDF 3.x~\cite{netcdf}. The key feature of these APIs was the
+These systems still exist in the form of serial HDF5~\cite{chilan:2006:hdf5-performance} and the
+end-of-life NetCDF 3.x~\cite{netcdf3}. The key feature of these APIs was the
 logical data model that eliminated any parallel data decomoposition artifacts
 from the actual data storage. This offered consistent performance and regular
 data access patterns.
 
 The second generation is really an evolution of the first with HDF-5 adding
-parallel capabilities and NetCDF bifurcating into NetCDF4~\cite{netcdf4} and
-PnetCDF~\cite{pnetcdf} with PnetCDF almost completely maintaining the data
+parallel capabilities and NetCDF bifurcating into NetCDF4~\cite{rew:2011:netcdf-guide} and
+PnetCDF~\cite{torrellas:2003:pnetcdf} with PnetCDF almost completely maintaining the data
 model and NetCDF4 shifting to use HDF5 underneath. The other improvement is
 incorporating knowledge of an underlying parallel file system to support large
 files written in unision from many processes.
@@ -103,12 +78,12 @@ files written in unision from many processes.
 The third generation is a reaction to the second based on recognizing that
 maintaining the logical data model in physical form became inordinately
 expensive and offered a performance penalty in most cases when running at
-scale. Libraries like ADIOS~\cite{adios} shifted from writing complete
+scale. Libraries like ADIOS~\cite{lofstead:2009:adaptable} shifted from writing complete
 variables from distributed processes as a single entity to treating all data
 from a single source to be treated as a unit. This eliminated the data
 reorganization at the cost of more complicated reading patterns. In spite of
 this extra complication, the performance is generally
-better~\cite{six-degrees}.
+better~\cite{lofstead:2011:six-degrees}.
 
 SIRIUS represents the next generation. New platforms are introducting
 additional storage layers to accelerate IO operations and to compensate for
@@ -154,7 +129,7 @@ the storage array.
 Section~\ref{sec:storage}
 discusses the challenges and opportunities for deploying scalable storage
 infrastructure.
-Section~\ref{sec:qos} 
+Section~\ref{sec:qos}
 discusses the quality of service features proposed for this project.
 Next is an exploration of the metadata challenges required to support such a
 system in Section~\ref{sec:metadata}.
@@ -163,6 +138,7 @@ Section~\ref{sec:evaluation}.
 The paper is concluded in
 Section~\ref{sec:conclusion} with a summary of the broad issues covered in the
 paper.
+
 
 \section{Related Work}
 \label{sec:related}
@@ -222,7 +198,7 @@ overviews, just reading the two-byte portion is sufficient to get a rough idea
 of data contents. If particular data looks interesting, more and more data can
 be read to improve the precision. This can easily be applied uniformly by each
 process without coordinating. A more dynamic approach would be to apply a
-wavelet compression~\cite{wavelet} approach that generates different compressed
+wavelet compression~\cite{klappenecker:1995:wavelet} approach that generates different compressed
 data sizes at a fixed error rate depending on the data entropy. This is still a
 uniform operator, but the resulting data can be of radically different sizes.
 
@@ -300,14 +276,14 @@ alternative versions can be requested instead.
 
 The metadata system has a daunting challenge. Traditional metadata systems for
 both distributed and parallel file systems only have to deal with a single name
-space and storage hierarchy. While hierarichal storage management~\cite{hsm}
+space and storage hierarchy. While hierarichal storage management~\cite{blaze:1992:hsm}
 systems offer a way to show a single name space, the reality is that the tier
 closest to the user is a cache for the other tiers with data migrating as
 necessary to support user interaction. SIRIUS is working in a fundamentally
 different way. Each tier is treated as a first class citizen with direct
 client access possible. Where data is actually retrieved from is where it is
 actually stored rather than forcing data migration and caching. Systems like
-Sirocco~\cite{sirocco} offer a way to support this model directly and are a
+Sirocco~\cite{curry:2015:sirocco} offer a way to support this model directly and are a
 fundamental part of our system.
 
 The additional challege SIRIUS metadata services face is incorporating
@@ -339,19 +315,36 @@ to help accelerate data access and ultimately time to insight. Our initial
 efforts show promise that such a system is both possible and can offer
 attractive performance to better use the supercomputing platform.
 
-\section{Acknowledgements}
+%\subsection{How to Build Your Paper}
+%
+%You have to run {\tt latex} once to prepare your references for
+%munging.  Then run {\tt bibtex} to build your bibliography metadata.
+%Then run {\tt latex} twice to ensure all references have been resolved.
+%If your source file is called {\tt usenixTemplate.tex} and your {\tt
+%  bibtex} file is called {\tt usenixTemplate.bib}, here's what you do:
+%{\tt \small
+%\begin{verbatim}
+%latex usenixTemplate
+%bibtex usenixTemplate
+%latex usenixTemplate
+%latex usenixTemplate
+%\end{verbatim}
+%}
+%
 
-\includegraphics[scale=0.07]{logos/doe_logo}
-\includegraphics[scale=0.30]{logos/snl_logo}
-\includegraphics[scale=0.35]{logos/nnsa_logo}
+\section{Acknowledgments}
+
+%\includegraphics[scale=0.07]{logos/doe_logo}
+%\includegraphics[scale=0.30]{logos/snl_logo}
+%\includegraphics[scale=0.35]{logos/nnsa_logo}
 Sandia National Laboratories is a multi-program laboratory managed and operated
 by Sandia Corporation, a wholly owned subsidiary of Lockheed Martin
 Corporation, for the U.S. Department of Energy's National Nuclear Security
 Administration under contract DE-AC04-94AL85000.
 
-\bibliographystyle{abbrv}
-\bibliography{paper}
+{\footnotesize \bibliographystyle{acm}
+\bibliography{paper}}
 
-\vfill\eject
+%\theendnotes
 
 \end{document}
