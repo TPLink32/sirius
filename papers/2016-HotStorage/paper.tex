@@ -60,29 +60,34 @@ platform characteristics and in the context of current industry trends.
 
 \section{Introduction}
 
-The first generation of standardized APIs for scientific computing IO focused
-on serial output from a single process to a distributed or local file system.
-These systems still exist in the form of serial HDF5~\cite{chilan:2006:hdf5-performance} and the
-end-of-life NetCDF 3.x~\cite{netcdf3}. The key feature of these APIs was the
-logical data model that eliminated any parallel data decomoposition artifacts
-from the actual data storage. This offered consistent performance and regular
-data access patterns.
+High performance computing simulations have driven tightly coupled platform
+scaling for decades. The output from these simulations are analyzed using
+regular tools and techniques optimized for this environment.  The first
+generation of standardized APIs for scientific computing IO focused on serial
+output from a single process to a distributed or local file system.  These
+systems still exist in the form of serial
+HDF5~\cite{chilan:2006:hdf5-performance} and the end-of-life NetCDF
+3.x~\cite{netcdf3}. The key feature of these APIs was the logical data model
+that eliminated any parallel data decomoposition artifacts from the actual data
+storage. This offered consistent performance and regular data access patterns.
 
 The second generation is really an evolution of the first with HDF-5 adding
-parallel capabilities and NetCDF bifurcating into NetCDF4~\cite{rew:2011:netcdf-guide} and
-PnetCDF~\cite{torrellas:2003:pnetcdf} with PnetCDF almost completely maintaining the data
-model and NetCDF4 shifting to use HDF5 underneath. The other improvement is
-incorporating knowledge of an underlying parallel file system to support large
-files written in unision from many processes.
+parallel capabilities and NetCDF bifurcating into
+NetCDF4~\cite{rew:2011:netcdf-guide} and PnetCDF~\cite{torrellas:2003:pnetcdf}
+with PnetCDF almost completely maintaining the data model and NetCDF4 shifting
+to use HDF5 underneath. The other improvement is incorporating knowledge of an
+underlying parallel file system to support large files written in unision from
+many processes.
 
 The third generation is a reaction to the second based on recognizing that
 maintaining the logical data model in physical form became inordinately
-expensive and offered a performance penalty in most cases when running at
-scale. Libraries like ADIOS~\cite{lofstead:2009:adaptable} shifted from writing complete
-variables from distributed processes as a single entity to treating all data
-from a single source to be treated as a unit. This eliminated the data
-reorganization at the cost of more complicated reading patterns. In spite of
-this extra complication, the performance is generally
+expensive~\cite{lofstead:2011:six-degrees} and offered a performance penalty in
+most cases when running at scale. Libraries like
+ADIOS~\cite{lofstead:2009:adaptable} shifted from writing complete variables
+from distributed processes as a single entity to treating all data from a
+single source to be treated as a unit. This eliminated the data reorganization
+at the cost of more complicated reading patterns. In spite of this extra
+complication, the performance is generally
 better~\cite{lofstead:2011:six-degrees}.
 
 SIRIUS represents the next generation. New platforms are introducting
@@ -90,10 +95,7 @@ additional storage layers to accelerate IO operations and to compensate for
 plateauing storage array performance. At the same time, data sizes continue
 to grow. The fourth generation IO API will have to both address the IO API
 and middleware layer as well as the deeper, more complex storage hierarchy.
-
-Systems like ADIOS showed the performance advantage for decomposed data
-layouts, but still rely on a uniform storage layer. SIRIUS represents a shift
-to consider the local portion of each globally distributed variable as a
+SIRIUS considers the local portion of each globally distributed variable as a
 management entity with data placement decisions across the entire storage
 hierarhy rather than on a single tier.  Decisions on what data to place where
 is driven by the data contents itself according to end-user specified
@@ -186,9 +188,6 @@ both writing and reading are new. To manage these new requirements, an extended
 API is proposed. At a high level, the common API broad categories are
 discussed.
 
-\noindent\textbf{Open and Close} need to add additional information to include
-intent information. The intent hints to the system that....
-
 \noindent\textbf{Refactoring} may be a uniform operation across an
 entire variable. For example, splitting a double into three parts--two byes,
 four bytes, and two bytes, yields a two-byte value that is the majority of the
@@ -197,18 +196,25 @@ precision. The last two bytes are the remainder of the precision. For quick
 overviews, just reading the two-byte portion is sufficient to get a rough idea
 of data contents. If particular data looks interesting, more and more data can
 be read to improve the precision. This can easily be applied uniformly by each
-process without coordinating. A more dynamic approach would be to apply a
-wavelet compression~\cite{klappenecker:1995:wavelet} approach that generates different compressed
-data sizes at a fixed error rate depending on the data entropy. This is still a
-uniform operator, but the resulting data can be of radically different sizes.
+process without coordinating. From a storage hierarchy perspective, the primary
+value portion could be written to high performance, low capacity storage while
+the rest is written to slower storage. That would reduce the data quantity
+written to NVM, for example, by 75\% for a 2/6 split enabling far more output
+to be written to this fast tier with the rest spooled asynchronously.
 
 A more complex, but interesting approach is to offer an {\em Auditor} that
-performs the same computation, but with some simplification that greatly
-reduces computation intensity with only a minor loss of precision over the
-short term. Longer term, this auditor would need to be reset to bring it back
-into alignment with the full precision simulation. The much smaller reduced
+performs a similar, but lower precision computation that greatly reduces
+computation intensity with only a minor loss of precision over short spatial
+and temporal domains. As the simulation progresses, the auditor drift would
+need to be reset to bring it back into alignment. The much smaller, reduced
 precision data could be used instead of the full precision in many
-circumstances.
+circumstances.  A more dynamic lossy approach would be to apply a wavelet
+compression~\cite{klappenecker:1995:wavelet} approach that generates different
+compressed data sizes at a fixed error rate depending on the data entropy.
+These are still uniform operators, but the resulting data can be of radically
+different sizes. For this approach, some or all of the lower precision data
+can be written to the fast tier while full precision can be spooled
+asynchrnously to the slower tier(s).
 
 A middle ground approach between these two refactoring approaches is to use a
 non-uniform operator across a variable. Instead of, for example, splitting on
@@ -218,13 +224,16 @@ that should be maintained in full precision while other areas can be more
 highly compressed. Such an operator would decompose the data from a process
 further than a single process or node depending on the data features. This
 approach may balance precision better than wavelet compression, but at a higher
-analytics cost.
+analytics cost. We would put data areas with interesting features on the fast
+tier while the rest could be spooled to the slow tier asynchronously.
 
 We plan to investigate all three approaches as different applications will have
-different techniques that work best. Any performant storage system should
-offer the flexibility to incorporate application specific data refactoring
-techniques and sufficient metadata support for an arbitrary client to access
-the data successfully.
+different techniques that work best. Our initial tests have demonstrated the
+potential for the auditor approach in an isolated environment. We have also
+built a prototype ADIOS transport method for the byte-split apporach. Any
+performant storage system should offer the flexibility to incorporate
+application specific data refactoring techniques and sufficient metadata
+support for an arbitrary client to access the data successfully.
 
 \noindent\textbf{Quality of Service} deadlines are important for driving how
 much time is spent performing IO. At the same time, data quality must be
@@ -232,7 +241,63 @@ maintained at a sufficient level for the resulting science to be possible.
 The system must offer a way for an end-user to negotiate with the system for
 trading off between time spent in IO and the amount of data written or read.
 Part of that tradeoff will be increased or reduced data quality, depending on
-the system.
+the system. For example, when data is written, a few different forms may be
+output given sufficient space and time. One may be every fourth element
+across a regular mesh reduces the data size to $1/64^th$ the full data set.
+Further dividing that using byte-splitting can reduce it by another 75\%. For
+quick overviews to search data sets, this reduced form can be sufficient
+driving which data sets should be investigated in more detail. The key driving
+factor is time. The applicaiton scientist can read 0.4\% of the full data
+volume with a similar time reduction. SIRIUS will offer a negotiation process
+to read any data.
+
+First, a user will request a particular variable and timesetp. SIRIUS will
+return a table similar to Table~\ref{tab:results}. For a given variable ``A'',
+the end-user can then select the data quality and approximate reading time for
+the operation. In this case, there are 5 options for obtaining the whole data
+set (1/2/3/4, 5/6, 7/8, 9, 10). The first four represent a spatial and byte
+split, 5/6 represent just strided writing, 7/8 represent just a byte-split, 9
+represents a wavelet compressed version, and 10 is the full precision data.
+The user would specify to read a particular data instance that would proceed
+normally.  Quality of Service soft guarantees specified as part of the request
+will result in SIRIUS allocating soft bandwidth reservations to meet the
+request.
+
+\begin{table}[tbp]
+\centering
+\caption{Reading Options for Variable ``A''}
+\label{tab:results}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+\# & Size & Time & Time Err & Refactoring & Data Err\\
+\hline
+1 & $(\frac{1}{4})^3(\frac{3}{8})$A & 10s & $\pm$ 3s & stride, byte-split & 99\% \\
+\hline
+2 & $(\frac{3}{4})^3(\frac{3}{8})$A & 90s & $\pm$ 30s & stride, byte-split & 58\% \\
+\hline
+3 & $(\frac{1}{4})^3(\frac{5}{8})$A & 16s & $\pm$ 5s & stride, byte-split & 0.01\% \\
+\hline
+4 & $(\frac{3}{4})^3(\frac{5}{8})$A & 120s & $\pm$ 50s & stride, byte-split & 0.01\% \\
+\hline
+\hline
+5 & $(\frac{1}{4})^3$A & 1200s & $\pm$ 30s & stride & 98\% \\
+\hline
+6 & $(\frac{3}{4})^3$A & 2400s & $\pm$ 90s & stride & 58\% \\
+\hline
+\hline
+7 & $(\frac{3}{8})$A & 1350s & $\pm$ 120s & byte-split & 5\% \\
+\hline
+8 & $(\frac{5}{8})$A & 2250s & $\pm$ 120s & byte-split & 0.01\% \\
+\hline
+\hline
+9 & A & 36s & $\pm$ 6s & wavelet & 1\% \\
+\hline
+\hline
+10 & A & 3600s & $\pm$ 600s & none & 0\% \\
+\hline
+\end{tabular}
+\end{table}
+
 
 \section{Storage Challenges and Opportunities}
 \label{sec:storage}
