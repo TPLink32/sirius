@@ -243,7 +243,7 @@ trading off between time spent in IO and the amount of data written or read.
 Part of that tradeoff will be increased or reduced data quality, depending on
 the system. For example, when data is written, a few different forms may be
 output given sufficient space and time. One may be every fourth element
-across a regular mesh reduces the data size to $1/64^th$ the full data set.
+across a regular mesh reduces the data size to $1/64^{th}$ the full data set.
 Further dividing that using byte-splitting can reduce it by another 75\%. For
 quick overviews to search data sets, this reduced form can be sufficient
 driving which data sets should be investigated in more detail. The key driving
@@ -261,7 +261,11 @@ represents a wavelet compressed version, and 10 is the full precision data.
 The user would specify to read a particular data instance that would proceed
 normally.  Quality of Service soft guarantees specified as part of the request
 will result in SIRIUS allocating soft bandwidth reservations to meet the
-request.
+request. While some of the error rates seem to render the data unusable,
+consider a 3000x3000x3000 simulation domain. That would yield a 27 gigapixel
+image should all of the data be used. Visualization will already radically
+reduce the data sizes to make usable visualizations that work on a standard
+display. A 99\% reduction would yield a 270 megapixel image--still quite large.
 
 \begin{table}[tbp]
 \centering
