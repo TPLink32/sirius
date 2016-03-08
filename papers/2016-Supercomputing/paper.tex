@@ -74,24 +74,49 @@ Stephane Ethier\footnotemark[8]~~
 
 \begin{abstract}
 
-As the exascale computing age emerges, data related issues are becoming
-critical factors that determine how and where we do computing. Popular
-approaches used by traditional I/O solution and storage libraries become
-increasingly bottlenecked due to their assumptions about data movement,
-re-organization, and storage. While, new technologies, such as ``burst
-buffers'', can help address some of the short-term performance issues, it is
-essential that we reexamine the underlying storage and I/O infrastructure to
-effectively support requirements and challenges at exascale and beyond.
+  Big data and the associated changes in the computing platform are key
+  components for the advances from exascale systems for scientific discovery
+  with computing. Data will increasingly drive the next generation of scientific
+  discoveries, but limitations in the rate of progress for data storage and
+  movement technologies is likely to hamper this revolution. Storage performance
+  and capacity bottlenecks have the potential to greatly limit how much data can
+  be output from exascale simulations, how often this data can be output, and
+  how much knowledge can be derived from the data.
 
-In this paper we present
-- different data needs different techniques
-- write overhead for the different refactoring/auditing approaches
-- derived quantities in viz after precision based refactoring and differences
-  from full fidelity data sets.
-- linear auditing approaches for data refactoring and the effects on data
-  sizes, io performance, and viz quality. Do every point, but split at 24 bits
-and 40 bits.
+  New techniques in storage and I/O hardware is one direction towards addressing
+  these issues. In this paper we present an alternate method for addressing the
+  data deluge, by utilizing domain specific knowledge about the data to manage
+  the organization, content and precision of the output data. The tradeoff
+  between system level quality of service and domain specific quality of
+  information can be used to circumvent the storage bottlenecks without
+  exploding the cost or energy usage of storage systems.
 
+  In this paper we present a lossless data partitioning technique that
+  intelligently utilizes hierarchical storage in next-generation leadership
+  computing systems. We show that lower accuracy partitions can be used to
+  service the need for most common use cases, and additional accuracy can be
+  added for more demanding scenarios. The performance benefits are .....
+
+  \begin{comment}
+    As the exascale computing age emerges, data related issues are becoming
+    critical factors that determine how and where we do computing. Popular
+    approaches used by traditional I/O solution and storage libraries become
+    increasingly bottlenecked due to their assumptions about data movement,
+    re-organization, and storage. While, new technologies, such as ``burst
+    buffers'', can help address some of the short-term performance issues, it is
+    essential that we reexamine the underlying storage and I/O infrastructure to
+    effectively support requirements and challenges at exascale and beyond.
+
+    In this paper we present
+    - different data needs different techniques
+    - write overhead for the different refactoring/auditing approaches
+    - derived quantities in viz after precision based refactoring and differences
+    from full fidelity data sets.
+    - linear auditing approaches for data refactoring and the effects on data
+    sizes, io performance, and viz quality. Do every point, but split at 24 bits
+    and 40 bits.
+  \end{comment}
+  
 \end{abstract}
 
 %\category{D.4}{Software}{Operating Systems}
@@ -101,10 +126,46 @@ and 40 bits.
 
 \section{Introduction}
 
-Be sure to address the following:\\
-1. Why should Chang or Chen care from the apps side.\\
-2. why should ken or hank care from the viz side\\
-3. why would Garth care from the storage side\\
+
+
+\begin{comment}
+  Be sure to address the following:\\
+  1. Why should Chang or Chen care from the apps side.\\
+  2. why should ken or hank care from the viz side\\
+  3. why would Garth care from the storage side\\
+\end{comment}
+
+  Big data and the associated changes in the computing platform are key
+  components for the advances from exascale systems for scientific discovery
+  with computing. Data will increasingly drive the next generation of scientific
+  discoveries, but limitations in the rate of progress for data storage and
+  movement technologies is likely to hamper this revolution. Storage performance
+  and capacity bottlenecks have the potential to greatly limit how much data can
+  be output from exascale simulations, how often this data can be output, and
+  how much knowledge can be derived from the data.
+
+  New techniques in storage and I/O hardware is one direction towards addressing
+  these issues. In this paper we present an alternate method for addressing the
+  data deluge, by utilizing domain specific knowledge about the data to manage
+  the organization, content and precision of the output data. The tradeoff
+  between system level quality of service and domain specific quality of
+  information can be used to circumvent the storage bottlenecks without
+  exploding the cost or energy usage of storage systems.
+
+
+  We have undertaken this effort as part of a larger rethinking of the role of
+  storage in high performance computing applications, the SIRIUS project. In
+  this paper we demonstrate the initial efforts towards creating precision
+  aware I/O techniques for different types of large scale data sets. Our
+  experiments show that selecting for output accuracy based on the intended
+  usage for data can yeild substantial performance benefits. Moreover, we show
+  that lossless data partitioning techniques can be utilize in lieu of lossy
+  compression methods to utilize the hierarchical storage structure of
+  next-generation leadership computing platforms. By partitioning data into
+  buckets of varying precision, many usecases can be met with smaller, less
+  accurate buckets. For other use cases where only the highest precision will
+  suffice, the additional cost can be paid as and when needed.
+
 
 %\begin{figure}[htbp]
 %\vspace{-0.10in}
