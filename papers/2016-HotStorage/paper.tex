@@ -125,9 +125,8 @@ discussed briefly.
 %\end{figure}
 
 The rest of the paper is organized as follows. A brief overview of related work
-is presented first in Section~\ref{sec:related}. Section~\ref{sec:end-user}
-discusses the programmatic interface end users will see when interacting with
-the storage array.
+is presented first in Section~\ref{sec:related}. Section~\ref{sec:features}
+discusses the differentiating platform features SIRIUS will provide.
 Section~\ref{sec:storage}
 discusses the challenges and opportunities for deploying scalable storage
 infrastructure.
@@ -178,15 +177,12 @@ The other, popular distributed
 file system of note is NFS~\cite{powlowski:1994:nfs3} that has been used for
 decades for enterprise file systems.
 
-\section{End-User API Layer}
-\label{sec:end-user}
+\section{Platform Features}
+\label{sec:features}
 
-The initial thoughts about an end-use API is to try to work within established
-APIs to ease user migration. However, some of the key features, such as the
-data ``refactor'' functionality and the quality of service requirements for
-both writing and reading are new. To manage these new requirements, an extended
-API is proposed. At a high level, the common API broad categories are
-discussed.
+The platform has two key features that drive the rest of the design. First is
+the data refactoring/compression approach. Second are quality of service
+estimates. 
 
 \noindent\textbf{Refactoring} may be a uniform operation across an
 entire variable. For example, splitting a double into three parts--two byes,
@@ -320,6 +316,10 @@ important data in the fast tier and store lower precision representations of
 the rest of the data in the slower tiers. This lowers pressures on the NVM
 layer increasing performance overall by greatly reducing the drain/stage-in
 operations and reducing the data volumes stored on a per application basis.
+As part of the data refactoring, SIRIUS will use the entire storage hierarchy
+to store different portions of each variable as illustrated in
+Table~\ref{tab:results}. For example, for the 1/2/3/4 setup, 4 different tiers
+may be used to store this single variable.
 
 \section{Quality of Service Features}
 \label{sec:qos}
