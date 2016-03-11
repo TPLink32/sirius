@@ -206,7 +206,7 @@ store only a data subset. For example, by selecting every fourth element in
 three dimensions yields a $\frac{1}{64}$ sized data set to store in fast
 storage--a mere 1.5\% of the original size. The rest can be spooled
 asynchronously. Combining byte-splits and striding can reduce the data sizes
-even more. Doing a 3/5 split and an every fourth element yields 0.9\% of the
+even more. Doing a 3/5 split and an every fourth element yields 0.5\% of the
 original size.
 
 A more complex, but interesting approach is to offer an {\em Auditor} that
@@ -380,7 +380,7 @@ estimates given data placement and the requesting source(s).
 
 The metadata system has a daunting challenge. Traditional metadata systems for
 both distributed and parallel file systems only have to deal with a single name
-space and storage tier. While hierarichal storage
+space and storage tier. While hierarchical storage
 management~\cite{blaze:1992:hsm} systems offer a way to show a single name
 space, the reality is that the tier closest to the user is a cache for the
 other tiers with data migrating as necessary to support user interaction.
