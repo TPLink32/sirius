@@ -247,6 +247,13 @@ factor is time. The applicaiton scientist can read 0.4\% of the full data
 volume with a similar time reduction. SIRIUS will offer a negotiation process
 to read any data.
 
+The byte splitting approach error rate is quite small. By splitting at byte
+boundaries rather than converting to a lower precision 4-byte float, we
+preserve the full exponent range and keep the first 11 bits of mantissa
+precision. This leaves a $2^{-12}$ maximum error magnitude for each value--the
+last 40 bits represent less precision together than the immediately preceeding
+bit all by itself.
+
 First, a user will request a particular variable and timesetp. SIRIUS will
 return a table similar to Table~\ref{tab:results}. For a given variable ``A'',
 the end-user can then select the data quality and approximate reading time for
@@ -271,13 +278,13 @@ display. A 99\% reduction would yield a 270 megapixel image--still quite large.
 \hline
 \# & Size & Time & Time Err & Refactoring & Data Err\\
 \hline
-1 & $(\frac{1}{4})^3(\frac{3}{8})$A & 10s & $\pm$ 3s & stride, byte-split & 99\% \\
+1 & $(\frac{1}{4})^3(\frac{3}{8})$A & 10s & $\pm$ 3s & stride, byte-split & 98\% \\
 \hline
 2 & $(\frac{3}{4})^3(\frac{3}{8})$A & 90s & $\pm$ 30s & stride, byte-split & 58\% \\
 \hline
-3 & $(\frac{1}{4})^3(\frac{5}{8})$A & 16s & $\pm$ 5s & stride, byte-split & 0.01\% \\
+3 & $(\frac{1}{4})^3(\frac{5}{8})$A & 16s & $\pm$ 5s & stride, byte-split & n/a \\
 \hline
-4 & $(\frac{3}{4})^3(\frac{5}{8})$A & 120s & $\pm$ 50s & stride, byte-split & 0.01\% \\
+4 & $(\frac{3}{4})^3(\frac{5}{8})$A & 120s & $\pm$ 50s & stride, byte-split & n/a \\
 \hline
 \hline
 5 & $(\frac{1}{4})^3$A & 1200s & $\pm$ 30s & stride & 98\% \\
@@ -285,9 +292,9 @@ display. A 99\% reduction would yield a 270 megapixel image--still quite large.
 6 & $(\frac{3}{4})^3$A & 2400s & $\pm$ 90s & stride & 58\% \\
 \hline
 \hline
-7 & $(\frac{3}{8})$A & 1350s & $\pm$ 120s & byte-split & 5\% \\
+7 & $(\frac{3}{8})$A & 1350s & $\pm$ 120s & byte-split & 0.02\% \\
 \hline
-8 & $(\frac{5}{8})$A & 2250s & $\pm$ 120s & byte-split & 0.01\% \\
+8 & $(\frac{5}{8})$A & 2250s & $\pm$ 120s & byte-split & n/a \\
 \hline
 \hline
 9 & A & 36s & $\pm$ 6s & wavelet & 1\% \\
@@ -368,12 +375,49 @@ for higher precision OR higher performance reading.
 \section{Demonstration}
 \label{sec:evaluation}
 
-This stack has an early prototype implementation intended to test concepts
-rather than performance and scalability. It has focused on examining the
-interaction of the different APIs for each layer to flesh out any detailed
-requirements or concerns that may have been missed in the conceptualization of
-this IO stack. To demonstrate the viability of the IO stack described in this
-paper, we show some very early performance results from the untuned prototype.
+Our initial tests are on the Sith cluster at Oak Ridge. The system contains 40
+compute nodes. Each compute node contains four 2.3 GHz 8 core AMD Opteron
+processors, and 64 GB of memory. The system is configured with a 86 TB Lustre
+file system for scratch space.
+
+We use the XGC1~\cite{ku:2008:xgc1} fusion simulation as our application. We
+run on 5 nodes with 160 processes total. XGC1 is configured to use 819,200,000
+particles evenly spread across the processes.
+
+\begin{table}[tbp]
+\centering
+\caption{Performance For 3/5 byte Split}
+\label{tab:performance}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+Test & Time (s)\\
+\hline
+Write full data & 10.3 \\
+\hline
+Byte split & 2.5 \\
+\hline
+write 3-byte portion & 3.4 \\
+\hline
+write 5-byte portion & 9.3 \\
+\hline
+\hline
+Read 3-byte portion & 10.3 \\
+\hline
+Reassemble after read & 27.9 \\
+\hline
+Read full data & 34.2 \\
+\hline
+\end{tabular}
+\end{table}
+
+Evaluating the error when using just the 3-byte portion compared to the full
+data set yields an $L^2$ norm of 72028.2 and $L_{\inf}$ of 0.00109242.
+
+Writing the 3-byte portion synchronously to fast storage and spooling the
+5-byte portion out to slower storage asynchronously will preserve the full data
+fidelity while improving both writing and reading time even when including the
+disassemble/reassemble times. The introduced errors when using just the 3-byte
+portion, as discussed above, is quite small.
 
 \section{Conclusions}
 \label{sec:conclusion}
@@ -403,9 +447,9 @@ attractive performance to better use the supercomputing platform.
 
 \section{Acknowledgments}
 
-%\includegraphics[scale=0.07]{logos/doe_logo}
-%\includegraphics[scale=0.30]{logos/snl_logo}
-%\includegraphics[scale=0.35]{logos/nnsa_logo}
+This project is funded by the following research grants from the Advanced
+Scientific Research Office at the Department of Energy, under contracts SDAV:
+ERKJ200/KJ0403000, RSVP: ERKJU60/KJ0402000, and Sirius: ERKJ311/KJ0402000.
 Sandia National Laboratories is a multi-program laboratory managed and operated
 by Sandia Corporation, a wholly owned subsidiary of Lockheed Martin
 Corporation, for the U.S. Department of Energy's National Nuclear Security
