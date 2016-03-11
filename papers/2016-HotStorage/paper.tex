@@ -9,28 +9,35 @@
 %make title bold and 14 pt font (Latex default is non-bold, 16 pt)
 \title{\Large \bf SIRIUS: A Revolutionary Approach to I/O and Storage for Exascale Scientific Computing}
 
-%for single author (just remove % characters)
 \author{
-{\rm Your N.\ Here}\\
-Your Institution
-\and
-{\rm Second Name}\\
-Second Institution
-% copy the following lines to add more authors
-% \and
-% {\rm Name}\\
-%Name Institution
-} % end author
-
-%\author{
-%\alignauthor {Jay Lofstead\footnotemark[1], Carlos Maltzahn\footnotemark[2], Scott Klasky\footnotemark[3], Hasan Abbasi\footnotemark[3], Qing Liu\footnotemark[3]\\
-%Matthew Curry\footnotemark[1], Mark Ainsworth\footnotemark[5], Manish Parashar\footnotemark[4]}\\
-%\footnotemark[1]~~Sandia National Laboratories
-%\footnotemark[2]~~University of California\\
-%\footnotemark[3]~~Oak Ridge National Laboratory
-%\footnotemark[4]~~Rutgers University
-%\footnotemark[5]~~Brown University\\
-%}
+Jay Lofstead\footnotemark[1]~~,
+Hasan Abbasi\footnotemark[3]~~,
+Mark Ainsworth\footnotemark[6]~\footnotemark[3]~~,
+Jong Choi\footnotemark[3]~~,
+Matthew Curry\footnotemark[1]~~,\\
+Scott Klasky\footnotemark[3]~\footnotemark[4]~\footnotemark[7]~~,
+Tahsin Kurc\footnotemark[9]~~,
+Qing Liu\footnotemark[3]~~,
+Jeremy Logan\footnotemark[4]~~,
+Carlos Maltzahn\footnotemark[2]~~,
+Manish Parashar\footnotemark[5]~~,\\
+Norbert Podhorzski\footnotemark[3]~~,
+Feiyi Wang\footnotemark[3]~~,
+Matthew Wolf\footnotemark[7]~~,
+C. S. Chang\footnotemark[8]~~,
+Michael Churchill\footnotemark[8]~~,
+Stephane Ethier\footnotemark[8]~~
+\\
+\footnotemark[1]~~Sandia National Laboratories,
+\footnotemark[2]~~University of California Santa Cruz,\\
+\footnotemark[3]~~Oak Ridge National Laboratory,
+\footnotemark[4]~~U. Tenn. Knoxville,
+\footnotemark[5]~~Rutgers University,\\
+\footnotemark[6]~~Brown University,
+\footnotemark[7]~~Georgia Tech,
+\footnotemark[8]~~PPPL,
+\footnotemark[9]~~Stony Brook
+}
 
 \maketitle
 
@@ -41,7 +48,7 @@ Second Institution
 
 \subsection*{Abstract}
 The longest existing parallel I/O APIs, HDF5, PnetCDF, and NetCDF, are focused
-on treating the entire output from a paralell application as a single unit.
+on treating the entire output from a parallel application as a single unit.
 These libraries work to gather the data from all processes and arrange it such
 that it is organized much like as if it were written from a single process.
 This approach, in particular the two-phase collective I/O with data sieving
@@ -50,13 +57,14 @@ ADIOS shifted the focus from treating the entire application output as a single
 entity to treating the output from each writer as a self-contained entity. This
 eliminated the need for the problematic two-phase collective I/O and has
 demonstrated good scalability well into the petascale era. Another shift is
-required to address the needs of exascale systems. New system I/O bandwidth is
-not keeping pace with the compute acceleration leading to accute bottlenecks.
-While ``burst buffer'' technology will help address the performance gap, it
-does not address the problem completely. This paper describes a new approach
-to not just an I/O library, but also the underlying storage infrastructure to
-address the needs of exascacle applications cognizant of projected exascale
-platform characteristics and in the context of current industry trends.
+required to address the needs of exascale systems. New supercomputing system
+I/O bandwidth is not keeping pace with the compute acceleration leading to
+acute bottlenecks.  While ``burst buffer'' technology will help address the
+performance gap, it does not address the problem completely. This paper
+describes a new approach to not just an I/O library, but also the underlying
+storage infrastructure to address the needs of exascacle applications cognizant
+of projected exascale platform characteristics and in the context of current
+industry trends.
 
 \section{Introduction}
 
@@ -67,9 +75,9 @@ generation of standardized APIs for scientific computing IO focused on serial
 output from a single process to a distributed or local file system.  These
 systems still exist in the form of serial
 HDF5~\cite{chilan:2006:hdf5-performance} and the end-of-life NetCDF
-3.x~\cite{netcdf3}. The key feature of these APIs was the logical data model
-that eliminated any parallel data decomoposition artifacts from the actual data
-storage. This offered consistent performance and regular data access patterns.
+3.x~\cite{netcdf3}. The key feature of these APIs is the logical data model
+that eliminates any parallel data decomoposition artifacts from the stored
+data.  This offered consistent performance and regular data access patterns.
 
 The second generation is really an evolution of the first with HDF-5 adding
 parallel capabilities and NetCDF bifurcating into
@@ -110,9 +118,9 @@ accelerating writing is important. This approach also supports accelerating
 reading.
 
 This paper presents an overview of the efforts to build such a fourth
-generation storage and IO system. A discussion of the end-user API, storage
-challenges, quality of service features, and metadata challenges are all
-discussed briefly.
+generation storage and IO system. A discussion of the platform features,
+storage challenges, quality of service features, and metadata challenges are
+all discussed briefly.
 
 %\begin{figure}[htbp]
 %\vspace{-0.10in}
@@ -125,9 +133,8 @@ discussed briefly.
 %\end{figure}
 
 The rest of the paper is organized as follows. A brief overview of related work
-is presented first in Section~\ref{sec:related}. Section~\ref{sec:end-user}
-discusses the programmatic interface end users will see when interacting with
-the storage array.
+is presented first in Section~\ref{sec:related}. Section~\ref{sec:features}
+discusses the differentiating platform features SIRIUS will provide.
 Section~\ref{sec:storage}
 discusses the challenges and opportunities for deploying scalable storage
 infrastructure.
@@ -146,61 +153,61 @@ paper.
 \label{sec:related}
 
 Ceph~\cite{weil:ceph} is a distributed object store and file system. It offers
-both a POSIX and object interface including features typically found in parallel
-file systems.
-Ceph's unique striping approach uses pseudo-random numbers with a
-known seed eliminating the need for the metadata service to track where each
-stripe in a parallel file is placed.
-PVFS~\cite{carns:pvfs} offers optimizations to reduce metadata server load,
-such as a single process opening a file and sharing the handle.
-It has been
-commercialized in recent years as OrangeFS.
-Lustre~\cite{braam:lustre-arch} has become the de facto standard on most major
-clusters offering scalable performance and fine-grained end-user and
-programmatic control over how data is placed in the storage system.
-GPFS~\cite{schmuck:gpfs} offers a hands-off approach for providing good
-performance for scaling parallel IO tasks and is used extensively by its owner,
-IBM.
-Panasas~\cite{panasas:architecture} seeks to offer a dynamically adaptive
-striping system that detects the need for additional stripes for performance
-and adjusts the file layout as necessary.
+both a POSIX and object interface including features typically found in
+parallel file systems.  Ceph's unique striping approach uses pseudo-random
+numbers with a known seed eliminating the need for the metadata service to
+track where each stripe in a parallel file is placed.  PVFS~\cite{carns:pvfs}
+offers optimizations to reduce metadata server load, such as a single process
+opening a file and sharing the handle.  It has been commercialized in recent
+years as OrangeFS.  Lustre~\cite{braam:lustre-arch} has become the de facto
+standard on most major clusters offering scalable performance and fine-grained
+end-user and programmatic control over how data is placed in the storage
+system.  GPFS~\cite{schmuck:gpfs} offers a hands-off approach for providing
+good performance for scaling parallel IO tasks and is used extensively by its
+owner, IBM.  Panasas~\cite{panasas:architecture} seeks to offer a dynamically
+adaptive striping system that detects the need for additional stripes for
+performance and adjusts the file layout as necessary.
 
 Other file systems, like GoogleFS~\cite{ghemawat:googlefs} and
 HDFS~\cite{Shvachko:2010:hdfs}, address distributed rather than parallel
-computing and cannot be compared directly.
-The primary difference between
+computing and cannot be compared directly.  The primary difference between
 distributed and parallel file systems is the ability of the file system to
 store and retrieve data simultaneously from multiple clients, in parallel, and
 treat the resulting collection of pieces as a single object.  Distributed file
 systems rely on a single client creating a file, but distributing the set of
-files across a wide array of storage devices.
-The other, popular distributed
+files across a wide array of storage devices.  The other, popular distributed
 file system of note is NFS~\cite{powlowski:1994:nfs3} that has been used for
 decades for enterprise file systems.
 
-\section{End-User API Layer}
-\label{sec:end-user}
+\section{Platform Features}
+\label{sec:features}
 
-The initial thoughts about an end-use API is to try to work within established
-APIs to ease user migration. However, some of the key features, such as the
-data ``refactor'' functionality and the quality of service requirements for
-both writing and reading are new. To manage these new requirements, an extended
-API is proposed. At a high level, the common API broad categories are
-discussed.
+The platform has two key features that drive the rest of the design. First is
+the data refactoring/compression approach. Second are quality of service
+estimates. 
 
-\noindent\textbf{Refactoring} may be a uniform operation across an
-entire variable. For example, splitting a double into three parts--two byes,
-four bytes, and two bytes, yields a two-byte value that is the majority of the
-data precision. The next four bytes would be most of the rest of the data
-precision. The last two bytes are the remainder of the precision. For quick
-overviews, just reading the two-byte portion is sufficient to get a rough idea
-of data contents. If particular data looks interesting, more and more data can
-be read to improve the precision. This can easily be applied uniformly by each
-process without coordinating. From a storage hierarchy perspective, the primary
-value portion could be written to high performance, low capacity storage while
-the rest is written to slower storage. That would reduce the data quantity
-written to NVM, for example, by 75\% for a 2/6 split enabling far more output
-to be written to this fast tier with the rest spooled asynchronously.
+\subsection{Refactoring}
+Refactoring may be a uniform operation across an entire variable. For example,
+splitting a double into three parts--two byes, four bytes, and two bytes,
+yields a two-byte value that is the majority of the data precision. The next
+four bytes would be most of the rest of the data precision. The last two bytes
+are the remainder of the precision. For quick overviews, just reading the
+two-byte portion is sufficient to get a rough idea of data contents. If
+particular data looks interesting, more and more data can be read to improve
+the precision. This can easily be applied uniformly by each process without
+coordinating. From a storage hierarchy perspective, the primary value portion
+could be written to high performance, low capacity storage while the rest is
+written to slower storage. That would reduce the data quantity written to NVM,
+for example, by 75\% for a 2/6 split enabling far more output to be written to
+this fast tier with the rest spooled asynchronously.
+
+A similar approach that maintains full data quality is to use a data stride to
+store only a data subset. For example, by selecting every fourth element in
+three dimensions yields a $\frac{1}{64}$ sized data set to store in fast
+storage--a mere 1.5\% of the original size. The rest can be spooled
+asynchronously. Combining byte-splits and striding can reduce the data sizes
+even more. Doing a 3/5 split and an every fourth element yields 0.5\% of the
+original size.
 
 A more complex, but interesting approach is to offer an {\em Auditor} that
 performs a similar, but lower precision computation that greatly reduces
@@ -208,7 +215,20 @@ computation intensity with only a minor loss of precision over short spatial
 and temporal domains. As the simulation progresses, the auditor drift would
 need to be reset to bring it back into alignment. The much smaller, reduced
 precision data could be used instead of the full precision in many
-circumstances.  A more dynamic lossy approach would be to apply a wavelet
+circumstances.  For an example auditor, consider a previous generation physics
+model. While it is not as accurate as the state-of-the-art-model, it is very
+close, particularly over short temporal and spatial ranges. Other types of
+auditors are possible and are under investigation. The key idea with the
+auditor is that the reduced quality result can be calculated much more quickly
+than the full precision and will have much smaller data sizes. As a side
+benefit, the auditor can both detect soft errors in the caluclation by the
+drift from the high precision physics diverging too quickly. It can also be
+used to create a statistically representative data set for the high precision
+physics model. Calculating the auditor value and writing its output for
+checkpoint restart or initial analysis exploration can save time and leverage
+otherwise idle excess compute resources.
+
+A more dynamic lossy approach would be to apply a wavelet
 compression~\cite{klappenecker:1995:wavelet} approach that generates different
 compressed data sizes at a fixed error rate depending on the data entropy.
 These are still uniform operators, but the resulting data can be of radically
@@ -216,7 +236,7 @@ different sizes. For this approach, some or all of the lower precision data
 can be written to the fast tier while full precision can be spooled
 asynchrnously to the slower tier(s).
 
-A middle ground approach between these two refactoring approaches is to use a
+A middle ground approach between these refactoring approaches is to use a
 non-uniform operator across a variable. Instead of, for example, splitting on
 byte boundaries to make multiple values, a function that identifies data
 features through a local analytics function could identify ``interesting'' data
@@ -224,48 +244,32 @@ that should be maintained in full precision while other areas can be more
 highly compressed. Such an operator would decompose the data from a process
 further than a single process or node depending on the data features. This
 approach may balance precision better than wavelet compression, but at a higher
-analytics cost. We would put data areas with interesting features on the fast
-tier while the rest could be spooled to the slow tier asynchronously.
+analytics cost. SIRIUS would put data areas with interesting features on the
+fast tier while the rest could be spooled to the slow tier asynchronously.
 
-We plan to investigate all three approaches as different applications will have
-different techniques that work best. Our initial tests have demonstrated the
-potential for the auditor approach in an isolated environment. We have also
+We plan to investigate all of these approaches as different applications will
+have different techniques that work best. Our initial tests have demonstrated
+the potential for the auditor approach in an isolated environment. We have also
 built a prototype ADIOS transport method for the byte-split apporach. Any
 performant storage system should offer the flexibility to incorporate
 application specific data refactoring techniques and sufficient metadata
 support for an arbitrary client to access the data successfully.
 
-\noindent\textbf{Quality of Service} deadlines are important for driving how
-much time is spent performing IO. At the same time, data quality must be
-maintained at a sufficient level for the resulting science to be possible.
-The system must offer a way for an end-user to negotiate with the system for
-trading off between time spent in IO and the amount of data written or read.
-Part of that tradeoff will be increased or reduced data quality, depending on
-the system. For example, when data is written, a few different forms may be
-output given sufficient space and time. One may be every fourth element
-across a regular mesh reduces the data size to $1/64^{th}$ the full data set.
-Further dividing that using byte-splitting can reduce it by another 75\%. For
-quick overviews to search data sets, this reduced form can be sufficient
-driving which data sets should be investigated in more detail. The key driving
-factor is time. The applicaiton scientist can read 0.4\% of the full data
-volume with a similar time reduction. SIRIUS will offer a negotiation process
-to read any data.
-
-First, a user will request a particular variable and timesetp. SIRIUS will
-return a table similar to Table~\ref{tab:results}. For a given variable ``A'',
-the end-user can then select the data quality and approximate reading time for
-the operation. In this case, there are 5 options for obtaining the whole data
-set (1/2/3/4, 5/6, 7/8, 9, 10). The first four represent a spatial and byte
-split, 5/6 represent just strided writing, 7/8 represent just a byte-split, 9
-represents a wavelet compressed version, and 10 is the full precision data.
-The user would specify to read a particular data instance that would proceed
-normally.  Quality of Service soft guarantees specified as part of the request
-will result in SIRIUS allocating soft bandwidth reservations to meet the
-request. While some of the error rates seem to render the data unusable,
-consider a 3000x3000x3000 simulation domain. That would yield a 27 gigapixel
-image should all of the data be used. Visualization will already radically
-reduce the data sizes to make usable visualizations that work on a standard
-display. A 99\% reduction would yield a 270 megapixel image--still quite large.
+\subsection{Quality of Service}
+Quality of service deadlines are important for driving how much time is spent
+performing IO. At the same time, data quality must be maintained at a
+sufficient level for the resulting science to be possible.  The system must
+offer a way for an end-user to negotiate with the system for trading off
+between time spent in IO and the amount of data written or read.  Part of that
+tradeoff will be increased or reduced data quality, depending on the system.
+For example, when data is written, a few different forms may be output given
+sufficient space and time. One may be every fourth element across a regular
+mesh reduces the data size to $1/64^{th}$ the full data set.  Further dividing
+that using byte-splitting can reduce it by another 75\%. For quick overviews to
+search data sets, this reduced form can be sufficient driving which data sets
+should be investigated in more detail. The key driving factor is time. The
+applicaiton scientist can read 0.4\% of the full data volume with a similar
+time reduction. SIRIUS will offer a negotiation process to read any data.
 
 \begin{table}[tbp]
 \centering
@@ -275,13 +279,13 @@ display. A 99\% reduction would yield a 270 megapixel image--still quite large.
 \hline
 \# & Size & Time & Time Err & Refactoring & Data Err\\
 \hline
-1 & $(\frac{1}{4})^3(\frac{3}{8})$A & 10s & $\pm$ 3s & stride, byte-split & 99\% \\
+1 & $(\frac{1}{4})^3(\frac{3}{8})$A & 10s & $\pm$ 3s & stride, byte-split & 98\% \\
 \hline
 2 & $(\frac{3}{4})^3(\frac{3}{8})$A & 90s & $\pm$ 30s & stride, byte-split & 58\% \\
 \hline
-3 & $(\frac{1}{4})^3(\frac{5}{8})$A & 16s & $\pm$ 5s & stride, byte-split & 0.01\% \\
+3 & $(\frac{1}{4})^3(\frac{5}{8})$A & 16s & $\pm$ 5s & stride, byte-split & n/a \\
 \hline
-4 & $(\frac{3}{4})^3(\frac{5}{8})$A & 120s & $\pm$ 50s & stride, byte-split & 0.01\% \\
+4 & $(\frac{3}{4})^3(\frac{5}{8})$A & 120s & $\pm$ 50s & stride, byte-split & n/a \\
 \hline
 \hline
 5 & $(\frac{1}{4})^3$A & 1200s & $\pm$ 30s & stride & 98\% \\
@@ -289,9 +293,9 @@ display. A 99\% reduction would yield a 270 megapixel image--still quite large.
 6 & $(\frac{3}{4})^3$A & 2400s & $\pm$ 90s & stride & 58\% \\
 \hline
 \hline
-7 & $(\frac{3}{8})$A & 1350s & $\pm$ 120s & byte-split & 5\% \\
+7 & $(\frac{3}{8})$A & 1350s & $\pm$ 120s & byte-split & 0.02\% \\
 \hline
-8 & $(\frac{5}{8})$A & 2250s & $\pm$ 120s & byte-split & 0.01\% \\
+8 & $(\frac{5}{8})$A & 2250s & $\pm$ 120s & byte-split & n/a \\
 \hline
 \hline
 9 & A & 36s & $\pm$ 6s & wavelet & 1\% \\
@@ -302,6 +306,33 @@ display. A 99\% reduction would yield a 270 megapixel image--still quite large.
 \end{tabular}
 \end{table}
 
+The byte splitting approach error rate is quite small. By splitting at byte
+boundaries rather than converting to a lower precision 4-byte float, we
+preserve the full exponent range and keep the first 11 bits of mantissa
+precision. This leaves a $2^{-12}$ maximum error magnitude for each value--the
+last 40 bits represent less precision together than the immediately preceeding
+bit all by itself.
+
+To read these various data organizations, read operations will shift to a
+two-step process. First, an list of options will be requested that includes
+both and error estiates. A second request will retrieve a particular data
+portion from the provided list. Consider Table~\ref{tab:results}.  First, a
+user will request a particular variable and timesetp. SIRIUS will return a
+table similar to Table~\ref{tab:results}. For a given variable ``A'',
+the end-user can then select the data quality and approximate reading time for
+the operation. In this case, there are 5 options for obtaining the whole data
+set (1/2/3/4, 5/6, 7/8, 9, 10). The first four entries represent a spatial and
+byte split, 5/6 represent just strided writing, 7/8 represent just a
+byte-split, 9 represents a wavelet compressed version, and 10 is the full
+precision data.  The user would specify to read a particular data instance that
+would proceed normally.  Quality of Service soft guarantees specified as part
+of the request will result in SIRIUS allocating soft bandwidth reservations to
+meet the request. While some of the error rates seem to render the data
+unusable, consider a 3000x3000x3000 simulation domain. That would yield a 27
+gigapixel image should all of the data be used. Visualization will already
+radically reduce the data sizes to make usable visualizations that work on a
+standard display. A 99\% reduction would yield a 270 megapixel image--still
+quite large.
 
 \section{Storage Challenges and Opportunities}
 \label{sec:storage}
@@ -320,6 +351,10 @@ important data in the fast tier and store lower precision representations of
 the rest of the data in the slower tiers. This lowers pressures on the NVM
 layer increasing performance overall by greatly reducing the drain/stage-in
 operations and reducing the data volumes stored on a per application basis.
+As part of the data refactoring, SIRIUS will use the entire storage hierarchy
+to store different portions of each variable as illustrated in
+Table~\ref{tab:results}. For example, for the 1/2/3/4 setup, 4 different tiers
+may be used to store this single variable.
 
 \section{Quality of Service Features}
 \label{sec:qos}
@@ -330,30 +365,30 @@ performance, an end-user can describe the local data to the storage system and
 receive an estimate on how long that data will take to write. If that is
 acceptable within a margin of error, the API can write. If it is unacceptable,
 the end-user can make decisions about skipping the output or maybe spending a
-little time with a strong data refactoring to reduce the data size.
+little time with a strong data refactoring to reduce the data size.  On
+reading, a user will select from a list of available options based on the time
+and data quality requirements.
 
-On reading, a user may specify that they are willing to wait for an approximate
-time for an operation. This will negotiate with the storage system to determine
-the data quality returned. If the requested data quality cannot be retrieved
-within a given time, the storage array may be able to apply an additional
-data reduction operator to decrease the amount of time spent in IO.
-Alternatively, if multiple different refactored data versions are stored,
-alternative versions can be requested instead.
+Key to making QoS work is to maintain performance metadata to inform the IO
+time estimates and error bounds returned to the user. Without hard
+reservations, no system can offer strict performance guarantees. Instead, by
+monitoring system behavior, SIRIUS will be able to offer reasonable time
+estimates given data placement and the requesting source(s).
 
 \section{Metadata Challenges}
 \label{sec:metadata}
 
 The metadata system has a daunting challenge. Traditional metadata systems for
 both distributed and parallel file systems only have to deal with a single name
-space and storage hierarchy. While hierarichal storage management~\cite{blaze:1992:hsm}
-systems offer a way to show a single name space, the reality is that the tier
-closest to the user is a cache for the other tiers with data migrating as
-necessary to support user interaction. SIRIUS is working in a fundamentally
-different way. Each tier is treated as a first class citizen with direct
-client access possible. Where data is actually retrieved from is where it is
-actually stored rather than forcing data migration and caching. Systems like
-Sirocco~\cite{curry:2015:sirocco} offer a way to support this model directly and are a
-fundamental part of our system.
+space and storage tier. While hierarchical storage
+management~\cite{blaze:1992:hsm} systems offer a way to show a single name
+space, the reality is that the tier closest to the user is a cache for the
+other tiers with data migrating as necessary to support user interaction.
+SIRIUS is working in a fundamentally different way. Each tier is treated as a
+first class citizen with direct client access possible. Where data is actually
+retrieved from is where it is actually stored rather than forcing data
+migration and caching. Systems like Sirocco~\cite{curry:2015:sirocco} offer a
+way to support this model directly and are a fundamental part of our system.
 
 The additional challege SIRIUS metadata services face is incorporating
 user-specified attributes including data refactoring functions. Since an
@@ -368,12 +403,50 @@ for higher precision OR higher performance reading.
 \section{Demonstration}
 \label{sec:evaluation}
 
-This stack has an early prototype implementation intended to test concepts
-rather than performance and scalability. It has focused on examining the
-interaction of the different APIs for each layer to flesh out any detailed
-requirements or concerns that may have been missed in the conceptualization of
-this IO stack. To demonstrate the viability of the IO stack described in this
-paper, we show some very early performance results from the untuned prototype.
+Our initial tests are on the Sith cluster at Oak Ridge. The system contains 40
+compute nodes. Each compute node contains four 2.3 GHz 8 core AMD Opteron
+processors, and 64 GB of memory. The system is configured with a 86 TB Lustre
+file system for scratch space.
+
+We use the XGC1~\cite{ku:2008:xgc1} fusion simulation as our application. We
+run on 5 nodes with 160 processes total. XGC1 is configured to use 819,200,000
+particles evenly spread across the processes. Performance numbers are
+presented in Table~\ref{tab:performance}.
+
+\begin{table}[tbp]
+\centering
+\caption{Performance For 3/5 byte Split}
+\label{tab:performance}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+Test & Time (s)\\
+\hline
+Write full data & 10.3 \\
+\hline
+Byte split & 2.5 \\
+\hline
+write 3-byte portion & 3.4 \\
+\hline
+write 5-byte portion & 9.3 \\
+\hline
+\hline
+Read 3-byte portion & 10.3 \\
+\hline
+Reassemble after read & 27.9 \\
+\hline
+Read full data & 34.2 \\
+\hline
+\end{tabular}
+\end{table}
+
+Evaluating the error when using just the 3-byte portion compared to the full
+data set yields an $L^2$ norm of 0.000087925 and $L_{\inf}$ of 0.00109242.
+
+Writing the 3-byte portion synchronously to fast storage and spooling the
+5-byte portion out to slower storage asynchronously will preserve the full data
+fidelity while improving both writing and reading time even when including the
+disassemble/reassemble times. The introduced errors when using just the 3-byte
+portion, as discussed above, is quite small.
 
 \section{Conclusions}
 \label{sec:conclusion}
@@ -382,7 +455,13 @@ Overall, the SIRIUS storage system is ushering in a new generation of both IO
 APIs and storage system managed together. It incorporates additional metadata
 to help accelerate data access and ultimately time to insight. Our initial
 efforts show promise that such a system is both possible and can offer
-attractive performance to better use the supercomputing platform.
+attractive performance to better use the supercomputing platform. By treating
+all storage tiers as first-class resources accessed independently, SIRIUS can
+maximize available IO bandwidth. By refactoring data to extract out important
+parts into separate data set slices, data writing and reading time can be
+greatly improved while still maintaining full data fidelity when necessary.
+The quality of service monitoring will inform the performance estimates giving
+a more predictably responsive system accelerating time to insight.
 
 %\subsection{How to Build Your Paper}
 %
@@ -403,9 +482,9 @@ attractive performance to better use the supercomputing platform.
 
 \section{Acknowledgments}
 
-%\includegraphics[scale=0.07]{logos/doe_logo}
-%\includegraphics[scale=0.30]{logos/snl_logo}
-%\includegraphics[scale=0.35]{logos/nnsa_logo}
+This project is funded by the following research grants from the Advanced
+Scientific Research Office at the Department of Energy, under contracts SDAV:
+ERKJ200/KJ0403000, RSVP: ERKJU60/KJ0402000, and Sirius: ERKJ311/KJ0402000.
 Sandia National Laboratories is a multi-program laboratory managed and operated
 by Sandia Corporation, a wholly owned subsidiary of Lockheed Martin
 Corporation, for the U.S. Department of Energy's National Nuclear Security
