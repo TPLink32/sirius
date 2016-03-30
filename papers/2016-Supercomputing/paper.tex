@@ -154,7 +154,6 @@ between system level quality of service and domain specific quality of
 information can be used to circumvent the storage bottlenecks without
 exploding the cost or energy usage of storage systems.
 
-
 We have undertaken this effort as part of a larger rethinking of the role of
 storage in high performance computing applications, the SIRIUS project. In
 this paper we demonstrate the initial efforts towards creating precision
@@ -167,6 +166,31 @@ next-generation leadership computing platforms. By partitioning data into
 buckets of varying precision, many usecases can be met with smaller, less
 accurate buckets. For other use cases where only the highest precision will
 suffice, the additional cost can be paid as and when needed.
+
+This paper describes our initial foray into hierarchical partitioning techniques
+to match the structure of storage in future systems. We have developed three
+sets of techinques for partitioning scientific data from large scale
+applications, evaluated these techniques on our local cluster to gain deeper
+understanding of the cost-benefit tradeoffs with respect to computational time,
+storage time, storage space, access speeds and power consumption, and utilized
+microbenchmarks to extrapolate our results to future use cases. Our research is
+driven by a combination of application user requirements and data consumption
+use cases, such as scientific visualization. To aid in adoption and
+experimentation, we have integrated our techniques with the ADIOS high
+performance I/O middleware library and the Visit visualization application. 
+
+The three broad techniques we study in this paper are bit-based splitting of
+double precision floating point data, spatial dimensional sampling of data, and
+a temporal interpolation based data prediction technique. In
+Section~\ref{details} we provide details on each of these techniques and discuss
+the various tradeoffs each technique emobdies. Our evaluation platform presents
+a two level storage hierarchy with local SSDs and a remote lustre parallel file
+system. Both storage targets have different performance characteristics, and
+more details on the evaluation platform are presented in Section~\ref{hardware}.
+With this background we present our results in Section~\ref{performance} and
+discussion in Section~\ref{res-discussion}. This work is the first step in a
+comprehensive new direction for data management at large scale and we discuss
+the future of this effort and conclusions in Section~\ref{future}. 
 
 
 % \begin{figure}[htbp]
