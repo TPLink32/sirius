@@ -179,14 +179,20 @@ use cases, such as scientific visualization. To aid in adoption and
 experimentation, we have integrated our techniques with the ADIOS high
 performance I/O middleware library and the Visit visualization application. 
 
+In the next section, Section~\ref{motivation}, we present the application use
+case for our data partitioning approach, and a discussion on the storage
+hierarchy in Section~\ref{storage-h}. 
 The three broad techniques we study in this paper are bit-based splitting of
 double precision floating point data, spatial dimensional sampling of data, and
-a temporal interpolation based data prediction technique. In
+a temporal interpolation based data prediction technique. 
+In
 Section~\ref{details} we provide details on each of these techniques and discuss
-the various tradeoffs each technique emobdies. Our evaluation platform presents
+the various tradeoffs each technique emobdies. Other research efforts and
+directions are discussed in Section~\ref{related-work}. 
+Our evaluation platform presents
 a two level storage hierarchy with local SSDs and a remote lustre parallel file
 system. Both storage targets have different performance characteristics, and
-more details on the evaluation platform are presented in Section~\ref{hardware}.
+more details on the evaluation platform are presented in Section~\ref{hardware}. 
 With this background we present our results in Section~\ref{performance} and
 discussion in Section~\ref{res-discussion}. This work is the first step in a
 comprehensive new direction for data management at large scale and we discuss
@@ -277,28 +283,27 @@ COMPLETED WORK:\\
 7. Make it neutral in terms of tech used to make double blind possible. Add in
 the rest of the details once accepted\\
 
+\section{Motivation and Application Use Cases}
+\label{motivation}
 
-The rest of the paper is organized as follows. A brief overview of related work
-is presented first in Section~\ref{sec:related}. Section~\ref{sec:end-user}
-discusses the programmatic interface end users will see when interacting with
-the storage array.
-Section~\ref{sec:iof}
-briefly discusses the motivation and proposal for the IO forwarding layer.
-Section~\ref{sec:iod} describes the IO Dispatcher layer and the broad
-functionality it offers.
-Section~\ref{sec:daos} discusses how the DAOS
-layer functions.
-The VOSD layer is discussed in Section~\ref{sec:vosd}.
-Next is an exploration of cross-cutting features like transactions and
-metadata management in Section~\ref{sec:broader}.
-A demonstration of the functionality is presented in
-Section~\ref{sec:evaluation}.
-The paper is concluded in
-Section~\ref{sec:conclusion} with a summary of the broad issues covered in the
-paper.
+\section{Storage Hierarchy}
+\label{storage-h}
+
+\section{Partitioning Techniques}
+\label{details}
+
+\section{Evaluation Platform}
+\label{hardware}
+
+\section{Evaluation}
+\label{performance}
+
+\section{Cost-Benefit Discussion}
+\label{discussion}
+
 
 \section{Related Work}
-\label{sec:related}
+\label{related-work}
 
 Many projects over the last couple of decades have sought to address some
 challenging aspect of parallel file system design. The recent rise of ``Big
@@ -349,27 +354,13 @@ These other file systems are mainly of
 interest in the context of the ACG features of FFSIO and will be discussed more
 in Section~\ref{sec:acg}.
 
-\section{Demonstration}
-\label{sec:evaluation}
+\section{Evaluation}
+\label{performance}
 
 
-\section{Conclusions}
-\label{sec:conclusion}
+\section{Future Work and Conclusions}
+\label{future}
 
-The Fast Forward Storage and IO Stack project has designed a good first pass at
-addressing the requirements for an extreme scale data storage mechanism.  By
-preferring a high level user API like HDF5 rather than using the POSIX
-interface, more advanced functionality can be incorporated with less end-user
-impact. The introduction of the IOD layer with buffering will absorb the
-difference between the compute node IO demands and the available bandwidth in
-the storage array. With DAOS supporting translating the container and object
-model to the underlying storage options, different storage technologies can be
-deployed over time.
-
-With the overall stack design a prototype implementation complete, refinements,
-such as fault detection and recovery, can be designed and tested.  These and
-other activities for phase 2 will ultimately generate what is likely to be the
-next generation storage stack for extreme scale platforms.
 
 \section{Acknowledgements}
 
