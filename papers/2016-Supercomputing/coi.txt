@@ -1,0 +1,216 @@
+Role	First Name	Last Name	Institution
+Technical Papers Chair	Lois Curfman	McInnes	Argonne National Laboratory
+Technical Papers Vice Chair	Richard	Vuduc	Georgia Institute of Technology
+Algorithms Chair	Anne	Benoit	ENS Lyon
+Algorithms Vice Chair	Julien	Langou	University of Colorado Denver
+Algorithms Member	Frédéric	Vivien	French Institute for Research in Computer Science and Automation
+Algorithms Member	Misun	Min	Argonne National Laboratory
+Algorithms Member	Ulrike	Meier Yang	Lawrence Livermore National Laboratory
+Algorithms Member	Ana	Gainaru	Mellanox Technologies
+Algorithms Member	Ioana	Banicescu	Mississippi State University
+Algorithms Member	Erik	Saule	University of North Carolina at Charlotte
+Algorithms Member	Ponnuswamy	Sadayappan	OSU
+Algorithms Member	Harsh	Vardhan	Google
+Algorithms Member	Krzysztof	Rzadca	University of Warsaw
+Algorithms Member	Emmanuel	Agullo	INRIA
+Algorithms Member	Rio	Yokota	Tokyo Institute of Technology
+Algorithms Member	Kamer	Kaya	Sabancı University
+Algorithms Member	Sanjukta	Bhowmick	University of Nebraska Omaha
+Algorithms Member	Jed	Brown	University of Colorado at Boulder
+
+Algorithms Member	Amanda	Randles	Duke University
+
+Algorithms Member	Howie	Huang	George Washingtion University
+Algorithms Member	Yves	Robert	ENS Lyon
+Algorithms Member	Aydin	Buluc	Lawrence Berkeley National Laboratory
+
+Algorithms Member	Thomas	Herault	University of Tennessee
+Algorithms Member	Hatem	Ltaief	King Abdullah University of Science and Technology
+Algorithms Member	Murat Efe	Guney	Intel Corporation
+Algorithms Member	Hari	Sundar	University of Utah
+Algorithms Member	Guillaume	Aupy	Vanderbilt University
+Algorithms Member	Sudarshan	Raghunathan	Microsoft Corporation
+Applications Chair	Carol	Woodward	Lawrence Livermore National Laboratory
+Applications Vice Chair	Michael	Bader	TUM
+Applications Member	Masha	Sosonkina	Ames Laboratory Iowa State University
+
+Applications Member	Miriam	Mehl	University of Stuttgart
+Applications Member	Alexandros	Stamatakis	HITS gGmbH
+Applications Member	Wolfgang	Bangerth	Texas A&M University
+Applications Member	Pradeep	Dubey	Intel Corporation
+Applications Member	Donna	Calhoun	Boise State University
+Applications Member	Kirk E.	Jordan	IBM Corporation
+Applications Member	Adrianna	Gillman	Rice University
+Applications Member	Allison H.	Baker	National Center for Atmospheric Research
+Applications Member	Noemi	Petra	University of California, Merced
+Applications Member	George	Biros	University of Texas at Austin
+Applications Member	David	Ham	Imperial College London
+Applications Member	Rich	Hornung	Lawrence Livermore National Laboratory
+Applications Member	Francois	Gygi	University of California, Davis
+Applications Member	Olaf	Schenk	University of Italian Switzerland
+Applications Member	Anshu	Dubey	Argonne National Laboratory
+Applications Member	H. Metin	Aktulga	Michigan State University
+Applications Member	Jean-Sylvain	Camier	CEA-DAM
+
+Applications Member	Boyce	Griffith	University of North Carolina at Chapel Hill
+Applications Member	Hector	Klie	ConocoPhillips
+Applications Member	Joe	Eaton	NVIDIA
+Applications Member	Suzanne	Shontz	University of Kansas
+Architectures & Networks Chair	Mattan	Erez	The University of Texas at Austin
+Architectures & Networks Vice Chair	Jung Ho	Ahn	Seoul National University
+Architectures & Networks Member	Koji	Inoue	Kyushu University
+Architectures & Networks Member	Ronald	Dreslinski Jr	University of Michigan
+Architectures & Networks Member	John	Kim	Korea Advanced Institute of Science and Technology
+Architectures & Networks Member	John	Shalf	Lawrence Berkeley National Laboratory
+Architectures & Networks Member	Paolo	Faraboschi	Hewlett-Packard
+Architectures & Networks Member	Jae W.	Lee	Sungkyunkwan University
+Architectures & Networks Member	Jishen	Zhao	UCSC
+Architectures & Networks Member	Samira	Khan	University of Virginia
+Architectures & Networks Member	Christopher	Batten	Cornell University
+Architectures & Networks Member	Wei	Wu	Intel
+Architectures & Networks Member	Avi	Mendelson	Technion -- Israel Institute of Technology
+Architectures & Networks Member	Moray	McLaren	Google
+Architectures & Networks Member	Ioana	Baldini	IBM Research
+Architectures & Networks Member	Vijay	Nagarajan	University of Edinburgh
+Architectures & Networks Member	Rakesh	Kumar	University of Illinois at Urbana-Champaign
+Architectures & Networks Member	George	Michelogiannakis	Lawrence Berkeley National Laboratory
+Architectures & Networks Member	Minsoo	Rhu	NVIDIA Research
+Architectures & Networks Member	Yungang	Bao	ICT, CAS
+Architectures & Networks Member	Scott	Pakin	Los Alamos National Laboratory
+Architectures & Networks Member	Reetu	Das	University of Michigan
+Architectures & Networks Member	Keren	Bergman	Columbia University
+Architectures & Networks Member	Jonathan	Beard	ARM Inc.
+Clouds & Distributed Computing Chair	Dick H.J.	Epema	Delft University of Technology
+Clouds & Distributed Computing Vice Chair	Lavanya	Ramakrishnan	Lawrence Berkeley National Laboratory
+Clouds & Distributed Computing Member	Adrien	Lèbre	Inria / Mines Nantes / LINA
+Clouds & Distributed Computing Member	Alexandru	Iosup	Delft University of Technology
+Clouds & Distributed Computing Member	Ioan	Raicu	Illinois Institute of Technology
+Clouds & Distributed Computing Member	Radu	Prodan	University of Innsbruck
+Clouds & Distributed Computing Member	Kyle	Chard	University of Chicago & Argonne National Laboratory
+Clouds & Distributed Computing Member	Kate	Keahey	Argonne National Laboratory
+Clouds & Distributed Computing Member	Antony	Rowstron	Microsoft Research
+Clouds & Distributed Computing Member	Evgenia	Smirni	College of William and Mary
+Clouds & Distributed Computing Member	Kerstin	Kleese van Dam	Brookhaven National Laboratory
+Clouds & Distributed Computing Member	Rich	Wolski	University of California, Santa Barbara
+Clouds & Distributed Computing Member	Ruben S.	Montero	Universidad Complutense de Madrid
+Clouds & Distributed Computing Member	Yongwei	Wu	Tsinghua University
+Clouds & Distributed Computing Member	Christine	Morin	French Institute for Research in Computer Science and Automation
+Clouds & Distributed Computing Member	Jelena	Pjesivac-Grbovic	Google
+Clouds & Distributed Computing Member	Ali R.	Butt	Virginia Polytechnic Institute and State University
+
+Clouds & Distributed Computing Member	David	Irwin	University of Massachusetts Amherst
+Clouds & Distributed Computing Member	Dean	Hildebrand	IBM Corporation
+Data Analytics, Visualization & Storage Chair	Yong	Chen	Texas Tech University
+
+Data Analytics, Visualization & Storage Member	Toni	Cortes	Barcelona Supercomputing Center
+Data Analytics, Visualization & Storage Member	Suren	Byna	Lawrence Berkeley National Laboratory
+Data Analytics, Visualization & Storage Member	Quincey	Koziol	Lawrence Berkeley National Lab
+Data Analytics, Visualization & Storage Member	John	Bent	EMC Corporation
+Data Analytics, Visualization & Storage Member	Jonathan L.	Woodring	LANL
+Data Analytics, Visualization & Storage Member	Tevfik	Kosar	University at Buffalo (SUNY)
+Data Analytics, Visualization & Storage Member	Venkatram	Vishwanath	Argonne National Laboratory
+Data Analytics, Visualization & Storage Member	Wei-keng	Liao	Northwestern University
+
+Data Analytics, Visualization & Storage Member	Jin	Xiong	Institute of Computing Technology
+
+Data Analytics, Visualization & Storage Member	Xuanhua	Shi	HUST
+Data Analytics, Visualization & Storage Member	Yinglong	Xia	Huawei Research America
+Data Analytics, Visualization & Storage Member	Rita	Borgo	Swansea University
+Data Analytics, Visualization & Storage Member	Suzanne	McIntosh	Cloudera, Inc. and New York University
+Data Analytics, Visualization & Storage Member	Claire	Guilbaud	CEA/DAM
+Data Analytics, Visualization & Storage Member	Jens	Krueger	University of Duisburg-Essen
+Data Analytics, Visualization & Storage Member	Kelly	Gaither	The University of Texas at Austin
+Data Analytics, Visualization & Storage Member	Daniela	Ushizima	Lawrence Berkeley National Laboratory
+Data Analytics, Visualization & Storage Member	Bingsheng	He	Nanyang Technological University
+Performance Chair	Gerhard	Wellein	Erlangen Regional Computing Center
+Performance Vice Chair	Sameer	Shende	University of Oregon
+Performance Member	Michael	Wolfe	NVIDIA/PGI
+Performance Member	Heike	Jagode	University of Tennessee, Knoxville
+Performance Member	Allen	Malony	University of Oregon
+
+Performance Member	Peter	Beckman	Argonne National Laboratory
+Performance Member	Jeff R.	Hammond	Intel Corporation
+
+Performance Member	Felix	Wolf	TU Darmstadt
+Performance Member	Kathryn	Mohror	Lawrence Livermore National Laboratory
+Performance Member	Laura C.	Carrington	University of California, San Diego and EP Analytics
+Performance Member	Greg	Bronevetsky	Google
+Performance Member	John	Linford	Paratools, Inc.
+Performance Member	Gerard	Gorman	Imperial College London
+Performance Member	Lauren L.	Smith	National Security Agency
+Performance Member	Andreas	Knuepfer	ZIH, TU Dresden
+Performance Member	Rong	Ge	Clemson University
+Performance Member	Catherine	Olschanowsky	Colorado State University
+Performance Member	Nathan	Tallent	Pacific Northwest National Laboratory
+Performance Member	Fabrizio	Petrini	IBM Corporation
+Performance Member	Vivek	Sarkar	Rice University
+Performance Member	Manu	Shantharam	SDSC
+Performance Member	Bronis R.	de Supinski	Lawrence Livermore National Laboratory
+Performance Member	Frank	Mueller	North Carolina State University
+Performance Member	Andrey	Semin	Intel Corporation
+Performance Member	David	Lowenthal	University of Arizona
+Performance Member	Tareq	Malas	Lawrence Berkeley National Laboratory
+Performance Member	Jean-Baptiste	Besnard	ParaTools, SAS
+Performance Member	Tulin	Kaman	University of Zurich
+Performance Member	Xiaosong	Ma	Qatar Computing Research Institute
+Performance Member	Tyler	Simon	Department of Defense
+Programming Systems Chair	Michelle Mills	Strout	University of Arizona
+Programming Systems Vice Chair	Ganesh	Gopalakrishnan	University of Utah
+Programming Systems Member	Hironori	Kasahara	Waseda University
+Programming Systems Member	James C.	Brodman	Intel Corporation
+Programming Systems Member	Jeremy	Siek	University of Colorado at Boulder
+Programming Systems Member	Michael	Garland	NVIDIA Corporation
+Programming Systems Member	Costin	Iancu	Lawrence Berkeley National Laboratory
+Programming Systems Member	Scott B.	Baden	University of California, San Diego
+Programming Systems Member	Tomofumi	Yuki	INRIA
+Programming Systems Member	Michela	Becchi	University of Missouri
+Programming Systems Member	Cindy	Rubio-Gonzales	UC Davis
+Programming Systems Member	Stephen	Fink	IBM
+Programming Systems Member	Ignacio	Laguna	Lawrence Livermore National Laboratory
+Programming Systems Member	Zoran	Budimlic	Rice University
+Programming Systems Member	Stephen F.	Siegel	University of Delaware
+Programming Systems Member	Sriram	Krishnamoorthy	Pacific Northwest National Laboratory
+Programming Systems Member	Didem	Unat	Koç University
+Programming Systems Member	Paul	Hovland	Argonne National Laboratory
+Programming Systems Member	Boyana	Norris	University of Oregon
+Programming Systems Member	Uday	Bondhugula	Indian Institute of Science
+Programming Systems Member	Hal	Finkel	Argonne National Laboratory
+Programming Systems Member	Albert	Cohen	INRIA
+Programming Systems Member	Aparna	Chandramowlishwaran	University of California, Irvine
+Programming Systems Member	Jaejin	Lee	Seoul National University
+
+State of the Practice Chair	Costas	Bekas	IBM Corporation
+State of the Practice Vice Chair	Dirk	Pleiter	Forschungszentrum Juelich
+State of the Practice Member	Susan	Coghlan	Argonne National Laboratory
+State of the Practice Member	Felix	Schürmann	Swiss Federal Institute of Technology in Lausanne
+State of the Practice Member	Carlo	Cavazzoni	CINECA
+State of the Practice Member	Carsten	Trinitis	Technical University of Munich
+State of the Practice Member	Thomas	Ludwig	German Climate Computing Center
+State of the Practice Member	Irene	Qualters	National Science Foundation
+State of the Practice Member	Tina	Butler	LBNL
+State of the Practice Member	Isabella	Weger	ECMWF
+State of the Practice Member	Jennifer M.	Schopf	Indiana University
+State of the Practice Member	Rama	Govindaraju	Google
+
+State of the Practice Member	Winfield S.	Futral	LLNL
+
+System Software Vice Chair	Rolf	Riesen	Intel Corporation
+System Software Member	Konstantinos	Katrinis	IBM Research - Ireland
+System Software Member	Andrew	Chien	University of Chicago
+System Software Member	Eric	Van Hensbergen	ARM
+System Software Member	Balazs	Gerofi	RIKEN Advanced Institute for Computational Science
+System Software Member	Peter	Dinda	Northwestern University
+
+System Software Member	Roberto	Gioiosa	Pacific Northwest National Laboratory
+System Software Member	Dorian C.	Arnold	University of New Mexico
+System Software Member	Maya	Gokhale	Lawrence Livermore National Laboratory
+System Software Member	Rosa M.	Badia	Barcelona Supercomputing Center
+System Software Member	Brett	Becker	University College Dublin
+System Software Member	Sadaf R.	Alam	Swiss National Supercomputing Center
+System Software Member	Hermann	Haertig	TU Dresden
+System Software Member	Zizhong	Chen	University of California, Riverside
+System Software Member	Ronald	Minnich	Google
+System Software Member	Ada	Gavrilovska	Georgia Institute of Technology
+System Software Member	Dimitrios	Nikolopoulos	Queen's University Belfast
+System Software Member	Dilma	Da Silva	Texas A&M University
+System Software Member	Trammell	Hudson	Two Sigma Investments
