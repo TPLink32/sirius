@@ -1,0 +1,8 @@
+*.pdf
+*.dvi
+
+/*TeX intermediate files.*/
+*.aux
+*.bbl
+*.log
+*.blg

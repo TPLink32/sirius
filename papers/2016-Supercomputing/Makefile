@@ -1,11 +1,13 @@
 PAPER=paper
-all: paper.tex
-	rm -f ${PAPER}.pdf
-	rm -f ${PAPER}.dvi
-	rm -f ${PAPER}.aux
-	rm -f ${PAPER}.bbl
-	rm -f ${PAPER}.log
-	rm -f ${PAPER}.blg
+SECTIONS=motivation storage details hardware performance discussion
+CLEAN_EXTENSIONS=pdf dvi aux bbl log blg
+
+.PHONY: all TeX_clean clean
+
+all: $(PAPER).pdf
+
+$(PAPER).pdf: paper.tex $(addsuffix .tex, $(SECTIONS))
+	make TeX_clean
 	pdflatex ${PAPER}.tex
 	pdflatex ${PAPER}.tex
 	bibtex ${PAPER}
@@ -13,5 +15,8 @@ all: paper.tex
 	pdflatex ${PAPER}.tex
 	pdflatex ${PAPER}.tex
 
+TeX_clean:
+	rm -f $(addprefix $(PAPER)., $(CLEAN_EXTENSIONS))
+
 clean:
-	rm -f ${PAPER}.dvi ${PAPER}.aux ${PAPER}.bbl ${PAPER}.log ${PAPER}.blg
+	make TeX_clean
