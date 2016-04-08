@@ -1,0 +1,45 @@
+\RequirePackage{amsmath}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+
+\RequirePackage{xparse}
+\RequirePackage{xstring}
+
+\newcommand{\NN}{\mathbb{N}}
+
+\newcommand{\stride}{s}
+
+\NewDocumentCommand{\IndexedElement}{%
+	m % element
+	m % superscript
+	o % formatting flag for element
+	m % subscript
+}{%
+	\IfValueT{#3}{%
+		\IfEqCase{#3}{%
+			{approx}{\tilde}%
+		}[\PackageError{IndexedElement}{Unrecognized argument}{%
+			Only 'approx' is allowed.%
+		}]%
+	}{#1}^{#2}_{#4}%
+}
+\NewDocumentCommand{\IndexedSet}{%
+	m % IndexedElement with two final arguments unfilled
+	m % IndexedElement index
+	m % set index
+	m % set index start value
+	m % set index stop value
+	o % formatting flag for IndexedElement
+}{\IndexedElement{\{#1[#6]{#2}\}}{#5}{#3\in#4}}
+
+\NewDocumentCommand{\Datum}{}{\IndexedElement{u}{}}
+\NewDocumentCommand{\Data}{}{\IndexedSet{\Datum}{j}{j}{\NN}{}}
+
+\NewDocumentCommand{\DataDecimated}{}{\IndexedSet{\Datum}{m\stride}{m}{\NN}{}}
+
+\NewDocumentCommand{\InterpolationError}{om}{\Datum{#2}-\Datum[approx]{#2}}
+\NewDocumentCommand{\InterpolationErrors}{}{\IndexedSet{\InterpolationError}{j}{j}{\NN}{}}
+
+\RequirePackage{eufrak}
+\NewDocumentCommand{\MaximumDifferenceGlobal}{m}{\IndexedElement{\mathfrak{M}}{}{#1}}

@@ -3,3 +3,84 @@
 %%% mode: latex
 %%% TeX-master: "paper"
 %%% End:
+
+Modern experiments and numerical simulations produce datasets so large that their storage and retrieval strain the capabilities of storage hardware.
+Slow writing of the data is problematic on shared machines where memory is periodically purged and transferred to new users; slow reading delays analysis of the data after the experiment is over.
+Compression offers a solution to this problem.
+A crude but commonly used compression technique is decimation, wherein only every \(\stride\)th datum of a sequence is stored.
+In practice, the decimation factor \(\stride\), also known as the stride, is often chosen to be \(10\).
+The remaining data is simply discarded.
+Clearly, decimation trades a reduction in the size of the dataset for data loss.
+The loss can be mitigated by generating approximations to the discarded data from the retained data.
+A simple, natural technique for doing so is linear interpolation.
+Let \(\Data\) be the original dataset.
+To generate an approximation \(\Datum[approx]{j}\) to a discarded datum \(\Datum{j}\), we find stored values \(\Datum{m\stride}\) and \(\Datum{m\stride+\stride}\) that straddle \(\Datum{j}\) (\(m\stride<j<m\stride+\stride\)) and take a weighted average:
+\begin{equation*}
+\Datum{j} \approx \Datum[approx]{j} = (1-\tfrac{j-m\stride}{\stride})\Datum{m\stride}+\tfrac{m\stride+\stride-j}{\stride}\Datum{m\stride+\stride}
+.
+\end{equation*}
+Observe that decimation paired with interpolation, illustrated in Fig.~\ref{fig:InterpolationReconstructionOfDiscardedValues}, gives a compression ratio of \(\stride\) and provides a full set of values at all original timesteps.
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.45\textwidth]{images/interpolation/illustration_of_procedure}
+\caption{Illustration of decimation procedure for partitioning of data in the case \(\stride=5\).}
+\label{fig:InterpolationReconstructionOfDiscardedValues}
+\end{figure}
+This procedure produces a good compression ratio, and it is computationally attractive: for a given \(j\) only two stored values need to be retrieved in order to reconstruct a value for \(\Datum{j}\).
+However, as noted above, there is a direct tradeoff between the compression ratio and the data loss.
+Nonetheless, despite these obvious shortcomings, the above approach or variants thereof is in widespread use as a technique for compression large datasets, particularly in the context of computational simulation.
+In our implementation, the data is partitioned into the \emph{top level data} \(\DataDecimated\), consisting of the decimated data, and the \emph{bottom level data} \(\InterpolationErrors\), consisting of the differences, or \emph{deltas}, between the original data and the approximated data.
+
+Typically, the deltas resulting from decimation paired with interpolation are simply discarded.
+The tacit assumption behind this approach is that the approximated dataset \(\Data[approx]\) is a sufficiently good approximation to the full dataset \(\Data\).
+The issue of the accuracy of this process has received little or no attention, but the following result is proved in \cite{AinsworthWhitneyKlasky}:
+\begin{equation}
+\max_{j\in\NN}\lvert\InterpolationError{j}\rvert \leq \min(
+2\MaximumDifferenceGlobal{0},
+\tfrac{1}{2}\stride\MaximumDifferenceGlobal{1},
+\tfrac{1}{8}\stride^{2}\MaximumDifferenceGlobal{2}
+)
+\label{eqn:InterpolationMagnitudeOfDeltasBound}
+\end{equation}
+where \(\MaximumDifferenceGlobal{0}=\max_{j\in\NN}\lvert\Datum{j}\rvert\), \(\MaximumDifferenceGlobal{1}=\max_{j\in\NN}\lvert\Datum{j}-\Datum{j+1}\rvert\), and \(\MaximumDifferenceGlobal{2}=\max_{j\in\NN}\lvert\Datum{j}-2\Datum{j+1}+\Datum{j+2}\rvert\).
+These bounds are illustrated for a particular dataset in Fig.~\ref{fig:InterpolationDeltaMagnitudeExample}.
+Notice that when \(\stride\) is smaller, the accuracy is high, meaning that the top level data produces an acceptable surrogate for the full original dataset.
+However, for larger strides (or, equally well, for higher compression ratios), the accuracy becomes unacceptable.
+The bottom level data, containing the deltas, enables lossless reconstruction of the data when the accuracy of the approximations is unacceptable for a particular purpose.
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.45\textwidth]{images/interpolation/delta_sizes}
+\caption{%
+Illustration of the bounds in Eq.~\eqref{eqn:InterpolationMagnitudeOfDeltasBound} for a range of strides in the case \(\Datum{j}=\sin(2^{-5}j)\) for \(j=0,\ldots,\lfloor2^{6}\pi\rfloor\).
+Observe the transition between different cases of Eq.~\eqref{eqn:InterpolationMagnitudeOfDeltasBound} at \(\stride\approx2^{7}\).%
+}
+\label{fig:InterpolationDeltaMagnitudeExample}
+\end{figure}
+
+One might question whether this partitioning procedure provides any overall compression of the original data.
+The amount by which a dataset can be compressed is quantified by its Shannon entropy.
+One advantage of the decimation--interpolation process is that for reasonably smooth data the entropy of the deltas \(\InterpolationErrors\) will be smaller than that of the original data stream \(\Data\).
+Consequently, the deltas are more amenable to compression using an entropy encoder than were the original data.
+The following result is proved in \cite{AinsworthWhitneyKlasky}.
+
+\begin{theorem}
+\label{thm:InterpolationDifferentialEntropyBounds}
+The average differential entropy per delta in \(\InterpolationErrors\) is bounded by the minimum of
+\begin{enumerate}[(1)]
+\item \(1+\log_{2}\MaximumDifferenceGlobal{0}+\tfrac{1}{\stride-1}\log_{2}\big[\tfrac{1}{6}(\stride+1)(\stride+2)\big]\)
+\item \(1+\log_{2}\MaximumDifferenceGlobal{1}\)
+\item \(1+\log_{2}\MaximumDifferenceGlobal{2}-\tfrac{1}{\stride-1}\log_{2}\stride\)
+\end{enumerate}
+\end{theorem}
+
+These entropy bounds can be translated to bounds on the expected compression ratio achieved by the combination of decimation, interpolation, and compression of the deltas.
+See \cite{AinsworthWhitneyKlasky} for details and Fig.~\ref{fig:InterpolationCompressionRatioExample} for an illustration.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.45\textwidth]{images/interpolation/compression_ratios}
+\caption{%
+Illustration of the compression ratio bounds derived in \cite{AinsworthWhitneyKlasky} from Theorem~\ref{thm:InterpolationDifferentialEntropyBounds} for a range of strides in the case \(\Datum{j}=2^{4}(3+\sin(2^{-15}j))\) for \(j=0,\ldots,\lfloor2^{16}\pi\rfloor\).%
+}
+\label{fig:InterpolationCompressionRatioExample}
+\end{figure}
