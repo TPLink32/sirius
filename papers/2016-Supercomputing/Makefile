@@ -2,11 +2,14 @@ PAPER=paper
 SECTIONS=motivation storage details hardware performance discussion
 CLEAN_EXTENSIONS=pdf dvi aux bbl log blg
 
-.PHONY: all TeX_clean clean
+.PHONY: all plots TeX_clean clean
 
 all: $(PAPER).pdf
 
-$(PAPER).pdf: paper.tex $(addsuffix .tex, $(SECTIONS))
+plots:
+	$(MAKE) --directory images all
+
+$(PAPER).pdf: paper.tex $(addsuffix .tex, $(SECTIONS)) plots
 	make TeX_clean
 	pdflatex ${PAPER}.tex
 	pdflatex ${PAPER}.tex
@@ -20,3 +23,4 @@ TeX_clean:
 
 clean:
 	make TeX_clean
+	$(MAKE) --directory images clean
