@@ -3,3 +3,194 @@
 %%% mode: latex
 %%% TeX-master: "paper"
 %%% End:
+
+The storage environment targeted by SIRIUS is complex. Based on industry trends
+and our own experiences with hardware projections for future HPC platforms, the
+current model of adding only a burst buffer tier to the storage hierarchy will
+be supplanted with a much more complex setup.
+
+In addition to the new hardware affecting data storage opportunities, the
+storage hierarchy will affect how data is later identified, located, and
+retrieved. Important considerations are what metadata must be collected and
+how the quality of service estimates are provided.
+
+\subsection{Non-Volatile Memory}
+
+The data refactoring tools SIRIUS incorporates assumes the existence of
+multiple different storage technologies, each with different performance and
+capacity limitations. The most interesting of these is Non-Volatile Memory
+(NVM). We see the potential for NVM to be deployed in at least four distinct
+machine locations, each with a motivating use case:
+
+\begin{enumerate}
+
+\item {\em Memory Bus} - By placing NVM on the memory bus, fast, local access
+is assured. This is ideal for out of core processing workloads. While this is
+not a primary use case targeted by SIRIUS, we would take advantage of this
+resource, should it be available. The disadvantage of this location is the
+difficulty with remote access. Using RDMA-based techniques can simplify
+access, even if it still requires a block interface. High bandwidth, on package
+RAM can eliminate much of the contention that would otherwise make RDMA use of
+the memory-bus based NVRAM impractical.
+
+\item {\em Node-Local SSD} - This data analytics as well as IBM Burst Buffer
+model where each node has a local SSD to eliminate network and centralized
+storage access overheads for read intensive workloads has other uses for the
+HPC environment. As with the Memory Bus-based NVM, Scalable Checkpoint/Restart
+(SCM)~\cite{moody:2010:scr} can make effective use of node-local storage for
+both local and remote processes. However, SIRIUS aims for a more interesting
+use. By acknowledging the future workflow components connected with the
+simulation and where the system either has or will deploy those components,
+pre-staging data directly where the analytics needs it can be accomplished.
+SIRIUS will aid this scenario by reducing data sizes through data refactoring
+or other techniques.
+
+\item {\em In Compute Area} - The Cray Burst Buffer model where, for example,
+a single node per rack is deployed as a NVM node with significant non-volatile
+storage has dual use. The intent for current generation new machines like
+Trinity at Sandia and Los Alamos, is to primarily serve as a fast cache for the
+parallel file system. The goal is to accelerate checkpoint/restart operations
+by making the writing operations as fast as possible while allowing spooling to
+the parallel file system as necessary. The secondary use case, and the one
+SIRIUS is most interested in, is using these nodes as data staging for workflow
+usage. By moving from the node-local SSD model, potential performance impacts
+from remote data access can be eliminated. The intereference effects on
+inter-node, intra-application communication can also be avoided. Much like the
+Node-local SSD case, SIRIUS will store only the important parts of refactored
+data in these resources while asynchronously spooling the less important data
+to the parallel file system directly. By ensuring direct access to the parallel
+file system without going through these Burst Buffer nodes, two different,
+simultaneous paths to storage exists. Noticing this extra bandwidth and seeking
+an advantageous way to leverage this to help applications was a major impetus
+for SIRIUS.
+
+\item {\em In Parallel File System} - By placing NVM in the parallel file
+system, the caching nature desired for the Trinity and similar machines can be
+achieved, but at a data center level instead. In addition, the metadata
+services can use this faster storage to accelerate metadata operations.
+
+\end{enumerate}
+
+With a system that offers NVM in all of these locations, potential bandwidth to
+storage will be maximized only when all of these as well as existing
+components, such as the parallel file system, can be used simultaneously. By
+focusing on storing only the most important parts of a data set on the
+expensive, close NVM resources and asynchrnously spooling the rest to slower,
+cheaper, higher capacity storage, SIRIUS achieves the best possible storage
+bandwidth while also accelerating time to scientific insight.
+
+\subsection{Metadata}
+
+The metadata required falls into three categories: data characteristics, data
+location, and infrastructure characteristics.
+
+\subsubsection{Data Characteristics}
+
+Unlike a traditional POSIX-style file system, SIRIUS is using a richer
+approach.  In addition to something related to a file name, information about
+individual variables including array dimensions, the data sizes, dimensions of
+each piece written, and data features are stored. The full range of this data
+must be user defined and will differ from application to application. The
+initial model for these characteristics are the data characteristics that
+currently exist in ADIOS~\cite{lofstead:2009:adaptable}. The extensible nature
+of the characteristics in ADIOS will directly relate to those in SIRIUS. The
+indexing structure used in ADIOS will also translate directly. Each chunk
+stored will have information about what it belongs to and what portion of that
+whole it represents.
+
+\subsubection{Data Location}
+
+By spreading a single data set across the entire storage hierarchy, where each
+piece of data resides must either be tracked directly at the cost of
+maintaining full consistency, or be found later when requested, at the cost of
+the search. Which of these approaches or what hybrid using a partiular balance
+of parameters will be explored as part of this project.
+
+\subsubsection{Infrastructure Characteristics}
+
+Almost most importnatly for the metadata are the infrastructure
+characteristics. As part of providing quality of service, how the system
+performs is critical.  As the system is used, each read or write to different
+storage resources must be measured to generate a reasonable estimate for future
+accesses under similar conditions. This is further explored in the quality of
+service subsection.
+
+\subsubsection{Quality of Service}
+
+Quality of service deadlines are important for driving how much time is spent
+performing IO. At the same time, data quality must be maintained at a
+sufficient level for the resulting science to be possible.  The system must
+offer a way for an end-user to negotiate with the system for trading off
+between time spent in IO and the amount of data written or read.  Part of that
+tradeoff will be increased or reduced data quality, depending on the system.
+For example, when data is written, a few different forms may be output given
+sufficient space and time. One may be every fourth element across a regular
+mesh reduces the data size to $1/64^{th}$ the full data set.  Further dividing
+that using byte-splitting can reduce it by another 75\%. For quick overviews to
+search data sets, this reduced form can be sufficient driving which data sets
+should be investigated in more detail. The key driving factor is time. The
+applicaiton scientist can read 0.4\% of the full data volume with a similar
+time reduction. SIRIUS will offer a negotiation process to read any data.
+
+\begin{table}[tbp]
+\centering
+\caption{Reading Options for Variable ``A''}
+\label{tab:results}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+\# & Size & Time & Time Err & Refactoring & Data Err\\
+\hline
+1 & $(\frac{1}{4})^3(\frac{3}{8})$A & 10s & $\pm$ 3s & stride, byte-split & 98\% \\
+\hline
+2 & $(\frac{3}{4})^3(\frac{3}{8})$A & 90s & $\pm$ 30s & stride, byte-split & 58\% \\
+\hline
+3 & $(\frac{1}{4})^3(\frac{5}{8})$A & 16s & $\pm$ 5s & stride, byte-split & n/a \\
+\hline
+4 & $(\frac{3}{4})^3(\frac{5}{8})$A & 120s & $\pm$ 50s & stride, byte-split & n/a \\
+\hline
+\hline
+5 & $(\frac{1}{4})^3$A & 1200s & $\pm$ 30s & stride & 98\% \\
+\hline
+6 & $(\frac{3}{4})^3$A & 2400s & $\pm$ 90s & stride & 58\% \\
+\hline
+\hline
+7 & $(\frac{3}{8})$A & 1350s & $\pm$ 120s & byte-split & 0.02\% \\
+\hline
+8 & $(\frac{5}{8})$A & 2250s & $\pm$ 120s & byte-split & n/a \\
+\hline
+\hline
+9 & A & 36s & $\pm$ 6s & wavelet & 1\% \\
+\hline
+\hline
+10 & A & 3600s & $\pm$ 600s & none & 0\% \\
+\hline
+\end{tabular}
+\end{table}
+
+The byte splitting approach error rate is quite small. By splitting at byte
+boundaries rather than converting to a lower precision 4-byte float, we
+preserve the full exponent range and keep the first 11 bits of mantissa
+precision. This leaves a $2^{-12}$ maximum error magnitude for each value--the
+last 40 bits represent less precision together than the immediately preceeding
+bit all by itself.
+
+To read these various data organizations, read operations will shift to a
+two-step process. First, an list of options will be requested that includes
+both and error estiates. A second request will retrieve a particular data
+portion from the provided list. Consider Table~\ref{tab:results}.  First, a
+user will request a particular variable and timesetp. SIRIUS will return a
+table similar to Table~\ref{tab:results}. For a given variable ``A'',
+the end-user can then select the data quality and approximate reading time for
+the operation. In this case, there are 5 options for obtaining the whole data
+set (1/2/3/4, 5/6, 7/8, 9, 10). The first four entries represent a spatial and
+byte split, 5/6 represent just strided writing, 7/8 represent just a
+byte-split, 9 represents a wavelet compressed version, and 10 is the full
+precision data.  The user would specify to read a particular data instance that
+would proceed normally.  Quality of Service soft guarantees specified as part
+of the request will result in SIRIUS allocating soft bandwidth reservations to
+meet the request. While some of the error rates seem to render the data
+unusable, consider a 3000x3000x3000 simulation domain. That would yield a 27
+gigapixel image should all of the data be used. Visualization will already
+radically reduce the data sizes to make usable visualizations that work on a
+standard display. A 99\% reduction would yield a 270 megapixel image--still
+quite large.
