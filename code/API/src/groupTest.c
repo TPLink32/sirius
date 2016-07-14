@@ -1,67 +1,69 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <mpi.h>
-#include <math.h>
-
-#include <pnetcdf.h>
 
 #include "jsonparser.h"
+#include "groupTest.h"
 
 //compile w/ "mpicc groupTest.c -lm -lpnetcdf -o "exe_name" "
 //run w/ "mpirun -np x ./group" where x is # of processes
 
-#define JSON_FILE_NAME "paramstest.json"
-
-#define FILENAME_CHAR_LENGTH 50
-
-#define NUM_DIMS 4
-
-#define ROOT_PROCESS 0
-#define NUM_COLORS 10
-#define NUM_VARS 4
-
-#define MAX_PRI_REGIONS 10
-#define PERCENT_0_PRI_BIAS 0.80	//the % "skew" towards having exactly 0 priority regions locally
-
-#define FLOAT_TYPE 'f'
-#define INT_TYPE 'i'
-#define DOUBLE_TYPE 'd'
-#define LONG_TYPE 'l'
-
-void printUsage();
-char* removeQuotesOnString(char* str);
-char isPrime(long x);
-char isEquallyDivisibleVolume(long volume, long num_procs);
-char largestIndexOfThree(int a, int b, int c);
-int* returnBestDims(int x, int y, int z, long num_procs);
-int* allocDimensions(int x, int y, int z);
-char isPriorityInMyRegion(int* priStart, int* myStart);
-int getRandNumPriorityRegions(int max_regions, float percent_0_bias);
-void* allocAndFetchDataByTypeAndNum(int ncid, int varid, MPI_Offset* start, MPI_Offset* readsize, nc_type* var_type, long num);
-void printDataSequentiallyOnAllProcs(int rank, int global_size, void* data, long data_size);
+struct priorityRegion
+{
+	char tag;
+	int start[3];
+	int end[3];
+	int priority_level;
+	pri_region_link* next;
+};
 
 static FILE* LOG_FILE = NULL;
 
-int main(int argc, char** argv)
-{	
-	double start_time, end_time;
+void main(int argc, char** argv)
+{
+	void* data = getTestDataBuffer(5, 10, 15, 20);
+	int i;
+	for(i = 0; i < 5*10*15*20; i += 5)
+	{
+		//printf("(%0.0f, %0.0f, %0.0f): %0.0f, %0.0f\n", 
+		//((double*)data)[i], ((double*)data)[i+1], ((double*)data)[i+2], ((double*)data)[i+3], ((double*)data)[i+4]);
+	}
+	//printf("\n");
+	int nc_err = MPI_Init(&argc, &argv);
 	
-	char** dimStrList = malloc(sizeof(char*) * NUM_DIMS);
-	dimStrList[0] = "level";
-	dimStrList[1] = "latitude";
-	dimStrList[2] = "longitude";
-	dimStrList[3] = "time";
+	mainFunc(data, (5*10*15*20), argc, argv);
+	free(data);
 	
-	char** varStrList = malloc(sizeof(char*) * NUM_DIMS);
-	varStrList[0] = "pressure";
-	varStrList[1] = "temperature";
-	varStrList[2] = "latitude";
-	varStrList[3] = "longitude";
+	nc_err = MPI_Finalize();
+	//if (nc_err != NC_NOERR) fprintf(stderr, "%d: %s (END)\n", global_rank, ncmpi_strerror (nc_err));	
+}
 
-	//z,y,z,q respectively
-	int dimIds[NUM_DIMS];
-	int dimMins[NUM_DIMS]; //offsets for local
-	MPI_Offset ns[NUM_DIMS];
+void mainFunc(void* inputData, long inputDataSize, int argc, char** argv)
+{	
+/*****************************************************************************/
+	char** dimStrList = malloc(sizeof(char*) * 3);
+	dimStrList[0] = malloc(sizeof(char) * DIM_CHAR_LENGTH);
+	dimStrList[1] = malloc(sizeof(char) * DIM_CHAR_LENGTH);
+	dimStrList[2] = malloc(sizeof(char) * DIM_CHAR_LENGTH);
+	
+	char** varStrList = malloc(sizeof(char*) * 2);
+	varStrList[0] = malloc(sizeof(char) * DIM_CHAR_LENGTH);
+	varStrList[1] = malloc(sizeof(char) * DIM_CHAR_LENGTH);
+	
+	char** dimIndexStrList = malloc(sizeof(char*) * 3);
+	dimIndexStrList[0] = "dim1";
+	dimIndexStrList[1] = "dim2";
+	dimIndexStrList[2] = "dim3";
+	
+	char** varIndexStrList = malloc(sizeof(char*) * 2);
+	varIndexStrList[0] = "var1";
+	varIndexStrList[1] = "var2";
+
+	
+	int* dim_Ids = NULL;
+	int* var_Ids = NULL;
+	
+	int* dim_Mins = NULL; //offsets for local
+	
+	MPI_Offset* dim_Sizes = NULL;
+	MPI_Offset* var_Dim_Sizes = NULL;
 
 	int i = 0, n = 0, w = 0;
 	
@@ -84,16 +86,21 @@ int main(int argc, char** argv)
 	int global_rank, global_size;
 	int local_rank, local_size;
 	
-	//LOG_FILE = fopen("debugLog.txt", "w");
-	nc_err = MPI_Init(&argc, &argv);
-
+	char* nc5_file_name = NULL;
+	int num_dims;
+	int num_vars;
+	int max_pri;
+	
+/*****************************************************************************/
+	//MPI_Init is called by main, before calling this mainFunc
 	nc_err = MPI_Comm_rank(MPI_COMM_WORLD, &global_rank);
-	nc_err = MPI_Comm_size(MPI_COMM_WORLD, &global_size);	
+	nc_err = MPI_Comm_size(MPI_COMM_WORLD, &global_size);
+	
+	MPI_Comm no_priority_comm;
+	MPI_Comm priority_comm;
 	
 	json_object** json_obj_arr_ptr = NULL;
 	json_object** global_params_obj = NULL;
-	//json_object** temp_priority_obj = NULL;
-	char* nc5_file_name = NULL;
 
 	srand(global_rank * time(NULL));
 	int rand_pri_region_count = getRandNumPriorityRegions(MAX_PRI_REGIONS, PERCENT_0_PRI_BIAS);
@@ -113,96 +120,107 @@ int main(int argc, char** argv)
 			if(strcmp(current_obj_id, "globalParams") == 0)
 			{
 				global_params_obj = &temp;
-				nc5_file_name = removeQuotesOnString(getValueAsStringFromObjAndKey(temp, "fileReadName"));
+				nc5_file_name = removeQuotesOnString(getValueAsStringFromObjAndKey(temp, "fileWriteName"));
+				num_dims = atoi(getValueAsStringFromObjAndKey(temp, "dimensions"));
+				num_vars = atoi(getValueAsStringFromObjAndKey(temp, "variables"));
+				max_pri = atoi(getValueAsStringFromObjAndKey(temp, "maxPriority"));
+				
+				dim_Ids = malloc(sizeof(int) * num_dims);
+				var_Ids = malloc(sizeof(int) * num_vars);
+				
+				dim_Mins = malloc(sizeof(int) * num_dims);
+				
+				dim_Sizes = malloc(sizeof(MPI_Offset) * num_dims);
+				var_Dim_Sizes = malloc(sizeof(MPI_Offset) * num_vars);
 				//printf("got globals!\n");
 			}
-			/*else 
+			else
 			{
-				for(n = 0; n < NUM_VARS; n++)
+				for(n = 0; n < num_dims; n++)
 				{
-					if(strcmp(current_obj_id, varStrList[n]) == 0)
+					if(strcmp(current_obj_id, dimIndexStrList[n]) == 0)
 					{
-						//printf("found var: %d\n", n);
-						
-						variable_spec_arr[n].name = removeQuotesOnString(getValueAsStringFromObjAndKey(temp, "name"));
-						variable_spec_arr[n].units = removeQuotesOnString(getValueAsStringFromObjAndKey(temp, "units"));
-						
-						char* tempType = removeQuotesOnString(getValueAsStringFromObjAndKey(temp, "size"));
-						if(strcmp(tempType, "float") == 0)
-						{
-							variable_spec_arr[n].varType = FLOAT_TYPE;
-						}
-						else if(strcmp(tempType, "double") == 0)
-						{
-							variable_spec_arr[n].varType = DOUBLE_TYPE;
-						}
-						else if(strcmp(tempType, "int") == 0)
-						{
-							variable_spec_arr[n].varType = INT_TYPE;
-						}
-						else if(strcmp(tempType, "long") == 0)
-						{
-							variable_spec_arr[n].varType = LONG_TYPE;
-						}
-						
-						//printf("name: %s, units: %s, type: %c\n", 
-							//variable_spec_arr[n].name, variable_spec_arr[n].units, variable_spec_arr[n].varType );
+						//printf("got dimension: %d: ", n+1);
+						dimStrList[n] = removeQuotesOnString(getValueAsStringFromObjAndKey(temp, "name"));
+						dim_Sizes[n] = atoi(getValueAsStringFromObjAndKey(temp, "size"));
+						//printf("%s: size: %d\n",dimStrList[n], (int)dim_Sizes[n]);
 					}
 				}
-			}*/
-			/*else if(strcmp(current_obj_id, "\"priority\"") == 0)
-			{
-				temp_priority_obj = &temp;
-				
-				priority_2D_coord_arr[cur_priority_n] = getValueAsIntegerFromObjAndKey(temp, "startx");
-				priority_2D_coord_arr[cur_priority_n+1] = getValueAsIntegerFromObjAndKey(temp, "starty");
-				priority_2D_coord_arr[cur_priority_n+2] = getValueAsIntegerFromObjAndKey(temp, "startz");
-				
-				priority_2D_coord_arr[cur_priority_n+3] = getValueAsIntegerFromObjAndKey(temp, "endx");
-				priority_2D_coord_arr[cur_priority_n+4] = getValueAsIntegerFromObjAndKey(temp, "endy");
-				priority_2D_coord_arr[cur_priority_n+5] = getValueAsIntegerFromObjAndKey(temp, "endz");
-				
-				cur_priority_n++;
-			
-				//printf("got priority!\n");
-			}*/
+				for(n = 0; n < num_vars; n++)
+				{
+					if(strcmp(current_obj_id, varIndexStrList[n]) == 0)
+					{
+						varStrList[n] = removeQuotesOnString(getValueAsStringFromObjAndKey(temp, "name"));
+						var_Dim_Sizes[n] = atoi(getValueAsStringFromObjAndKey(temp, "dims"));
+						//printf("%s: size: %d\n",dimStrList[n], (int)var_Dim_Sizes[n]);
+					}
+				}
+			}
 			i++;
 			temp = json_obj_arr_ptr[i];
-			//printf("%li\n", (long) temp);
 		}
 	}
 	else
 	{
-		nc5_file_name = malloc(sizeof(char) * FILENAME_CHAR_LENGTH);
+		nc5_file_name = malloc(sizeof(char) * FILENAME_CHAR_LENGTH);	
 	}
-	
 	
 	MPI_Bcast(nc5_file_name, FILENAME_CHAR_LENGTH, MPI_BYTE, ROOT_PROCESS, MPI_COMM_WORLD);
-	//MPI_Bcast(&cur_priority_n, 1, MPI_INT, ROOT_PROCESS, MPI_COMM_WORLD);
-
-	//MPI_Bcast(priority_2D_coord_arr, 6 * cur_priority_n, MPI_INT, ROOT_PROCESS, MPI_COMM_WORLD);
+	MPI_Bcast(&num_dims, 1, MPI_INT, ROOT_PROCESS, MPI_COMM_WORLD);
+	MPI_Bcast(&num_vars, 1, MPI_INT, ROOT_PROCESS, MPI_COMM_WORLD);
+	MPI_Bcast(&max_pri, 1, MPI_INT, ROOT_PROCESS, MPI_COMM_WORLD);
 	
-	//now all processes have the start and end coords of a priority region
+	if(global_rank != ROOT_PROCESS)
+	{
+		dim_Ids = malloc(sizeof(int) * num_dims);
+		var_Ids = malloc(sizeof(int) * num_vars);
+		
+		dim_Mins = malloc(sizeof(int) * num_dims);
+			
+		dim_Sizes = malloc(sizeof(MPI_Offset) * num_dims);
+		var_Dim_Sizes = malloc(sizeof(MPI_Offset) * num_vars);
+	}
 
-	nc_err = ncmpi_open(MPI_COMM_WORLD, nc5_file_name, NC_NOWRITE|NC_64BIT_DATA, MPI_INFO_NULL, &ncid);
+	nc_err = ncmpi_create(MPI_COMM_WORLD, nc5_file_name, NC_CLOBBER|NC_64BIT_OFFSET|NC_WRITE, MPI_INFO_NULL, &ncid);
 	if (nc_err != NC_NOERR) fprintf(stderr, "%d: %s (1)\n", global_rank, ncmpi_strerror (nc_err)); 
 	
-	for(i = 0; i < NUM_DIMS; i++)
+	for(i = 0; i < num_dims; i++)
 	{
-		nc_err = ncmpi_inq_dimid(ncid, dimStrList[i], &dimIds[i]);
-		if (nc_err != NC_NOERR) fprintf(stderr, "%d: %s (%d)\n", global_rank, ncmpi_strerror (nc_err), (i*2) + 2);
-		nc_err = ncmpi_inq_dim(ncid, dimIds[i], dim_name, &ns[i]);
-		if (nc_err != NC_NOERR) fprintf(stderr, "%d: %s (%d)\n", global_rank, ncmpi_strerror (nc_err), (i*2) + 3);
+		MPI_Bcast(&dim_Sizes[i], 1, MPI_INT, ROOT_PROCESS, MPI_COMM_WORLD);
+		MPI_Bcast(dimStrList[i], DIM_CHAR_LENGTH, MPI_CHAR, ROOT_PROCESS, MPI_COMM_WORLD);
+		
+		nc_err = ncmpi_def_dim(ncid, dimStrList[i], (int)dim_Sizes[i], &dim_Ids[i]);
+		if (nc_err != NC_NOERR) fprintf(stderr, "%d: %s (%d)\n", global_rank, ncmpi_strerror (nc_err), i);
 	}
-	//printf("NS: %d, %d, %d, %d\n", (int)ns[0], (int)ns[1], (int)ns[2], (int)ns[3]);
+	//shares info about the dimensions, and then defines them
+
+	for(i = 0; i < num_vars; i++)
+	{
+		MPI_Bcast(varStrList[i], DIM_CHAR_LENGTH, MPI_CHAR, ROOT_PROCESS, MPI_COMM_WORLD);
+		MPI_Bcast(&var_Dim_Sizes[i], 1, MPI_INT, ROOT_PROCESS, MPI_COMM_WORLD);
+	}
+	//shares info about the variables
 	
-	long volume = ns[0] * ns[1] * ns[2];
-	//not multiplying by ns[3], as this is assumed to be the time dimension- handled separately
+	for(i = 0; i < num_vars; i++)
+	{
+		nc_err = ncmpi_def_var(ncid, varStrList[i], NC_DOUBLE, var_Dim_Sizes[i], dim_Ids, &var_Ids[i]);
+     	if (nc_err != NC_NOERR) fprintf(stderr, "%d: %s (%d)\n", global_rank, ncmpi_strerror (nc_err), i);
+    }
+    //defines the variables formally
+    
+	nc_err = ncmpi_enddef(ncid);
+	if (nc_err != NC_NOERR) fprintf(stderr, "%d: %s (%d)\n", global_rank, ncmpi_strerror (nc_err), i);
+	
+	//printf("%dNS: %d, %d, %d, %d\n", global_rank, (int)dim_Sizes[0], (int)dim_Sizes[1], (int)dim_Sizes[2], (int)dim_Sizes[3]);
+	
+	long volume = (int)dim_Sizes[0] * (int)dim_Sizes[1] * (int)dim_Sizes[2];
+	
+	//printf("vol: %li\n", volume);
 	
 	int* myDims;
 	if(isEquallyDivisibleVolume(volume, global_size))
 	{
-		myDims = returnBestDims((int)ns[0],(int)ns[1],(int)ns[2], global_size);
+		myDims = allocAndReturnBestDims((int)dim_Sizes[0],(int)dim_Sizes[1],(int)dim_Sizes[2], global_size);
 		
 		if(myDims == NULL)
 		{
@@ -212,7 +230,7 @@ int main(int argc, char** argv)
 		else
 		{
 			//printf("dims: %d, %d, %d\n", myDims[0], myDims[1], myDims[2]);
-			//int* test = returnBestDims(10, 10, 10, 10);
+			//int* test = allocAndReturnBestDims(10, 10, 10, 10);
 			//printf("dims: %d, %d, %d\n", test[0], test[1], test[2]);
 			//free(test);
 		}
@@ -224,168 +242,219 @@ int main(int argc, char** argv)
 	}
 
 		
-	n_procs[0] = ns[0] / myDims[0];
-	n_procs[1] = ns[1] / myDims[1];
-	n_procs[2] = ns[2] / myDims[2];
+	n_procs[0] = (int)dim_Sizes[0] / myDims[0];
+	n_procs[1] = (int)dim_Sizes[1] / myDims[1];
+	n_procs[2] = (int)dim_Sizes[2] / myDims[2];
 		
-	dimMins[0] = (global_rank % n_procs[0]) * myDims[0];
-	dimMins[1] = ((global_rank / n_procs[0]) % n_procs[1]) * myDims[1];
-	dimMins[2] = global_rank / (n_procs[0] * n_procs[1]) * myDims[2];
+	dim_Mins[0] = (global_rank % n_procs[0]) * myDims[0];
+	dim_Mins[1] = ((global_rank / n_procs[0]) % n_procs[1]) * myDims[1];
+	dim_Mins[2] = global_rank / (n_procs[0] * n_procs[1]) * myDims[2];
 		
-	readsize[0] = 1; //time dimension	
-	for(i = 0; i < 3; i++)
+	for(i = 0; i < num_dims; i++)
 	{
-		if(dimMins[i] + myDims[i] > ns[i])
+		if(dim_Mins[i] + myDims[i] > (int)dim_Sizes[i])
 		{
-			readsize[i+1] = ns[i] - dimMins[i];
-			printf("%d in %d plane shortened to %d\n", (dimMins[i] + myDims[i]), i, (int)readsize[i+1]);
+			readsize[i] = (int)dim_Sizes[i] - dim_Mins[i];
+			printf("%d in %d plane shortened to %d\n", (dim_Mins[i] + myDims[i]), i, (int)readsize[i]);
 		}
 		else
 		{
-			readsize[i+1] = myDims[i];
+			readsize[i] = myDims[i];
 		}
 	}
-	
-	/*int rangeArr[6];
-	rangeArr[0] = dimMins[0];
-	rangeArr[1] = dimMins[1];
-	rangeArr[2] = dimMins[2];
-	rangeArr[3] = dimMins[0] + myDims[0];
-	rangeArr[4] = dimMins[1] + myDims[1];
-	rangeArr[5] = dimMins[2] + myDims[2];*/
+	//printf("(%d, %d, %d)", myDims[0], myDims[1], myDims[2]);
 
 	//isPriorityInMyRegion(priority_2D_coord_arr, rangeArr);
-	
-	int* pri_region_coords[rand_pri_region_count];
-	
-	for(i = 0; i < rand_pri_region_count; i++)
+
+	if(rand_pri_region_count > 0)
 	{
-		pri_region_coords[i] = malloc(sizeof(int) * 6);
-		for(n = 0; n < 3; n++)
+		pri_region_link* head_priority_link_ptr = NULL;
+		pri_region_link* cur_priority_link_ptr = NULL;
+		
+		int* buffer = malloc(sizeof(int) * 2);
+		MPI_Comm_split(MPI_COMM_WORLD, PRIORITY_COLOR, global_rank, &priority_comm);
+		nc_err = MPI_Comm_rank(priority_comm, &local_rank);
+		nc_err = MPI_Comm_size(priority_comm, &local_size);
+		
+		char curTag = accumulateTagThroughGroup('A', rand_pri_region_count, priority_comm, local_rank, local_size);
+
+		for(n = 0; n < rand_pri_region_count; n++)
 		{
-			pri_region_coords[i][n] = dimMins[i] + (rand() % myDims[i]) ;
-			//rand offset from start of local space
-			
-			//printf("%d start: %d", global_rank, pri_region_coords[i][n]);
-			
-			int maxLength = (dimMins[n] + myDims[n]) - pri_region_coords[i][n];
-			if(maxLength == 0) 
-				pri_region_coords[i][n+3] = pri_region_coords[i][n];
+			if(n == 0)
+			{
+				head_priority_link_ptr = malloc(sizeof(pri_region_link));
+				cur_priority_link_ptr = head_priority_link_ptr;
+			}
 			else
-				pri_region_coords[i][n+3] = pri_region_coords[i][n] + (rand() % maxLength);
-			//selects a random number not greater than the distance between the random start pos, 
-			//and the end of the local range
+			{
+				cur_priority_link_ptr->next = malloc(sizeof(pri_region_link));
+				cur_priority_link_ptr = cur_priority_link_ptr->next;
+			}
+			//adjusts the current pointer to a fresh object
 			
-			//printf(" end: %d\n", pri_region_coords[i][n+3]);
+			cur_priority_link_ptr->tag = curTag;
+			curTag++;
+		
+			for(i = 0; i < 3; i++)
+			{
+				fillPriCoordPairBuffer(dim_Mins[i], dim_Mins[i] + myDims[i], buffer);
+				cur_priority_link_ptr->start[i] = buffer[0];
+				cur_priority_link_ptr->end[i] = buffer[1];
+			}
+			cur_priority_link_ptr->priority_level = rand() % max_pri;
+			cur_priority_link_ptr->next = NULL;
 		}
+		
+		//printAllPriStats(global_rank, head_priority_link_ptr);
+		free(buffer);
+	}	
+	else
+	{
+		MPI_Comm_split(MPI_COMM_WORLD, NO_PRIORITY_COLOR, global_rank, &no_priority_comm);
+		nc_err = MPI_Comm_rank(no_priority_comm, &local_rank);
+		nc_err = MPI_Comm_size(no_priority_comm, &local_size);
 	}
 
-	start[0] = 0; //time dimension
-	start[1] = dimMins[0];
-	start[2] = dimMins[1];
-	start[3] = dimMins[2];
-	
-	//printf("%d has start: (%d,%d,%d) and size: (%d,%d,%d)\n", 
-			//global_rank, dimMins[0], dimMins[1], dimMins[2], myDims[0], myDims[1], myDims[2]);
+	//start[3] = 0; //time dimension
+	start[0] = dim_Mins[0];
+	start[1] = dim_Mins[1];
+	start[2] = dim_Mins[2];
 
-	//long total_var_count = readsize[1] * readsize[2] * readsize[3]; //not worrying about time dimension at the moment
-	int* num_dims_per_var = malloc(sizeof(int));
-	int* this_var_dim_ids = NULL;
-	long alloc_size = 1; //how many elements to fetch
-	nc_type* var_type = malloc(sizeof(nc_type));
-	void* data_buffer;
-	//printf("readsizes: %d %d %d\n", (int)start[0], (int)start[1], (int)start[2]);
+/*
+	printf("%d has start: (%d,%d,%d) and size: (%d,%d,%d)\n", 
+			global_rank, (int)start[0], (int)start[1], (int)start[2], 
+			(int)readsize[0], (int)readsize[1], (int)readsize[2]);
+			*/
+			
+	long alloc_size = myDims[0] * myDims[1] * myDims[2]; //how many elements to fetch
+
+		
+	//printDataSequentiallyOnAllProcs(global_rank, global_size, data_buffer, alloc_size);
 	
-	for(i = 0; i < 1; i++, alloc_size = 1)
+	
+	nc_err = ncmpi_begin_indep_data(ncid);
+	if (nc_err != NC_NOERR) fprintf(stderr, "%d: %s (B)\n", global_rank, ncmpi_strerror (nc_err));
+	
+	int xOffset = dim_Sizes[1] * dim_Sizes[2] * dim_Mins[0];
+	int yOffset = dim_Sizes[2] * dim_Mins[1];
+	int zOffset = dim_Mins[2];
+	
+	int total_offset = (xOffset + yOffset + zOffset) * INPUT_DATA_WIDTH;
+	//accurate total variable offset to START from, in the input data buffer
+	//dif. for every process, b/c of the different dim_mins (starting positions)
+	
+	double testdub[alloc_size];
+	int vars_read = 0;
+	int ix, iy, iz;
+	int cur_offset;
+	
+	//printf("%d: off: %d\n", global_rank, total_offset);
+
+	for(n = 0; n < num_vars; n++, vars_read = 0)
 	{
-		nc_err = ncmpi_inq_varid(ncid, varStrList[i], &grav_x_c_varid);
-		if (nc_err != NC_NOERR) fprintf(stderr, "%d: %s (6)\n", global_rank, ncmpi_strerror (nc_err));
-	
-		
-		nc_err = ncmpi_inq_varndims(ncid, grav_x_c_varid, num_dims_per_var);	
-		if (nc_err != NC_NOERR) fprintf(stderr, "%d: %s (7)\n", global_rank, ncmpi_strerror (nc_err));
-		
-		this_var_dim_ids = malloc(sizeof(int) * (*num_dims_per_var));
-		
-		nc_err = ncmpi_inq_vardimid(ncid, grav_x_c_varid, this_var_dim_ids);	
-		if (nc_err != NC_NOERR) fprintf(stderr, "%d: %s (8)\n", global_rank, ncmpi_strerror (nc_err));
-		//gets the ids of all dimensions for the current variable
-		
-		
-		for(n = 0; n < *num_dims_per_var; n++) //go through the dimensions of the current var
+		for(ix = 0; ix < myDims[0]; ix++)
 		{
-			for(w = 0; w < NUM_DIMS; w++)
+			for(iy = 0; iy < myDims[1]; iy++)
 			{
-				if(dimIds[w] == this_var_dim_ids[n]) //on a match, determine the allocation size based
-				{									 //on the dimensions already determined earlier
-					alloc_size *= readsize[w];
-					
+				for(iz = 0; iz < myDims[2]; iz++)
+				{
+					cur_offset = total_offset + (INPUT_DATA_WIDTH * (
+													iz + 
+													(iy * dim_Sizes[2]) + 
+													(ix * dim_Sizes[1] * dim_Sizes[2]) ) );
+													
+					testdub[vars_read] = ((double*) inputData)[cur_offset + 3 + n];
+					//printf("%0.0f, ", testdub[vars_read]);
+					//testdub[vars_read] = 
+					vars_read++;
 				}
 			}
-			
 		}
-		//printf("%d alloc'ed %li\n", global_rank, alloc_size);
-		nc_err = ncmpi_inq_vartype(ncid, grav_x_c_varid, var_type);	
-		if (nc_err != NC_NOERR) fprintf(stderr, "%d: %s (9)\n", global_rank, ncmpi_strerror (nc_err));
-		
-		data_buffer = allocAndFetchDataByTypeAndNum(ncid, grav_x_c_varid, start, readsize, var_type, alloc_size);
-		
-		//MPI_Barrier(MPI_COMM_WORLD);
-		
-		printDataSequentiallyOnAllProcs(global_rank, global_size, data_buffer, alloc_size);
-	
-		//printf("%d: %s\n", global_rank, varStrList[i]);
-		free(this_var_dim_ids);
+		nc_err = ncmpi_put_vara_double(ncid, var_Ids[n], start, readsize, testdub);
+		if (nc_err != NC_NOERR) fprintf(stderr, "%d: %s (C)\n", global_rank, ncmpi_strerror (nc_err));
 	}
-		
+	
+	nc_err = ncmpi_end_indep_data(ncid);
+	if (nc_err != NC_NOERR) fprintf(stderr, "%d: %s (D)\n", global_rank, ncmpi_strerror (nc_err));
+	
 	nc_err = ncmpi_close(ncid);
-	if (nc_err != NC_NOERR) fprintf(stderr, "%d: %s (B)\n", global_rank, ncmpi_strerror (nc_err));
-
-	
-	/*if(global_rank == (global_size - 1))
-	{
-		printf("RANK DATA: %d\n", global_rank);
-		for(i = 0; i < total_var_count; i++)
-		{
-			printf("%d ", (int)grav_x_c[i]);
-		}
-	}*/
+	if (nc_err != NC_NOERR) fprintf(stderr, "%d: %s (E)\n", global_rank, ncmpi_strerror (nc_err));
 	
 
-	/*int my_color = global_rank % NUM_COLORS;
-	
-	MPI_Comm local_comm;
-	MPI_Comm_split(MPI_COMM_WORLD, my_color, global_rank, &local_comm);
-
-	nc_err = MPI_Comm_rank(local_comm, &local_rank);
-	nc_err = MPI_Comm_size(local_comm, &local_size);*/
-
-	//MPI_Group world_group;
-	//MPI_Comm_group(MPI_COMM_WORLD, &world_group);
-
-	//printRanks(global_rank, local_rank);
-
-	//MPI_Group_free(&world_group);
-
-	//MPI_Comm_free(&local_comm);
-	//freeObjArr(json_obj_arr_ptr);
-	free(myDims);
-	//free(grav_x_c);
 	if(global_rank != ROOT_PROCESS)
 		free(nc5_file_name);
 		
-	free(dimStrList);
-	for(i = 0; i < rand_pri_region_count; i++)
-	{
-		free(pri_region_coords[i]);
-	}
-	free(num_dims_per_var);
-	free(var_type);
-	//free(startStr);
-	//free(endStr);
 
-	nc_err = MPI_Finalize();
+		
+	free(dimStrList);
+	free(varStrList);
+	free(dimIndexStrList);
+	free(varIndexStrList);	
+	
+	free(dim_Ids);
+	free(var_Ids);
+	
+	free(dim_Mins);
+	
+	free(dim_Sizes);
+	free(var_Dim_Sizes);
+
 	return;
+}
+
+void* getTestDataBuffer(int vars, int x, int y, int z)
+{
+	const int totalSize = vars * x * y * z;
+
+	int i, j, k;
+	int n = 0;
+
+	void* data = malloc(sizeof(double) * totalSize);
+
+	for(i = 0; i < x; i++)
+	{
+		for(j = 0; j < y; j++)
+		{
+			for(k = 0; k < z; k++)
+			{
+				((double*)data)[n] = i;		//x
+				((double*)data)[n+1] = j;	//y
+				((double*)data)[n+2] = k;	//z
+				
+				((double*)data)[n+3] = n+3;
+				((double*)data)[n+4] = n+4;
+				n+=5;
+			}
+		}
+	}
+	return data;
+}
+
+void fillPriCoordPairBuffer(int dimStart, int dimEnd, int* buffer)
+{	
+	if(dimStart != 0)
+		buffer[0] = rand() % dimStart; //rand start coord in the range of the region
+	else
+		buffer[0] = rand() % (dimStart + 1);
+	
+	int range = dimEnd - buffer[0]; //max possible values for random size
+	
+	if(range != 0)
+		buffer[1] = buffer[0] + (rand() % range);
+	else
+		buffer[1] = buffer[0];
+}
+
+void printAllPriStats(int rank, pri_region_link* curPtr)
+{
+	printf("Rank %d: Tag %c: Pri %d: (%d, %d, %d) to (%d, %d, %d)\n", 
+		rank, curPtr->tag, curPtr->priority_level, 
+		curPtr->start[0], curPtr->start[1], curPtr->start[2], 
+		curPtr->end[0], curPtr->end[1], curPtr->end[2]);
+	if(curPtr->next != NULL)
+		printAllPriStats(rank, curPtr->next); //recursively print the other linked regions
+	else
+		return;
 }
 
 char isPrime(long num)
@@ -434,12 +503,35 @@ void printDataSequentiallyOnAllProcs(int rank, int global_size, void* data, long
 		MPI_Send(&dummy_var, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD);
 	}
 }
-void* allocAndFetchDataByTypeAndNum(int ncid, int varid, MPI_Offset* start, MPI_Offset* readsize, nc_type* var_type, long num)
+char accumulateTagThroughGroup(char start_tag, int pri_regions_this_proc, MPI_Comm group, int group_rank, int group_size)
+{
+	char temp;
+	char tempAlt;
+	if(group_rank == 0)
+	{
+		temp = start_tag + pri_regions_this_proc;
+		MPI_Send(&temp, 1, MPI_CHAR, group_rank + 1, 0, group);
+		return start_tag;
+	}
+	else if(group_rank == (group_size - 1))
+	{
+		MPI_Recv(&temp, 1, MPI_CHAR, group_rank - 1, 0, group, MPI_STATUS_IGNORE);
+		return temp;
+	}
+	else
+	{
+		MPI_Recv(&temp, 1, MPI_CHAR, group_rank - 1, 0, group, MPI_STATUS_IGNORE);
+		tempAlt = temp + pri_regions_this_proc;
+		MPI_Send(&tempAlt, 1, MPI_CHAR, group_rank + 1, 0, group);
+		return temp;
+	}
+}
+static void* allocAndFetchDataByTypeAndNum(int ncid, int varid, MPI_Offset* start, MPI_Offset* readsize, nc_type* var_type, long num)
 {
 	int n;
 	int nc_err = 0;
 	void* buffer = NULL;
-	//MPI_Offset startAlt[4] = start;
+
 	switch(*var_type)
 	{
 		/*case NC_BYTE:
@@ -484,7 +576,7 @@ int getRandNumPriorityRegions(int max_regions, float percent_0_bias)
 	} 
 	return temp;
 }
-int* allocDimensions(int x, int y, int z)
+static int* allocDimensions(int x, int y, int z)
 {
 	int* ret = malloc(sizeof(int) * 3);
 	ret[0] = x;
@@ -537,6 +629,7 @@ char isPriorityInMyRegion(int* pri_start, int* my_start)
 			//my_start[0], my_start[1], my_start[2], my_start[3], my_start[4], my_start[5]);
 	//printf("mx: %f, my: %f, mz: %f\n\n", my_middle[0], my_middle[1], my_middle[2]);
 }
+
 char largestIndexOfThree(int a, int b, int c)
 {
 	if(a >= b)
@@ -567,32 +660,32 @@ int* testModulusWithDims(int mod, int x, int y, int z, int procs)
 	{
 		case 0:
 			if(x % mod == 0)
-				return returnBestDims(x / mod, y, z, procs / mod);
+				return allocAndReturnBestDims(x / mod, y, z, procs / mod);
 			else if(y % mod == 0)
-				return returnBestDims(x, y / mod, z, procs / mod);
+				return allocAndReturnBestDims(x, y / mod, z, procs / mod);
 			else if(z % mod == 0)
-				return returnBestDims(x, y, z / mod, procs / mod);
+				return allocAndReturnBestDims(x, y, z / mod, procs / mod);
 		case 1:
 			if(x % mod == 0)
-				return returnBestDims(x / mod, y, z, procs / mod);
+				return allocAndReturnBestDims(x / mod, y, z, procs / mod);
 			else if(y % mod == 0)
-				return returnBestDims(x, y / mod, z, procs / mod);
+				return allocAndReturnBestDims(x, y / mod, z, procs / mod);
 			else if(z % mod == 0)
-				return returnBestDims(x, y, z / mod, procs / mod);
+				return allocAndReturnBestDims(x, y, z / mod, procs / mod);
 		case 2:
 			if(x % mod == 0)
-				return returnBestDims(x / mod, y, z, procs / mod);
+				return allocAndReturnBestDims(x / mod, y, z, procs / mod);
 			else if(y % mod == 0)
-				return returnBestDims(x, y / mod, z, procs / mod);
+				return allocAndReturnBestDims(x, y / mod, z, procs / mod);
 			else if(z % mod == 0)
-				return returnBestDims(x, y, z / mod, procs / mod);
+				return allocAndReturnBestDims(x, y, z / mod, procs / mod);
 		default: 
 			printf("Couldn't split the dims, but procs remain!\n");
 			return NULL;
 	}
 }
 
-int* returnBestDims(int x, int y, int z, long num_procs)
+static int* allocAndReturnBestDims(int x, int y, int z, long num_procs)
 {
 	if(num_procs == 1)
 	{
