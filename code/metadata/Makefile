@@ -42,7 +42,7 @@ server: metadata_server.C metadata_args.h client_lib
 	$(CC) -g metadata_server.C sqlite3.o -o metadata_server ${NSSI_INCLUDE} ${NSSI_LIBDIR} ${NSSI_LIBS} -lmetadata_client
 
 client_lib: metadata_client.C metadata_args.h metadata_args.c
-	g++ -c -g metadata_client.C metadata_args.c ${NSSI_INCLUDE}
+	mpiCC -c -g metadata_client.C metadata_args.c ${NSSI_INCLUDE}
 	ar rcs libmetadata_client.a metadata_client.o metadata_args.o
 	ranlib libmetadata_client.a
 
@@ -51,7 +51,7 @@ client: test_client.C client_lib
 
 metadata_args.c: metadata_args.x
 	rm -f $@
-	@echo "#include <Trios_config.h>" >> $@
+#	@echo "#include <Trios_config.h>" >> $@
 ifeq ($(UNAME),Darwin)
 	rpcgen -Cc metadata_args.x | sed -e "s/uint/u_int/g" > metadata_args.c
 else
@@ -60,7 +60,7 @@ endif
 
 metadata_args.h: metadata_args.x
 	rm -f $@
-	@echo "#include <Trios_config.h>" >> $@
+#	@echo "#include <Trios_config.h>" >> $@
 ifeq ($(UNAME),Darwin)
 	rpcgen -Ch metadata_args.x >> $@
 else

@@ -34,9 +34,9 @@
 
 #include <mpi.h>
 
-#include <Trios_config.h>
-#include <Trios_nssi_server.h>
-#include <Trios_logger.h>
+//#include <Trios_config.h>
+//#include <Trios_nssi_server.h>
+//#include <Trios_logger.h>
 
 #include "metadata_args.h"
 #include "metadata_client.h"
@@ -58,8 +58,8 @@ static int callback (void * NotUsed, int argc, char ** argv, char ** ColName)
 }
 
 static void generate_contact_info (const char * env_var, const char * myid);
-static nssi_service service;
-static int metadata_server_init ();
+//static nssi_service service;
+static int metadata_server_init (MPI_Comm * comm, int color, int key);
 static int metadata_server_finalize ();
 
 int md_create_var_stub (const unsigned long request_id
@@ -692,8 +692,9 @@ int md_processing_var_stub (const unsigned long request_id
 }
 
 //===========================================================================
-static int metadata_server_init ()
+static int metadata_server_init (MPI_Comm * comm, int color, int key)
 {
+#if 0
     NSSI_REGISTER_SERVER_STUB(MD_CREATE_VAR_OP, md_create_var_stub, md_create_var_args, void);
     NSSI_REGISTER_SERVER_STUB(MD_INSERT_CHUNK_OP, md_insert_chunk_stub, md_insert_chunk_args, void);
     NSSI_REGISTER_SERVER_STUB(MD_DELETE_VAR_OP, md_delete_var_stub, md_delete_var_args, void);
@@ -705,6 +706,7 @@ static int metadata_server_init ()
     NSSI_REGISTER_SERVER_STUB(MD_CATALOG_ENTRY_COUNT_OP, md_catalog_entry_count_stub, void, void);
     NSSI_REGISTER_SERVER_STUB(MD_ACTIVATE_VAR_OP, md_activate_var_stub, md_activate_var_args, void);
     NSSI_REGISTER_SERVER_STUB(MD_PROCESSING_VAR_OP, md_processing_var_stub, md_processing_var_args, void);
+#endif
 
     // ======================================
     //setup the database
@@ -747,6 +749,7 @@ static int metadata_server_finalize ()
 // ============================================================================
 typedef char NNTI_url [NNTI_URL_LEN];
 
+#if 0
 static void generate_contact_info (const char * env_var, const char * myid)
 {
     NNTI_url *all_urls=NULL;
@@ -794,9 +797,11 @@ static void generate_contact_info (const char * env_var, const char * myid)
     }
     //log_debug(netcdf_debug_level, "exit");
 }
+#endif
 
 int main (int argc, char ** argv)
 {
+    MPI_Comm metadata_comm = MPI_COMM_NULL;
     char my_url [NSSI_URL_LEN];
     int rc;
 
@@ -810,35 +815,35 @@ int main (int argc, char ** argv)
 
     MPI_Init (&argc, &argv);
 
-    logger_init ((log_level) atoi (getenv ("MD_SERVER_LOG_LEVEL")), NULL);
+//    logger_init ((log_level) atoi (getenv ("MD_SERVER_LOG_LEVEL")), NULL);
 
-    nssi_rpc_init (NSSI_DEFAULT_TRANSPORT, NSSI_DEFAULT_ENCODE, NULL);
+//    nssi_rpc_init (NSSI_DEFAULT_TRANSPORT, NSSI_DEFAULT_ENCODE, NULL);
 
-    nssi_get_url (NSSI_DEFAULT_TRANSPORT, my_url, NSSI_URL_LEN);
-    generate_contact_info (argv [1], my_url);
+//    nssi_get_url (NSSI_DEFAULT_TRANSPORT, my_url, NSSI_URL_LEN);
+//    generate_contact_info (argv [1], my_url);
 
-    rc = nssi_service_init (NSSI_DEFAULT_TRANSPORT, NSSI_SHORT_REQUEST_SIZE, &service);
-    if (rc != NSSI_OK) {
-//        log_error(debug_level, "could not init xfer_svc: %s", nssi_err_str(rc));
-        return -1;
-    }
+//    rc = nssi_service_init (NSSI_DEFAULT_TRANSPORT, NSSI_SHORT_REQUEST_SIZE, &service);
+//    if (rc != NSSI_OK) {
+////        log_error(debug_level, "could not init xfer_svc: %s", nssi_err_str(rc));
+//        return -1;
+//    }
 
-    rc = metadata_server_init ();
+    rc = metadata_server_init (MPI_COMM_WORLD, 100, 0, &metadata_comm);
 
     /* start processing requests */
     service.max_reqs = -1;
-    rc = nssi_service_start (&service);
-    if (rc != NSSI_OK) {
-        //log_info(netcdf_debug_level, "exited xfer_svc: %s", nssi_err_str(rc));
-    }
+//    rc = nssi_service_start (&service);
+//    if (rc != NSSI_OK) {
+//        //log_info(netcdf_debug_level, "exited xfer_svc: %s", nssi_err_str(rc));
+//    }
 
     metadata_server_finalize ();
 
     /* shutdown the xfer_svc */
     //log_debug(debug_level, "shutting down service library");
-    nssi_service_fini (&service);
+//    nssi_service_fini (&service);
 
-    nssi_rpc_fini (NSSI_DEFAULT_TRANSPORT);
+//    nssi_rpc_fini (NSSI_DEFAULT_TRANSPORT);
 
     MPI_Finalize ();
 

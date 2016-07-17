@@ -70,7 +70,7 @@ extern "C"
 #define RC_ENUM
 enum RC
 {
-    RC_OK = NSSI_OK,
+    RC_OK = MD_OK,
     RC_ERR
 };
 #endif

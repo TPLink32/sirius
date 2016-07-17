@@ -34,9 +34,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include <Trios_config.h>
-#include <Trios_nssi_rpc.h>
-#include <Trios_nssi_client.h>
+//#include <Trios_config.h>
+//#include <Trios_nssi_rpc.h>
+//#include <Trios_nssi_client.h>
 
 #include "metadata_args.h"
 #include "metadata_client.h"
@@ -46,18 +46,24 @@
 extern "C"
 struct metadata_server
 {
-    nssi_service * service;
-    const char * service_connect_string;
+    MPI_Comm comm;
+    int rank;
+    const char * service;
+//    nssi_service * service;
+//    const char * service_connect_string;
 };
 
 extern "C"
 int metadata_get_config_from_env (const char * env_var, struct md_config * config);
 
 extern "C"
-int metadata_init (const char * connect_str, struct metadata_server ** new_server)
+int metadata_init (MPI_Comm * comm, int color, int key, struct metadata_server ** new_server)
 {
     int rc;
 
+    MPI_Comm_split (*comm, color, key, &(*new_server)->comm);
+
+#if 0
     nssi_rpc_init (NSSI_DEFAULT_TRANSPORT, NSSI_DEFAULT_ENCODE, NULL);
 
     NSSI_REGISTER_CLIENT_STUB(MD_CREATE_VAR_OP, md_create_var_args, void, int);
@@ -77,10 +83,11 @@ int metadata_init (const char * connect_str, struct metadata_server ** new_serve
     (*new_server)->service_connect_string = strdup (connect_str);
 
     rc = nssi_get_service (NSSI_DEFAULT_TRANSPORT, (*new_server)->service_connect_string, -1, (*new_server)->service);
-    if (rc != NSSI_OK)
+    if (rc != MD_OK)
     {
         printf ("error: %d\n", rc);
     }
+#endif
 
     return RC_OK;
 }
@@ -88,6 +95,7 @@ int metadata_init (const char * connect_str, struct metadata_server ** new_serve
 extern "C"
 int metadata_finalize (struct metadata_server * server, struct md_config * config, bool kill_service)
 {
+#if 0
     if (kill_service)
     {
         nssi_kill (server->service, 0, 5000);
@@ -102,6 +110,7 @@ int metadata_finalize (struct metadata_server * server, struct md_config * confi
         free (config->server_urls [i]);
     }
     free (config->server_urls);
+#endif
 
     return RC_OK;
 }
@@ -482,14 +491,14 @@ int metadata_get_config_from_env (const char * env_var, struct md_config * confi
             if (!config->server_urls) {
                 //log_error(netcdf_debug_level, "could not allocate netcdf services");
                 free (fbuf);
-                return NSSI_ENOMEM;
+                return MD_ENOMEM;
             }
             for (i=0;i<lcount;i++) {
                 config->server_urls[i] = (char *)calloc(NNTI_URL_LEN, sizeof(char));
                 if (!config->server_urls[i]) {
                     //log_error(netcdf_debug_level, "could not allocate netcdf services");
                     free (fbuf);
-                    return NSSI_ENOMEM;
+                    return MD_ENOMEM;
                 }
             }
             start=end=fbuf;
@@ -512,5 +521,5 @@ int metadata_get_config_from_env (const char * env_var, struct md_config * confi
         }
     }
 
-    return(NSSI_OK);
+    return(MD_OK);
 }

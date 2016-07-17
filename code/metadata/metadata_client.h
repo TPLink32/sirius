@@ -30,6 +30,8 @@
 #ifndef METADATA_CLIENT_H
 #define METADATA_CLIENT_H
 
+#include <mpi.h>
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -68,7 +70,10 @@ struct md_chunk_entry
 
 struct metadata_server;
 
-int metadata_init (const char * connection_string, struct metadata_server ** new_server);
+enum METADATA_COLOR {METADATA_COLOR_CLIENT = 1, METADATA_COLOR_SERVER = 2};
+enum MD_RES {MD_OK = 1, MD_ENOMEM = 2};
+
+int metadata_init (MPI_Comm * comm, int color, int key, struct metadata_server ** new_server);
 int metadata_finalize (struct metadata_server * server, struct md_config * config, bool kill_service);
 int metadata_get_config_from_env (const char * env_var, struct md_config * config);
 
