@@ -88,9 +88,17 @@ int main(int argc, char **argv)
     status = MPI_Barrier (MPI_COMM_WORLD);
     start_time = MPI_Wtime ();
 
+/////////////////////////////
+// start SIRIUS write test //
+/////////////////////////////
     status = sirius_open_write (&sirius_handle, filename, &comm);
 
+// put the rest of the calls in this block
+
     status = sirius_close (&sirius_handle);
+///////////////////////////
+// end SIRIUS write test //
+///////////////////////////
 
     status = MPI_Barrier (MPI_COMM_WORLD);
 
