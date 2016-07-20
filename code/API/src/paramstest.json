@@ -28,27 +28,36 @@
 {
 	"id" : "var1",
 	"name" : "temperature",
-	"dims" : 3
+	"dims" : 3,
+	"type" : "double"
 }
 {
 	"id" : "var2",
 	"name" : "pressure",
-	"dims" : 3
-}
+	"dims" : 3,
+	"type" : "double"
+} 
+//specifies the vartypes
 
 //when reading in the file, and looking at the input format, ensure that users are following the format
 //ex: if there are 3 vars defined, but only 2 listed in the input format, then warn the user
 {
-	"id" : "dataInputFormat",
+	"id" : "debugDataFormat",
 	"nx" : "double",
 	"ny" : "double",
 	"nz" : "double",
 	"var1" : "double",
 	"var2" : "double"
 }
-//data should be sent to api as a void* consisting of chunks of 5 doubles (in this case)
-//data also assumes that the z dimension index increases the fastest, and that data is organized sequentially
-//ex: data for (1,2,2) is followed by (1,2,3)
+//specifies the data format, not variable format
+
+{
+	"id" : "testDataFormat",
+	"nx" : "double",
+	"ny" : "double",
+	"nz" : "double",
+	"var2" : "double"
+}
 
 
 
