@@ -2,14 +2,41 @@
 #include <stdint.h>
 #include <time.h>
 
+#define ROOT_PROCESS 0
+
+struct SIRIUS_PRIORITY_REGION
+{
+	uint64_t* start_coords;
+	uint64_t* end_coords;
+	int dims;
+	struct SIRIUS_PRIORITY_REGION* next;
+};
+
+struct SIRIUS_WRITE_OPTIONS
+{
+	uint32_t num_dims;
+	uint32_t num_vars;
+	uint64_t* global_dimensions;
+	uint64_t* var_dimensions;
+	
+	int max_priority;
+};
+
 struct SIRIUS_HANDLE
 {
     uint64_t handle;
+    //uint32_t comm_size;
+    const char* runtime_config_filename; //this specifies how the program runs (NOT the output format)
+    //MPI_Comm * comm;
+   // struct SIRIUS_WRITE_OPTIONS* write_options;
 };
 
 struct SIRIUS_VAR_HANDLE
 {
     uint64_t handle;
+    
+    const char* var_name;
+	struct SIRIUS_VARINFO* var_info;
 };
 
 struct SIRIUS_RESERVATION_HANDLE
@@ -90,10 +117,11 @@ struct SIRIUS_VARINFO
 //===============================================================================================
 
 // read the JSON file to initialize the internal output information
-int sirius_init (MPI_Comm comm, const char * config);
+// write_handle is an output parameter
+int sirius_init (struct SIRIUS_WRITE_OPTIONS * write_handle, MPI_Comm comm, const char * config);
 
 // clean up anything configured on sirius_init and make sure anything reserved is freed.
-int sirius_finalize (int rank);
+int sirius_finalize (struct SIRIUS_WRITE_OPTIONS * write_handle, int rank);
 
 //===============================================================================================
 
@@ -111,8 +139,9 @@ int sirius_get_write_time_estimates (struct SIRIUS_HANDLE * handle, size_t total
 int sirius_write (struct SIRIUS_HANDLE * handle, struct SIRIUS_RESERVATION_HANDLE * res, const char * var_name, void * data, struct SIRIUS_VAR_HANDLE * var_handle);
 
 // write a list of one or more priority regions for a particular process.  The coordinates are
-// assuming a 3-d cartaesan space and all values are in the global rather than local space.
-int sirius_write_priority_regions (struct SIRIUS_HANDLE * handle, uint32_t * count, uint64_t * coords);
+// assuming a 3-d cartesian space and all values are in the global rather than local space.
+int sirius_write_priority_regions (struct SIRIUS_HANDLE * handle, uint32_t * count, 
+uint64_t * start_coords, uint64_t * end_coords, int ndims, struct SIRIUS_VAR_HANDLE * var_handle);
 
 // close a stream to force cleaning up and committing anything that might remain from an output
 int sirius_close (struct SIRIUS_HANDLE * handle);
@@ -136,3 +165,9 @@ int sirius_open_read (MPI_Comm * readers_comm, const char * name, struct SIRIUS_
 
 // read the requested_parameters portion of the var. Put no more than buffer_size bytes into the buffer
 int sirius_read (struct SIRIUS_HANDLE * handle, struct SIRIUS_RESERVATION_HANDLE * res, struct SIRIUS_VARINFO * requested_parameteres, size_t buffer_size, void * buffer);
+
+static char** get_index_str_arr(char base, int num_dims);
+
+
+//static int sirius_
+

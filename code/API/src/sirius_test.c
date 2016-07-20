@@ -14,7 +14,7 @@ int main(int argc, char **argv)
     int offsets[3], lsize[3], gsize[3];
     uint64_t cube_start[3];
     uint64_t cube_count[3];
-    double *ddata=NULL;
+    double *ddata = NULL;
     double * A, * B, * C, * D, * E, * F, * G, * H, * I, * J;
     int rank;
     int nprocs;
@@ -24,6 +24,7 @@ int main(int argc, char **argv)
     char filename [256];
 
     struct SIRIUS_HANDLE sirius_handle;
+    struct SIRIUS_WRITE_OPTIONS sirius_write_handle;
     MPI_Comm comm = MPI_COMM_WORLD;
 
     sprintf (filename, "%s.bp", argv [1]);
@@ -32,7 +33,9 @@ int main(int argc, char **argv)
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-   sirius_init (MPI_COMM_WORLD, "paramtest.json");
+    sirius_init (&sirius_write_handle, MPI_COMM_WORLD, "paramstest.json");
+    
+  //  printf("%d %d %d\n", sirius_write_handle.global_dimensions[0], sirius_write_handle.global_dimensions[1], sirius_write_handle.global_dimensions[2]);
 
     if (argc < 7)
     {
@@ -43,19 +46,20 @@ int main(int argc, char **argv)
         MPI_Finalize ();
         return 1;
     }
+   
 
     npx = atoi(argv[2]);
     npy = atoi(argv[3]);
-    npz = atoi(argv[4]);
+    npz = atoi(argv[4]); //number of processes per dimension
 
     ndx = atoi(argv[5]);
     ndy = atoi(argv[6]);
-    ndz = atoi(argv[7]);
-  
+    ndz = atoi(argv[7]); //local sizes
+
     nx = npx * ndx;
     ny = npy * ndy;
     nz = npz * ndz;
-  
+
     posx = rank%npx;
     posy = (rank/npx) %npy;
     posz = rank/(npx*npy);
@@ -95,14 +99,46 @@ int main(int argc, char **argv)
 
 // put the rest of the calls in this block
 
+	struct SIRIUS_VAR_HANDLE var1_handle;
+	struct SIRIUS_VAR_HANDLE var2_handle;
+	
+	status = sirius_write(&sirius_handle, NULL, "var1", ddata, &var1_handle);
+	status = sirius_write(&sirius_handle, NULL, "var2", ddata, &var2_handle);
+	
+	uint32_t* test = malloc(sizeof(uint32_t));
+	uint64_t* start = malloc(sizeof(uint64_t) * 30);
+	uint64_t* end = malloc(sizeof(uint64_t) * 30);
+	*test = 10;
+	
+	int q;
+	for(q = 0; q < 30; q++)
+	{
+		start[q] = q;
+		end[q] = q + 1;
+	}
+	
+	sirius_write_priority_regions (&sirius_handle, test, start, end, 3, &var1_handle);
+	sirius_write_priority_regions (&sirius_handle, test, start, end, 3, &var2_handle);
+	
+	/*struct SIRIUS_PRIORITY_REGION* temp = var_handle.priority_head;
+	while(temp != NULL)
+	{
+		printf("region:\n");
+		for(q = 0; q < temp->dims; q++)
+		{
+			printf("%d to %d\n", temp->start_coords[q], temp->end_coords[q]);
+		}
+		temp = temp->next;
+	}*/
+	
     status = sirius_close (&sirius_handle);
 ///////////////////////////
 // end SIRIUS write test //
 ///////////////////////////
-
+	
     status = MPI_Barrier (MPI_COMM_WORLD);
 
-    end_time = MPI_Wtime ();
+    end_time = MPI_Wtime (); 
 
     t_time = end_time - start_time;
     sz = (8.0 * 8.0 * nx * ny * ((double) nz)) / (1024.0 * 1024.0 * 1024.0);
@@ -111,7 +147,10 @@ int main(int argc, char **argv)
         printf ("%s %d %d %d %d %lf %lf %lf\n", filename, nprocs, ndx, ndy, ndz, sz, t_time, gps);
 
     free (ddata);
-    sirius_finalize (rank);
+    free(test);
+    free(start);
+    free(end);
+    sirius_finalize (&sirius_write_handle, rank);
     MPI_Finalize ();
 
     return 0;

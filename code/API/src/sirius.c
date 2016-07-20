@@ -1,18 +1,120 @@
 #include <stdint.h>
 #include <mpi.h>
 #include "sirius.h"
+#include "jsonparser.h"
 
 //===============================================================================================
 
 // read the JSON file to initialize the internal output information
-int sirius_init (MPI_Comm comm, const char * config)
+int sirius_init (struct SIRIUS_WRITE_OPTIONS * write_handle, MPI_Comm comm, const char * config)
 {
-    return 0;
+	int i = 0, n = 0;
+
+	uint32_t global_size;
+	uint32_t global_rank;
+	
+	char** dim_index_str_arr = NULL;
+	char** var_index_str_arr = NULL;
+	
+	int nc_err = MPI_Comm_size(comm, &global_size);
+	nc_err = MPI_Comm_rank(comm, &global_rank);
+	
+	json_object** json_obj_arr_ptr = NULL;
+	
+	
+	if(global_rank == ROOT_PROCESS)
+	{
+		json_obj_arr_ptr = parseFileWithName(config);		
+		if(json_obj_arr_ptr == NULL)	exit(0);
+		
+		json_object* temp = json_obj_arr_ptr[0];
+		
+		while(temp != NULL)
+		{
+			char* current_obj_id = removeQuotesOnString(getObjID(temp));
+			
+			if(strcmp(current_obj_id, "globalParams") == 0)
+			{
+				write_handle->num_dims = atoi(getValueAsStringFromObjAndKey(temp, "dimensions"));
+				write_handle->global_dimensions = malloc(sizeof(uint64_t) * write_handle->num_dims);
+				
+				write_handle->num_vars = atoi(getValueAsStringFromObjAndKey(temp, "variables"));
+				write_handle->var_dimensions = malloc(sizeof(uint64_t) * write_handle->num_vars);
+				
+				write_handle->max_priority = atoi(getValueAsStringFromObjAndKey(temp, "maxPriority"));
+				
+				dim_index_str_arr = get_index_str_arr('d', write_handle->num_dims);
+				var_index_str_arr = get_index_str_arr('v', write_handle->num_vars);
+				
+				MPI_Bcast(&write_handle->num_dims, 1, MPI_UNSIGNED_LONG, ROOT_PROCESS, comm);
+				MPI_Bcast(&write_handle->num_vars, 1, MPI_UNSIGNED_LONG, ROOT_PROCESS, comm);
+			}
+			else
+			{
+				for(n = 0; n < write_handle->num_dims; n++)
+				{
+					if(strcmp(current_obj_id, dim_index_str_arr[n]) == 0)
+					{
+						//printf("got dimension: %s\n", dim_index_str_arr[n]);
+						//dimStrList[n] = removeQuotesOnString(getValueAsStringFromObjAndKey(temp, "name"));
+						write_handle->global_dimensions[n] = atoi(getValueAsStringFromObjAndKey(temp, "size"));
+						
+						MPI_Bcast(&write_handle->global_dimensions[n], 1, MPI_UNSIGNED_LONG_LONG, ROOT_PROCESS, comm);
+						//printf("%s: size: %d\n",dimStrList[n], (int)dim_Sizes[n]);
+					}
+				}
+				for(n = 0; n < write_handle->num_vars; n++)
+				{
+					if(strcmp(current_obj_id, var_index_str_arr[n]) == 0)
+					{
+						//printf("got dimension: %s\n", dim_index_str_arr[n]);
+						//dimStrList[n] = removeQuotesOnString(getValueAsStringFromObjAndKey(temp, "name"));
+						write_handle->var_dimensions[n] = atoi(getValueAsStringFromObjAndKey(temp, "dims"));
+						
+						MPI_Bcast(&write_handle->var_dimensions[n], 1, MPI_UNSIGNED_LONG_LONG, ROOT_PROCESS, comm);
+						//printf("%s: size: %d\n",dimStrList[n], (int)dim_Sizes[n]);
+					}
+				}
+			}
+			i++;
+			temp = json_obj_arr_ptr[i];
+		}
+		free(dim_index_str_arr);
+		free(var_index_str_arr);
+	}
+	
+	//the Bcasts embedded in this "if" are because they are called by the root proc above already
+	if(global_rank != ROOT_PROCESS)
+	{
+		MPI_Bcast(&write_handle->num_dims, 1, MPI_UNSIGNED_LONG, ROOT_PROCESS, comm);
+		MPI_Bcast(&write_handle->num_vars, 1, MPI_UNSIGNED_LONG, ROOT_PROCESS, comm);
+		
+		write_handle->global_dimensions = malloc(sizeof(uint64_t) * write_handle->num_dims);
+		write_handle->var_dimensions = malloc(sizeof(uint64_t) * write_handle->num_vars);
+	
+		for(n = 0; n < write_handle->num_dims; n++)
+		{	
+			MPI_Bcast(&write_handle->global_dimensions[n], 1, MPI_UNSIGNED_LONG_LONG, ROOT_PROCESS, comm);
+			//printf("Dims: %d\n", (int)write_handle->global_dimensions[n]);
+		}
+		for(n = 0; n < write_handle->num_vars; n++)
+		{
+			MPI_Bcast(&write_handle->var_dimensions[n], 1, MPI_UNSIGNED_LONG_LONG, ROOT_PROCESS, comm);
+			//printf("Var dims: %d\n", (int)write_handle->var_dimensions[n]);
+		}
+	}
+	
+	//these are called by all procs, here
+	MPI_Bcast(&write_handle->max_priority, 1, MPI_INT, ROOT_PROCESS, comm);
+	
+    return 1;
 }
 
 // clean up anything configured on sirius_init and make sure anything reserved is freed.
-int sirius_finalize (int rank)
+int sirius_finalize (struct SIRIUS_WRITE_OPTIONS * write_handle, int rank)
 {
+	if(rank == ROOT_PROCESS)
+		free (write_handle->global_dimensions);
     return 0;
 }
 
@@ -20,8 +122,16 @@ int sirius_finalize (int rank)
 
 // open an output stream for writing. Kept separate from reading for simplicity of implementation
 // handle is an output parameter
+static int DumbGlobalCounter = 0;
 int sirius_open_write (struct SIRIUS_HANDLE * handle, const char * name, MPI_Comm * comm)
 {
+	int nc_err; 
+	//nc_err = MPI_Comm_size(*comm, &handle->comm_size); 
+	handle->runtime_config_filename = name;
+	//handle->comm = comm;
+	handle->handle = DumbGlobalCounter++; 
+	//intentional post increment	
+
     return 0;
 }
 
@@ -33,18 +143,52 @@ int sirius_get_write_time_estimates (struct SIRIUS_HANDLE * handle, size_t total
     return 0;
 }
 
-// write a var to a stream using a partiular reservation (or NULL if no particular choice).
+// write a var to a stream using a particular reservation (or NULL if no particular choice).
 // var_handle is an output parameter for use with the priority regions or other such encodings.
 int sirius_write (struct SIRIUS_HANDLE * handle, struct SIRIUS_RESERVATION_HANDLE * res, const char * var_name, void * data, struct SIRIUS_VAR_HANDLE * var_handle)
 {
-    return 0;
+	var_handle->var_name = var_name;
+	var_handle->var_info = malloc(sizeof(struct SIRIUS_VARINFO));
+	
+    return 1;
 }
 
 // write a list of one or more priority regions for a particular process.  The coordinates are
-// assuming a 3-d cartaesan space and all values are in the global rather than local space.
-int sirius_write_priority_regions (struct SIRIUS_HANDLE * handle, uint32_t * count, uint64_t * coords)
-{
-    return 0;
+// assuming a 3-d cartesian space and all values are in the global rather than local space.
+int sirius_write_priority_regions (struct SIRIUS_HANDLE * handle, uint32_t * count, uint64_t * start_coords, uint64_t * end_coords, int ndims, struct SIRIUS_VAR_HANDLE * var_handle)
+{	
+/*	int i, n;
+
+	struct SIRIUS_PRIORITY_REGION* temp_pri_region = NULL;
+	
+	for(i = 0; i < *count; i++)
+	{
+		if(i == 0) //set the head
+		{
+			var_handle->priority_head = malloc(sizeof(struct SIRIUS_PRIORITY_REGION));
+			temp_pri_region = var_handle->priority_head;
+		}
+		else //otherwise, allocate another element and adjust current ptr
+		{
+			temp_pri_region->next = malloc(sizeof(struct SIRIUS_PRIORITY_REGION));
+			temp_pri_region = temp_pri_region->next;
+		}
+	
+		temp_pri_region->dims = ndims;
+		temp_pri_region->start_coords = malloc(sizeof(uint64_t) * ndims);
+		temp_pri_region->end_coords = malloc(sizeof(uint64_t) * ndims);
+
+		//printf("Pri region:\n");
+		for(n = 0; n < ndims; n++)
+		{
+			//printf("   %d - %d\n", (int)start_coords[(i * ndims) + n], (int)end_coords[(i * ndims) + n]);
+			temp_pri_region->start_coords[n] = start_coords[(i * ndims) + n];
+			temp_pri_region->end_coords[n] = end_coords[(i * ndims) + n];
+		}	
+		temp_pri_region->next = NULL;
+	}
+	//metadata_write_priority(uint32_t count, uint64_t start_coords, uint64_t end_coords, int num_dims, struct SIRIUS_VAR_HANDLE * var_handle);*/
+    return 1;
 }
 
 // close a stream to force cleaning up and committing anything that might remain from an output
@@ -83,4 +227,28 @@ int sirius_open_read (MPI_Comm * readers_comm, const char * name, struct SIRIUS_
 int sirius_read (struct SIRIUS_HANDLE * handle, struct SIRIUS_RESERVATION_HANDLE * res, struct SIRIUS_VARINFO * requested_parameteres, size_t buffer_size, void * buffer)
 {
     return 0;
+}
+
+/*int sirius_init_output_format(struct SIRIUS_OUTPUT_FORMAT * output_handle, const char* filename)
+{
+	return 0;
+}*/
+
+static char** get_index_str_arr(char base, int num_dims)
+{
+	char** ret = malloc(sizeof(char*) * num_dims);
+	
+	if(base == 'd')
+	{
+		ret[0] = "dim1";
+		ret[1] = "dim2";
+		ret[2] = "dim3";
+	}
+	else if(base == 'v')
+	{
+		ret[0] = "var1";
+		ret[1] = "var2";
+	}
+
+	return ret;
 }
