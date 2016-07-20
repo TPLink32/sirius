@@ -23,8 +23,12 @@ int main(int argc, char **argv)
     int status;
     char filename [256];
 
-    struct SIRIUS_HANDLE sirius_handle;
-    struct SIRIUS_WRITE_OPTIONS sirius_write_handle;
+    struct SIRIUS_HANDLE sirius_write_handle;
+    struct SIRIUS_HANDLE sirius_read_handle;
+    
+    struct SIRIUS_WRITE_OPTIONS sirius_write_options_handle;
+    struct SIRIUS_VARINFO read_var_info;
+    
     MPI_Comm comm = MPI_COMM_WORLD;
 
     sprintf (filename, "%s.bp", argv [1]);
@@ -33,7 +37,7 @@ int main(int argc, char **argv)
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    sirius_init (&sirius_write_handle, MPI_COMM_WORLD, "paramstest.json");
+    sirius_init (&sirius_write_options_handle, MPI_COMM_WORLD, "paramstest.json");
     
   //  printf("%d %d %d\n", sirius_write_handle.global_dimensions[0], sirius_write_handle.global_dimensions[1], sirius_write_handle.global_dimensions[2]);
 
@@ -95,43 +99,55 @@ int main(int argc, char **argv)
 /////////////////////////////
 // start SIRIUS write test //
 /////////////////////////////
-    status = sirius_open_write (&sirius_handle, filename, &comm);
+    status = sirius_open_write (&sirius_write_handle, filename, &comm);
+    status = sirius_open_read(&comm, NULL, NULL, &sirius_read_handle);
 
 // put the rest of the calls in this block
 
 	struct SIRIUS_VAR_HANDLE var1_handle;
 	struct SIRIUS_VAR_HANDLE var2_handle;
 	
-	status = sirius_write(&sirius_handle, NULL, "var1", ddata, &var1_handle);
-	status = sirius_write(&sirius_handle, NULL, "var2", ddata, &var2_handle);
+	status = sirius_write(&sirius_write_handle, NULL, "temperature", ddata, &var1_handle);
+	status = sirius_write(&sirius_write_handle, NULL, "pressure", ddata, &var2_handle);
 	
-	uint32_t* test = malloc(sizeof(uint32_t));
-	uint64_t* start = malloc(sizeof(uint64_t) * 30);
-	uint64_t* end = malloc(sizeof(uint64_t) * 30);
-	*test = 10;
+	uint32_t num_points = 10;
+	int num_dims = 3;
+	
+	uint32_t total_coord_values = num_points * num_dims;
+	
+	uint64_t* start = malloc(sizeof(uint64_t) * total_coord_values);
+	uint64_t* end = malloc(sizeof(uint64_t) * total_coord_values);
 	
 	int q;
-	for(q = 0; q < 30; q++)
+	for(q = 0; q < total_coord_values; q++)
 	{
 		start[q] = q;
 		end[q] = q + 1;
 	}
 	
-	sirius_write_priority_regions (&sirius_handle, test, start, end, 3, &var1_handle);
-	sirius_write_priority_regions (&sirius_handle, test, start, end, 3, &var2_handle);
+	status = sirius_write_priority_regions (&sirius_write_handle, &num_points, start, end, &var1_handle);
+	status = sirius_write_priority_regions (&sirius_write_handle, &num_points, start, end, &var2_handle);
+
+	//print_linked_priority_regions(var1_handle.var_name, var1_handle.priority_head);
+	//print_linked_priority_regions(var2_handle.var_name, var2_handle.priority_head);
 	
-	/*struct SIRIUS_PRIORITY_REGION* temp = var_handle.priority_head;
-	while(temp != NULL)
-	{
-		printf("region:\n");
-		for(q = 0; q < temp->dims; q++)
-		{
-			printf("%d to %d\n", temp->start_coords[q], temp->end_coords[q]);
-		}
-		temp = temp->next;
-	}*/
+	double* dataBuf = malloc(sizeof(double) * 50);
 	
-    status = sirius_close (&sirius_handle);
+	sirius_get_var_info (NULL, "temperature", &read_var_info);
+	status = sirius_read(&sirius_read_handle, NULL, &read_var_info, 50, dataBuf);
+	debug_print_buffer(dataBuf, 'd', 50);
+	
+	//
+	// function to return a var handle, just with the name of the var?
+	// var handle should be stored on metadata side anyways...
+	//
+	
+	sirius_get_var_info (NULL, "pressure", &read_var_info);
+	status = sirius_read(&sirius_read_handle, NULL, &read_var_info, 50, dataBuf);
+	debug_print_buffer(dataBuf, 'd', 50);
+	
+    status = sirius_close (&sirius_write_handle);
+    status = sirius_close (&sirius_read_handle);
 ///////////////////////////
 // end SIRIUS write test //
 ///////////////////////////
@@ -147,12 +163,12 @@ int main(int argc, char **argv)
         printf ("%s %d %d %d %d %lf %lf %lf\n", filename, nprocs, ndx, ndy, ndz, sz, t_time, gps);
 
     free (ddata);
-    free(test);
     free(start);
     free(end);
-    sirius_finalize (&sirius_write_handle, rank);
+    sirius_finalize (&sirius_write_options_handle, rank);
     MPI_Finalize ();
 
     return 0;
 }
+
 

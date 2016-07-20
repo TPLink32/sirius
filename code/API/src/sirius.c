@@ -43,8 +43,8 @@ int sirius_init (struct SIRIUS_WRITE_OPTIONS * write_handle, MPI_Comm comm, cons
 				
 				write_handle->max_priority = atoi(getValueAsStringFromObjAndKey(temp, "maxPriority"));
 				
-				dim_index_str_arr = get_index_str_arr('d', write_handle->num_dims);
-				var_index_str_arr = get_index_str_arr('v', write_handle->num_vars);
+				dim_index_str_arr = alloc_and_get_index_str_arr('d', write_handle->num_dims);
+				var_index_str_arr = alloc_and_get_index_str_arr('v', write_handle->num_vars);
 				
 				MPI_Bcast(&write_handle->num_dims, 1, MPI_UNSIGNED_LONG, ROOT_PROCESS, comm);
 				MPI_Bcast(&write_handle->num_vars, 1, MPI_UNSIGNED_LONG, ROOT_PROCESS, comm);
@@ -128,8 +128,9 @@ int sirius_open_write (struct SIRIUS_HANDLE * handle, const char * name, MPI_Com
 	int nc_err; 
 	//nc_err = MPI_Comm_size(*comm, &handle->comm_size); 
 	handle->runtime_config_filename = name;
-	//handle->comm = comm;
+	handle->comm = comm;
 	handle->handle = DumbGlobalCounter++; 
+	handle->op_type = READ_OP;
 	//intentional post increment	
 
     return 0;
@@ -148,16 +149,46 @@ int sirius_get_write_time_estimates (struct SIRIUS_HANDLE * handle, size_t total
 int sirius_write (struct SIRIUS_HANDLE * handle, struct SIRIUS_RESERVATION_HANDLE * res, const char * var_name, void * data, struct SIRIUS_VAR_HANDLE * var_handle)
 {
 	var_handle->var_name = var_name;
-	var_handle->var_info = malloc(sizeof(struct SIRIUS_VARINFO));
+	struct SIRIUS_VARINFO* handle_varinfo = var_handle->var_info = malloc(sizeof(struct SIRIUS_VARINFO));
+	
+	//This string checking is in lieu of actually reading the JSON file, for now
+	if(strcmp(var_name, "temperature") == 0)
+	{
+		handle_varinfo->type = sirius_double;
+		var_handle->handle = handle_varinfo->varid = 0;
+		handle_varinfo->ndim = 3;
+		handle_varinfo->dims = malloc(sizeof(uint64_t) * handle_varinfo->ndim);
+		handle_varinfo->dims[0] = LENGTH;
+		handle_varinfo->dims[1] = WIDTH;
+		handle_varinfo->dims[2] = HEIGHT;
+
+		handle_varinfo->nsteps = 1;
+		printf("wrote temp\n");
+	}
+	else if(strcmp(var_name, "pressure") == 0)
+	{
+		handle_varinfo->type = sirius_double;
+		var_handle->handle = handle_varinfo->varid = 1;
+		handle_varinfo->ndim = 3;
+		handle_varinfo->dims = malloc(sizeof(uint64_t) * handle_varinfo->ndim);
+		handle_varinfo->dims[0] = LENGTH;
+		handle_varinfo->dims[1] = WIDTH;
+		handle_varinfo->dims[2] = HEIGHT;
+
+		handle_varinfo->nsteps = 1;
+		printf("wrote pressure\n");
+	}
 	
     return 1;
 }
 
 // write a list of one or more priority regions for a particular process.  The coordinates are
 // assuming a 3-d cartesian space and all values are in the global rather than local space.
-int sirius_write_priority_regions (struct SIRIUS_HANDLE * handle, uint32_t * count, uint64_t * start_coords, uint64_t * end_coords, int ndims, struct SIRIUS_VAR_HANDLE * var_handle)
+int sirius_write_priority_regions (struct SIRIUS_HANDLE * handle, uint32_t * count, uint64_t * start_coords, uint64_t * end_coords, struct SIRIUS_VAR_HANDLE * var_handle)
 {	
-/*	int i, n;
+	int ndims = get_var_dims_from_var_handle(var_handle);
+	//printf("dims: %d\n", ndims);
+	int i, n;
 
 	struct SIRIUS_PRIORITY_REGION* temp_pri_region = NULL;
 	
@@ -187,7 +218,7 @@ int sirius_write_priority_regions (struct SIRIUS_HANDLE * handle, uint32_t * cou
 		}	
 		temp_pri_region->next = NULL;
 	}
-	//metadata_write_priority(uint32_t count, uint64_t start_coords, uint64_t end_coords, int num_dims, struct SIRIUS_VAR_HANDLE * var_handle);*/
+	//metadata_write_priority(uint32_t count, uint64_t start_coords, uint64_t end_coords, int num_dims, struct SIRIUS_VAR_HANDLE * var_handle);
     return 1;
 }
 
@@ -203,7 +234,44 @@ int sirius_close (struct SIRIUS_HANDLE * handle)
 // what portion of the var they care about.
 int sirius_get_var_info (const char * stream_name, const char * var_name, struct SIRIUS_VARINFO * info)
 {
-    return 0;
+	//TODO
+	//query metadata server for the info associated with a specific variable
+	//FOR NOW: provides hardcoded info
+	 
+	if(strcmp(var_name, "temperature") == 0)
+	{
+		info->varid = 0;
+		info->type = sirius_double;
+		info->ndim = 3;
+		info->dims = malloc(sizeof(uint64_t) * info->ndim);
+		info->dims[0] = LENGTH;
+		info->dims[1] = WIDTH;
+		info->dims[2] = HEIGHT;
+
+		info->nsteps = 1;
+		//printf("wrote temp\n");
+	}
+	else if(strcmp(var_name, "pressure") == 0)
+	{
+		info->varid = 1;
+		info->type = sirius_double;
+		info->ndim = 3;
+		info->dims = malloc(sizeof(uint64_t) * info->ndim);
+		info->dims[0] = LENGTH;
+		info->dims[1] = WIDTH;
+		info->dims[2] = HEIGHT;
+
+		info->nsteps = 1;
+		//printf("wrote pressure\n");
+	} 
+	 
+    return 1;
+}
+
+//TODO requests the metadata server for a variable handle associated with a particular name
+int sirius_get_var_handle(const char* var_name, struct SIRIUS_VAR_HANDLE * var_handle)
+{
+	return 0;
 }
 
 // get options for reading a particular var from a particular output stream
@@ -220,21 +288,31 @@ int sirius_get_read_options (const char * stream_name, const char * var_name, ui
 // handle is an output parameter
 int sirius_open_read (MPI_Comm * readers_comm, const char * name, struct SIRIUS_RESERVATION_HANDLE * res, struct SIRIUS_HANDLE * handle)
 {
-    return 0;
+	
+	handle->op_type = WRITE_OP;
+	handle->comm = readers_comm;
+	handle->handle = DumbGlobalCounter++; 
+	
+	
+    return 1;
 }
 
 // read the requested_parameters portion of the var. Put no more than buffer_size bytes into the buffer
-int sirius_read (struct SIRIUS_HANDLE * handle, struct SIRIUS_RESERVATION_HANDLE * res, struct SIRIUS_VARINFO * requested_parameteres, size_t buffer_size, void * buffer)
+int sirius_read (struct SIRIUS_HANDLE * handle, struct SIRIUS_RESERVATION_HANDLE * res, struct SIRIUS_VARINFO * requested_parameters, size_t buffer_size, void * buffer)
 {
-    return 0;
+	if(requested_parameters->varid == 0)
+	{
+		debug_fill_buffer("temperature", buffer_size, buffer);
+	}
+	else if(requested_parameters->varid == 1)
+	{
+		debug_fill_buffer("pressure", buffer_size, buffer);
+	}
+
+    return 1;
 }
 
-/*int sirius_init_output_format(struct SIRIUS_OUTPUT_FORMAT * output_handle, const char* filename)
-{
-	return 0;
-}*/
-
-static char** get_index_str_arr(char base, int num_dims)
+static char** alloc_and_get_index_str_arr(char base, int num_dims)
 {
 	char** ret = malloc(sizeof(char*) * num_dims);
 	
@@ -252,3 +330,57 @@ static char** get_index_str_arr(char base, int num_dims)
 
 	return ret;
 }
+
+static int get_var_dims_from_var_handle(struct SIRIUS_VAR_HANDLE* var_handle)
+{
+	return var_handle->var_info->ndim;
+}
+
+static void debug_fill_buffer(const char* name, size_t size, double* buffer)
+{
+	int i;
+
+	if(strcmp(name, "temperature") == 0)
+	{
+		for(i = 0; i < size; i++)
+		{
+			buffer[i] = i;
+		}
+	}
+	else if (strcmp(name, "pressure") == 0)
+	{
+		for(i = 0; i < size; i++)
+		{
+			buffer[i] = size - i;
+		}
+	}
+}
+
+void debug_print_buffer(void* buffer, const char type, size_t size)
+{
+	int i;
+	switch(type)
+	{
+		case 'd':
+			printf("buffer:\n");
+			for(i = 0; i < size; i++)
+			{
+				printf("%0.0f, ", ((double*)buffer)[i]);
+			}
+			printf("\n");
+			return;
+	}
+}
+void print_linked_priority_regions(const char* var_name, struct SIRIUS_PRIORITY_REGION * head)
+{
+	if(head == NULL)	return;
+	
+	int q;
+	printf("%s region:\n", var_name);
+	for(q = 0; q < head->dims; q++)
+	{
+		printf("%d to %d\n", (int)head->start_coords[q], (int)head->end_coords[q]);
+	}
+	print_linked_priority_regions(var_name, head->next);
+}
+
