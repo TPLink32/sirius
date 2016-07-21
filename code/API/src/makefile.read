@@ -1,0 +1,2 @@
+all: sirius.h sirius.c sirius_read.c
+	mpicc -o sirius sirius.c sirius_read.c

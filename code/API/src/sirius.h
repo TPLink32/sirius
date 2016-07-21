@@ -11,6 +11,8 @@
 #define WRITE_OP 'w'
 #define READ_OP 'r'
 
+#define MAX_CHAR_DIM_LEN 6
+
 struct SIRIUS_PRIORITY_REGION
 {
 	uint64_t* start_coords;

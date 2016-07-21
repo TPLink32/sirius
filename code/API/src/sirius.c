@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <mpi.h>
+#include <string.h>
 #include "sirius.h"
 #include "jsonparser.h"
 
@@ -235,8 +236,7 @@ int sirius_close (struct SIRIUS_HANDLE * handle)
 int sirius_get_var_info (const char * stream_name, const char * var_name, struct SIRIUS_VARINFO * info)
 {
 	//TODO
-	//query metadata server for the info associated with a specific variable
-	//FOR NOW: provides hardcoded info
+	//use the json parsed info from before 
 	 
 	if(strcmp(var_name, "temperature") == 0)
 	{
@@ -288,7 +288,6 @@ int sirius_get_read_options (const char * stream_name, const char * var_name, ui
 // handle is an output parameter
 int sirius_open_read (MPI_Comm * readers_comm, const char * name, struct SIRIUS_RESERVATION_HANDLE * res, struct SIRIUS_HANDLE * handle)
 {
-	
 	handle->op_type = WRITE_OP;
 	handle->comm = readers_comm;
 	handle->handle = DumbGlobalCounter++; 
@@ -312,20 +311,27 @@ int sirius_read (struct SIRIUS_HANDLE * handle, struct SIRIUS_RESERVATION_HANDLE
     return 1;
 }
 
-static char** alloc_and_get_index_str_arr(char base, int num_dims)
+static char** alloc_and_get_index_str_arr(char base, int num)
 {
-	char** ret = malloc(sizeof(char*) * num_dims);
+	int n;
+	char** ret = malloc(sizeof(char*) * num);
 	
-	if(base == 'd')
+	for(n = 0; n < num; n++)
 	{
-		ret[0] = "dim1";
-		ret[1] = "dim2";
-		ret[2] = "dim3";
-	}
-	else if(base == 'v')
-	{
-		ret[0] = "var1";
-		ret[1] = "var2";
+		char app[1];
+		app[0] = (n + 1) + '0';
+		
+		ret[n] = malloc(sizeof(char) * 6);
+		if(base == 'd')
+			strcpy(ret[n], "dim");
+		else if(base == 'v')
+			strcpy(ret[n], "var");
+		else 
+			strcpy(ret[n], "nul");
+			
+			
+		strcat(ret[n], app);
+		printf("%s\n", ret[n]);
 	}
 
 	return ret;
