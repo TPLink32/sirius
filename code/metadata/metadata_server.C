@@ -62,12 +62,13 @@ static void generate_contact_info (const char * env_var, const char * myid);
 static int metadata_server_init (MPI_Comm * comm, int color, int key);
 static int metadata_server_finalize ();
 
-int md_create_var_stub (const unsigned long request_id
-                  ,const NNTI_peer_t *caller
-                  ,const md_create_var_args *args
-                  ,const NNTI_buffer_t *data_addr
-                  ,const NNTI_buffer_t *res_addr
-                  )
+//int md_create_var_stub (const unsigned long request_id
+//                  ,const NNTI_peer_t *caller
+//                  ,const md_create_var_args *args
+//                  ,const NNTI_buffer_t *data_addr
+//                  ,const NNTI_buffer_t *res_addr
+//                  )
+int md_create_var_stub (MPI_Comm old_world_comm, int message_source, MPI_Comm metadata_comm)
 {
     int rc;
     int i;
@@ -76,16 +77,21 @@ int md_create_var_stub (const unsigned long request_id
     uint64_t var_id;
     struct md_dim_bounds * buf = NULL;
     size_t len = 0;
+    struct md_create_var_args args;
+    MPI_Status status;
 
-    len = args->num_dims * sizeof (struct md_dim_bounds);
+    MPI_Recv (&args, sizeof (struct md_create_var_args), MPI_BYTE, message_source, MD_CREATE_VAR_OP, old_world_comm, &status);
+
+    len = args.num_dims * sizeof (struct md_dim_bounds);
     buf = (struct md_dim_bounds *) malloc (len);
 
     /* Fetch the data from the client */
-    rc = nssi_get_data(caller, buf, len, data_addr);
-    if (rc != NSSI_OK) {
+    MPI_Recv (buf, len, MPI_BYTE, status.MPI_SOURCE, status.MPI_TAG, old_world_comm, &status);
+//    rc = nssi_get_data(caller, buf, len, data_addr);
+//    if (rc != NSSI_OK) {
 //        log_error(debug_level, "Could not fetch var data from client");
-        goto cleanup;
-    }
+//        goto cleanup;
+//    }
     rc = sqlite3_prepare_v2 (db, "insert into global_catalog (id, name, path, version, active, txn_id, num_dims, d0_min, d0_max, d1_min, d1_max, d2_min, d2_max) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", -1, &stmt, &tail);
     if (rc != SQLITE_OK)
     {
@@ -95,13 +101,13 @@ int md_create_var_stub (const unsigned long request_id
     }
     
     rc = sqlite3_bind_null (stmt, 1); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_text (stmt, 2, strdup (args->name), -1, free); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_text (stmt, 3, strdup (args->path), -1, free); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_int (stmt, 4, args->var_version); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_text (stmt, 2, strdup (args.name), -1, free); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_text (stmt, 3, strdup (args.path), -1, free); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_int (stmt, 4, args.var_version); assert (rc == SQLITE_OK);
     rc = sqlite3_bind_int (stmt, 5, 0); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_int (stmt, 6, args->txid); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_int (stmt, 7, args->num_dims); assert (rc == SQLITE_OK);
-    for (i = 1; i <= args->num_dims; i++)
+    rc = sqlite3_bind_int (stmt, 6, args.txid); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_int (stmt, 7, args.num_dims); assert (rc == SQLITE_OK);
+    for (i = 1; i <= args.num_dims; i++)
     {
         rc = sqlite3_bind_int (stmt, 7 + i * 2 - 1, buf [i - 1].min); assert (rc == SQLITE_OK);
         rc = sqlite3_bind_int (stmt, 7 + i * 2, buf [i - 1].max); assert (rc == SQLITE_OK);
@@ -121,21 +127,24 @@ int md_create_var_stub (const unsigned long request_id
     rc = sqlite3_finalize (stmt);
 
 cleanup:
-    rc = nssi_put_data (caller, &var_id, sizeof (uint64_t), data_addr, -1);
+    MPI_Send (&var_id, 1, MPI_INTEGER, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
+//    rc = nssi_put_data (caller, &var_id, sizeof (uint64_t), data_addr, -1);
 
     free (buf);
 
-    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
+    MPI_Send (&rc, 1, MPI_INTEGER, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
+//    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
 
     return rc;
 }
 
-int md_insert_chunk_stub (const unsigned long request_id
-                  ,const NNTI_peer_t *caller
-                  ,const md_insert_chunk_args *args
-                  ,const NNTI_buffer_t *data_addr
-                  ,const NNTI_buffer_t *res_addr
-                  )
+//int md_insert_chunk_stub (const unsigned long request_id
+//                  ,const NNTI_peer_t *caller
+//                  ,const md_insert_chunk_args *args
+//                  ,const NNTI_buffer_t *data_addr
+//                  ,const NNTI_buffer_t *res_addr
+//                  )
+int md_insert_chunk_stub (MPI_Comm old_world_comm, int message_source, MPI_Comm metadata_comm)
 {
     int rc;
     uint32_t count;
@@ -146,16 +155,21 @@ int md_insert_chunk_stub (const unsigned long request_id
     int rowid;
     struct md_dim_bounds * buf = NULL;
     size_t len = 0;
+    struct md_insert_chunk_args args;
+    MPI_Status status;
 
-    len = args->num_dims * sizeof (struct md_dim_bounds);
+    MPI_Recv (&args, sizeof (struct md_insert_chunk_args), MPI_BYTE, message_source, MD_INSERT_CHUNK_OP, old_world_comm, &status);
+
+    len = args.num_dims * sizeof (struct md_dim_bounds);
     buf = (struct md_dim_bounds *) malloc (len);
 
     /* Fetch the data from the client */
-    rc = nssi_get_data (caller, buf, len, data_addr);
-    if (rc != NSSI_OK) {
+    //rc = nssi_get_data (caller, buf, len, data_addr);
+    MPI_Recv (buf, len, MPI_BYTE, status.MPI_SOURCE, status.MPI_TAG, old_world_comm, &status);
+//    if (rc != NSSI_OK) {
 //        log_error(debug_level, "Could not fetch var data from client");
-        goto cleanup;
-    }
+//        goto cleanup;
+//    }
 
     rc = sqlite3_prepare_v2 (db, "insert into var_data (global_id, chunk_id, connection, length, d0_min, d0_max, d1_min, d1_max, d2_min, d2_max) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", -1, &stmt_index, &tail_index);
     if (rc != SQLITE_OK)
@@ -165,11 +179,11 @@ int md_insert_chunk_stub (const unsigned long request_id
         goto cleanup;
     }
 
-    rc = sqlite3_bind_int (stmt_index, 1, args->var_id); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_int (stmt_index, 2, args->chunk_id); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_text (stmt_index, 3, strdup (args->connection), -1, free); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_int (stmt_index, 4, args->length_of_chunk); assert (rc == SQLITE_OK);
-    for (i = 0; i < args->num_dims; i++)
+    rc = sqlite3_bind_int (stmt_index, 1, args.var_id); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_int (stmt_index, 2, args.chunk_id); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_text (stmt_index, 3, strdup (args.connection), -1, free); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_int (stmt_index, 4, args.length_of_chunk); assert (rc == SQLITE_OK);
+    for (i = 0; i < args.num_dims; i++)
     {
         rc = sqlite3_bind_int (stmt_index, 5 + i * 2, buf [i].min); assert (rc == SQLITE_OK);
         rc = sqlite3_bind_int (stmt_index, 6 + i * 2, buf [i].max); //assert (rc == SQLITE_OK);
@@ -193,25 +207,32 @@ int md_insert_chunk_stub (const unsigned long request_id
 cleanup:
     free (buf);
 
-    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
+    MPI_Send (&rc, 1, MPI_INTEGER, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
+//    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
 
     return rc;
 }
 
-int md_delete_var_stub (const unsigned long request_id
-                  ,const NNTI_peer_t *caller
-                  ,const md_delete_var_args *args
-                  ,const NNTI_buffer_t *data_addr
-                  ,const NNTI_buffer_t *res_addr
-                  )
+//int md_delete_var_stub (const unsigned long request_id
+//                  ,const NNTI_peer_t *caller
+//                  ,const md_delete_var_args *args
+//                  ,const NNTI_buffer_t *data_addr
+//                  ,const NNTI_buffer_t *res_addr
+//                  )
+int md_delete_var_stub (MPI_Comm old_world_comm, int message_source, MPI_Comm metadata_comm)
 {
-    int rc = NSSI_OK;
+    int rc = MD_OK;
     char * ErrMsg = NULL;
     sqlite3_stmt * stmt = NULL;
     const char * tail = NULL;
 
     const char * query1 = "delete from var_data where exists (select var_data.chunk_id from var_data, global_catalog where var_data.global_id = global_catalog.id and global_catalog.id = ? and global_catalog.name = ? and global_catalog.path = ? and global_catalog.version = ?) ";
     const char * query2 = "delete from global_catalog where global_catalog.id = ? and global_catalog.name = ? and global_catalog.path = ? and global_catalog.version = ? ";
+
+    struct md_delete_var_args args;
+    MPI_Status status;
+
+    MPI_Recv (&args, sizeof (struct md_delete_var_args), MPI_BYTE, message_source, MD_DELETE_VAR_OP, old_world_comm, &status);
 
     rc = sqlite3_exec (db, "begin;", callback, 0, &ErrMsg);
     if (rc != SQLITE_OK)
@@ -230,10 +251,10 @@ int md_delete_var_stub (const unsigned long request_id
         goto cleanup;
     }
 
-    rc = sqlite3_bind_int (stmt, 1, args->var_id); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_text (stmt, 2, strdup (args->name), -1, free); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_text (stmt, 3, strdup (args->path), -1, free); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_int (stmt, 4, args->var_version); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_int (stmt, 1, args.var_id); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_text (stmt, 2, strdup (args.name), -1, free); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_text (stmt, 3, strdup (args.path), -1, free); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_int (stmt, 4, args.var_version); assert (rc == SQLITE_OK);
     rc = sqlite3_step (stmt); assert (rc == SQLITE_OK || rc == SQLITE_DONE);
 
     rc = sqlite3_finalize (stmt);
@@ -246,10 +267,10 @@ int md_delete_var_stub (const unsigned long request_id
         goto cleanup;
     }
 
-    rc = sqlite3_bind_int (stmt, 1, args->var_id); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_text (stmt, 2, strdup (args->name), -1, free); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_text (stmt, 3, strdup (args->path), -1, free); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_int (stmt, 4, args->var_version); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_int (stmt, 1, args.var_id); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_text (stmt, 2, strdup (args.name), -1, free); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_text (stmt, 3, strdup (args.path), -1, free); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_int (stmt, 4, args.var_version); assert (rc == SQLITE_OK);
     rc = sqlite3_step (stmt); assert (rc == SQLITE_OK || rc == SQLITE_DONE);
 
     rc = sqlite3_finalize (stmt);
@@ -268,7 +289,8 @@ cleanup:
     {
         rc = sqlite3_exec (db, "rollback;", callback, 0, &ErrMsg);
     }
-    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
+//    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
+    MPI_Send (&rc, 1, MPI_INTEGER, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
 
     return rc;
 }
@@ -301,12 +323,13 @@ cleanup:
     return rc;
 }
 
-int md_get_chunk_list_stub (const unsigned long request_id
-                  ,const NNTI_peer_t *caller
-                  ,const md_get_chunk_list_args *args
-                  ,const NNTI_buffer_t *data_addr
-                  ,const NNTI_buffer_t *res_addr
-                  )
+//int md_get_chunk_list_stub (const unsigned long request_id
+//                  ,const NNTI_peer_t *caller
+//                  ,const md_get_chunk_list_args *args
+//                  ,const NNTI_buffer_t *data_addr
+//                  ,const NNTI_buffer_t *res_addr
+//                  )
+int md_get_chunk_list_stub (MPI_Comm old_world_comm, int message_source, MPI_Comm metadata_comm)
 {
     int rc;
     struct md_chunk_entry * entries = NULL;
@@ -316,11 +339,17 @@ int md_get_chunk_list_stub (const unsigned long request_id
     const char * tail = NULL;
     const char * query = "select vd.chunk_id, vd.length, vd.connection, gc.num_dims, vd.d0_min, vd.d0_max, vd.d1_min, vd.d1_max, vd.d2_min, vd.d2_max from var_data vd, global_catalog gc where gc.name = ? and gc.path = ? and gc.version = ? and gc.id = vd.global_id and (gc.txn_id = ? or gc.active = 1)";
 
-    rc = get_chunk_list_count (args, &count);
+    struct md_get_chunk_list_args args;
+
+    MPI_Status status;
+    MPI_Recv (&args, sizeof (struct md_get_chunk_list_args), MPI_BYTE, message_source, MD_GET_CHUNK_LIST_COUNT_OP, old_world_comm, &status);
+
+    rc = get_chunk_list_count (&args, &count);
 //printf ("CL chunks: %d\n", count);
 
     if (count > 0)
     {
+        MPI_Send (&count, sizeof (uint32_t), MPI_BYTE, status.MPI_SOURCE, MD_GET_CHUNK_LIST_COUNT_OP, old_world_comm);
         size = sizeof (struct md_chunk_entry) * count;
         entries = (struct md_chunk_entry *) malloc (size);
 
@@ -331,10 +360,10 @@ int md_get_chunk_list_stub (const unsigned long request_id
             sqlite3_close (db);
             goto cleanup;
         }
-        rc = sqlite3_bind_text (stmt, 1, strdup (args->name), -1, free); assert (rc == SQLITE_OK);
-        rc = sqlite3_bind_text (stmt, 2, strdup (args->path), -1, free); assert (rc == SQLITE_OK);
-        rc = sqlite3_bind_int (stmt, 3, args->var_version); assert (rc == SQLITE_OK);
-        rc = sqlite3_bind_int (stmt, 4, args->txid); assert (rc == SQLITE_OK);
+        rc = sqlite3_bind_text (stmt, 1, strdup (args.name), -1, free); assert (rc == SQLITE_OK);
+        rc = sqlite3_bind_text (stmt, 2, strdup (args.path), -1, free); assert (rc == SQLITE_OK);
+        rc = sqlite3_bind_int (stmt, 3, args.var_version); assert (rc == SQLITE_OK);
+        rc = sqlite3_bind_int (stmt, 4, args.txid); assert (rc == SQLITE_OK);
         rc = sqlite3_step (stmt);
 //printf ("CL rc: %d\n", rc);
 
@@ -369,9 +398,11 @@ int md_get_chunk_list_stub (const unsigned long request_id
     }
 
 cleanup:
-    rc = nssi_put_data (caller, entries, size, data_addr, -1);
+    MPI_Send (entries, size, MPI_BYTE, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
+//    rc = nssi_put_data (caller, entries, size, data_addr, -1);
 
-    rc = nssi_send_result (caller, request_id, NSSI_OK, NULL, res_addr);
+    MPI_Send (&rc, 1, MPI_INTEGER, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
+//    rc = nssi_send_result (caller, request_id, NSSI_OK, NULL, res_addr);
 
     // need to wait until after send_result to do the free
     // need to free the connection strings too
@@ -381,30 +412,34 @@ printf ("need to clean up this: %s %d\n", __FILE__, __LINE__);
     return rc;
 }
 
-int md_get_chunk_list_count_stub (const unsigned long request_id
-                  ,const NNTI_peer_t *caller
-                  ,const md_get_chunk_list_args *args
-                  ,const NNTI_buffer_t *data_addr
-                  ,const NNTI_buffer_t *res_addr
-                  )
+//int md_get_chunk_list_count_stub (const unsigned long request_id
+//                  ,const NNTI_peer_t *caller
+//                  ,const md_get_chunk_list_args *args
+//                  ,const NNTI_buffer_t *data_addr
+//                  ,const NNTI_buffer_t *res_addr
+//                  )
+int md_get_chunk_list_count_stub (MPI_Comm old_world_comm, int message_source, MPI_Comm metadata_comm)
 {
     int rc;
     uint32_t count;
+    struct md_get_chunk_list_args args;
 
-    rc = get_chunk_list_count (args, &count);
+    rc = get_chunk_list_count (&args, &count);
 
-    rc = nssi_put_data (caller, &count, sizeof (uint32_t), data_addr, -1);
-    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
+//    rc = nssi_put_data (caller, &count, sizeof (uint32_t), data_addr, -1);
+//    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
+    fprintf (stderr, "Need to implemenet get chunk list count stub\n");
 
     return rc;
 }
 
-int md_catalog_stub (const unsigned long request_id
-                  ,const NNTI_peer_t *caller
-                  ,struct md_catalog_args *args
-                  ,const NNTI_buffer_t *data_addr
-                  ,const NNTI_buffer_t *res_addr
-                  )
+//int md_catalog_stub (const unsigned long request_id
+//                  ,const NNTI_peer_t *caller
+//                  ,struct md_catalog_args *args
+//                  ,const NNTI_buffer_t *data_addr
+//                  ,const NNTI_buffer_t *res_addr
+//                  )
+int md_catalog_stub (MPI_Comm old_world_comm, int message_source, MPI_Comm metadata_comm)
 {
     int rc;
     uint32_t count;
@@ -414,12 +449,18 @@ int md_catalog_stub (const unsigned long request_id
     const char * query = "select id, name, path, version, active, txn_id, num_dims, d0_min, d0_max, d1_min, d1_max, d2_min, d2_max from global_catalog where txn_id = ? or active = 1 order by path, name, version";
     struct md_catalog_entry * data = NULL;
     size_t size = 0;
+    struct md_catalog_args args;
+    MPI_Status status;
+
+    MPI_Recv (&args, sizeof (struct md_catalog_args), MPI_BYTE, message_source, MD_CATALOG_OP, old_world_comm, &status);
 
     rc = sqlite3_prepare_v2 (db, "select count (*) from global_catalog where txn_id = ? or active = 1", -1, &stmt, &tail); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_int (stmt, 1, args->txid); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_int (stmt, 1, args.txid); assert (rc == SQLITE_OK);
     rc = sqlite3_step (stmt); assert (rc == SQLITE_OK || rc == SQLITE_ROW);
     count = sqlite3_column_int (stmt, 0);
     rc = sqlite3_finalize (stmt); assert (rc == SQLITE_OK);
+
+    MPI_Send (&count, sizeof (uint32_t), MPI_BYTE, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
 
 //printf ("rows in global_catalog: %d\n", count);
     size = sizeof (struct md_catalog_entry) * count;
@@ -427,7 +468,7 @@ int md_catalog_stub (const unsigned long request_id
     memset (data, 0, size);
 
     rc = sqlite3_prepare_v2 (db, query, -1, &stmt, &tail); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_int (stmt, 1, args->txid); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_int (stmt, 1, args.txid); assert (rc == SQLITE_OK);
     rc = sqlite3_step (stmt); assert (rc == SQLITE_ROW || rc == SQLITE_OK);
 
     while (rc == SQLITE_ROW)
@@ -461,8 +502,10 @@ int md_catalog_stub (const unsigned long request_id
     rc = sqlite3_finalize (stmt);
 
 cleanup:
-    rc = nssi_put_data (caller, data, size, data_addr, -1);
-    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
+    MPI_Send (data, size, MPI_BYTE, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
+//    rc = nssi_put_data (caller, data, size, data_addr, -1);
+    MPI_Send (&rc, 1, MPI_INTEGER, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
+//    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
     free (data);
 
     return rc;
@@ -502,12 +545,13 @@ static int get_matching_chunk_count (const md_get_chunk_args * args, const struc
     return rc;
 }
 
-int md_get_chunk_stub (const unsigned long request_id
-                  ,const NNTI_peer_t *caller
-                  ,const md_get_chunk_args *args
-                  ,const NNTI_buffer_t *data_addr
-                  ,const NNTI_buffer_t *res_addr
-                  )
+//int md_get_chunk_stub (const unsigned long request_id
+//                  ,const NNTI_peer_t *caller
+//                  ,const md_get_chunk_args *args
+//                  ,const NNTI_buffer_t *data_addr
+//                  ,const NNTI_buffer_t *res_addr
+//                  )
+int md_get_chunk_stub (MPI_Comm old_world_comm, int message_source, MPI_Comm metadata_comm)
 {
     int rc;
     uint32_t count;
@@ -526,20 +570,26 @@ int md_get_chunk_stub (const unsigned long request_id
     size_t size = 0;
     struct md_dim_bounds * dims;
 
-//args->var_id is available.
-    size = args->num_dims * sizeof (struct md_dim_bounds);
-    dims = (struct md_dim_bounds *) malloc (size);
-    rc = nssi_get_data(caller, dims, size, data_addr);
-    assert (rc == NSSI_OK);
+    struct md_get_chunk_args args;
 
-    rc = get_matching_chunk_count (args, dims, &count);
+    MPI_Status status;
+    MPI_Recv (&args, sizeof (md_get_chunk_args), MPI_BYTE, message_source, MD_GET_CHUNK_OP, old_world_comm, &status);
+
+//args->var_id is available.
+    size = args.num_dims * sizeof (struct md_dim_bounds);
+    dims = (struct md_dim_bounds *) malloc (size);
+    MPI_Recv (dims, size, MPI_BYTE, status.MPI_SOURCE, status.MPI_TAG, old_world_comm, &status);
+//    rc = nssi_get_data(caller, dims, size, data_addr);
+    assert (rc == MD_OK);
+
+    rc = get_matching_chunk_count (&args, dims, &count);
 
     rc = sqlite3_prepare_v2 (db, query, -1, &stmt, &tail); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_text (stmt, 1, strdup (args->name), -1, free); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_text (stmt, 2, strdup (args->path), -1, free); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_int (stmt, 3, args->var_version); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_int (stmt, 4, args->txid); assert (rc == SQLITE_OK);
-    for (int j = 0; j < args->num_dims; j++)
+    rc = sqlite3_bind_text (stmt, 1, strdup (args.name), -1, free); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_text (stmt, 2, strdup (args.path), -1, free); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_int (stmt, 3, args.var_version); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_int (stmt, 4, args.txid); assert (rc == SQLITE_OK);
+    for (int j = 0; j < args.num_dims; j++)
     {
         rc = sqlite3_bind_int (stmt, 5 + (j * 2), dims [j].min);
         rc = sqlite3_bind_int (stmt, 6 + (j * 2), dims [j].max);
@@ -548,6 +598,7 @@ int md_get_chunk_stub (const unsigned long request_id
 
     size = count * sizeof (struct md_chunk_entry);
     chunk_list = (struct md_chunk_entry *) malloc (size);
+    MPI_Send (&count, sizeof (uint32_t), MPI_BYTE, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
 
     i = 0;
     while (rc == SQLITE_ROW)
@@ -581,79 +632,108 @@ int md_get_chunk_stub (const unsigned long request_id
 cleanup:
     free (dims);
 
-    rc = nssi_put_data (caller, chunk_list, size, data_addr, -1);
+    MPI_Send (chunk_list, size, MPI_BYTE, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
+//    rc = nssi_put_data (caller, chunk_list, size, data_addr, -1);
 
-    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
+    MPI_Send (&rc, 1, MPI_INTEGER, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
+//    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
 
     free (chunk_list);
 
     return rc;
 }
 
-int md_get_chunk_count_stub (const unsigned long request_id
-                  ,const NNTI_peer_t *caller
-                  ,const md_get_chunk_args *args
-                  ,const NNTI_buffer_t *data_addr
-                  ,const NNTI_buffer_t *res_addr
-                  )
+//int md_get_chunk_count_stub (const unsigned long request_id
+//                  ,const NNTI_peer_t *caller
+//                  ,const md_get_chunk_args *args
+//                  ,const NNTI_buffer_t *data_addr
+//                  ,const NNTI_buffer_t *res_addr
+//                  )
+int md_get_chunk_count_stub (MPI_Comm old_world_comm, int message_source, MPI_Comm metadata_comm)
 {
     int rc;
     uint32_t count;
     size_t size = 0;
     struct md_dim_bounds * dims;
 
-    size = args->num_dims * sizeof (struct md_dim_bounds);
-    dims = (struct md_dim_bounds *) malloc (size);
-    rc = nssi_get_data(caller, dims, size, data_addr);
+    struct md_get_chunk_args args;
+    MPI_Status status;
 
-    rc = get_matching_chunk_count (args, dims, &count);
+    MPI_Recv (&args, sizeof (struct md_get_chunk_args), MPI_BYTE, message_source, MD_GET_CHUNK_COUNT_OP, old_world_comm, &status);
+
+    size = args.num_dims * sizeof (struct md_dim_bounds);
+    dims = (struct md_dim_bounds *) malloc (size);
+    MPI_Recv (dims, size, MPI_BYTE, status.MPI_SOURCE, status.MPI_TAG, old_world_comm, &status);
+//    rc = nssi_get_data(caller, dims, size, data_addr);
+
+    rc = get_matching_chunk_count (&args, dims, &count);
 
 cleanup:
     free (dims);
 
-    rc = nssi_put_data (caller, &count, sizeof (uint32_t), data_addr, -1);
+    MPI_Send (&count, sizeof (uint32_t), MPI_BYTE, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
+//    rc = nssi_put_data (caller, &count, sizeof (uint32_t), data_addr, -1);
 
-    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
+    MPI_Send (&rc, 1, MPI_INTEGER, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
+//    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
+
+    return rc;
 }
 
-int md_catalog_entry_count_stub (const unsigned long request_id
-                  ,const NNTI_peer_t *caller
-                  ,const md_catalog_args *args
-                  ,const NNTI_buffer_t *data_addr
-                  ,const NNTI_buffer_t *res_addr
-                  )
+//int md_catalog_entry_count_stub (const unsigned long request_id
+//                  ,const NNTI_peer_t *caller
+//                  ,const md_catalog_args *args
+//                  ,const NNTI_buffer_t *data_addr
+//                  ,const NNTI_buffer_t *res_addr
+//                  )
+int md_catalog_entry_count_stub (MPI_Comm old_world_comm, int message_source, MPI_Comm metadata_comm)
 {
     int rc;
     sqlite3_stmt * stmt = NULL;
     const char * tail = NULL;
     uint32_t count;
+    struct md_catalog_args args;
+
+    MPI_Status status;
+
+    MPI_Recv (&args, sizeof (struct md_catalog_args), MPI_BYTE, message_source, MD_CATALOG_ENTRY_COUNT_OP, old_world_comm, &status);
 
     rc = sqlite3_prepare_v2 (db, "select count (*) from global_catalog where txn_id = ? or active = 1", -1, &stmt, &tail); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_int (stmt, 1, args->txid); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_int (stmt, 1, args.txid); assert (rc == SQLITE_OK);
     rc = sqlite3_step (stmt); assert (rc == SQLITE_OK || rc == SQLITE_ROW);
     count = sqlite3_column_int (stmt, 0);
     rc = sqlite3_finalize (stmt); assert (rc == SQLITE_OK);
 
 cleanup:
-    rc = nssi_put_data (caller, &count, sizeof (uint32_t), data_addr, -1);
+    MPI_Send (&count, sizeof (uint32_t), MPI_BYTE, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
+//    rc = nssi_put_data (caller, &count, sizeof (uint32_t), data_addr, -1);
 
-    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
+    MPI_Send (&rc, 1, MPI_INTEGER, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
+//    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
+
+    return rc;
 }
 
-int md_activate_var_stub (const unsigned long request_id
-                  ,const NNTI_peer_t *caller
-                  ,const md_activate_var_args *args
-                  ,const NNTI_buffer_t *data_addr
-                  ,const NNTI_buffer_t *res_addr
-                  )
+//int md_activate_var_stub (const unsigned long request_id
+//                  ,const NNTI_peer_t *caller
+//                  ,const md_activate_var_args *args
+//                  ,const NNTI_buffer_t *data_addr
+//                  ,const NNTI_buffer_t *res_addr
+//                  )
+int md_activate_var_stub (MPI_Comm old_world_comm, int message_source, MPI_Comm metadata_comm)
 {
     int rc;
     sqlite3_stmt * stmt = NULL;
     const char * tail = NULL;
     const char * query = "update global_catalog set active = 1 where txn_id = ?";
+    struct md_activate_var_args args;
+
+    MPI_Status status;
+
+    MPI_Recv (&args, sizeof (struct md_activate_var_args), MPI_BYTE, message_source, MD_ACTIVATE_VAR_OP, old_world_comm, &status);
 
     rc = sqlite3_prepare_v2 (db, query, -1, &stmt, &tail); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_int (stmt, 1, args->txid); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_int (stmt, 1, args.txid); assert (rc == SQLITE_OK);
     rc = sqlite3_step (stmt); assert (rc == SQLITE_OK || rc == SQLITE_ROW || rc == SQLITE_DONE);
         if (rc != SQLITE_OK && rc != SQLITE_DONE && rc != SQLITE_ROW)
         {
@@ -664,35 +744,43 @@ int md_activate_var_stub (const unsigned long request_id
     rc = sqlite3_finalize (stmt); assert (rc == SQLITE_OK);
 
 cleanup:
-    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
+    MPI_Send (&rc, 1, MPI_INTEGER, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
+//    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
 
     return rc;
 }
 
-int md_processing_var_stub (const unsigned long request_id
-                  ,const NNTI_peer_t *caller
-                  ,const md_processing_var_args *args
-                  ,const NNTI_buffer_t *data_addr
-                  ,const NNTI_buffer_t *res_addr
-                  )
+//int md_processing_var_stub (const unsigned long request_id
+//                  ,const NNTI_peer_t *caller
+//                  ,const md_processing_var_args *args
+//                  ,const NNTI_buffer_t *data_addr
+//                  ,const NNTI_buffer_t *res_addr
+//                  )
+int md_processing_var_stub (MPI_Comm old_world_comm, int message_source, MPI_Comm metadata_comm)
 {
     int rc;
     sqlite3_stmt * stmt = NULL;
     const char * tail = NULL;
     const char * query = "update global_catalog set active = 2 where txn_id = ?";
 
+    struct md_processing_var_args args;
+
+    MPI_Status status;
+    MPI_Recv (&args, sizeof (struct md_processing_var_args), MPI_BYTE, message_source, MD_PROCESSING_VAR_OP, old_world_comm, &status);
+
     rc = sqlite3_prepare_v2 (db, query, -1, &stmt, &tail); assert (rc == SQLITE_OK);
-    rc = sqlite3_bind_int (stmt, 1, args->txid); assert (rc == SQLITE_OK);
+    rc = sqlite3_bind_int (stmt, 1, args.txid); assert (rc == SQLITE_OK);
     rc = sqlite3_step (stmt); assert (rc == SQLITE_OK || rc == SQLITE_ROW || rc == SQLITE_DONE);
     rc = sqlite3_finalize (stmt); assert (rc == SQLITE_OK);
 
-    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
+    MPI_Send (&rc, 1, MPI_INTEGER, status.MPI_SOURCE, status.MPI_TAG, old_world_comm);
+//    rc = nssi_send_result (caller, request_id, rc, NULL, res_addr);
 
     return rc;
 }
 
 //===========================================================================
-static int metadata_server_init (MPI_Comm * comm, int color, int key)
+static int metadata_server_init (MPI_Comm old_world_comm, MPI_Comm * new_world_comm)
 {
 #if 0
     NSSI_REGISTER_SERVER_STUB(MD_CREATE_VAR_OP, md_create_var_stub, md_create_var_args, void);
@@ -708,9 +796,19 @@ static int metadata_server_init (MPI_Comm * comm, int color, int key)
     NSSI_REGISTER_SERVER_STUB(MD_PROCESSING_VAR_OP, md_processing_var_stub, md_processing_var_args, void);
 #endif
 
+    int rc;
+    int color = 2; // used for metadata server processes;
+    int key = 0;
+
+    // keep ranks the same order in case they are deliberately assigned
+    MPI_Comm_rank (old_world_comm, &key);
+
+    MPI_Comm_split (old_world_comm, color, key, new_world_comm);
+
+    MPI_Bcast (&key, 1, MPI_INTEGER, MPI_ROOT, old_world_comm);
+
     // ======================================
     //setup the database
-    int rc;
     char * ErrMsg = NULL;
     
     rc = sqlite3_open (":memory:", &db);
@@ -744,10 +842,12 @@ cleanup:
 static int metadata_server_finalize ()
 {
     sqlite3_close (db);
+
+    return MD_OK;
 }
 
 // ============================================================================
-typedef char NNTI_url [NNTI_URL_LEN];
+typedef char NNTI_url [MAXSTRLEN];
 
 #if 0
 static void generate_contact_info (const char * env_var, const char * myid)
@@ -801,8 +901,9 @@ static void generate_contact_info (const char * env_var, const char * myid)
 
 int main (int argc, char ** argv)
 {
+    MPI_Comm old_world_comm = MPI_COMM_WORLD;
     MPI_Comm metadata_comm = MPI_COMM_NULL;
-    char my_url [NSSI_URL_LEN];
+    char my_url [MAXSTRLEN];
     int rc;
 
     if (argc < 2)
@@ -828,14 +929,74 @@ int main (int argc, char ** argv)
 //        return -1;
 //    }
 
-    rc = metadata_server_init (MPI_COMM_WORLD, 100, 0, &metadata_comm);
+    rc = metadata_server_init (MPI_COMM_WORLD, &metadata_comm);
 
     /* start processing requests */
-    service.max_reqs = -1;
+    //service.max_reqs = -1;
 //    rc = nssi_service_start (&service);
 //    if (rc != NSSI_OK) {
 //        //log_info(netcdf_debug_level, "exited xfer_svc: %s", nssi_err_str(rc));
 //    }
+    bool done = false;
+
+    while (!done)
+    {
+        int source;
+        int tag;
+        MPI_Status status;
+
+        MPI_Probe (MPI_ANY_SOURCE, MPI_ANY_TAG, old_world_comm, &status);
+
+        switch (status.MPI_TAG)
+        {
+            case MD_CREATE_VAR_OP:
+                md_create_var_stub (old_world_comm, status.MPI_SOURCE, metadata_comm);
+                break;
+
+            case MD_INSERT_CHUNK_OP:
+                md_insert_chunk_stub (old_world_comm, status.MPI_SOURCE, metadata_comm);
+                break;
+
+            case MD_DELETE_VAR_OP:
+                md_delete_var_stub (old_world_comm, status.MPI_SOURCE, metadata_comm);
+                break;
+
+            case MD_GET_CHUNK_LIST_OP:
+                md_get_chunk_list_stub (old_world_comm, status.MPI_SOURCE, metadata_comm);
+                break;
+
+            case MD_GET_CHUNK_LIST_COUNT_OP:
+                md_get_chunk_list_count_stub (old_world_comm, status.MPI_SOURCE, metadata_comm);
+                break;
+
+            case MD_GET_CHUNK_OP:
+                md_get_chunk_stub (old_world_comm, status.MPI_SOURCE, metadata_comm);
+                break;
+
+            case MD_GET_CHUNK_COUNT_OP:
+                md_get_chunk_count_stub (old_world_comm, status.MPI_SOURCE, metadata_comm);
+                break;
+
+            case MD_CATALOG_OP:
+                md_catalog_stub (old_world_comm, status.MPI_SOURCE, metadata_comm);
+                break;
+
+            case MD_CATALOG_ENTRY_COUNT_OP:
+                md_catalog_entry_count_stub (old_world_comm, status.MPI_SOURCE, metadata_comm);
+                break;
+
+            case MD_ACTIVATE_VAR_OP:
+                md_activate_var_stub (old_world_comm, status.MPI_SOURCE, metadata_comm);
+                break;
+
+            case MD_PROCESSING_VAR_OP:
+                md_processing_var_stub (old_world_comm, status.MPI_SOURCE, metadata_comm);
+                break;
+
+            default:
+                done = true;
+        }
+    }
 
     metadata_server_finalize ();
 

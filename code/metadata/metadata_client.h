@@ -73,9 +73,9 @@ struct metadata_server;
 enum METADATA_COLOR {METADATA_COLOR_CLIENT = 1, METADATA_COLOR_SERVER = 2};
 enum MD_RES {MD_OK = 1, MD_ENOMEM = 2};
 
-int metadata_init (MPI_Comm * comm, int color, int key, struct metadata_server ** new_server);
+int metadata_init (MPI_Comm old_world_comm, struct metadata_server * server);
 int metadata_finalize (struct metadata_server * server, struct md_config * config, bool kill_service);
-int metadata_get_config_from_env (const char * env_var, struct md_config * config);
+//int metadata_get_config_from_env (const char * env_var, struct md_config * config);
 
 // create a variable in an inactive state. Chunks will be added later. Once the
 // variable is complete (the transaction is ready to commit), it can then be

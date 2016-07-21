@@ -35,9 +35,9 @@
 
 #include <mpi.h>
 
-#include <Trios_config.h>
-#include <Trios_nssi_rpc.h>
-#include <Trios_nssi_client.h>
+//#include <Trios_config.h>
+//#include <Trios_nssi_rpc.h>
+//#include <Trios_nssi_client.h>
 
 #include "metadata_client.h"
 
@@ -99,8 +99,12 @@ int main (int argc, char ** argv)
     struct md_config metadata_config;
     struct metadata_server * md_server;
 
-    metadata_get_config_from_env ("METADATA_CONFIG_FILE", &metadata_config);
-    rc = metadata_init (metadata_config.server_urls [0], &md_server);
+    MPI_Comm comm; // new comm from split in init for intra-metadata server
+                   // communication. Is this necessary?
+
+//    metadata_get_config_from_env ("METADATA_CONFIG_FILE", &metadata_config);
+//    rc = metadata_init (metadata_config.server_urls [0], &md_server);
+    metadata_init (MPI_COMM_WORLD, &comm);
 
     strcpy (new_var.name, name0);
     strcpy (new_var.path, path0);

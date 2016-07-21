@@ -46,9 +46,10 @@
 extern "C"
 struct metadata_server
 {
-    MPI_Comm comm;
-    int rank;
-    const char * service;
+    MPI_Comm old_world_comm;
+    MPI_Comm metadata_comm;
+    int metadata_server_rank;
+//    const char * service;
 //    nssi_service * service;
 //    const char * service_connect_string;
 };
@@ -57,11 +58,20 @@ extern "C"
 int metadata_get_config_from_env (const char * env_var, struct md_config * config);
 
 extern "C"
-int metadata_init (MPI_Comm * comm, int color, int key, struct metadata_server ** new_server)
+int metadata_init (MPI_Comm old_world_comm, struct metadata_server * new_server)
 {
     int rc;
+    int color = 1;  // used for non-metadata server processes
+    int key = 0;
 
-    MPI_Comm_split (*comm, color, key, &(*new_server)->comm);
+    // keep rank assignments the same in case they are done deliberately
+    MPI_Comm_rank (old_world_comm, &key);
+
+    new_server->old_world_comm = old_world_comm;
+
+    MPI_Comm_split (old_world_comm, color, key, &(*new_server).metadata_comm);
+
+    MPI_Bcast (&(*new_server).metadata_server_rank, 1, MPI_INTEGER, MPI_PROC_NULL, old_world_comm);
 
 #if 0
     nssi_rpc_init (NSSI_DEFAULT_TRANSPORT, NSSI_DEFAULT_ENCODE, NULL);
@@ -112,6 +122,8 @@ int metadata_finalize (struct metadata_server * server, struct md_config * confi
     free (config->server_urls);
 #endif
 
+    fprintf (stderr, "Change finalize to send a shutdown message\n");
+
     return RC_OK;
 }
 
@@ -133,8 +145,8 @@ int metadata_create_var (struct metadata_server * server, uint64_t txid
     size_t size;
 
     args.txid = txid;
-    args.name = (char *) new_var->name;
-    args.path = (char *) new_var->path;
+    strncpy (args.name, (char *) new_var->name, MAXSTRLEN);
+    strncpy (args.path, (char *) new_var->path, MAXSTRLEN);
     args.type = new_var->type;
     args.var_version = new_var->version;
     args.num_dims = new_var->num_dims;
@@ -143,6 +155,12 @@ int metadata_create_var (struct metadata_server * server, uint64_t txid
     dims = (struct md_dim_bounds *) malloc (size);
     memcpy (dims, new_var->dim, size);
 
+    // send args
+    MPI_Send (&args, sizeof (args), MPI_BYTE, server->metadata_server_rank, MD_CREATE_VAR_OP, server->old_world_comm);
+    // send dims
+    MPI_Send (dims, size, MPI_BYTE, server->metadata_server_rank, MD_CREATE_VAR_OP, server->old_world_comm);
+
+#if 0
     rc = nssi_call_rpc_sync (server->service    // service
                             ,MD_CREATE_VAR_OP  // opcode
                             ,&args      // args struct
@@ -152,6 +170,16 @@ int metadata_create_var (struct metadata_server * server, uint64_t txid
                             );
 
     *var_id = *(uint64_t *) dims; // this is the out; the other is the in
+#endif
+
+    MPI_Status status;
+
+    // get the out parameter var id
+    MPI_Recv (var_id, sizeof (uint64_t), MPI_BYTE, server->metadata_server_rank, MD_CREATE_VAR_OP, server->old_world_comm, &status);
+
+    // get result code
+    MPI_Recv (&res, 1, MPI_INTEGER, server->metadata_server_rank, MD_CREATE_VAR_OP, server->old_world_comm, &status);
+
     free (dims);
 
     return RC_OK;
@@ -171,11 +199,16 @@ int metadata_insert_chunk (struct metadata_server * server, uint64_t var_id, str
     args.var_id = var_id;
     args.chunk_id = new_chunk->chunk_id;
     args.num_dims = new_chunk->num_dims;
-    args.connection = (char *) new_chunk->connection;
+    strncpy (args.connection, (char *) new_chunk->connection, MAXSTRLEN);
     args.length_of_chunk = new_chunk->length_of_chunk;
 
     size = sizeof (struct md_dim_bounds) * new_chunk->num_dims;
 
+    MPI_Send (&args, sizeof (struct md_insert_chunk_args), MPI_BYTE, server->metadata_server_rank, MD_INSERT_CHUNK_OP, server->old_world_comm);
+
+    MPI_Send (new_chunk, size, MPI_BYTE, server->metadata_server_rank, MD_INSERT_CHUNK_OP, server->old_world_comm);
+
+#if 0
     rc = nssi_call_rpc_sync (server->service    // service
                             ,MD_INSERT_CHUNK_OP  // opcode
                             ,&args      // args struct
@@ -183,6 +216,10 @@ int metadata_insert_chunk (struct metadata_server * server, uint64_t var_id, str
                             ,size       // length of bulk transfer buffer
                             ,&res       // where to put result
                             );
+#endif
+
+    MPI_Status status;
+    MPI_Recv (&rc, 1, MPI_INTEGER, server->metadata_server_rank, MD_INSERT_CHUNK_OP, server->old_world_comm, &status);
 
     return RC_OK;
 }
@@ -200,10 +237,13 @@ int metadata_delete_var (struct metadata_server * server, uint64_t var_id
     md_delete_var_args args;
 
     args.var_id = var_id;
-    args.name = (char *) name;
-    args.path = (char *) path;
+    strncpy (args.name, (char *) name, MAXSTRLEN);
+    strncpy (args.path, (char *) path, MAXSTRLEN);
     args.var_version = version;
 
+    MPI_Send (&args, sizeof (struct md_delete_var_args), MPI_BYTE, server->metadata_server_rank, MD_DELETE_VAR_OP, server->old_world_comm);
+
+#if 0
     rc = nssi_call_rpc_sync (server->service    // service
                             ,MD_DELETE_VAR_OP  // opcode
                             ,&args      // args struct
@@ -211,6 +251,10 @@ int metadata_delete_var (struct metadata_server * server, uint64_t var_id
                             ,0       // length of bulk transfer buffer
                             ,&res       // where to put result
                             );
+#endif
+
+    MPI_Status status;
+    MPI_Recv (&rc, 1, MPI_INTEGER, server->metadata_server_rank, MD_DELETE_VAR_OP, server->old_world_comm, &status);
 
     return rc;
 }
@@ -231,10 +275,11 @@ int metadata_get_chunk_list (struct metadata_server * server, uint64_t txid
     size_t size = 0;
 
     args.txid = txid;
-    args.name = (char *) name;
-    args.path = (char *) path;
+    strncpy (args.name, (char *) name, MAXSTRLEN);
+    strncpy (args.path, (char *) path, MAXSTRLEN);
     args.var_version = version;
 
+#if 0
     rc = nssi_call_rpc_sync (server->service    // service
                             ,MD_GET_CHUNK_LIST_COUNT_OP  // opcode
                             ,&args      // args struct
@@ -242,11 +287,20 @@ int metadata_get_chunk_list (struct metadata_server * server, uint64_t txid
                             ,sizeof (uint32_t) // length of bulk transfer buffer
                             ,&res       // where to put result
                             );
+#endif
+    MPI_Send (&args, sizeof (struct md_get_chunk_list_args), MPI_BYTE, server->metadata_server_rank, MD_GET_CHUNK_LIST_COUNT_OP, server->old_world_comm);
+
+    MPI_Status status;
+
+    MPI_Recv (&items, sizeof (uint32_t), MPI_BYTE, server->metadata_server_rank, MD_GET_CHUNK_LIST_COUNT_OP, server->old_world_comm, &status);
 
     if (*items > 0)
     {
         size = *items * sizeof (struct md_chunk_entry);
         *chunks = (struct md_chunk_entry *) malloc (size);
+
+        MPI_Recv (chunks, size, MPI_BYTE, server->metadata_server_rank, MD_GET_CHUNK_LIST_OP, server->old_world_comm, &status);
+#if 0
         rc = nssi_call_rpc_sync (server->service    // service
                                 ,MD_GET_CHUNK_LIST_OP  // opcode
                                 ,&args      // args struct
@@ -254,7 +308,10 @@ int metadata_get_chunk_list (struct metadata_server * server, uint64_t txid
                                 ,size       // length of bulk transfer buffer
                                 ,&res       // where to put result
                                 );
+#endif
     }
+
+    MPI_Recv (&rc, 1, MPI_INTEGER, server->metadata_server_rank, MD_GET_CHUNK_LIST_OP, server->old_world_comm, &status);
 
     return RC_OK;
 }
@@ -275,8 +332,8 @@ int metadata_get_chunk (struct metadata_server * server, uint64_t txid
 
     args.txid = txid;
     args.var_id = desired_box->var_id;
-    args.name = desired_box->name;
-    args.path = desired_box->path;
+    strncpy (args.name, desired_box->name, MAXSTRLEN);
+    strncpy (args.path, desired_box->path, MAXSTRLEN);
     args.var_version = desired_box->version;
     args.num_dims = desired_box->num_dims;
 
@@ -288,6 +345,7 @@ int metadata_get_chunk (struct metadata_server * server, uint64_t txid
         dims [i].max = desired_box->dim [i].max;
     }
 
+#if 0
     rc = nssi_call_rpc_sync (server->service    // service
                             ,MD_GET_CHUNK_COUNT_OP  // opcode
                             ,&args      // args struct
@@ -295,6 +353,7 @@ int metadata_get_chunk (struct metadata_server * server, uint64_t txid
                             ,size       // length of bulk transfer buffer
                             ,&res       // where to put result
                             );
+#endif
 
     *items = *(uint32_t *) dims;
     // refresh to make sure we are sending the right stuff again
@@ -312,6 +371,7 @@ int metadata_get_chunk (struct metadata_server * server, uint64_t txid
         size_t max_size = (size > size2 ? size : size2);
         *matching_chunks = (struct md_chunk_entry *) malloc (max_size);
         memcpy (*matching_chunks, dims, size);
+#if 0
         rc = nssi_call_rpc_sync (server->service    // service
                                 ,MD_GET_CHUNK_OP  // opcode
                                 ,&args      // args struct
@@ -319,6 +379,7 @@ int metadata_get_chunk (struct metadata_server * server, uint64_t txid
                                 ,max_size       // length of bulk transfer buffer
                                 ,&res       // where to put result
                                 );
+#endif
     }
 
     free (dims);
@@ -342,6 +403,8 @@ int metadata_catalog (struct metadata_server * server, uint64_t txn_id
 
     args.txid = txn_id;
 
+    MPI_Send (&args, sizeof (struct md_catalog_args), MPI_BYTE, server->metadata_server_rank, MD_CATALOG_OP, server->old_world_comm);
+#if 0
     rc = nssi_call_rpc_sync (server->service    // service
                             ,MD_CATALOG_ENTRY_COUNT_OP  // opcode
                             ,&args      // args struct
@@ -349,11 +412,18 @@ int metadata_catalog (struct metadata_server * server, uint64_t txn_id
                             ,sizeof (uint32_t) // length of bulk transfer buffer
                             ,&res       // where to put result
                             );
+#endif
+
+    MPI_Status status;
+    MPI_Recv (&items, sizeof (uint32_t), MPI_BYTE, server->metadata_server_rank, MD_CATALOG_OP, server->old_world_comm, &status);
 
     if (*items > 0)
     {
         size = sizeof (struct md_catalog_entry) * *items;
         *entries = (struct md_catalog_entry *) malloc (size);
+
+        MPI_Recv (entries, size, MPI_BYTE, server->metadata_server_rank, MD_CATALOG_OP, server->old_world_comm, &status);
+#if 0
         rc = nssi_call_rpc_sync (server->service    // service
                                 ,MD_CATALOG_OP  // opcode
                                 ,&args      // args struct
@@ -361,7 +431,10 @@ int metadata_catalog (struct metadata_server * server, uint64_t txn_id
                                 ,size       // length of bulk transfer buffer
                                 ,&res       // where to put result
                                 );
+#endif
     }
+
+    MPI_Recv (&rc, 1, MPI_INTEGER, server->metadata_server_rank, MD_CATALOG_OP, server->old_world_comm, &status);
 
     return RC_OK;
 }
@@ -382,10 +455,13 @@ int metadata_activate_var (struct metadata_server * server, uint64_t txid
     size_t size = 0;
 
     args.txid = txid;
-    args.name = (char *) name;
-    args.path = (char *) path;
+    strncpy (args.name, (char *) name, MAXSTRLEN);
+    strncpy (args.path, (char *) path, MAXSTRLEN);
     args.var_version = version;
 
+    MPI_Send (&args, sizeof (struct md_activate_var_args), MPI_BYTE, server->metadata_server_rank, MD_ACTIVATE_VAR_OP, server->old_world_comm);
+
+#if 0
     rc = nssi_call_rpc_sync (server->service    // service
                             ,MD_ACTIVATE_VAR_OP  // opcode
                             ,&args      // args struct
@@ -393,6 +469,10 @@ int metadata_activate_var (struct metadata_server * server, uint64_t txid
                             ,size       // length of bulk transfer buffer
                             ,&res       // where to put result
                             );
+#endif
+
+    MPI_Status status;
+    MPI_Recv (&rc, 1, MPI_INTEGER, server->metadata_server_rank, MD_ACTIVATE_VAR_OP, server->old_world_comm, &status);
 
     return RC_OK;
 }
@@ -413,10 +493,13 @@ int metadata_processing_var (struct metadata_server * server, uint64_t txid
     size_t size = 0;
 
     args.txid = txid;
-    args.name = (char *) name;
-    args.path = (char *) path;
+    strncpy (args.name, (char *) name, MAXSTRLEN);
+    strncpy (args.path, (char *) path, MAXSTRLEN);
     args.var_version = version;
 
+    MPI_Send (&args, sizeof (md_processing_var_args), MPI_BYTE, server->metadata_server_rank, MD_PROCESSING_VAR_OP, server->old_world_comm);
+
+#if 0
     rc = nssi_call_rpc_sync (server->service    // service
                             ,MD_PROCESSING_VAR_OP  // opcode
                             ,&args      // args struct
@@ -424,6 +507,10 @@ int metadata_processing_var (struct metadata_server * server, uint64_t txid
                             ,size       // length of bulk transfer buffer
                             ,&res       // where to put result
                             );
+#endif
+
+    MPI_Status status;
+    MPI_Recv (&rc, 1, MPI_INTEGER, server->metadata_server_rank, MD_PROCESSING_VAR_OP, server->old_world_comm, &status);
 
     return RC_OK;
 }
@@ -494,7 +581,8 @@ int metadata_get_config_from_env (const char * env_var, struct md_config * confi
                 return MD_ENOMEM;
             }
             for (i=0;i<lcount;i++) {
-                config->server_urls[i] = (char *)calloc(NNTI_URL_LEN, sizeof(char));
+//                config->server_urls[i] = (char *)calloc(NNTI_URL_LEN, sizeof(char));
+                config->server_urls[i] = (char *)calloc(MAXSTRLEN, sizeof(char));
                 if (!config->server_urls[i]) {
                     //log_error(netcdf_debug_level, "could not allocate netcdf services");
                     free (fbuf);
