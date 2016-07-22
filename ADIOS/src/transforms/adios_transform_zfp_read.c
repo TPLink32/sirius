@@ -116,7 +116,6 @@ adios_datablock * adios_transform_zfp_pg_reqgroup_completed(adios_transform_read
 	for (i=0; i<zbuff->ndims; i++)
 	{
 		zbuff->dims[i] = (uint) reqgroup->transinfo->orig_dims[i];
-		printf("dim %i: len=%i\n", i, zbuff->dims[i]); fflush(stdout);
 	}
 
 	
@@ -130,7 +129,7 @@ adios_datablock * adios_transform_zfp_pg_reqgroup_completed(adios_transform_read
 	udata = malloc(usize);
 	if(!udata)
 	{
-		sprintf(zbuff->msg, "Ran out of memory allocating uncompressed buffer\n");
+		sprintf(zbuff->msg, "Ran out of memory allocating uncompressed buffer.");
 		zfp_error(zbuff);
 		return NULL;
 	}
