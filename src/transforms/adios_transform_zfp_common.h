@@ -3,6 +3,7 @@
  *
  * 	Author: Eric Suchyta
  * 	contact: eric.d.suchyta@gmail.com
+ *
  */
 
 #ifndef ADIOS_TRANSFORM_ZFP_COMMON_H_
@@ -111,6 +112,7 @@ static void read_metastring(char s[ZFP_STRSIZE], const void* pos, size_t* offset
 	return;
 }
 
+
 /* Read each memory location and cast to the correct type */
 static struct zfp_metadata* zfp_read_metadata(struct zfp_metadata* metadata, adios_transform_pg_read_request *completed_pg_reqgroup)
 {
@@ -125,21 +127,6 @@ static struct zfp_metadata* zfp_read_metadata(struct zfp_metadata* metadata, adi
 
 	return metadata;
 }
-
-
-/* Get the dimensionality of the input data 
-static void get_dimensions(const struct adios_dimension_struct* dimensions, struct zfp_buffer* zbuff, struct adios_var_struct* var)
-{
-	int i;
-	uint64_t test;
-	zbuff->dims = malloc(zbuff->ndims*sizeof(uint));
-	for (i=0; i<zbuff->ndims; i++)
-	{
-		zbuff->dims[i] = (uint) dimensions->dimension.rank;
-		dimensions = dimensions->next;
-	}
-}
-*/
 
 
 /* Function for common way to log errors */
@@ -206,8 +193,9 @@ static void zfp_initialize(void* array, struct zfp_buffer* zbuff)
 	}
 	else 
 	{
-		sprintf(zbuff->msg, "Dimensions error: ndims=%i is not implemented. 1, 2, and 3 are available.\n", zbuff->ndims);
-		return zfp_error(zbuff);
+		sprintf(zbuff->msg, "Dimensions error: ndims=%i is not implemented. 1, 2, and 3 are available.", zbuff->ndims);
+		zfp_error(zbuff);
+		return;
 	}
 
 	
@@ -218,20 +206,44 @@ static void zfp_initialize(void* array, struct zfp_buffer* zbuff)
 		int success = sscanf(zbuff->ctol, "%lf", &tol);
 		if (success != 1) 
 		{
-			sprintf(zbuff->msg, "Error in accuracy specification: %s. Provide a double.\n", zbuff->ctol);
-			return zfp_error(zbuff);
+			sprintf(zbuff->msg, "Error in accuracy specification: %s. Provide a double.", zbuff->ctol);
+			zfp_error(zbuff);
+			return;
 		}
 	       	zfp_stream_set_accuracy(zbuff->zstream, tol, zbuff->type);
 	}
 	else if (zbuff->mode == 1) 	// precision
 	{
 		uint tol;
+
+		/*
 		int success = sscanf(zbuff->ctol, "%u", &tol);
 		if (success != 1)
 		{
-			sprintf(zbuff->msg, "Error in precision specification: %s. Provide an integer.\n", zbuff->ctol);
-			return zfp_error(zbuff);
+			sprintf(zbuff->msg, "Error in precision specification: %s. Provide an integer.", zbuff->ctol);
+			zfp_error(zbuff);
+			return;
 		}
+		*/
+		
+		long int ct;
+		char* end;
+		ct = strtol(zbuff->ctol, &end, 10);
+		if (ct == 0)
+		{
+			sprintf(zbuff->msg, "Error in precision specification: %s. Provide an integer.", zbuff->ctol);
+			zfp_error(zbuff);
+			return;
+		}
+
+		if (*end != '\0')
+		{
+			sprintf(zbuff->msg, "A float was given for precision: %s -- the value was cast to an integer. ZFP accepts integer precisions.", zbuff->ctol);
+			zfp_warn(zbuff);
+		}
+		tol = (uint) ct;
+
+
 		zfp_stream_set_precision(zbuff->zstream, tol, zbuff->type);
 	}
 	else if (zbuff->mode == 2) 	// rate
@@ -240,12 +252,13 @@ static void zfp_initialize(void* array, struct zfp_buffer* zbuff)
 		int success = sscanf(zbuff->ctol, "%lf", &tol);
 		if (success != 1)
 		{
-			sprintf(zbuff->msg, "Error in rate specification: %s. Provide a double.\n", zbuff->ctol);
-			return zfp_error(zbuff);
+			sprintf(zbuff->msg, "Error in rate specification: %s. Provide a double.", zbuff->ctol);
+			zfp_error(zbuff);
+			return;
 		}
 		zfp_stream_set_rate(zbuff->zstream, tol, zbuff->type, zbuff->ndims, 0);  // I don't know what the 0 is.
 	}
-
+	
 	zbuff->buffsize = zfp_stream_maximum_size(zbuff->zstream, zbuff->field);
 }
 
@@ -266,8 +279,9 @@ static void zfp_streaming(struct zfp_buffer* zbuff, void* abuff, bool decompress
 		int success = zfp_decompress(zbuff->zstream, zbuff->field);
 		if (!success)
 		{
-			sprintf(zbuff->msg, "Decompression failed\n");
-			return zfp_error(zbuff);
+			sprintf(zbuff->msg, "Decompression failed");
+			zfp_error(zbuff);
+			return;
 		}
 	}
 	else 
@@ -275,8 +289,9 @@ static void zfp_streaming(struct zfp_buffer* zbuff, void* abuff, bool decompress
 		*finalsize = (uint64_t) zfp_compress(zbuff->zstream, zbuff->field);
 		if (! *finalsize)
 		{
-			sprintf(zbuff->msg, "Compression failed.\n");
-			return zfp_error(zbuff);
+			sprintf(zbuff->msg, "Compression failed.");
+			zfp_error(zbuff);
+			return;
 		}
 	}
 
@@ -306,7 +321,7 @@ static int zfp_compression(struct zfp_buffer* zbuff, const void* array, void** a
 	{
 		if (!shared_buffer_reserve(fd, zbuff->buffsize)) 
 		{
-			sprintf(zbuff->msg, "Out of memory allocating %u bytes for transform.\n", zbuff->buffsize);
+			sprintf(zbuff->msg, "Out of memory allocating %u bytes for transform.", zbuff->buffsize);
 			zfp_error(zbuff);
 			return 0;
 		}
@@ -317,7 +332,7 @@ static int zfp_compression(struct zfp_buffer* zbuff, const void* array, void** a
 		*abuff = malloc(zbuff->buffsize);
 		if (! *abuff)
 		{
-			sprintf(zbuff->msg, "Out of memory allocating %u bytes for for transform\n", zbuff->buffsize);
+			sprintf(zbuff->msg, "Out of memory allocating %u bytes for for transform", zbuff->buffsize);
 			zfp_error(zbuff);
 			return 0;
 		}
